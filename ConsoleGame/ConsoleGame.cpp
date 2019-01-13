@@ -31,8 +31,6 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-void MainLoop(Screen &screen, Scene &scene);
-
 int main()
 {
 	Screen screen(cout, 20, 50, ' ');
@@ -41,70 +39,9 @@ int main()
 
 	scene.init();
 
-	MainLoop(screen, scene);
+	scene.MainLoop(screen);
 
-	system("pause");
+	_getch();
 
 	return 0;
-}
-
-void breakTime(int seconds)
-{
-	clock_t temp;
-	temp = clock() + seconds * CLOCKS_PER_SEC;
-	while (clock() < temp)
-	{
-	}
-}
-
-void MainLoop(Screen &screen, Scene &scene)
-{
-	char c;
-
-	bool gameRunning = true;
-
-	while(gameRunning)
-	{
-		system("cls");
-
-		screen.clear();
-		scene.fillBorder(screen);
-
-		try
-		{
-			scene.drawToScreen(screen);
-		}
-		catch (std::exception &err)
-		{
-			cout << err.what() << endl
-				<< "press ane key to continue...\n";
-			_getch();
-		}
-
-		screen.display();
-
-		c = _getch();
-
-		switch (c)
-		{
-		case 27:
-			gameRunning = false;
-
-			system("cls");
-
-			cout << "enter Q to quit or any key to continue: ";
-
-			cin >> c;
-
-			if (c == 'Q' || c == 'q')
-				break;
-
-			gameRunning = true;
-		default:
-			scene.onKeyPressed(c);
-			;
-		}
-
-		scene.onEvent();
-	}
 }

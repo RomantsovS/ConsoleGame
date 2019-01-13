@@ -1,9 +1,12 @@
 #include <random>
+#include <ctime>
+#include <conio.h>
+#include <iostream>
 
 #include "Scene.h"
 
-Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, char bord) : height(h), width(w),
-					borderHeight(borderHt), borderWidth(borderWd), borderSymbol(bord)
+Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, char bord, int delay) : height(h), width(w),
+					borderHeight(borderHt), borderWidth(borderWd), borderSymbol(bord), delayMilliseconds(delay)
 {
 	
 }
@@ -53,6 +56,61 @@ void Scene::addObject(std::shared_ptr<SimpleObject> object)
 	collideObjects.push_back(object);
 }
 
+void Scene::MainLoop(Screen &screen)
+{
+	char c = 0;
+
+	bool gameRunning = true;
+
+	while (gameRunning)
+	{
+		system("cls");
+
+		if (_kbhit() != 0)
+			c = _getch();
+
+		switch (c)
+		{
+		case 27:
+			gameRunning = false;
+
+			system("cls");
+
+			std::cout << "enter Q to quit or any key to continue: ";
+
+			std::cin >> c;
+
+			if (c == 'Q' || c == 'q')
+				break;
+
+			gameRunning = true;
+		default:
+			onKeyPressed(c);
+			;
+		}
+
+		onEvent();
+
+		screen.clear();
+		fillBorder(screen);
+
+		try
+		{
+			drawToScreen(screen);
+		}
+		catch (std::exception &err)
+		{
+			std::cout << err.what() << std::endl
+				<< "press ane key to continue...\n";
+			_getch();
+		}
+
+		screen.display();
+
+		breakTime();
+	}
+}
+
 void Scene::drawToScreen(Screen & screen)
 {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
@@ -95,6 +153,15 @@ void Scene::onKeyPressed(char c)
 
 		break;
 	}
+	}
+}
+
+void Scene::breakTime()
+{
+	clock_t temp;
+	temp = clock() + delayMilliseconds * CLOCKS_PER_SEC / 1000;
+	while (clock() < temp)
+	{
 	}
 }
 
@@ -165,6 +232,8 @@ bool Scene::checkCollideObjects(std::shared_ptr<SimpleObject> object, SimpleObje
 
 			addRandomPoint();
 			addRandomPoint();
+
+			delayMilliseconds -= 10;
 
 			return false;
 		}

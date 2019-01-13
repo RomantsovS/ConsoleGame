@@ -14,7 +14,7 @@ class Scene
 {
 	using pos = Screen::pos;
 public:
-	Scene(pos h, pos w, pos borderWd = 1, pos borderHt = 1, char bord = '#');
+	Scene(pos h, pos w, pos borderWd = 1, pos borderHt = 1, char bord = '#', int delay = 100);
 
 	~Scene();
 
@@ -31,6 +31,8 @@ public:
 	pos getUsedHeight() const { return height - 1 - borderHeight; }
 	pos getUsedWidth() const { return width - 1 - borderWidth; }
 
+	void MainLoop(Screen &screen);
+
 	void drawToScreen(Screen &screen);
 
 	void onEvent();
@@ -40,9 +42,12 @@ private:
 	std::vector<std::shared_ptr<SimpleObject>> objects;
 	std::vector<std::shared_ptr<SimpleObject>> collideObjects;
 
-
 	pos height, width, borderWidth, borderHeight;
 	char borderSymbol;
+
+	int delayMilliseconds;
+
+	void breakTime();
 
 	void addRandomPoint();
 
