@@ -16,15 +16,15 @@ public:
 
 	~Snake();
 
-	bool checkCollide(const Scene &scene, SimpleObject::directions param) const;
-	bool checkCollide(std::shared_ptr<Point> point, directions dir);
+	bool checkCollide(const Scene &scene) const;
+	bool checkCollide(std::shared_ptr<Point> point);
 	bool checkCollide(const pos_type pos) const;
 
 	virtual void drawToScreen(Screen &screen);
 
 	void setDirection(SimpleObject::directions dir);
 
-	void move(directions dir);
+	void move();
 private:
 	char backgroundSymbol;
 

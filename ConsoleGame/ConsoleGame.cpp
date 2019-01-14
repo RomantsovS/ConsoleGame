@@ -35,7 +35,7 @@ int main()
 {
 	Screen screen(cout, 20, 50, ' ');
 
-	Scene scene(screen.getHeight(), screen.getWidth(), 1, 1, '#');
+	Scene scene(screen.getHeight(), screen.getWidth(), 1, 1, '#', 100);
 
 	scene.init();
 

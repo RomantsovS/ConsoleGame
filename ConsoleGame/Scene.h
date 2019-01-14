@@ -2,6 +2,7 @@
 #define SCENE
 
 #include <vector>
+#include <ctime>
 
 #include "Snake.h"
 #include "Screen.h"
@@ -45,6 +46,7 @@ private:
 	pos height, width, borderWidth, borderHeight;
 	char borderSymbol;
 
+	clock_t lastClock;
 	int delayMilliseconds;
 
 	void breakTime();
@@ -53,7 +55,7 @@ private:
 
 	void removeObject(std::shared_ptr<SimpleObject> object);
 
-	bool checkCollideObjects(std::shared_ptr<SimpleObject> object, SimpleObject::directions dir);
+	bool checkCollideObjects(std::shared_ptr<SimpleObject> object);
 
 	void onMoveKeyPressed(SimpleObject::directions dir);
 

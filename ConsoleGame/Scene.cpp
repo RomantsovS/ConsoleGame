@@ -1,12 +1,11 @@
 #include <random>
-#include <ctime>
 #include <conio.h>
 #include <iostream>
 
 #include "Scene.h"
 
 Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, char bord, int delay) : height(h), width(w),
-					borderHeight(borderHt), borderWidth(borderWd), borderSymbol(bord), delayMilliseconds(delay)
+					borderHeight(borderHt), borderWidth(borderWd), borderSymbol(bord), lastClock(0), delayMilliseconds(delay)
 {
 	
 }
@@ -61,35 +60,44 @@ void Scene::MainLoop(Screen &screen)
 	char c = 0;
 
 	bool gameRunning = true;
+	lastClock = clock();
 
 	while (gameRunning)
 	{
 		system("cls");
 
-		if (_kbhit() != 0)
+		if (_kbhit())
+		{
 			c = _getch();
 
-		switch (c)
-		{
-		case 27:
-			gameRunning = false;
+			switch (c)
+			{
+			case 27:
+				gameRunning = false;
 
-			system("cls");
+				system("cls");
 
-			std::cout << "enter Q to quit or any key to continue: ";
+				std::cout << "enter Q to quit or any key to continue: ";
 
-			std::cin >> c;
+				std::cin >> c;
 
-			if (c == 'Q' || c == 'q')
-				break;
+				if (c == 'Q' || c == 'q')
+					break;
 
-			gameRunning = true;
-		default:
-			onKeyPressed(c);
-			;
+				gameRunning = true;
+			default:
+				onKeyPressed(c);
+				;
+			}
 		}
 
-		onEvent();
+		auto tempClock = clock();
+
+		if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
+		{
+			onEvent();
+			lastClock = tempClock;
+		}
 
 		screen.clear();
 		fillBorder(screen);
@@ -106,8 +114,6 @@ void Scene::MainLoop(Screen &screen)
 		}
 
 		screen.display();
-
-		breakTime();
 	}
 }
 
@@ -123,6 +129,9 @@ void Scene::drawToScreen(Screen & screen)
 
 void Scene::onEvent()
 {	
+	if (snake->checkCollide(*this))
+		if (checkCollideObjects(snake))
+			snake->move();
 }
 
 void Scene::onKeyPressed(char c)
@@ -213,7 +222,7 @@ void Scene::removeObject(std::shared_ptr<SimpleObject> object)
 	}
 }
 
-bool Scene::checkCollideObjects(std::shared_ptr<SimpleObject> object, SimpleObject::directions dir)
+bool Scene::checkCollideObjects(std::shared_ptr<SimpleObject> object)
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
 	{
@@ -226,7 +235,7 @@ bool Scene::checkCollideObjects(std::shared_ptr<SimpleObject> object, SimpleObje
 		}
 			
 
-		if (!object->checkCollide(std::static_pointer_cast<Point>(obj), dir))
+		if (!object->checkCollide(std::static_pointer_cast<Point>(obj)))
 		{
 			removeObject(obj);
 
@@ -248,9 +257,9 @@ void Scene::onMoveKeyPressed(SimpleObject::directions dir)
 {
 	snake->setDirection(dir);
 
-	if (snake->checkCollide(*this, dir))
-		if (checkCollideObjects(snake, dir))
-			snake->move(dir);
+	if (snake->checkCollide(*this))
+		if (checkCollideObjects(snake))
+			snake->move();
 }
 
 bool Scene::checkCollidePosToAllObjects(pos_type pos)

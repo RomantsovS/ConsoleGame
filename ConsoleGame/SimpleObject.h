@@ -32,13 +32,13 @@ public:
 	
 	virtual ~SimpleObject();
 
-	virtual bool checkCollide(const Scene &scene, SimpleObject::directions param) const = 0;
-	virtual bool checkCollide(std::shared_ptr<Point> point, directions dir) = 0;
+	virtual bool checkCollide(const Scene &scene) const = 0;
+	virtual bool checkCollide(std::shared_ptr<Point> point) = 0;
 	virtual bool checkCollide(const pos_type pos) const = 0;
 
 	virtual void drawToScreen(Screen &screen) = 0;
 
-	virtual void move(directions dir) = 0;
+	virtual void move() = 0;
 protected:
 	char drawSymbol;
 };
@@ -51,13 +51,13 @@ public:
 
 	~Point();
 
-	bool checkCollide(const Scene &scene, SimpleObject::directions param) const { return true; }
-	bool checkCollide(std::shared_ptr<Point> point, directions dir) { return true; }
+	bool checkCollide(const Scene &scene) const { return true; }
+	bool checkCollide(std::shared_ptr<Point> point) { return true; }
 	bool checkCollide(const pos_type pos) const;
 
 	void drawToScreen(Screen &screen);
 
-	void move(directions dir) {}
+	void move() {}
 
 	pos_type getPos() const { return pos; }
 private:

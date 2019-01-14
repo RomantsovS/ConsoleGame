@@ -63,17 +63,17 @@ void Snake::setDirection(SimpleObject::directions dir)
 	}
 }
 
-void Snake::move(directions dir)
+void Snake::move()
 {
 	pos_type pos(0, 0);
 
-	if (dir == UP)
+	if (direction == UP)
 		pos = { points.back().h - 1, points.back().w + 0 };
-	else if (dir == DOWN)
+	else if (direction == DOWN)
 		pos = { points.back().h + 1, points.back().w + 0 };
-	else if (dir == LEFT)
+	else if (direction == LEFT)
 		pos = { points.back().h + 0, points.back().w - 1 };
-	else if (dir == RIGHT)
+	else if (direction == RIGHT)
 		pos = { points.back().h + 0, points.back().w + 1 };
 
 	points.push_back(pos);
@@ -81,23 +81,23 @@ void Snake::move(directions dir)
 	points.pop_front();
 }
 
-bool Snake::checkCollide(const Scene &scene, SimpleObject::directions param) const
+bool Snake::checkCollide(const Scene &scene) const
 {
 	auto backPoint = points.back();
 
-	if (param == SimpleObject::UP)
+	if (direction == SimpleObject::UP)
 	{
 		pos_type newPos(backPoint.h - 1, backPoint.w);
 
 		return backPoint.h > scene.getBorderHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 	}
-	else if (param == SimpleObject::DOWN)
+	else if (direction == SimpleObject::DOWN)
 	{
 		pos_type newPos = {backPoint.h + 1, backPoint.w };
 
 		return backPoint.h < scene.getUsedHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 	}
-	else if (param == SimpleObject::LEFT)
+	else if (direction == SimpleObject::LEFT)
 	{
 		pos_type newPos = {backPoint.h, backPoint.w - 1};
 
@@ -105,7 +105,7 @@ bool Snake::checkCollide(const Scene &scene, SimpleObject::directions param) con
 
 		return backPoint.w > scene.getBorderWidth() && p;
 	}
-	else if (param == SimpleObject::RIGHT)
+	else if (direction == SimpleObject::RIGHT)
 	{
 		pos_type newPos = {backPoint.h, backPoint.w + 1};
 
@@ -115,7 +115,7 @@ bool Snake::checkCollide(const Scene &scene, SimpleObject::directions param) con
 	return false;
 }
 
-bool Snake::checkCollide(std::shared_ptr<Point> point, directions dir)
+bool Snake::checkCollide(std::shared_ptr<Point> point)
 {
 	auto pos = *(--points.end());
 
