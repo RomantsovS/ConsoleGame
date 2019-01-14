@@ -3,13 +3,20 @@
 
 #include <string>
 #include <iostream>
+#include <ctime>
 
 class Screen {
 public:
     typedef std::string::size_type pos;
 
 	Screen(std::ostream &os, pos ht, pos wd, char back = ' '):
-		height(ht), width(wd), backgroundSymbol(back), contents(ht * wd, backgroundSymbol), outputStream(os) {}
+		height(ht), width(wd), backgroundSymbol(back), contents(ht * wd, backgroundSymbol), outputStream(os),
+		buffer(new char[ht * (wd + 1) + 1]), FPS(0) {}
+
+	~Screen()
+	{
+		delete [] buffer;
+	}
 
     char get() const              // get the character at the cursor
 	    { return contents[cursor]; }       // implicitly inline
@@ -27,11 +34,26 @@ public:
 	void clear() { std::fill(contents.begin(), contents.end(), backgroundSymbol); }
 
     Screen &display() { do_display(); return *this; }
-    const Screen &display() const { do_display(); return *this; }
 private:
-	void do_display() const
+	void do_display()
 	{
-		for (pos h = 0; h != height; ++h)
+		static clock_t lastClock = clock();
+
+		auto curClock = clock();
+
+		static std::string str = "FPS: ";
+
+		if (curClock - lastClock >= CLOCKS_PER_SEC)
+		{
+			str = "FPS: " + std::to_string(FPS);
+
+			FPS = 0;
+			lastClock = curClock;
+		}
+		else
+			FPS++;
+
+		/*for (pos h = 0; h != height; ++h)
 		{
 			for (pos w = 0; w != width; ++w)
 			{
@@ -40,11 +62,33 @@ private:
 			outputStream << std::endl;
 		}
 		outputStream << std::endl;
+
+		outputStream << str;*/
+		
+		char *p_next_write = &buffer[0];
+
+		for (pos y = 0; y < height; y++)
+		{
+			for (pos x = 0; x < width; x++)
+			{
+				*p_next_write++ = contents[y * width + x];
+			}
+			*p_next_write++ = '\n';
+		}
+
+		for (auto iter = str.cbegin(); iter != str.cend(); ++iter)
+			*p_next_write++ = *iter;
+
+		*p_next_write = '\0';
+		
+		outputStream.write(&buffer[0], p_next_write - &buffer[0]);
 	}
 
 	pos cursor;
 	pos height, width;
 	char backgroundSymbol;
+	char *buffer;
+	size_t FPS;
 
 	std::string contents;
 	std::ostream &outputStream;

@@ -129,7 +129,7 @@ void Scene::drawToScreen(Screen & screen)
 
 void Scene::onEvent()
 {	
-	if (snake->checkCollide(*this))
+	if (snake && snake->checkCollide(*this))
 		if (checkCollideObjects(snake))
 			snake->move();
 }

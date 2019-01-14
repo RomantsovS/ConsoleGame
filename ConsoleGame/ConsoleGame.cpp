@@ -33,9 +33,9 @@ using std::set;
 
 int main()
 {
-	Screen screen(cout, 20, 50, ' ');
+	Screen screen(cout, 20, 30, ' ');
 
-	Scene scene(screen.getHeight(), screen.getWidth(), 1, 1, '#', 100);
+	Scene scene(screen.getHeight() - 5, screen.getWidth(), 1, 1, '#', 200);
 
 	scene.init();
 
