@@ -36,7 +36,7 @@ pos_type& pos_type::operator+=(const pos_type & r)
 	return *this;
 }
 
-SimpleObject::SimpleObject(char drawSy) : drawSymbol(drawSy)
+SimpleObject::SimpleObject(Screen::Pixel drawPix) : drawPixel(drawPix)
 {
 }
 
@@ -44,11 +44,11 @@ SimpleObject::~SimpleObject()
 {
 }
 
-Point::Point(Screen::pos pos_h, Screen::pos pos_w, char drawSy) : SimpleObject(drawSy), pos({ pos_h, pos_w })
+Point::Point(Screen::pos pos_h, Screen::pos pos_w, Screen::Pixel drawPix) : SimpleObject(drawPix), pos({ pos_h, pos_w })
 {
 }
 
-Point::Point(pos_type position, char drawSy) : SimpleObject(drawSy), pos(position)
+Point::Point(pos_type position, Screen::Pixel drawPix) : SimpleObject(drawPix), pos(position)
 {
 	int a = 0;
 }
@@ -65,5 +65,5 @@ bool Point::checkCollide(const pos_type pos) const
 
 void Point::drawToScreen(Screen & screen)
 {
-	screen.set(pos.h, pos.w, drawSymbol);
+	screen.set(pos.h, pos.w, drawPixel);
 }

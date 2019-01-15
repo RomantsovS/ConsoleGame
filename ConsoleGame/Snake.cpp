@@ -1,7 +1,7 @@
 #include "Snake.h"
 
-Snake::Snake(Screen::pos size_h, Screen::pos pos_x, Screen::pos pos_y, char backSy, char drawSy, directions dir) :
-	SimpleObject(drawSy), backgroundSymbol(backSy), direction(dir)
+Snake::Snake(Screen::pos size_h, Screen::pos pos_x, Screen::pos pos_y, Screen::Pixel backPix, Screen::Pixel drawPix, directions dir) :
+	SimpleObject(drawPix), backgroundPixel(backPix), direction(dir)
 {
 	for (size_t i = 0; i != size_h; ++i)
 	{
@@ -19,7 +19,7 @@ void Snake::drawToScreen(Screen & screen)
 
 	for (auto iter = points.cbegin(); iter != points.cend(); ++iter)
 	{
-		screen.set(iter->h, iter->w, static_cast<char>(48 + cnt++ % 10));
+		screen.set(iter->h, iter->w, Screen::Pixel(static_cast<char>(48 + cnt++ % 10), drawPixel.color));
 	}
 }
 

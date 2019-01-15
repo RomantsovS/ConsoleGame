@@ -4,45 +4,94 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <Windows.h>
 
 class Screen {
 public:
     typedef std::string::size_type pos;
 
-	Screen(std::ostream &os, pos ht, pos wd, char back = ' '):
-		height(ht), width(wd), backgroundSymbol(back), contents(ht * wd, backgroundSymbol), outputStream(os),
-		buffer(new char[ht * (wd + 1) + 1]), FPS(0) {}
+	enum ConsoleColor
+	{
+		Black = 0,
+		Blue = 1,
+		Green = 2,
+		Cyan = 3,
+		Red = 4,
+		Magenta = 5,
+		Brown = 6,
+		LightGray = 7,
+		DarkGray = 8,
+		LightBlue = 9,
+		LightGreen = 10,
+		LightCyan = 11,
+		LightRed = 12,
+		LightMagenta = 13,
+		Yellow = 14,
+		White = 15
+	};
+
+	struct Pixel
+	{
+		char value;
+		ConsoleColor color;
+
+		Pixel() = default;
+
+		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
+	};
+
+	Screen(std::ostream &os, pos ht, pos wd, Pixel back):
+		height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), outputStream(os),
+		buffer(new char[ht * (wd + 1) + 1]), FPS(0)
+	{
+		clearContents();
+	}
 
 	~Screen()
 	{
 		delete [] buffer;
+		delete [] contents;
 	}
 
-    char get() const              // get the character at the cursor
+	Screen::Pixel get() const              // get the character at the cursor
 	    { return contents[cursor]; }       // implicitly inline
-    inline char get(pos ht, pos wd) const; // explicitly inline
+    inline Screen::Pixel get(pos ht, pos wd) const; // explicitly inline
 
     Screen &move(pos r, pos c);      // can be made inline later
-    Screen &set(char);
-    Screen &set(pos, pos, char);
+    Screen &set(Screen::Pixel);
+    Screen &set(pos, pos, Screen::Pixel);
 	
 	pos getHeight() const { return height; }
 	pos getWidth() const { return width; }
 
-	const char &getBackgroundSymbol() const { return backgroundSymbol; }
+	const Pixel &getBackgroundSymbol() const { return backgroundPixel; }
 
-	void clear() { std::fill(contents.begin(), contents.end(), backgroundSymbol); }
+	void clear() { clearContents(); }
 
 	Screen &display();
 private:
 	pos cursor;
 	pos height, width;
-	char backgroundSymbol;
+	Pixel backgroundPixel;
 	char *buffer;
 	size_t FPS;
 
-	std::string contents;
+	Pixel *contents;
 	std::ostream &outputStream;
+
+	void clearContents()
+	{
+		for (size_t i = 0; i != height * width; ++i)
+		{
+			contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
+		}
+	}
+
+	void SetColor(ConsoleColor text, ConsoleColor background)
+	{
+		HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
+	}
 };
 
 inline                   // we can specify inline on the definition
@@ -53,18 +102,18 @@ Screen &Screen::move(pos r, pos c)
     return *this;        // return this object as an lvalue
 }
 
-char Screen::get(pos r, pos c) const // declared as inline in the class
+Screen::Pixel Screen::get(pos r, pos c) const // declared as inline in the class
 {
     pos row = r * width;      // compute row location
     return contents[row + c]; // return character at the given column
 }
 
-inline Screen &Screen::set(char c) 
+inline Screen &Screen::set(Screen::Pixel c)
 { 
     contents[cursor] = c; // set the new value at the current cursor location
     return *this;         // return this object as an lvalue
 }
-inline Screen &Screen::set(pos r, pos col, char ch)
+inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 {
 	if (r >= height)
 		throw std::out_of_range("height out of range");

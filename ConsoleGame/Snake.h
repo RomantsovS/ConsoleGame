@@ -11,8 +11,8 @@
 class Snake : public SimpleObject
 {
 public:
-	Snake(Screen::pos size_h, Screen::pos pos_x = 0, Screen::pos pos_y = 0, char backSy = ' ',
-		char drawSy = '*', SimpleObject::directions dir = SimpleObject::DOWN);
+	Snake(Screen::pos size_h, Screen::pos pos_x = 0, Screen::pos pos_y = 0, Screen::Pixel backPix = Screen::Pixel(' ', Screen::Black),
+		Screen::Pixel drawPix = Screen::Pixel('*', Screen::White), SimpleObject::directions dir = SimpleObject::DOWN);
 
 	~Snake();
 
@@ -26,7 +26,7 @@ public:
 
 	void move();
 private:
-	char backgroundSymbol;
+	Screen::Pixel backgroundPixel;
 
 	std::list<pos_type> points;
 

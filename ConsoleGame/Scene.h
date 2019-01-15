@@ -15,7 +15,7 @@ class Scene
 {
 	using pos = Screen::pos;
 public:
-	Scene(pos h, pos w, pos borderWd = 1, pos borderHt = 1, char bord = '#', int delay = 100);
+	Scene(pos h, pos w, pos borderWd = 1, pos borderHt = 1, Screen::Pixel bord = Screen::Pixel('#', Screen::White), int delay = 100);
 
 	~Scene();
 
@@ -44,7 +44,7 @@ private:
 	std::vector<std::shared_ptr<SimpleObject>> collideObjects;
 
 	pos height, width, borderWidth, borderHeight;
-	char borderSymbol;
+	Screen::Pixel borderPixel;
 
 	clock_t lastClock;
 	int delayMilliseconds;

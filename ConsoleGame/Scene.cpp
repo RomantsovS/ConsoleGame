@@ -4,8 +4,8 @@
 
 #include "Scene.h"
 
-Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, char bord, int delay) : height(h), width(w),
-					borderHeight(borderHt), borderWidth(borderWd), borderSymbol(bord), lastClock(0), delayMilliseconds(delay)
+Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
+					borderHeight(borderHt), borderWidth(borderWd), borderPixel(bord), lastClock(0), delayMilliseconds(delay)
 {
 	
 }
@@ -23,7 +23,7 @@ void Scene::init()
 
 	pos_type pos(u_h(rand_eng), u_w(rand_eng));
 
-	snake = std::make_shared<Snake>(3, pos.h, pos.w, ' ', '*');
+	snake = std::make_shared<Snake>(3, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
 	addObject(std::static_pointer_cast<SimpleObject>(snake));
 
 	addRandomPoint();
@@ -39,19 +39,19 @@ void Scene::fillBorder(Screen &screen)
 	for (pos i = 0; i < height; ++i)
 	{
 		for (pos j = 0; j < borderWidth; ++j)
-			screen.set(i, j, borderSymbol);
+			screen.set(i, j, borderPixel);
 
 		for (pos j = width - 1; j > width - 1 - borderWidth; --j)
-			screen.set(i, j, borderSymbol);
+			screen.set(i, j, borderPixel);
 	}
 
 	for (pos j = 0; j < width; ++j)
 	{
 		for (pos i = 0; i < borderHeight; ++i)
-			screen.set(i, j, borderSymbol);
+			screen.set(i, j, borderPixel);
 
 		for (pos i = height - 1; i > height - 1 - borderHeight; --i)
-			screen.set(i, j, borderSymbol);
+			screen.set(i, j, borderPixel);
 	}
 }
 
@@ -198,7 +198,11 @@ void Scene::addRandomPoint()
 			break;
 	}
 
-	auto point = std::make_shared<Point>(pos, '*');
+	static std::uniform_int_distribution<int> u_c(static_cast<int>(Screen::Black), static_cast<int>(Screen::Yellow));
+
+	int col(u_c(rand_eng));
+
+	auto point = std::make_shared<Point>(pos, Screen::Pixel('*', static_cast<Screen::ConsoleColor>(col)));
 
 	addObject(point);
 }

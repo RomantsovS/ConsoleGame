@@ -28,7 +28,7 @@ class SimpleObject
 public:
 	enum directions {LEFT, RIGHT, UP, DOWN};
 
-	SimpleObject(char drawSy = '*');
+	SimpleObject(Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
 	
 	virtual ~SimpleObject();
 
@@ -40,14 +40,14 @@ public:
 
 	virtual void move() = 0;
 protected:
-	char drawSymbol;
+	Screen::Pixel drawPixel;
 };
 
 class Point : public SimpleObject
 {
 public:
-	Point(Screen::pos pos_h = 0, Screen::pos pos_w = 0, char drawSy = '*');
-	Point(pos_type position, char drawSy = '*');
+	Point(Screen::pos pos_h = 0, Screen::pos pos_w = 0, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
+	Point(pos_type position, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
 
 	~Point();
 
