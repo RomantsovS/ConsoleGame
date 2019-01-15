@@ -17,7 +17,13 @@ Scene::~Scene()
 
 void Scene::init()
 {
-	snake = std::make_shared<Snake>(3, 5, 15, ' ', '*');
+	static std::default_random_engine rand_eng;
+	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
+	static std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
+
+	pos_type pos(u_h(rand_eng), u_w(rand_eng));
+
+	snake = std::make_shared<Snake>(3, pos.h, pos.w, ' ', '*');
 	addObject(std::static_pointer_cast<SimpleObject>(snake));
 
 	addRandomPoint();
