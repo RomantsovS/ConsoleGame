@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <vector>
 #include <Windows.h>
 
 class Screen {
@@ -40,12 +41,7 @@ public:
 		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
 	};
 
-	Screen(std::ostream &os, pos ht, pos wd, Pixel back):
-		height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), outputStream(os),
-		buffer(new char[ht * (wd + 1) + 1]), FPS(0)
-	{
-		clearContents();
-	}
+	Screen(std::ostream &os, pos ht, pos wd, Pixel back);
 
 	~Screen()
 	{
@@ -86,12 +82,6 @@ private:
 			contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
 		}
 	}
-
-	void SetColor(ConsoleColor text, ConsoleColor background)
-	{
-		HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
-	}
 };
 
 inline                   // we can specify inline on the definition
@@ -125,5 +115,7 @@ inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 
 	return *this;                  // return this object as an lvalue
 }
+
+void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background);
 
 #endif

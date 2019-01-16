@@ -13,6 +13,13 @@ Snake::~Snake()
 {
 }
 
+void Snake::update(Scene &scene)
+{
+	if (checkCollide(scene))
+		if (scene.checkCollideObjects(this));
+			move();
+}
+
 void Snake::drawToScreen(Screen & screen)
 {
 	size_t cnt = 0;

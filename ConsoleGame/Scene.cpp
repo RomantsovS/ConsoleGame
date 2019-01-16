@@ -7,7 +7,18 @@
 Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
 					borderHeight(borderHt), borderWidth(borderWd), borderPixel(bord), lastClock(0), delayMilliseconds(delay)
 {
-	
+	colors.push_back(Screen::Green);
+	colors.push_back(Screen::Cyan);
+	colors.push_back(Screen::Red);
+	colors.push_back(Screen::Magenta);
+	colors.push_back(Screen::Brown);
+	colors.push_back(Screen::LightGray);
+	colors.push_back(Screen::LightGreen);
+	colors.push_back(Screen::LightCyan);
+	colors.push_back(Screen::LightRed);
+	colors.push_back(Screen::LightMagenta);
+	colors.push_back(Screen::Yellow);
+	colors.push_back(Screen::White);
 }
 
 Scene::~Scene()
@@ -17,13 +28,15 @@ Scene::~Scene()
 
 void Scene::init()
 {
-	static std::default_random_engine rand_eng;
-	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
-	static std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
+	unsigned snakeSize = 3;
+
+	std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
+	std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight() - snakeSize);
+	std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
 
 	pos_type pos(u_h(rand_eng), u_w(rand_eng));
 
-	snake = std::make_shared<Snake>(3, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
+	snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
 	addObject(std::static_pointer_cast<SimpleObject>(snake));
 
 	addRandomPoint();
@@ -101,7 +114,7 @@ void Scene::MainLoop(Screen &screen)
 
 		if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
 		{
-			onEvent();
+			update();
 			lastClock = tempClock;
 		}
 
@@ -133,11 +146,8 @@ void Scene::drawToScreen(Screen & screen)
 	}
 }
 
-void Scene::onEvent()
+void Scene::update()
 {	
-	if (snake && snake->checkCollide(*this))
-		if (checkCollideObjects(snake))
-			snake->move();
 }
 
 void Scene::onKeyPressed(char c)
@@ -182,7 +192,7 @@ void Scene::breakTime()
 
 void Scene::addRandomPoint()
 {
-	static std::default_random_engine rand_eng;
+	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
 	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
 	static std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
 
@@ -198,11 +208,7 @@ void Scene::addRandomPoint()
 			break;
 	}
 
-	static std::uniform_int_distribution<int> u_c(static_cast<int>(Screen::Black), static_cast<int>(Screen::Yellow));
-
-	int col(u_c(rand_eng));
-
-	auto point = std::make_shared<Point>(pos, Screen::Pixel('*', static_cast<Screen::ConsoleColor>(col)));
+	auto point = std::make_shared<Point>(pos, Screen::Pixel('*', getRandomColor()));
 
 	addObject(point);
 }
@@ -232,7 +238,7 @@ void Scene::removeObject(std::shared_ptr<SimpleObject> object)
 	}
 }
 
-bool Scene::checkCollideObjects(std::shared_ptr<SimpleObject> object)
+bool Scene::checkCollideObjects(SimpleObject *object)
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
 	{
@@ -283,4 +289,15 @@ bool Scene::checkCollidePosToAllObjects(pos_type pos)
 	}
 
 	return true;
+}
+
+Screen::ConsoleColor Scene::getRandomColor()
+{
+	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
+
+	static std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
+
+	int col(u_c(rand_eng));
+
+	return colors[col];
 }

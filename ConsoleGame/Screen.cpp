@@ -1,4 +1,12 @@
+#include <random>
+
 #include "Screen.h"
+
+Screen::Screen(std::ostream &os, pos ht, pos wd, Pixel back) :
+	height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), outputStream(os), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
+{
+	clearContents();
+}
 
 Screen& Screen::display()
 {
@@ -62,4 +70,10 @@ Screen& Screen::display()
 	outputStream.write(&buffer[0], p_next_write - &buffer[0]);
 
 	return *this;
+}
+
+void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background)
+{
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hStdOut, (WORD)((background << 4) | text));
 }

@@ -9,8 +9,6 @@
 
 class Snake;
 
-//enum directions { LEFT, RIGHT, UP, DOWN };
-
 class Scene
 {
 	using pos = Screen::pos;
@@ -36,8 +34,10 @@ public:
 
 	void drawToScreen(Screen &screen);
 
-	void onEvent();
+	void update();
 	void onKeyPressed(char c);
+
+	bool checkCollideObjects(SimpleObject *object);
 private:
 	std::shared_ptr<Snake> snake;
 	std::vector<std::shared_ptr<SimpleObject>> objects;
@@ -49,17 +49,19 @@ private:
 	clock_t lastClock;
 	int delayMilliseconds;
 
+	std::vector<Screen::ConsoleColor> colors;
+
 	void breakTime();
 
 	void addRandomPoint();
 
 	void removeObject(std::shared_ptr<SimpleObject> object);
 
-	bool checkCollideObjects(std::shared_ptr<SimpleObject> object);
-
 	void onMoveKeyPressed(SimpleObject::directions dir);
 
 	bool checkCollidePosToAllObjects(pos_type pos);
+
+	Screen::ConsoleColor getRandomColor();
 };
 
 #endif

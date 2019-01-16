@@ -36,6 +36,7 @@ public:
 	virtual bool checkCollide(std::shared_ptr<Point> point) = 0;
 	virtual bool checkCollide(const pos_type pos) const = 0;
 
+	virtual void update(Scene &scene) = 0;
 	virtual void drawToScreen(Screen &screen) = 0;
 
 	virtual void move() = 0;
@@ -51,13 +52,14 @@ public:
 
 	~Point();
 
-	bool checkCollide(const Scene &scene) const { return true; }
-	bool checkCollide(std::shared_ptr<Point> point) { return true; }
-	bool checkCollide(const pos_type pos) const;
+	bool checkCollide(const Scene &scene) const override { return true; }
+	bool checkCollide(std::shared_ptr<Point> point) override  { return true; }
+	bool checkCollide(const pos_type pos) const override;
 
-	void drawToScreen(Screen &screen);
+	void update(Scene &scene) override;
+	void drawToScreen(Screen &screen) override;
 
-	void move() {}
+	void move() override {}
 
 	pos_type getPos() const { return pos; }
 private:

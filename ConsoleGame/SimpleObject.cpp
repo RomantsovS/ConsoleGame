@@ -63,6 +63,10 @@ bool Point::checkCollide(const pos_type pos) const
 	return getPos() != pos;
 }
 
+void Point::update(Scene &scene)
+{
+}
+
 void Point::drawToScreen(Screen & screen)
 {
 	screen.set(pos.h, pos.w, drawPixel);
