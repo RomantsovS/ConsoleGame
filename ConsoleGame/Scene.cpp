@@ -30,7 +30,7 @@ void Scene::init()
 {
 	unsigned snakeSize = 3;
 
-	std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
+	std::default_random_engine rand_eng(static_cast<unsigned>(time(0) - 1));
 	std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight() - snakeSize);
 	std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
 
@@ -136,6 +136,18 @@ void Scene::MainLoop(Screen &screen)
 	}
 }
 
+void Scene::update()
+{
+	auto objectsCopy = objects;
+
+	for (auto iter = objectsCopy.begin(); iter != objectsCopy.end(); ++iter)
+	{
+		(*iter)->update(*this);
+	}
+
+	removeInactiveObjects();
+}
+
 void Scene::drawToScreen(Screen & screen)
 {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
@@ -144,10 +156,6 @@ void Scene::drawToScreen(Screen & screen)
 
 		obj->drawToScreen(screen);
 	}
-}
-
-void Scene::update()
-{	
 }
 
 void Scene::onKeyPressed(char c)
@@ -213,11 +221,11 @@ void Scene::addRandomPoint()
 	addObject(point);
 }
 
-void Scene::removeObject(std::shared_ptr<SimpleObject> object)
+void Scene::removeInactiveObjects()
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
 	{
-		if (*iter == object)
+		if (!(*iter)->isActive())
 		{
 			iter = collideObjects.erase(iter);
 			break;
@@ -228,7 +236,7 @@ void Scene::removeObject(std::shared_ptr<SimpleObject> object)
 
 	for (auto iter = objects.begin(); iter != objects.end();)
 	{
-		if (*iter == object)
+		if (!(*iter)->isActive())
 		{
 			objects.erase(iter);
 			break;
@@ -244,7 +252,7 @@ bool Scene::checkCollideObjects(SimpleObject *object)
 	{
 		auto obj = *iter;
 
-		if (object == obj)
+		if (object == obj.get())
 		{
 			++iter;
 			continue;
@@ -253,7 +261,7 @@ bool Scene::checkCollideObjects(SimpleObject *object)
 
 		if (!object->checkCollide(std::static_pointer_cast<Point>(obj)))
 		{
-			removeObject(obj);
+			obj->setActive(false);
 
 			addRandomPoint();
 			addRandomPoint();
@@ -273,9 +281,7 @@ void Scene::onMoveKeyPressed(SimpleObject::directions dir)
 {
 	snake->setDirection(dir);
 
-	if (snake->checkCollide(*this))
-		if (checkCollideObjects(snake))
-			snake->move();
+	snake->update(*this);
 }
 
 bool Scene::checkCollidePosToAllObjects(pos_type pos)

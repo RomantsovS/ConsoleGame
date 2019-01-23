@@ -36,7 +36,7 @@ pos_type& pos_type::operator+=(const pos_type & r)
 	return *this;
 }
 
-SimpleObject::SimpleObject(Screen::Pixel drawPix) : drawPixel(drawPix)
+SimpleObject::SimpleObject(Screen::Pixel drawPix) : drawPixel(drawPix), active(true)
 {
 }
 

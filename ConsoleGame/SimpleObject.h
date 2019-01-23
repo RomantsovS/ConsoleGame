@@ -40,8 +40,19 @@ public:
 	virtual void drawToScreen(Screen &screen) = 0;
 
 	virtual void move() = 0;
+
+	virtual void setActive(bool param)
+	{
+		active = param;
+	}
+
+	virtual bool isActive()
+	{
+		return active;
+	}
 protected:
 	Screen::Pixel drawPixel;
+	bool active;
 };
 
 class Point : public SimpleObject

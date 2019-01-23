@@ -31,10 +31,9 @@ public:
 	pos getUsedWidth() const { return width - 1 - borderWidth; }
 
 	void MainLoop(Screen &screen);
-
+	void update();
 	void drawToScreen(Screen &screen);
 
-	void update();
 	void onKeyPressed(char c);
 
 	bool checkCollideObjects(SimpleObject *object);
@@ -55,7 +54,7 @@ private:
 
 	void addRandomPoint();
 
-	void removeObject(std::shared_ptr<SimpleObject> object);
+	void removeInactiveObjects();
 
 	void onMoveKeyPressed(SimpleObject::directions dir);
 
