@@ -115,14 +115,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="RenderEntity.h" />
+    <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="SimpleObject.h" />
     <ClInclude Include="Snake.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleGame.cpp" />
-    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="RenderEntity.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="SimpleObject.cpp" />
     <ClCompile Include="Snake.cpp" />

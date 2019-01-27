@@ -1,9 +1,9 @@
-#ifndef SIMPLE_OBJECT
-#define SIMPLE_OBJECT
+#ifndef SIMPLE_OBJECT_H
+#define SIMPLE_OBJECT_H
 
 #include "Screen.h"
 
-class Scene;
+class Game;
 class Point;
 
 struct pos_type
@@ -30,13 +30,13 @@ public:
 
 	SimpleObject(Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
 	
-	virtual ~SimpleObject();
+	virtual ~SimpleObject() = 0;
 
-	virtual bool checkCollide(const Scene &scene) const = 0;
+	virtual bool checkCollide(const Game &Game) const = 0;
 	virtual bool checkCollide(std::shared_ptr<Point> point) = 0;
 	virtual bool checkCollide(const pos_type pos) const = 0;
 
-	virtual void update(Scene &scene) = 0;
+	virtual void update(Game &Game) = 0;
 	virtual void drawToScreen(Screen &screen) = 0;
 
 	virtual void move() = 0;
@@ -63,11 +63,11 @@ public:
 
 	~Point();
 
-	bool checkCollide(const Scene &scene) const override { return true; }
+	bool checkCollide(const Game &Game) const override { return true; }
 	bool checkCollide(std::shared_ptr<Point> point) override  { return true; }
 	bool checkCollide(const pos_type pos) const override;
 
-	void update(Scene &scene) override;
+	void update(Game &Game) override;
 	void drawToScreen(Screen &screen) override;
 
 	void move() override {}

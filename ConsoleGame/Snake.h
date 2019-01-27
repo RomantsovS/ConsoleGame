@@ -1,12 +1,12 @@
-#ifndef SNAKE
-#define SNAKE
+#ifndef SNAKE_H
+#define SNAKE_H
 
 #include <string>
 #include <list>
 
 #include "Screen.h"
 #include "SimpleObject.h"
-#include "Scene.h"
+#include "Game.h"
 
 class Snake : public SimpleObject
 {
@@ -16,11 +16,11 @@ public:
 
 	~Snake();
 
-	bool checkCollide(const Scene &scene) const override;
+	bool checkCollide(const Game &Game) const override;
 	bool checkCollide(std::shared_ptr<Point> point) override;
 	bool checkCollide(const pos_type pos) const override;
 
-	void update(Scene &scene) override;
+	void update(Game &Game) override;
 	void drawToScreen(Screen &screen) override;
 
 	void move() override;

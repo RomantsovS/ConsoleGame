@@ -2,9 +2,9 @@
 #include <conio.h>
 #include <iostream>
 
-#include "Scene.h"
+#include "Game.h"
 
-Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
+Game::Game(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
 					borderHeight(borderHt), borderWidth(borderWd), borderPixel(bord), lastClock(0), delayMilliseconds(delay)
 {
 	colors.push_back(Screen::Green);
@@ -21,13 +21,15 @@ Scene::Scene(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int d
 	colors.push_back(Screen::White);
 }
 
-Scene::~Scene()
+Game::~Game()
 {
 	destroy();
 }
 
-void Scene::init()
+void Game::init()
 {
+	renderSystem = new RenderSystem();
+
 	unsigned snakeSize = 3;
 
 	std::default_random_engine rand_eng(static_cast<unsigned>(time(0) - 1));
@@ -42,12 +44,12 @@ void Scene::init()
 	addRandomPoint();
 }
 
-void Scene::destroy()
+void Game::destroy()
 {
 
 }
 
-void Scene::fillBorder(Screen &screen)
+void Game::fillBorder(Screen &screen)
 {
 	for (pos i = 0; i < height; ++i)
 	{
@@ -68,13 +70,14 @@ void Scene::fillBorder(Screen &screen)
 	}
 }
 
-void Scene::addObject(std::shared_ptr<SimpleObject> object)
+void Game::addObject(std::shared_ptr<Entity> object)
 {
-	objects.push_back(object);
+	renderSystem->addObject(std::static_pointer_cast<Entity>(object));
+
 	collideObjects.push_back(object);
 }
 
-void Scene::MainLoop(Screen &screen)
+void Game::MainLoop(Screen &screen)
 {
 	char c = 0;
 
@@ -136,7 +139,7 @@ void Scene::MainLoop(Screen &screen)
 	}
 }
 
-void Scene::update()
+void Game::update()
 {
 	auto objectsCopy = objects;
 
@@ -148,7 +151,7 @@ void Scene::update()
 	removeInactiveObjects();
 }
 
-void Scene::drawToScreen(Screen & screen)
+void Game::drawToScreen(Screen & screen)
 {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
 	{
@@ -158,7 +161,7 @@ void Scene::drawToScreen(Screen & screen)
 	}
 }
 
-void Scene::onKeyPressed(char c)
+void Game::onKeyPressed(char c)
 {
 	switch (c)
 	{
@@ -189,7 +192,7 @@ void Scene::onKeyPressed(char c)
 	}
 }
 
-void Scene::breakTime()
+void Game::breakTime()
 {
 	clock_t temp;
 	temp = clock() + delayMilliseconds * CLOCKS_PER_SEC / 1000;
@@ -198,7 +201,7 @@ void Scene::breakTime()
 	}
 }
 
-void Scene::addRandomPoint()
+void Game::addRandomPoint()
 {
 	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
 	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
@@ -221,7 +224,7 @@ void Scene::addRandomPoint()
 	addObject(point);
 }
 
-void Scene::removeInactiveObjects()
+void Game::removeInactiveObjects()
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
 	{
@@ -246,7 +249,7 @@ void Scene::removeInactiveObjects()
 	}
 }
 
-bool Scene::checkCollideObjects(SimpleObject *object)
+bool Game::checkCollideObjects(SimpleObject *object)
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
 	{
@@ -277,14 +280,14 @@ bool Scene::checkCollideObjects(SimpleObject *object)
 	return true;
 }
 
-void Scene::onMoveKeyPressed(SimpleObject::directions dir)
+void Game::onMoveKeyPressed(SimpleObject::directions dir)
 {
 	snake->setDirection(dir);
 
 	snake->update(*this);
 }
 
-bool Scene::checkCollidePosToAllObjects(pos_type pos)
+bool Game::checkCollidePosToAllObjects(pos_type pos)
 {
 	for (auto iter = collideObjects.cbegin(); iter != collideObjects.cend(); ++iter)
 	{
@@ -297,7 +300,7 @@ bool Scene::checkCollidePosToAllObjects(pos_type pos)
 	return true;
 }
 
-Screen::ConsoleColor Scene::getRandomColor()
+Screen::ConsoleColor Game::getRandomColor()
 {
 	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
 

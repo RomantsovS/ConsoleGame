@@ -13,10 +13,10 @@ Snake::~Snake()
 {
 }
 
-void Snake::update(Scene &scene)
+void Snake::update(Game &Game)
 {
-	if (checkCollide(scene))
-		if (scene.checkCollideObjects(this))
+	if (checkCollide(Game))
+		if (Game.checkCollideObjects(this))
 			move();
 }
 
@@ -88,7 +88,7 @@ void Snake::move()
 	points.pop_front();
 }
 
-bool Snake::checkCollide(const Scene &scene) const
+bool Snake::checkCollide(const Game &Game) const
 {
 	auto backPoint = points.back();
 
@@ -96,13 +96,13 @@ bool Snake::checkCollide(const Scene &scene) const
 	{
 		pos_type newPos(backPoint.h - 1, backPoint.w);
 
-		return backPoint.h > scene.getBorderHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
+		return backPoint.h > Game.getBorderHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 	}
 	else if (direction == SimpleObject::DOWN)
 	{
 		pos_type newPos = {backPoint.h + 1, backPoint.w };
 
-		return backPoint.h < scene.getUsedHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
+		return backPoint.h < Game.getUsedHeight() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 	}
 	else if (direction == SimpleObject::LEFT)
 	{
@@ -110,13 +110,13 @@ bool Snake::checkCollide(const Scene &scene) const
 
 		auto p = std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 
-		return backPoint.w > scene.getBorderWidth() && p;
+		return backPoint.w > Game.getBorderWidth() && p;
 	}
 	else if (direction == SimpleObject::RIGHT)
 	{
 		pos_type newPos = {backPoint.h, backPoint.w + 1};
 
-		return backPoint.w < scene.getUsedWidth() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
+		return backPoint.w < Game.getUsedWidth() && std::find(points.cbegin(), points.cend(), newPos) == points.cend();
 	}
 
 	return false;
