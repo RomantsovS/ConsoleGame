@@ -2,6 +2,7 @@
 #define SIMPLE_OBJECT_H
 
 #include "Screen.h"
+#include "RenderEntity.h"
 
 class Game;
 class Point;

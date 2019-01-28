@@ -7,6 +7,15 @@
 Game::Game(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
 					borderHeight(borderHt), borderWidth(borderWd), borderPixel(bord), lastClock(0), delayMilliseconds(delay)
 {
+}
+
+Game::~Game()
+{
+	destroy();
+}
+
+void Game::init()
+{
 	colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
 	colors.push_back(Screen::Red);
@@ -19,15 +28,7 @@ Game::Game(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int del
 	colors.push_back(Screen::LightMagenta);
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
-}
 
-Game::~Game()
-{
-	destroy();
-}
-
-void Game::init()
-{
 	renderSystem = new RenderSystem();
 
 	unsigned snakeSize = 3;
@@ -39,7 +40,7 @@ void Game::init()
 	pos_type pos(u_h(rand_eng), u_w(rand_eng));
 
 	snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
-	addObject(std::static_pointer_cast<SimpleObject>(snake));
+	//addObject(snake->);
 
 	addRandomPoint();
 }

@@ -14,6 +14,8 @@ public:
 	~RenderSystem();
 
 	void addObject(std::shared_ptr<RenderEntity> object);
+
+	void update();
 private:
 	std::vector<std::shared_ptr<RenderEntity>> objects;
 };

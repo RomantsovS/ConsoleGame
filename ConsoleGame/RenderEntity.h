@@ -3,12 +3,14 @@
 
 #include "Entity.h"
 
-class RenderEntity : public Entity
+class RenderEntity
 {
 public:
 	RenderEntity();
 
 	virtual ~RenderEntity();
+
+	virtual void draw() = 0 const;
 };
 
 #endif
