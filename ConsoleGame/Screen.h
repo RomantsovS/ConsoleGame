@@ -41,7 +41,7 @@ public:
 		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
 	};
 
-	Screen(std::ostream &os, pos ht, pos wd, Pixel back);
+	Screen(pos ht, pos wd, Pixel back);
 
 	~Screen()
 	{
@@ -73,7 +73,6 @@ private:
 	size_t FPS;
 
 	Pixel *contents;
-	std::ostream &outputStream;
 
 	void clearContents()
 	{

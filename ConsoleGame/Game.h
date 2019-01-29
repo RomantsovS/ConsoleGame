@@ -4,18 +4,16 @@
 #include <vector>
 #include <ctime>
 
-#include "Snake.h"
-#include "Screen.h"
-#include "RenderSystem.h"
-#include "Entity.h"
+//#include "Snake.h"
+#include "RenderConsole.h"
+#include "EntityBase.h"
 
 class Snake;
 
 class Game
 {
-	using pos = Screen::pos;
 public:
-	Game(pos h, pos w, pos borderWd = 1, pos borderHt = 1, Screen::Pixel bord = Screen::Pixel('#', Screen::White), int delay = 100);
+	Game(size_t h, size_t w, size_t borderWd = 1, size_t borderHt = 1);
 
 	~Game();
 
@@ -24,21 +22,22 @@ public:
 
 	void fillBorder(Screen &screen);
 
-	void addObject(std::shared_ptr<Entity> object);
+	void addObject(std::shared_ptr<EntityBase> object);
 
-	pos getBorderHeight() const { return borderHeight; }
-	pos getBorderWidth() const { return borderWidth; }
+	bool isGameRunning() const { return gameRunning; }
 
-	pos getUsedHeight() const { return height - 1 - borderHeight; }
-	pos getUsedWidth() const { return width - 1 - borderWidth; }
+	size_t getBorderHeight() const { return borderHeight; }
+	size_t getBorderWidth() const { return borderWidth; }
 
-	void MainLoop(Screen &screen);
+	size_t getUsedHeight() const { return height - 1 - borderHeight; }
+	size_t getUsedWidth() const { return width - 1 - borderWidth; }
+
+	void frame();
 	void update();
-	void drawToScreen(Screen &screen);
 
-	void onKeyPressed(char c);
+	/*void onKeyPressed(char c);
 
-	bool checkCollideObjects(SimpleObject *object);
+	bool checkCollideObjects(SimpleObject *object);*/
 private:
 	void breakTime();
 
@@ -46,24 +45,27 @@ private:
 
 	void removeInactiveObjects();
 
-	void onMoveKeyPressed(SimpleObject::directions dir);
+	/*void onMoveKeyPressed(SimpleObject::directions dir);
 
-	bool checkCollidePosToAllObjects(pos_type pos);
+	bool checkCollidePosToAllObjects(pos_type pos);*/
 
 	Screen::ConsoleColor getRandomColor();
 
 	RenderSystem *renderSystem;
 
-	std::shared_ptr<Snake> snake;
-	std::vector<std::shared_ptr<SimpleObject>> collideObjects;
+	//std::shared_ptr<Snake> snake;
+	std::vector<std::shared_ptr<EntityBase>> objects;
+	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
-	pos height, width, borderWidth, borderHeight;
+	size_t height, width, borderWidth, borderHeight;
 	Screen::Pixel borderPixel;
 
 	clock_t lastClock;
 	int delayMilliseconds;
 
 	std::vector<Screen::ConsoleColor> colors;
+
+	bool gameRunning;
 };
 
 #endif

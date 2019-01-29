@@ -1,5 +1,5 @@
 #include "Snake.h"
-
+/*
 Snake::Snake(Screen::pos size_h, Screen::pos pos_x, Screen::pos pos_y, Screen::Pixel backPix, Screen::Pixel drawPix, directions dir) :
 	SimpleObject(drawPix), backgroundPixel(backPix), direction(dir)
 {
@@ -149,3 +149,4 @@ bool Snake::checkCollide(const pos_type pos) const
 {
 	return std::find(points.cbegin(), points.cend(), pos) == points.cend();
 }
+*/

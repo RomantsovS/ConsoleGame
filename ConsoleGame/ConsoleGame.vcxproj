@@ -115,24 +115,38 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AIEntity.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityBase.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="PlayerEntity.h" />
+    <ClInclude Include="PhysicsStatic.h" />
+    <ClInclude Include="RenderConsole.h" />
     <ClInclude Include="RenderEntity.h" />
+    <ClInclude Include="RenderEntityBase.h" />
+    <ClInclude Include="RenderStatic.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="Screen.h" />
-    <ClInclude Include="SimpleObject.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Snake.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AIEntity.cpp" />
     <ClCompile Include="ConsoleGame.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityBase.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsStatic.cpp" />
+    <ClCompile Include="PlayerEntity.cpp" />
+    <ClCompile Include="RenderConsole.cpp" />
     <ClCompile Include="RenderEntity.cpp" />
+    <ClCompile Include="RenderEntityBase.cpp" />
+    <ClCompile Include="RenderStatic.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="Screen.cpp" />
-    <ClCompile Include="SimpleObject.cpp" />
+    <ClCompile Include="Point.cpp" />
     <ClCompile Include="Snake.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

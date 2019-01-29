@@ -2,8 +2,8 @@
 
 #include "Screen.h"
 
-Screen::Screen(std::ostream &os, pos ht, pos wd, Pixel back) :
-	height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), outputStream(os), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
+Screen::Screen(pos ht, pos wd, Pixel back) :
+	height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
 {
 	clearContents();
 }
@@ -48,7 +48,7 @@ Screen& Screen::display()
 
 					SetColor(curCol, backgroundPixel.color);
 
-					outputStream.write(&buffer[0], p_next_write - &buffer[0]);
+					std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
 					p_next_write = &buffer[0];
 
@@ -67,7 +67,7 @@ Screen& Screen::display()
 	*p_next_write = '\0';
 
 	SetColor(curCol, backgroundPixel.color);
-	outputStream.write(&buffer[0], p_next_write - &buffer[0]);
+	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
 	return *this;
 }

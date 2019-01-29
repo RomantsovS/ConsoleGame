@@ -3,9 +3,10 @@
 #include <iostream>
 
 #include "Game.h"
+#include "Point.h"
 
-Game::Game(pos h, pos w, pos borderWd, pos borderHt, Screen::Pixel bord, int delay) : height(h), width(w),
-					borderHeight(borderHt), borderWidth(borderWd), borderPixel(bord), lastClock(0), delayMilliseconds(delay)
+Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt) : height(h), width(w),
+					borderHeight(borderHt), borderWidth(borderWd), lastClock(0)
 {
 }
 
@@ -16,6 +17,8 @@ Game::~Game()
 
 void Game::init()
 {
+	delayMilliseconds = 100;
+
 	colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
 	colors.push_back(Screen::Red);
@@ -29,7 +32,8 @@ void Game::init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	renderSystem = new RenderSystem();
+	renderSystem = new RenderConsole(height, width);
+	renderSystem->init();
 
 	unsigned snakeSize = 3;
 
@@ -39,7 +43,7 @@ void Game::init()
 
 	pos_type pos(u_h(rand_eng), u_w(rand_eng));
 
-	snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
+	//snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
 	//addObject(snake->);
 
 	addRandomPoint();
@@ -52,116 +56,102 @@ void Game::destroy()
 
 void Game::fillBorder(Screen &screen)
 {
-	for (pos i = 0; i < height; ++i)
+	for (size_t i = 0; i < height; ++i)
 	{
-		for (pos j = 0; j < borderWidth; ++j)
+		for (size_t j = 0; j < borderWidth; ++j)
 			screen.set(i, j, borderPixel);
 
-		for (pos j = width - 1; j > width - 1 - borderWidth; --j)
+		for (size_t j = width - 1; j > width - 1 - borderWidth; --j)
 			screen.set(i, j, borderPixel);
 	}
 
-	for (pos j = 0; j < width; ++j)
+	for (size_t j = 0; j < width; ++j)
 	{
-		for (pos i = 0; i < borderHeight; ++i)
+		for (size_t i = 0; i < borderHeight; ++i)
 			screen.set(i, j, borderPixel);
 
-		for (pos i = height - 1; i > height - 1 - borderHeight; --i)
+		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
 			screen.set(i, j, borderPixel);
 	}
 }
 
-void Game::addObject(std::shared_ptr<Entity> object)
+void Game::addObject(std::shared_ptr<EntityBase> object)
 {
-	renderSystem->addObject(std::static_pointer_cast<Entity>(object));
+	renderSystem->addObject(object->getRenderEntity());
 
-	collideObjects.push_back(object);
+	//collideObjects.push_back(object);
 }
 
-void Game::MainLoop(Screen &screen)
+void Game::frame()
 {
 	char c = 0;
 
-	bool gameRunning = true;
 	lastClock = clock();
 
-	while (gameRunning)
+	renderSystem->clear();
+
+	if (_kbhit())
 	{
-		system("cls");
+		c = _getch();
 
-		if (_kbhit())
+		switch (c)
 		{
-			c = _getch();
+		case 27:
+			gameRunning = false;
 
-			switch (c)
-			{
-			case 27:
-				gameRunning = false;
+			renderSystem->clear();
 
-				system("cls");
+			std::cout << "enter Q to quit or any key to continue: ";
 
-				std::cout << "enter Q to quit or any key to continue: ";
+			std::cin >> c;
 
-				std::cin >> c;
+			if (c == 'Q' || c == 'q')
+				break;
 
-				if (c == 'Q' || c == 'q')
-					break;
-
-				gameRunning = true;
-			default:
-				onKeyPressed(c);
-				;
-			}
+			gameRunning = true;
+		default:
+			//onKeyPressed(c);
+			;
 		}
+	}
 
-		auto tempClock = clock();
+	auto tempClock = clock();
 
-		if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
-		{
-			update();
-			lastClock = tempClock;
-		}
+	if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
+	{
+		update();
+		lastClock = tempClock;
+	}
 
-		screen.clear();
-		fillBorder(screen);
+	renderSystem->clear();
 
-		try
-		{
-			drawToScreen(screen);
-		}
-		catch (std::exception &err)
-		{
-			std::cout << err.what() << std::endl
-				<< "press ane key to continue...\n";
-			_getch();
-		}
+	//fillBorder(screen);
 
-		screen.display();
+	try
+	{
+		renderSystem->update();
+	}
+	catch (std::exception &err)
+	{
+		std::cout << err.what() << std::endl
+			<< "press ane key to continue...\n";
+		_getch();
 	}
 }
 
 void Game::update()
 {
-	auto objectsCopy = objects;
+	/*auto objectsCopy = objects;
 
 	for (auto iter = objectsCopy.begin(); iter != objectsCopy.end(); ++iter)
 	{
 		(*iter)->update(*this);
 	}
 
-	removeInactiveObjects();
+	removeInactiveObjects();*/
 }
 
-void Game::drawToScreen(Screen & screen)
-{
-	for (auto iter = objects.begin(); iter != objects.end(); ++iter)
-	{
-		auto obj = *iter;
-
-		obj->drawToScreen(screen);
-	}
-}
-
+/*
 void Game::onKeyPressed(char c)
 {
 	switch (c)
@@ -191,7 +181,7 @@ void Game::onKeyPressed(char c)
 		break;
 	}
 	}
-}
+}*/
 
 void Game::breakTime()
 {
@@ -212,13 +202,13 @@ void Game::addRandomPoint()
 
 	size_t numIters = 0;
 
-	while (!checkCollidePosToAllObjects(pos))
+	/*while (!checkCollidePosToAllObjects(pos))
 	{
 		pos = { u_h(rand_eng), u_w(rand_eng) };
 
 		if (++numIters == 10)
 			break;
-	}
+	}*/
 
 	auto point = std::make_shared<Point>(pos, Screen::Pixel('*', getRandomColor()));
 
@@ -227,17 +217,6 @@ void Game::addRandomPoint()
 
 void Game::removeInactiveObjects()
 {
-	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
-	{
-		if (!(*iter)->isActive())
-		{
-			iter = collideObjects.erase(iter);
-			break;
-		}
-		else
-			++iter;
-	}
-
 	for (auto iter = objects.begin(); iter != objects.end();)
 	{
 		if (!(*iter)->isActive())
@@ -250,6 +229,7 @@ void Game::removeInactiveObjects()
 	}
 }
 
+/*
 bool Game::checkCollideObjects(SimpleObject *object)
 {
 	for (auto iter = collideObjects.begin(); iter != collideObjects.end();)
@@ -279,15 +259,17 @@ bool Game::checkCollideObjects(SimpleObject *object)
 	}
 
 	return true;
-}
+}*/
 
+/*
 void Game::onMoveKeyPressed(SimpleObject::directions dir)
 {
 	snake->setDirection(dir);
 
 	snake->update(*this);
-}
+}*/
 
+/*
 bool Game::checkCollidePosToAllObjects(pos_type pos)
 {
 	for (auto iter = collideObjects.cbegin(); iter != collideObjects.cend(); ++iter)
@@ -299,7 +281,7 @@ bool Game::checkCollidePosToAllObjects(pos_type pos)
 	}
 
 	return true;
-}
+}*/
 
 Screen::ConsoleColor Game::getRandomColor()
 {

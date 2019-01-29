@@ -5,7 +5,7 @@
 #include <list>
 
 #include "Screen.h"
-#include "SimpleObject.h"
+/*#include "SimpleObject.h"
 #include "Game.h"
 
 class Snake : public SimpleObject
@@ -32,6 +32,6 @@ private:
 	std::list<pos_type> points;
 
 	SimpleObject::directions direction;
-};
+};*/
 
 #endif

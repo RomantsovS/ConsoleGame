@@ -1,19 +1,19 @@
 #include <iostream>
 #include <conio.h>
 
-#include "Screen.h"
 #include "Game.h"
-#include "Snake.h"
+//#include "Snake.h"
 
 int main()
 {
-	Screen screen(std::cout, 20, 50, Screen::Pixel(' ', Screen::Black));
+	Game game(20, 50, 1, 1);
 
-	Game Game(screen.getHeight(), screen.getWidth(), 1, 1, Screen::Pixel('#', Screen::White), 200);
+	game.init();
 
-	Game.init();
-
-	Game.MainLoop(screen);
+	while (game.isGameRunning())
+	{
+		game.frame();
+	}
 
 	_getch();
 

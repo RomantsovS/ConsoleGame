@@ -1,8 +1,6 @@
 #ifndef RENDER_ENTITY_H
 #define RENDER_ENTITY_H
 
-#include "Entity.h"
-
 class RenderEntity
 {
 public:
@@ -10,7 +8,8 @@ public:
 
 	virtual ~RenderEntity();
 
-	virtual void draw() = 0 const;
+	virtual void init() = 0;
+	virtual void update() = 0;
 };
 
 #endif

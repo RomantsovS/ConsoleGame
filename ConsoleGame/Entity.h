@@ -2,15 +2,17 @@
 #define ENTITY_H
 
 #include "RenderEntity.h"
+#include "Physics.h"
 
 class Entity
 {
 public:
 	Entity();
 	
-	virtual ~Entity();
+	virtual ~Entity() = 0;
 
-	virtual RenderEntity *getRenderEntity() = 0 const;
+	virtual void init() = 0;
+	virtual void update() = 0;
 };
 
 #endif
