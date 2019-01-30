@@ -4,9 +4,9 @@
 
 #include "Game.h"
 #include "Point.h"
+#include "Vector2.h"
 
-Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt) : height(h), width(w),
-					borderHeight(borderHt), borderWidth(borderWd), lastClock(0)
+Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt)
 {
 }
 
@@ -32,7 +32,7 @@ void Game::init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	renderSystem = new RenderConsole(height, width);
+	renderSystem = new RenderConsole(height, width, borderHeight, borderWidth);
 	renderSystem->init();
 
 	unsigned snakeSize = 3;
@@ -41,7 +41,7 @@ void Game::init()
 	std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight() - snakeSize);
 	std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
 
-	pos_type pos(u_h(rand_eng), u_w(rand_eng));
+	//Vector2 pos(u_h(rand_eng), u_w(rand_eng));
 
 	//snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
 	//addObject(snake->);
@@ -56,7 +56,7 @@ void Game::destroy()
 
 void Game::fillBorder(Screen &screen)
 {
-	for (size_t i = 0; i < height; ++i)
+	/*for (size_t i = 0; i < height; ++i)
 	{
 		for (size_t j = 0; j < borderWidth; ++j)
 			screen.set(i, j, borderPixel);
@@ -72,12 +72,12 @@ void Game::fillBorder(Screen &screen)
 
 		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
 			screen.set(i, j, borderPixel);
-	}
+	}*/
 }
 
-void Game::addObject(std::shared_ptr<EntityBase> object)
+void Game::addObject(Entity *object)
 {
-	renderSystem->addObject(object->getRenderEntity());
+	renderWorld->addEntity(object->getRenderEntity());
 
 	//collideObjects.push_back(object);
 }
@@ -198,7 +198,7 @@ void Game::addRandomPoint()
 	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
 	static std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
 
-	pos_type pos(u_h(rand_eng), u_w(rand_eng));
+	Vector2 pos(u_h(rand_eng), u_w(rand_eng));
 
 	size_t numIters = 0;
 
@@ -210,7 +210,7 @@ void Game::addRandomPoint()
 			break;
 	}*/
 
-	auto point = std::make_shared<Point>(pos, Screen::Pixel('*', getRandomColor()));
+	auto point = new Point(pos, Screen::Pixel('*', getRandomColor()));
 
 	addObject(point);
 }

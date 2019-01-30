@@ -1,9 +1,7 @@
 #ifndef RENDER_SYSTEM_H
 #define RENDER_SYSTEM_H
 
-#include <memory>
-
-#include "RenderEntity.h"
+#include "RenderWorld.h"
 
 class RenderSystem
 {
@@ -11,8 +9,6 @@ public:
 	RenderSystem();
 	
 	virtual ~RenderSystem() = 0;
-
-	virtual void addObject(std::shared_ptr<RenderEntity> object) = 0;
 
 	virtual void init() = 0;
 

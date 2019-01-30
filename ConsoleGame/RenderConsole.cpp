@@ -1,6 +1,8 @@
 #include "RenderConsole.h"
 
-RenderConsole::RenderConsole(size_t ht, size_t wd)
+RenderConsole::RenderConsole(size_t ht, size_t wd, size_t bordHt, size_t bordWd, Screen::Pixel bordPix) :
+	height(ht), width(wd), borderHeight(bordHt), borderWidth(bordWd), borderPixel(bordPix),
+	screen(ht, wd, Screen::Pixel(' ', Screen::ConsoleColor::Black))
 {
 }
 
@@ -8,19 +10,14 @@ RenderConsole::~RenderConsole()
 {
 }
 
-void RenderConsole::addObject(std::shared_ptr<RenderEntity> object)
-{
-	objects.push_back(object);
-}
-
 void RenderConsole::init()
 {
-	screen = std::make_shared<Screen>(20, 50, Screen::Pixel(' ', Screen::ConsoleColor::Black));
+	
 }
 
 void RenderConsole::update()
 {
-	screen->display();
+	screen.display();
 }
 
 void RenderConsole::clear()

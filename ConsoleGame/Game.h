@@ -6,7 +6,8 @@
 
 //#include "Snake.h"
 #include "RenderConsole.h"
-#include "EntityBase.h"
+#include "Entity.h"
+#include "RenderWorld.h"
 
 class Snake;
 
@@ -22,7 +23,7 @@ public:
 
 	void fillBorder(Screen &screen);
 
-	void addObject(std::shared_ptr<EntityBase> object);
+	void addObject(Entity *object);
 
 	bool isGameRunning() const { return gameRunning; }
 
@@ -52,13 +53,13 @@ private:
 	Screen::ConsoleColor getRandomColor();
 
 	RenderSystem *renderSystem;
+	RenderWorld *renderWorld;
 
 	//std::shared_ptr<Snake> snake;
-	std::vector<std::shared_ptr<EntityBase>> objects;
+	std::vector<std::shared_ptr<Entity>> objects;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
 	size_t height, width, borderWidth, borderHeight;
-	Screen::Pixel borderPixel;
 
 	clock_t lastClock;
 	int delayMilliseconds;

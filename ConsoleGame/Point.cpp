@@ -10,7 +10,7 @@ SimpleObject::~SimpleObject()
 {
 }*/
 
-Point::Point(pos_type position, Screen::Pixel drawPix) : pos(position), drawPixel(drawPix)
+Point::Point(Vector2 position, Screen::Pixel drawPix)
 {
 	int a = 0;
 }
@@ -22,13 +22,6 @@ Point::~Point()
 
 void Point::init()
 {
-	auto renderEntity = std::make_shared<RenderStatic>();
-
-	setRenderEntity(renderEntity);
-
-	auto physics = std::make_shared<PhysicsStatic>();
-
-	setPhysics(physics);
 }
 
 void Point::update()

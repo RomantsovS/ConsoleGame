@@ -1,25 +1,6 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include <initializer_list>
-
-struct pos_type
-{
-	friend pos_type operator+(const pos_type &l, const pos_type&r);
-	friend bool operator==(const pos_type & l, const pos_type & r);
-	friend bool operator!=(const pos_type & l, const pos_type & r);
-
-	pos_type(size_t height, size_t width) : h(height), w(width) {}
-	pos_type(std::initializer_list<size_t> il);
-
-	pos_type &operator+=(const pos_type & r);
-
-	size_t h, w;
-};
-
-bool operator==(const pos_type & l, const pos_type & r);
-bool operator!=(const pos_type & l, const pos_type & r);
-
 class Physics
 {
 public:

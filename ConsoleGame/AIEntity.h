@@ -1,16 +1,16 @@
 #ifndef AI_ENTITY_H
 #define AI_ENTITY_H
 
-#include "EntityBase.h"
+#include "Entity.h"
 
-class AIEntity : public EntityBase
+class AIEntity : public Entity
 {
 public:
 	AIEntity();
 
-	virtual ~AIEntity() = 0;
+	virtual ~AIEntity() override;
 
-	virtual void init() = 0;
+	virtual void init() override;
 	virtual void update() override;
 };
 

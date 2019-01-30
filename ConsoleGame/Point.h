@@ -1,11 +1,10 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include "Vector2.h"
 #include "Screen.h"
 #include "RenderEntity.h"
 #include "AIEntity.h"
-
-class Game;
 
 /*class SimpleObject
 {
@@ -25,7 +24,7 @@ protected:
 class Point : public AIEntity
 {
 public:
-	Point(pos_type position, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
+	Point(Vector2 position, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
 
 	~Point();
 
@@ -42,9 +41,6 @@ public:
 	void move() override {}
 
 	pos_type getPos() const { return pos; }*/
-private:
-	pos_type pos;
-	Screen::Pixel drawPixel;
 };
 
 #endif

@@ -1,18 +1,32 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "RenderEntity.h"
+#include "RenderWorld.h"
 #include "Physics.h"
 
 class Entity
 {
 public:
 	Entity();
-	
-	virtual ~Entity() = 0;
 
-	virtual void init() = 0;
-	virtual void update() = 0;
+	virtual ~Entity();
+
+	renderEntity_s *getRenderEntity() { return &renderEntity; };
+	//std::shared_ptr<Physics> getPhysics() const { return physics; };
+
+	//void setPhysics(std::shared_ptr<Physics> phys) { physics = phys; };
+
+	virtual void init();
+	virtual void update();
+
+	void setActive(bool param) { active = param; }
+
+	bool isActive() const { return active; }
+private:
+	renderEntity_s renderEntity;
+	Physics *physics;
+
+	bool active;
 };
 
 #endif
