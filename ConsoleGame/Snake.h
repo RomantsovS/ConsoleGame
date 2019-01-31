@@ -20,7 +20,7 @@ public:
 	bool checkCollide(std::shared_ptr<Point> point) override;
 	bool checkCollide(const pos_type pos) const override;
 
-	void update(Game &Game) override;
+	void think(Game &Game) override;
 	void drawToScreen(Screen &screen) override;
 
 	void move() override;

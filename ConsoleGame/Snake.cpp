@@ -13,7 +13,7 @@ Snake::~Snake()
 {
 }
 
-void Snake::update(Game &Game)
+void Snake::think(Game &Game)
 {
 	if (checkCollide(Game))
 		if (Game.checkCollideObjects(this))

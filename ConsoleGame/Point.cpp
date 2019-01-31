@@ -24,7 +24,7 @@ void Point::init()
 {
 }
 
-void Point::update()
+void Point::think()
 {
 }
 

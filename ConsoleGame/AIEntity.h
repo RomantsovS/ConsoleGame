@@ -11,7 +11,7 @@ public:
 	virtual ~AIEntity() override;
 
 	virtual void init() override;
-	virtual void update() override;
+	virtual void think() override;
 };
 
 #endif

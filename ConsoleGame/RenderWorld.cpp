@@ -1,4 +1,7 @@
 #include "RenderWorld.h"
+#include "RenderConsole.h"
+
+//extern RenderConsole renderConsole;
 
 RenderWorld::RenderWorld()
 {

@@ -12,6 +12,6 @@ void AIEntity::init()
 {
 }
 
-void AIEntity::update()
+void AIEntity::think()
 {
 }

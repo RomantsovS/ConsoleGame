@@ -15,6 +15,6 @@ void RenderEntityBase::init()
 {
 }
 
-void RenderEntityBase::update()
+void RenderEntityBase::think()
 {
 }

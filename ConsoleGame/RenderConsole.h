@@ -13,7 +13,7 @@ public:
 
 	virtual void init();
 
-	virtual void update();
+	virtual void draw();
 
 	virtual void clear();
 private:

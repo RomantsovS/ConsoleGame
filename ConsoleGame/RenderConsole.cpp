@@ -15,7 +15,7 @@ void RenderConsole::init()
 	
 }
 
-void RenderConsole::update()
+void RenderConsole::draw()
 {
 	screen.display();
 }
@@ -24,3 +24,5 @@ void RenderConsole::clear()
 {
 	system("cls");
 }
+
+RenderConsole renderConsole;

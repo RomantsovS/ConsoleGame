@@ -1,7 +1,7 @@
 #ifndef Game_H
 #define Game_H
 
-#include <vector>
+#include <list>
 #include <ctime>
 
 //#include "Snake.h"
@@ -34,7 +34,6 @@ public:
 	size_t getUsedWidth() const { return width - 1 - borderWidth; }
 
 	void frame();
-	void update();
 
 	/*void onKeyPressed(char c);
 
@@ -52,11 +51,11 @@ private:
 
 	Screen::ConsoleColor getRandomColor();
 
-	RenderSystem *renderSystem;
+	//RenderSystem *renderSystem;
 	RenderWorld *renderWorld;
 
 	//std::shared_ptr<Snake> snake;
-	std::vector<std::shared_ptr<Entity>> objects;
+	std::list<Entity*> entityes;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
 	size_t height, width, borderWidth, borderHeight;

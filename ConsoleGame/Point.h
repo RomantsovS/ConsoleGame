@@ -13,7 +13,7 @@ public:
 	
 	virtual ~SimpleObject() = 0;
 
-	virtual void update(Game &Game) = 0;
+	virtual void think(Game &Game) = 0;
 	virtual void drawToScreen(Screen &screen) = 0;
 
 	virtual void move() = 0;
@@ -29,13 +29,13 @@ public:
 	~Point();
 
 	virtual void init() override;
-	virtual void update() override;
+	virtual void think() override;
 
 	/*bool checkCollide(const Game &Game) const override { return true; }
 	bool checkCollide(std::shared_ptr<Point> point) override  { return true; }
 	bool checkCollide(const pos_type pos) const override;
 
-	void update(Game &Game) override;
+	void think(Game &Game) override;
 	void drawToScreen(Screen &screen) override;
 
 	void move() override {}

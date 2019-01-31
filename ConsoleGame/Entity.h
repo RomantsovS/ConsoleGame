@@ -17,7 +17,7 @@ public:
 	//void setPhysics(std::shared_ptr<Physics> phys) { physics = phys; };
 
 	virtual void init();
-	virtual void update();
+	virtual void think();
 
 	void setActive(bool param) { active = param; }
 

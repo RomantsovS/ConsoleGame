@@ -11,7 +11,7 @@ public:
 	~RenderEntityBase() = 0;
 
 	virtual void init() override;
-	virtual void update() override;
+	virtual void think() override;
 };
 
 #endif

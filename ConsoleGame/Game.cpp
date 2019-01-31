@@ -6,6 +6,8 @@
 #include "Point.h"
 #include "Vector2.h"
 
+extern RenderConsole renderConsole;
+
 Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt)
 {
 }
@@ -32,8 +34,7 @@ void Game::init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	renderSystem = new RenderConsole(height, width, borderHeight, borderWidth);
-	renderSystem->init();
+	renderConsole.init();
 
 	unsigned snakeSize = 3;
 
@@ -75,11 +76,9 @@ void Game::fillBorder(Screen &screen)
 	}*/
 }
 
-void Game::addObject(Entity *object)
+void Game::addObject(Entity *ent)
 {
-	renderWorld->addEntity(object->getRenderEntity());
-
-	//collideObjects.push_back(object);
+	entityes.push_back(ent);
 }
 
 void Game::frame()
@@ -88,7 +87,7 @@ void Game::frame()
 
 	lastClock = clock();
 
-	renderSystem->clear();
+	renderConsole.clear();
 
 	if (_kbhit())
 	{
@@ -99,7 +98,7 @@ void Game::frame()
 		case 27:
 			gameRunning = false;
 
-			renderSystem->clear();
+			renderConsole.clear();
 
 			std::cout << "enter Q to quit or any key to continue: ";
 
@@ -117,38 +116,32 @@ void Game::frame()
 
 	auto tempClock = clock();
 
-	if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
+	/*if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
 	{
-		update();
+		think();
 		lastClock = tempClock;
+	}*/
+
+	for (auto iter = entityes.begin(); iter != entityes.end(); ++iter)
+	{
+		(*iter)->think();
 	}
 
-	renderSystem->clear();
+	renderConsole.clear();
 
 	//fillBorder(screen);
 
 	try
 	{
-		renderSystem->update();
+		renderConsole.draw();
 	}
 	catch (std::exception &err)
 	{
+		gameRunning = false;
 		std::cout << err.what() << std::endl
 			<< "press ane key to continue...\n";
 		_getch();
 	}
-}
-
-void Game::update()
-{
-	/*auto objectsCopy = objects;
-
-	for (auto iter = objectsCopy.begin(); iter != objectsCopy.end(); ++iter)
-	{
-		(*iter)->update(*this);
-	}
-
-	removeInactiveObjects();*/
 }
 
 /*
@@ -217,11 +210,11 @@ void Game::addRandomPoint()
 
 void Game::removeInactiveObjects()
 {
-	for (auto iter = objects.begin(); iter != objects.end();)
+	for (auto iter = entityes.begin(); iter != entityes.end();)
 	{
 		if (!(*iter)->isActive())
 		{
-			objects.erase(iter);
+			entityes.erase(iter);
 			break;
 		}
 		else
@@ -266,7 +259,7 @@ void Game::onMoveKeyPressed(SimpleObject::directions dir)
 {
 	snake->setDirection(dir);
 
-	snake->update(*this);
+	snake->think(*this);
 }*/
 
 /*

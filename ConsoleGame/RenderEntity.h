@@ -3,8 +3,6 @@
 
 #include "RenderWorld.h"
 
-struct renderEntity_s;
-
 class RenderEntity
 {
 public:
@@ -13,7 +11,7 @@ public:
 	virtual ~RenderEntity();
 
 	virtual void init() = 0;
-	virtual void update() = 0;
+	virtual void think() = 0;
 private:
 	renderEntity_s parms;
 };
