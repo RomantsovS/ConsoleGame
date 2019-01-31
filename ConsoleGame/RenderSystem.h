@@ -5,9 +5,7 @@
 
 class RenderSystem
 {
-public:
-	RenderSystem();
-	
+public:	
 	virtual ~RenderSystem() = 0;
 
 	virtual void init() = 0;
@@ -16,5 +14,7 @@ public:
 
 	virtual void clear() = 0;
 };
+
+extern RenderSystem *renderSystem;
 
 #endif

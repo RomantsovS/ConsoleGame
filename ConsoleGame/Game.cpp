@@ -6,7 +6,7 @@
 #include "Point.h"
 #include "Vector2.h"
 
-extern RenderConsole renderConsole;
+RenderWorld *gameRenderWorld = NULL;
 
 Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt)
 {
@@ -34,7 +34,7 @@ void Game::init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	renderConsole.init();
+	renderSystem->init();
 
 	unsigned snakeSize = 3;
 
@@ -78,14 +78,14 @@ void Game::fillBorder(Screen &screen)
 
 void Game::addObject(Entity *ent)
 {
-	entityes.push_back(ent);
+	entities.push_back(ent);
 }
 
 void Game::frame()
 {
 	char c = 0;
 
-	lastClock = clock();
+	/*lastClock = clock();
 
 	renderConsole.clear();
 
@@ -122,18 +122,16 @@ void Game::frame()
 		lastClock = tempClock;
 	}*/
 
-	for (auto iter = entityes.begin(); iter != entityes.end(); ++iter)
+	for (auto iter = entities.begin(); iter != entities.end(); ++iter)
 	{
 		(*iter)->think();
 	}
-
-	renderConsole.clear();
 
 	//fillBorder(screen);
 
 	try
 	{
-		renderConsole.draw();
+		gameRenderWorld->renderScene();
 	}
 	catch (std::exception &err)
 	{

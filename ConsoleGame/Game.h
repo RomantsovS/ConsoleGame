@@ -4,10 +4,8 @@
 #include <list>
 #include <ctime>
 
-//#include "Snake.h"
-#include "RenderConsole.h"
 #include "Entity.h"
-#include "RenderWorld.h"
+#include "tr_local.h"
 
 class Snake;
 
@@ -55,7 +53,7 @@ private:
 	RenderWorld *renderWorld;
 
 	//std::shared_ptr<Snake> snake;
-	std::list<Entity*> entityes;
+	std::list<Entity*> entities;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
 	size_t height, width, borderWidth, borderHeight;

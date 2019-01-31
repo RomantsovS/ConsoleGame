@@ -10,7 +10,6 @@
 struct renderEntity_s
 {
 	Vector2 pos;
-	Screen::Pixel drawPixel;
 };
 
 class RenderWorld
@@ -20,10 +19,10 @@ public:
 
 	virtual ~RenderWorld() = 0;
 
-	virtual void addEntity(renderEntity_s *ent) = 0;
-};
+	virtual void addEntity(const renderEntity_s *ent) = 0;
 
-class RenderEntity;
+	virtual void renderScene() = 0;
+};
 
 class RenderWorldLocal : public RenderWorld
 {
@@ -32,9 +31,11 @@ public:
 
 	virtual ~RenderWorldLocal();
 
-	virtual void addEntity(renderEntity_s *ent) override;
+	virtual void addEntity(const renderEntity_s *ent) override;
+
+	virtual void renderScene();
 private:
-	std::list<RenderEntity*> entityes;
+	std::list<RenderEntity*> entityDefs;
 };
 
 #endif

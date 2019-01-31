@@ -19,9 +19,13 @@ RenderWorldLocal::~RenderWorldLocal()
 {
 }
 
-void RenderWorldLocal::addEntity(renderEntity_s *ent)
+void RenderWorldLocal::addEntity(const renderEntity_s *ent)
 {
 	//RenderEntity *rEnt = new RenderEntity;
 
 	//entityes.push_back(ent);
+}
+
+void RenderWorldLocal::renderScene()
+{
 }
