@@ -19,7 +19,7 @@ Vector2 operator+(const Vector2 & l, const Vector2 & r)
 	return sum;
 }
 
-Vector2::Vector2(size_t height, size_t width) : x(height), y(width) {}
+Vector2::Vector2(size_t height, size_t width) : x(height), y(width)
 {
 }
 

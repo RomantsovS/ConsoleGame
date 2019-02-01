@@ -13,7 +13,7 @@ public:
 
 	virtual void init() = 0;
 	virtual void think() = 0;
-private:
+
 	renderEntity_s parms;
 };
 
@@ -22,26 +22,26 @@ class RenderEntityLocal : public RenderEntity
 public:
 	RenderEntityLocal();
 
-	~RenderEntityLocal() = 0;
+	~RenderEntityLocal();
 
 	virtual void init() override;
 	virtual void think() override;
-
-	renderEntity_s parms;
 };
 
 class RenderSystemLocal : public RenderSystem
 {
 public:
-	RenderSystemLocal(size_t ht, size_t wd, size_t bordHt, size_t bordWd, Screen::Pixel bordPix = Screen::Pixel('#', Screen::ConsoleColor::White));
+	RenderSystemLocal();
 
 	~RenderSystemLocal();
 
 	virtual void init();
 
-	virtual void draw();
+	virtual void draw(const renderEntity_s &ent);
 
 	virtual void clear();
+
+	void fillBorder();
 private:
 	RenderWorld *renderWorld;
 

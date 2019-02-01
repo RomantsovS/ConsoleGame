@@ -3,6 +3,7 @@
 
 #include <list>
 #include <ctime>
+#include <random>
 
 #include "Entity.h"
 #include "tr_local.h"
@@ -12,30 +13,27 @@ class Snake;
 class Game
 {
 public:
-	Game(size_t h, size_t w, size_t borderWd = 1, size_t borderHt = 1);
+	Game();
 
 	~Game();
 
 	void init();
 	void destroy();
 
-	void fillBorder(Screen &screen);
-
 	void addObject(Entity *object);
 
 	bool isGameRunning() const { return gameRunning; }
-
-	size_t getBorderHeight() const { return borderHeight; }
-	size_t getBorderWidth() const { return borderWidth; }
-
-	size_t getUsedHeight() const { return height - 1 - borderHeight; }
-	size_t getUsedWidth() const { return width - 1 - borderWidth; }
 
 	void frame();
 
 	/*void onKeyPressed(char c);
 
 	bool checkCollideObjects(SimpleObject *object);*/
+
+	template <typename T>
+	T getRandomValue(T min, T max);
+
+	Screen::ConsoleColor getRandomColor();
 private:
 	void breakTime();
 
@@ -47,8 +45,6 @@ private:
 
 	bool checkCollidePosToAllObjects(pos_type pos);*/
 
-	Screen::ConsoleColor getRandomColor();
-
 	//RenderSystem *renderSystem;
 	RenderWorld *renderWorld;
 
@@ -56,7 +52,7 @@ private:
 	std::list<Entity*> entities;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
-	size_t height, width, borderWidth, borderHeight;
+	size_t height, width;
 
 	clock_t lastClock;
 	int delayMilliseconds;
@@ -64,6 +60,16 @@ private:
 	std::vector<Screen::ConsoleColor> colors;
 
 	bool gameRunning;
+
+	std::default_random_engine rand_eng;
 };
 
 #endif
+
+template<typename T>
+inline T Game::getRandomValue(T min, T max)
+{
+	std::uniform_int_distribution<Screen::pos> u(min, max);
+	
+	return u(rand_eng);
+}

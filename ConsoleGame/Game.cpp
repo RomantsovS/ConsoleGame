@@ -1,4 +1,3 @@
-#include <random>
 #include <conio.h>
 #include <iostream>
 
@@ -8,7 +7,7 @@
 
 RenderWorld *gameRenderWorld = NULL;
 
-Game::Game(size_t h, size_t w, size_t borderWd, size_t borderHt)
+Game::Game()
 {
 }
 
@@ -19,6 +18,9 @@ Game::~Game()
 
 void Game::init()
 {
+	height = 20;
+	width = 20;
+
 	delayMilliseconds = 100;
 
 	colors.push_back(Screen::Green);
@@ -34,13 +36,17 @@ void Game::init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
+	rand_eng.seed(static_cast<unsigned>(time(0)));
+
 	renderSystem->init();
+
+	gameRenderWorld = new RenderWorldLocal();
 
 	unsigned snakeSize = 3;
 
-	std::default_random_engine rand_eng(static_cast<unsigned>(time(0) - 1));
-	std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight() - snakeSize);
-	std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
+	/*std::default_random_engine rand_eng(static_cast<unsigned>(time(0) - 1));
+	std::uniform_int_distribution<Screen::pos> u_h(0, height- snakeSize);
+	std::uniform_int_distribution<Screen::pos> u_w(0, width);*/
 
 	//Vector2 pos(u_h(rand_eng), u_w(rand_eng));
 
@@ -48,6 +54,8 @@ void Game::init()
 	//addObject(snake->);
 
 	addRandomPoint();
+
+	gameRunning = true;
 }
 
 void Game::destroy()
@@ -55,39 +63,20 @@ void Game::destroy()
 
 }
 
-void Game::fillBorder(Screen &screen)
-{
-	/*for (size_t i = 0; i < height; ++i)
-	{
-		for (size_t j = 0; j < borderWidth; ++j)
-			screen.set(i, j, borderPixel);
-
-		for (size_t j = width - 1; j > width - 1 - borderWidth; --j)
-			screen.set(i, j, borderPixel);
-	}
-
-	for (size_t j = 0; j < width; ++j)
-	{
-		for (size_t i = 0; i < borderHeight; ++i)
-			screen.set(i, j, borderPixel);
-
-		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
-			screen.set(i, j, borderPixel);
-	}*/
-}
-
 void Game::addObject(Entity *ent)
 {
 	entities.push_back(ent);
+	
+	gameRenderWorld->addEntity(ent->getRenderEntity());
 }
 
 void Game::frame()
 {
 	char c = 0;
 
-	/*lastClock = clock();
+	lastClock = clock();
 
-	renderConsole.clear();
+	tr.clear();
 
 	if (_kbhit())
 	{
@@ -98,14 +87,19 @@ void Game::frame()
 		case 27:
 			gameRunning = false;
 
-			renderConsole.clear();
+			tr.clear();
 
 			std::cout << "enter Q to quit or any key to continue: ";
 
 			std::cin >> c;
 
+			while (std::cin.get() != '\n')
+				continue;
+
 			if (c == 'Q' || c == 'q')
+			{
 				break;
+			}
 
 			gameRunning = true;
 		default:
@@ -114,20 +108,10 @@ void Game::frame()
 		}
 	}
 
-	auto tempClock = clock();
-
-	/*if (tempClock - lastClock >= delayMilliseconds * CLOCKS_PER_SEC / 1000)
-	{
-		think();
-		lastClock = tempClock;
-	}*/
-
 	for (auto iter = entities.begin(); iter != entities.end(); ++iter)
 	{
 		(*iter)->think();
 	}
-
-	//fillBorder(screen);
 
 	try
 	{
@@ -185,11 +169,7 @@ void Game::breakTime()
 
 void Game::addRandomPoint()
 {
-	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
-	static std::uniform_int_distribution<Screen::pos> u_h(getBorderHeight(), getUsedHeight());
-	static std::uniform_int_distribution<Screen::pos> u_w(getBorderWidth(), getUsedWidth());
-
-	Vector2 pos(u_h(rand_eng), u_w(rand_eng));
+	Vector2 pos(getRandomValue(0U, height), getRandomValue(0U, width));
 
 	size_t numIters = 0;
 
@@ -208,11 +188,11 @@ void Game::addRandomPoint()
 
 void Game::removeInactiveObjects()
 {
-	for (auto iter = entityes.begin(); iter != entityes.end();)
+	for (auto iter = entities.begin(); iter != entities.end();)
 	{
 		if (!(*iter)->isActive())
 		{
-			entityes.erase(iter);
+			entities.erase(iter);
 			break;
 		}
 		else
@@ -276,9 +256,7 @@ bool Game::checkCollidePosToAllObjects(pos_type pos)
 
 Screen::ConsoleColor Game::getRandomColor()
 {
-	static std::default_random_engine rand_eng(static_cast<unsigned>(time(0)));
-
-	static std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
+	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
 
 	int col(u_c(rand_eng));
 

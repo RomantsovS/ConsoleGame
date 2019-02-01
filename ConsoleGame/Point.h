@@ -3,7 +3,6 @@
 
 #include "Vector2.h"
 #include "Screen.h"
-#include "RenderEntity.h"
 #include "AIEntity.h"
 
 /*class SimpleObject

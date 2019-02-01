@@ -12,6 +12,10 @@ RenderEntityLocal::RenderEntityLocal()
 {
 }
 
+RenderEntityLocal::~RenderEntityLocal()
+{
+}
+
 void RenderEntityLocal::init()
 {
 }

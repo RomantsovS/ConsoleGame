@@ -41,16 +41,13 @@ public:
 		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
 	};
 
+	Screen() = default;
 	Screen(pos ht, pos wd, Pixel back);
 
-	~Screen()
-	{
-		delete [] buffer;
-		delete [] contents;
-	}
+	~Screen();
 
-	Screen::Pixel get() const              // get the character at the cursor
-	    { return contents[cursor]; }       // implicitly inline
+	void init();
+
     inline Screen::Pixel get(pos ht, pos wd) const; // explicitly inline
 
     Screen &move(pos r, pos c);      // can be made inline later
@@ -66,7 +63,6 @@ public:
 
 	Screen &display();
 private:
-	pos cursor;
 	pos height, width;
 	Pixel backgroundPixel;
 	char *buffer;
@@ -74,22 +70,8 @@ private:
 
 	Pixel *contents;
 
-	void clearContents()
-	{
-		for (size_t i = 0; i != height * width; ++i)
-		{
-			contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
-		}
-	}
+	void clearContents();
 };
-
-inline                   // we can specify inline on the definition
-Screen &Screen::move(pos r, pos c)
-{
-    pos row = r * width; // compute the row location
-    cursor = row + c;    // move cursor to the column within that row
-    return *this;        // return this object as an lvalue
-}
 
 Screen::Pixel Screen::get(pos r, pos c) const // declared as inline in the class
 {
@@ -97,11 +79,6 @@ Screen::Pixel Screen::get(pos r, pos c) const // declared as inline in the class
     return contents[row + c]; // return character at the given column
 }
 
-inline Screen &Screen::set(Screen::Pixel c)
-{ 
-    contents[cursor] = c; // set the new value at the current cursor location
-    return *this;         // return this object as an lvalue
-}
 inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 {
 	if (r >= height)

@@ -1,7 +1,4 @@
-#include "RenderWorld.h"
-#include "RenderConsole.h"
-
-//extern RenderConsole renderConsole;
+#include "tr_local.h"
 
 RenderWorld::RenderWorld()
 {
@@ -21,11 +18,18 @@ RenderWorldLocal::~RenderWorldLocal()
 
 void RenderWorldLocal::addEntity(const renderEntity_s *ent)
 {
-	//RenderEntity *rEnt = new RenderEntity;
+	RenderEntityLocal *rEnt = new RenderEntityLocal;
+	rEnt->parms = *ent;
 
-	//entityes.push_back(ent);
+	entities.push_back(rEnt);
 }
 
 void RenderWorldLocal::renderScene()
 {
+	tr.fillBorder();
+
+	for (auto entIter = entities.cbegin(); entIter != entities.cend(); ++entIter)
+	{
+		tr.draw((*entIter)->parms);
+	}
 }

@@ -121,8 +121,8 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PlayerEntity.h" />
     <ClInclude Include="PhysicsStatic.h" />
+    <ClInclude Include="RenderModel.h" />
     <ClInclude Include="tr_local.h" />
-    <ClInclude Include="RenderStatic.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="RenderWorld.h" />
     <ClInclude Include="Screen.h" />
@@ -139,7 +139,7 @@
     <ClCompile Include="PhysicsStatic.cpp" />
     <ClCompile Include="PlayerEntity.cpp" />
     <ClCompile Include="RenderEntity.cpp" />
-    <ClCompile Include="RenderStatic.cpp" />
+    <ClCompile Include="RenderModel.cpp" />
     <ClCompile Include="RenderSystem.cpp" />
     <ClCompile Include="RenderWorld.cpp" />
     <ClCompile Include="Screen.cpp" />

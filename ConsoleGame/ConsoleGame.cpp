@@ -2,11 +2,10 @@
 #include <conio.h>
 
 #include "Game.h"
-//#include "Snake.h"
 
 int main()
 {
-	Game game(20, 50, 1, 1);
+	Game game;
 
 	game.init();
 

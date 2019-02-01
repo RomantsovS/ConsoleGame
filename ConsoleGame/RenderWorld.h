@@ -4,12 +4,16 @@
 #include <list>
 
 #include "Vector2.h"
-#include "RenderEntity.h"
 #include "Screen.h"
+#include "RenderModel.h"
+
+class RenderEntity;
 
 struct renderEntity_s
 {
 	Vector2 pos;
+
+	RenderModel model;
 };
 
 class RenderWorld
@@ -35,7 +39,7 @@ public:
 
 	virtual void renderScene();
 private:
-	std::list<RenderEntity*> entityDefs;
+	std::list<RenderEntity*> entities;
 };
 
 #endif

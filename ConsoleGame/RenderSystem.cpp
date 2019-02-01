@@ -3,9 +3,15 @@
 RenderSystemLocal tr;
 RenderSystem * renderSystem = &tr;
 
-RenderSystemLocal::RenderSystemLocal(size_t ht, size_t wd, size_t bordHt, size_t bordWd, Screen::Pixel bordPix) :
-	height(ht), width(wd), borderHeight(bordHt), borderWidth(bordWd), borderPixel(bordPix),
-	screen(ht, wd, Screen::Pixel(' ', Screen::ConsoleColor::Black))
+RenderSystem::RenderSystem()
+{
+}
+
+RenderSystem::~RenderSystem()
+{
+}
+
+RenderSystemLocal::RenderSystemLocal()
 {
 }
 
@@ -15,15 +21,45 @@ RenderSystemLocal::~RenderSystemLocal()
 
 void RenderSystemLocal::init()
 {
+	height = 20;
+	width = 20;
 
+	borderHeight = 1;
+	borderWidth = 1;
+
+	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
+
+	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
 }
 
-void RenderSystemLocal::draw()
+void RenderSystemLocal::draw(const renderEntity_s &ent)
 {
-	screen.display();
+	
 }
 
 void RenderSystemLocal::clear()
 {
 	system("cls");
+	screen.clear();
+}
+
+void RenderSystemLocal::fillBorder()
+{
+	for (size_t i = 0; i < height; ++i)
+	{
+		for (size_t j = 0; j < borderWidth; ++j)
+			screen.set(i, j, borderPixel);
+
+		for (size_t j = width - 1; j > width - 1 - borderWidth; --j)
+			screen.set(i, j, borderPixel);
+	}
+
+	for (size_t j = 0; j < width; ++j)
+	{
+		for (size_t i = 0; i < borderHeight; ++i)
+			screen.set(i, j, borderPixel);
+
+		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
+			screen.set(i, j, borderPixel);
+	}
 }

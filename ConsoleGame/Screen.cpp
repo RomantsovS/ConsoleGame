@@ -2,10 +2,18 @@
 
 #include "Screen.h"
 
-Screen::Screen(pos ht, pos wd, Pixel back) :
-	height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
+Screen::Screen(pos ht, pos wd, Pixel back) : height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
 {
 	clearContents();
+}
+
+Screen::~Screen()
+{
+}
+
+void Screen::init()
+{
+	//std::cout.setf()
 }
 
 Screen& Screen::display()
@@ -70,6 +78,14 @@ Screen& Screen::display()
 	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
 	return *this;
+}
+
+void Screen::clearContents()
+{
+	for (size_t i = 0; i != height * width; ++i)
+	{
+		contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
+	}
 }
 
 void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background)

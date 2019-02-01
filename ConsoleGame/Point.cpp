@@ -1,5 +1,4 @@
 #include "Point.h"
-#include "RenderStatic.h"
 #include "PhysicsStatic.h"
 
 /*SimpleObject::SimpleObject(Screen::Pixel drawPix) : drawPixel(drawPix), active(true)
