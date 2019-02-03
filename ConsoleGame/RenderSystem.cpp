@@ -19,7 +19,7 @@ RenderSystemLocal::~RenderSystemLocal()
 {
 }
 
-void RenderSystemLocal::init()
+void RenderSystemLocal::Init()
 {
 	height = 20;
 	width = 20;
@@ -32,18 +32,23 @@ void RenderSystemLocal::init()
 	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
 }
 
-void RenderSystemLocal::draw(const renderEntity_s &ent)
+void RenderSystemLocal::Draw(const renderEntity_s &ent)
 {
 	
 }
 
-void RenderSystemLocal::clear()
+void RenderSystemLocal::Display()
+{
+	screen.display();
+}
+
+void RenderSystemLocal::Clear()
 {
 	system("cls");
 	screen.clear();
 }
 
-void RenderSystemLocal::fillBorder()
+void RenderSystemLocal::FillBorder()
 {
 	for (size_t i = 0; i < height; ++i)
 	{

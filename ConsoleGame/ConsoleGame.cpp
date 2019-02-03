@@ -5,13 +5,11 @@
 
 int main()
 {
-	Game game;
+	gameLocal.Init();
 
-	game.init();
-
-	while (game.isGameRunning())
+	while (gameLocal.IsGameRunning())
 	{
-		game.frame();
+		gameLocal.Frame();
 	}
 
 	_getch();

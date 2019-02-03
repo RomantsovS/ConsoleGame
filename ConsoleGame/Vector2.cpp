@@ -34,10 +34,24 @@ Vector2::Vector2(std::initializer_list<size_t> il)
 	y = *iter;
 }
 
+void Vector2::Zero()
+{
+	x = y = 0;
+}
+
 Vector2& Vector2::operator+=(const Vector2 & r)
 {
 	x += r.x;
 	y += r.y;
 
 	return *this;
+}
+
+std::string Vector2::ToString(int precision) const
+{
+	std::string s;
+
+	s = std::to_string(x) + ' ' + std::to_string(y);
+
+	return s;
 }

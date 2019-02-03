@@ -23,9 +23,9 @@ public:
 
 	virtual ~RenderWorld() = 0;
 
-	virtual void addEntity(const renderEntity_s *ent) = 0;
+	virtual void AddEntity(const renderEntity_s *ent) = 0;
 
-	virtual void renderScene() = 0;
+	virtual void RenderScene() = 0;
 };
 
 class RenderWorldLocal : public RenderWorld
@@ -35,9 +35,9 @@ public:
 
 	virtual ~RenderWorldLocal();
 
-	virtual void addEntity(const renderEntity_s *ent) override;
+	virtual void AddEntity(const renderEntity_s *ent) override;
 
-	virtual void renderScene();
+	virtual void RenderScene();
 private:
 	std::list<RenderEntity*> entities;
 };

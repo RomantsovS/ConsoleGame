@@ -50,9 +50,7 @@ public:
 
     inline Screen::Pixel get(pos ht, pos wd) const; // explicitly inline
 
-    Screen &move(pos r, pos c);      // can be made inline later
-    Screen &set(Screen::Pixel);
-    Screen &set(pos, pos, Screen::Pixel);
+    Screen &set(pos r, pos col, Screen::Pixel ch);
 	
 	pos getHeight() const { return height; }
 	pos getWidth() const { return width; }

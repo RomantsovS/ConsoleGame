@@ -7,8 +7,10 @@
 
 #include "Entity.h"
 #include "tr_local.h"
+#include "Class.h"
+#include "Dict.h"
 
-class Snake;
+extern RenderWorld *gameRenderWorld;
 
 class Game
 {
@@ -17,29 +19,36 @@ public:
 
 	~Game();
 
-	void init();
-	void destroy();
+	void Init();
+	void Destroy();
 
-	void addObject(Entity *object);
+	void AddObject(Entity *object);
 
-	bool isGameRunning() const { return gameRunning; }
+	bool IsGameRunning() const { return gameRunning; }
 
-	void frame();
+	void Frame();
 
 	/*void onKeyPressed(char c);
 
 	bool checkCollideObjects(SimpleObject *object);*/
 
 	template <typename T>
-	T getRandomValue(T min, T max);
+	T GetRandomValue(T min, T max);
 
-	Screen::ConsoleColor getRandomColor();
+	Screen::ConsoleColor GetRandomColor();
+
+	bool SpawnEntityDef(const Dict &args);
+
+	void RegisterEntity(Entity *ent, int forceSpawnId, const Dict & spawnArgsToCopy);
+	//void UnregisterEntity(Entity *ent);
+
+	const Dict &GetSpawnArgs() const { return spawnArgs; }
 private:
-	void breakTime();
+	void BreakTime();
 
-	void addRandomPoint();
+	void AddRandomPoint();
 
-	void removeInactiveObjects();
+	void RemoveInactiveObjects();
 
 	/*void onMoveKeyPressed(SimpleObject::directions dir);
 
@@ -51,6 +60,8 @@ private:
 	//std::shared_ptr<Snake> snake;
 	std::list<Entity*> entities;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
+
+	Dict spawnArgs;
 
 	size_t height, width;
 
@@ -64,12 +75,14 @@ private:
 	std::default_random_engine rand_eng;
 };
 
-#endif
-
 template<typename T>
-inline T Game::getRandomValue(T min, T max)
+inline T Game::GetRandomValue(T min, T max)
 {
 	std::uniform_int_distribution<Screen::pos> u(min, max);
-	
+
 	return u(rand_eng);
 }
+
+extern Game gameLocal;
+
+#endif

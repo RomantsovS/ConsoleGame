@@ -35,13 +35,15 @@ public:
 
 	~RenderSystemLocal();
 
-	virtual void init();
+	virtual void Init();
 
-	virtual void draw(const renderEntity_s &ent);
+	virtual void Draw(const renderEntity_s &ent);
 
-	virtual void clear();
+	void Display();
 
-	void fillBorder();
+	virtual void Clear();
+
+	void FillBorder();
 private:
 	RenderWorld *renderWorld;
 

@@ -3,7 +3,7 @@
 
 #include "Vector2.h"
 #include "Screen.h"
-#include "AIEntity.h"
+#include "AI.h"
 
 /*class SimpleObject
 {
@@ -20,15 +20,15 @@ protected:
 	Screen::Pixel drawPixel;
 };*/
 
-class Point : public AIEntity
+class Point : public AI
 {
 public:
 	Point(Vector2 position, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));
 
 	~Point();
 
-	virtual void init() override;
-	virtual void think() override;
+	void Spawn();
+	virtual void Think() override;
 
 	/*bool checkCollide(const Game &Game) const override { return true; }
 	bool checkCollide(std::shared_ptr<Point> point) override  { return true; }

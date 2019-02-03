@@ -16,7 +16,7 @@ RenderWorldLocal::~RenderWorldLocal()
 {
 }
 
-void RenderWorldLocal::addEntity(const renderEntity_s *ent)
+void RenderWorldLocal::AddEntity(const renderEntity_s *ent)
 {
 	RenderEntityLocal *rEnt = new RenderEntityLocal;
 	rEnt->parms = *ent;
@@ -24,12 +24,14 @@ void RenderWorldLocal::addEntity(const renderEntity_s *ent)
 	entities.push_back(rEnt);
 }
 
-void RenderWorldLocal::renderScene()
+void RenderWorldLocal::RenderScene()
 {
-	tr.fillBorder();
+	tr.FillBorder();
 
 	for (auto entIter = entities.cbegin(); entIter != entities.cend(); ++entIter)
 	{
-		tr.draw((*entIter)->parms);
+		tr.Draw((*entIter)->parms);
 	}
+
+	tr.Display();
 }

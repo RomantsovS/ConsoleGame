@@ -19,11 +19,11 @@ Point::~Point()
 	int a = 0;
 }
 
-void Point::init()
+void Point::Spawn()
 {
 }
 
-void Point::think()
+void Point::Think()
 {
 }
 

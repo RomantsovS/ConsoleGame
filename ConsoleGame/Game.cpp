@@ -7,17 +7,22 @@
 
 RenderWorld *gameRenderWorld = NULL;
 
+// the rest of the engine will only reference the "game" variable, while all local aspects stay hidden
+Game gameLocal;
+
 Game::Game()
 {
 }
 
 Game::~Game()
 {
-	destroy();
+	Destroy();
 }
 
-void Game::init()
+void Game::Init()
 {
+	idClass::Init();
+
 	height = 20;
 	width = 20;
 
@@ -38,7 +43,7 @@ void Game::init()
 
 	rand_eng.seed(static_cast<unsigned>(time(0)));
 
-	renderSystem->init();
+	renderSystem->Init();
 
 	gameRenderWorld = new RenderWorldLocal();
 
@@ -53,30 +58,30 @@ void Game::init()
 	//snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
 	//addObject(snake->);
 
-	addRandomPoint();
+	AddRandomPoint();
 
 	gameRunning = true;
 }
 
-void Game::destroy()
+void Game::Destroy()
 {
 
 }
 
-void Game::addObject(Entity *ent)
+void Game::AddObject(Entity *ent)
 {
 	entities.push_back(ent);
 	
-	gameRenderWorld->addEntity(ent->getRenderEntity());
+	gameRenderWorld->AddEntity(ent->getRenderEntity());
 }
 
-void Game::frame()
+void Game::Frame()
 {
 	char c = 0;
 
 	lastClock = clock();
 
-	tr.clear();
+	tr.Clear();
 
 	if (_kbhit())
 	{
@@ -87,7 +92,7 @@ void Game::frame()
 		case 27:
 			gameRunning = false;
 
-			tr.clear();
+			tr.Clear();
 
 			std::cout << "enter Q to quit or any key to continue: ";
 
@@ -98,7 +103,9 @@ void Game::frame()
 
 			if (c == 'Q' || c == 'q')
 			{
-				break;
+				gameRunning = false;
+
+				return;
 			}
 
 			gameRunning = true;
@@ -110,12 +117,12 @@ void Game::frame()
 
 	for (auto iter = entities.begin(); iter != entities.end(); ++iter)
 	{
-		(*iter)->think();
+		(*iter)->Think();
 	}
 
 	try
 	{
-		gameRenderWorld->renderScene();
+		gameRenderWorld->RenderScene();
 	}
 	catch (std::exception &err)
 	{
@@ -158,7 +165,7 @@ void Game::onKeyPressed(char c)
 	}
 }*/
 
-void Game::breakTime()
+void Game::BreakTime()
 {
 	clock_t temp;
 	temp = clock() + delayMilliseconds * CLOCKS_PER_SEC / 1000;
@@ -167,9 +174,17 @@ void Game::breakTime()
 	}
 }
 
-void Game::addRandomPoint()
+void Game::AddRandomPoint()
 {
-	Vector2 pos(getRandomValue(0U, height), getRandomValue(0U, width));
+	Vector2 pos(GetRandomValue(0U, height), GetRandomValue(0U, width));
+
+	Dict args;
+
+	args.Set("classname", "StaticEntity");
+	args.Set("spawnclass", "StaticEntity");
+	args.Set("pos", pos.ToString());
+	
+	SpawnEntityDef(args);
 
 	size_t numIters = 0;
 
@@ -181,12 +196,12 @@ void Game::addRandomPoint()
 			break;
 	}*/
 
-	auto point = new Point(pos, Screen::Pixel('*', getRandomColor()));
+	//auto point = new Point(pos, Screen::Pixel('*', GetRandomColor()));
 
-	addObject(point);
+	//AddObject(point);
 }
 
-void Game::removeInactiveObjects()
+void Game::RemoveInactiveObjects()
 {
 	for (auto iter = entities.begin(); iter != entities.end();)
 	{
@@ -254,11 +269,56 @@ bool Game::checkCollidePosToAllObjects(pos_type pos)
 	return true;
 }*/
 
-Screen::ConsoleColor Game::getRandomColor()
+Screen::ConsoleColor Game::GetRandomColor()
 {
 	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
 
 	int col(u_c(rand_eng));
 
 	return colors[col];
+}
+
+bool Game::SpawnEntityDef(const Dict & args)
+{
+	std::string className, spawn;
+	idTypeInfo *cls;
+	idClass *obj;
+
+	spawnArgs = args;
+
+	spawnArgs.GetString("classname", "", &className);
+
+	spawnArgs.GetString("spawnclass", "", &spawn);
+
+	if (!spawn.empty()) {
+
+		cls = idClass::GetClass(spawn);
+		if (!cls)
+		{
+			return false;
+		}
+
+		obj = cls->CreateInstance();
+		if (!obj)
+		{
+			return false;
+		}
+
+		obj->CallSpawn();
+
+		return true;
+	}
+
+	return false;
+}
+
+void Game::RegisterEntity(Entity * ent, int forceSpawnId, const Dict & spawnArgsToCopy)
+{
+	entities.push_back(ent);
+
+	// Make a copy because TransferKeyValues clears the input parameter.
+	Dict copiedArgs = spawnArgsToCopy;
+	//ent->spawnArgs.TransferKeyValues(copiedArgs);
+
+	ent->spawnArgs = copiedArgs;
 }

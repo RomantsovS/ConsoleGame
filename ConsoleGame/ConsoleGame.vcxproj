@@ -115,11 +115,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="AIEntity.h" />
+    <ClInclude Include="Actor.h" />
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="Class.h" />
+    <ClInclude Include="Dict.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Misc.h" />
     <ClInclude Include="Physics.h" />
-    <ClInclude Include="PlayerEntity.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="PhysicsStatic.h" />
     <ClInclude Include="RenderModel.h" />
     <ClInclude Include="tr_local.h" />
@@ -131,13 +135,17 @@
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AIEntity.cpp" />
+    <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="AI.cpp" />
+    <ClCompile Include="Class.cpp" />
     <ClCompile Include="ConsoleGame.cpp" />
+    <ClCompile Include="Dict.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsStatic.cpp" />
-    <ClCompile Include="PlayerEntity.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderEntity.cpp" />
     <ClCompile Include="RenderModel.cpp" />
     <ClCompile Include="RenderSystem.cpp" />

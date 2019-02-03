@@ -10,11 +10,11 @@ public:
 
 	virtual ~RenderSystem() = 0;
 
-	virtual void init() = 0;
+	virtual void Init() = 0;
 
-	virtual void draw(const renderEntity_s &ent) = 0;
+	virtual void Draw(const renderEntity_s &ent) = 0;
 
-	virtual void clear() = 0;
+	virtual void Clear() = 0;
 };
 
 extern RenderSystem *renderSystem;
