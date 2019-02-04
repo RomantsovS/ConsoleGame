@@ -5,15 +5,15 @@
 
 #include "Vector2.h"
 #include "Screen.h"
-#include "RenderModel.h"
+#include "Model.h"
 
 class RenderEntity;
 
 struct renderEntity_s
 {
-	Vector2 pos;
+	RenderModel *hModel;
 
-	RenderModel model;
+	Vector2 pos;
 };
 
 class RenderWorld

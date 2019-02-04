@@ -1,7 +1,7 @@
 #include <iostream>
 #include <conio.h>
 
-#include "Game.h"
+#include "Game_local.h"
 
 int main()
 {

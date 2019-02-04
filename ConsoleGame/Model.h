@@ -15,12 +15,10 @@ class ModelPixel
 
 class RenderModel
 {
-public:
-	RenderModel();
-	
-	~RenderModel();
+public:	
+	virtual ~RenderModel();
 
-	std::list<ModelPixel> modelPixels;
+	virtual const std::list<ModelPixel> &GetJoints() const = 0;
 };
 
 #endif

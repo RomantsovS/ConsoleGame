@@ -3,6 +3,7 @@
 
 #include "Class.h"
 #include "RenderWorld.h"
+#include "Dict.h"
 #include "Physics.h"
 
 class Entity : public idClass
