@@ -125,7 +125,7 @@
     <ClInclude Include="Misc.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PhysicsStatic.h" />
+    <ClInclude Include="Physics_Static.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Model_local.h" />
     <ClInclude Include="tr_local.h" />
@@ -158,7 +158,6 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Point.cpp" />
     <ClCompile Include="Snake.cpp" />
-    <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

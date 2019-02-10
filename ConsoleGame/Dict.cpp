@@ -37,6 +37,18 @@ bool Dict::GetString(const std::string key, std::string defaultString, std::stri
 	return false;
 }
 
+int Dict::GetInt(const std::string key, const int defaultInt) const
+{
+	auto iter = args.find(key);
+
+	if (iter != args.end())
+	{
+		return std::atoi(iter->second.c_str());
+	}
+
+	return defaultInt;
+}
+
 bool Dict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const
 {
 	bool found;

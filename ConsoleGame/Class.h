@@ -13,8 +13,8 @@ public:																	\
 	static	idClass							*CreateInstance();	\
 	virtual	idTypeInfo						*GetType() const;		\
 
-#define CLASS_DECLARATION( nameofclass )											\
-	idTypeInfo nameofclass::Type( #nameofclass,									\
+#define CLASS_DECLARATION( nameofsuperclass, nameofclass )											\
+	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
 		nameofclass::CreateInstance, ( void ( idClass::* )() )&nameofclass::Spawn);	\
 	idClass *nameofclass::CreateInstance() {														\
 		try {																						\
@@ -35,8 +35,8 @@ public:																	\
 	static	idClass							*CreateInstance();	\
 	virtual	idTypeInfo						*GetType() const;		\
 
-#define ABSTRACT_DECLARATION( nameofclass )										\
-	idTypeInfo nameofclass::Type( #nameofclass,									\
+#define ABSTRACT_DECLARATION( nameofsuperclass, nameofclass )										\
+	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
 		nameofclass::CreateInstance, ( void ( idClass::* )() )&nameofclass::Spawn);	\
 	idClass *nameofclass::CreateInstance() {													\
 		return NULL;																				\
@@ -71,13 +71,14 @@ private:
 class idTypeInfo {
 public:
 	std::string classname;
-	//std::string superclass;
+	std::string superclass;
 	idClass * (*CreateInstance)();
 	void (idClass::*Spawn)();
 
+	idTypeInfo *super;
 	idTypeInfo *next;
 
-	idTypeInfo(std::string classname, idClass *(*CreateInstance)(), void (idClass::*Spawn)());
+	idTypeInfo(std::string classname, std::string superclass, idClass *(*CreateInstance)(), void (idClass::*Spawn)());
 	
 	~idTypeInfo();
 

@@ -1,6 +1,6 @@
 #include "AI.h"
 
-CLASS_DECLARATION(AI)
+CLASS_DECLARATION(Actor, AI)
 
 AI::AI()
 {

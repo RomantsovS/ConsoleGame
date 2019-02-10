@@ -1,9 +1,6 @@
 #include "Physics.h"
 
-Physics::Physics()
-{
-}
-
+ABSTRACT_DECLARATION(idClass, Physics)
 
 Physics::~Physics()
 {

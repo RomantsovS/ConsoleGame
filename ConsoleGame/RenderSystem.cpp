@@ -1,4 +1,5 @@
 #include "tr_local.h"
+#include "Game_local.h"
 
 RenderSystemLocal tr;
 RenderSystem * renderSystem = &tr;
@@ -21,11 +22,11 @@ RenderSystemLocal::~RenderSystemLocal()
 
 void RenderSystemLocal::Init()
 {
-	height = 20;
-	width = 20;
-
 	borderHeight = 1;
 	borderWidth = 1;
+
+	height = gameLocal.GetHeight() + borderHeight * 2;
+	width = gameLocal.GetWidth() + borderWidth * 2;
 
 	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
 
@@ -34,7 +35,12 @@ void RenderSystemLocal::Init()
 
 void RenderSystemLocal::Draw(const renderEntity_s &ent)
 {
-	
+	auto pixels = ent.hModel->GetJoints();
+
+	for (auto pixelIter = pixels.cbegin(); pixelIter != pixels.cend(); ++pixelIter)
+	{
+		screen.set(Vector2(borderHeight, borderWidth) + ent.origin + pixelIter->origin, pixelIter->screenPixel);
+	}
 }
 
 void RenderSystemLocal::Display()

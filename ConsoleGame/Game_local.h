@@ -8,14 +8,20 @@
 
 extern RenderWorld *gameRenderWorld;
 
+const int GENTITYNUM_BITS = 12;
+const int MAX_GENTITIES = 1 << GENTITYNUM_BITS;
+const int ENTITYNUM_NONE = MAX_GENTITIES - 1;
+
 class GameLocal : public Game
 {
 public:
+	int framenum;
+	int time;					// in msec
+	int	previousTime;			// time in msec of last frame
+
 	~GameLocal();
 
 	virtual void Init();
-
-	void AddObject(Entity *object);
 
 	virtual bool IsGameRunning() const { return gameRunning; }
 
@@ -33,9 +39,12 @@ public:
 	bool SpawnEntityDef(const Dict &args);
 
 	void RegisterEntity(Entity *ent, int forceSpawnId, const Dict & spawnArgsToCopy);
-	//void UnregisterEntity(Entity *ent);
+	void UnregisterEntity(Entity *ent);
 
 	const Dict &GetSpawnArgs() const { return spawnArgs; }
+
+	size_t GetHeight() { return height; }
+	size_t GetWidth() { return width; }
 private:
 	void BreakTime();
 
@@ -51,7 +60,7 @@ private:
 	RenderWorld *renderWorld;
 
 	//std::shared_ptr<Snake> snake;
-	std::list<Entity*> entities;
+	std::vector<Entity*> entities;
 	//std::vector<std::shared_ptr<EntityBase>> collideObjects;
 
 	Dict spawnArgs;

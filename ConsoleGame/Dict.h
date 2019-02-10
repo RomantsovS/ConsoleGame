@@ -19,6 +19,8 @@ public:
 
 	bool GetString(const std::string key, const std::string defaultString, std::string *out) const;
 
+	int	GetInt(const std::string key, const int defaultInt = 0) const;
+
 	bool GetVector(const std::string key, std::string defaultString, Vector2 &out) const;
 private:
 	std::map<std::string, std::string> args;

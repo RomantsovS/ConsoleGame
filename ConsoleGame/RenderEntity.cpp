@@ -1,25 +1,14 @@
 #include "tr_local.h"
 
-RenderEntity::RenderEntity()
-{
-}
-
 RenderEntity::~RenderEntity()
 {
 }
 
 RenderEntityLocal::RenderEntityLocal()
 {
+	index = 0;
 }
 
 RenderEntityLocal::~RenderEntityLocal()
-{
-}
-
-void RenderEntityLocal::init()
-{
-}
-
-void RenderEntityLocal::think()
 {
 }

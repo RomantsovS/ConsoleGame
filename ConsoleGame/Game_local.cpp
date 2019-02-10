@@ -1,5 +1,6 @@
 #include <conio.h>
 #include <iostream>
+#include <ctime>
 
 #include "Game_local.h"
 #include "Class.h"
@@ -18,8 +19,8 @@ void GameLocal::Init()
 {
 	idClass::Init();
 
-	height = 20;
-	width = 20;
+	height = 10;
+	width = 50;
 
 	delayMilliseconds = 100;
 
@@ -36,7 +37,7 @@ void GameLocal::Init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	rand_eng.seed(static_cast<unsigned>(time(0)));
+	rand_eng.seed(static_cast<unsigned>(std::time(0)));
 
 	renderSystem->Init();
 
@@ -56,13 +57,6 @@ void GameLocal::Init()
 	AddRandomPoint();
 
 	gameRunning = true;
-}
-
-void GameLocal::AddObject(Entity *ent)
-{
-	entities.push_back(ent);
-
-	gameRenderWorld->AddEntity(ent->getRenderEntity());
 }
 
 void GameLocal::Frame()
@@ -166,13 +160,16 @@ void GameLocal::BreakTime()
 
 void GameLocal::AddRandomPoint()
 {
-	Vector2 pos(GetRandomValue(0U, height), GetRandomValue(0U, width));
+	Vector2 origin(GetRandomValue(0U, width - 1), GetRandomValue(0U, height - 1));
+	Vector2 axis(0, 0);
 
 	Dict args;
 
 	args.Set("classname", "StaticEntity");
 	args.Set("spawnclass", "StaticEntity");
-	args.Set("pos", pos.ToString());
+	args.Set("origin", origin.ToString());
+	args.Set("axis", axis.ToString());
+	args.Set("color", std::to_string(GetRandomColor()));
 
 	SpawnEntityDef(args);
 
@@ -311,4 +308,14 @@ void GameLocal::RegisterEntity(Entity * ent, int forceSpawnId, const Dict & spaw
 	//ent->spawnArgs.TransferKeyValues(copiedArgs);
 
 	ent->spawnArgs = copiedArgs;
+}
+
+void GameLocal::UnregisterEntity(Entity * ent)
+{
+	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent))
+	{
+		entities[ent->entityNumber] = NULL;
+
+		ent->entityNumber = ENTITYNUM_NONE;
+	}
 }

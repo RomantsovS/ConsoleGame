@@ -1,6 +1,6 @@
 #include "Misc.h"
 
-CLASS_DECLARATION(StaticEntity)
+CLASS_DECLARATION(Entity, StaticEntity)
 
 StaticEntity::StaticEntity()
 {
@@ -16,4 +16,5 @@ void StaticEntity::Spawn()
 
 void StaticEntity::Think()
 {
+	Entity::Think();
 }

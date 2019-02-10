@@ -1,6 +1,6 @@
 #include "Player.h"
 
-CLASS_DECLARATION(Player)
+CLASS_DECLARATION(Actor, Player)
 
 Player::Player()
 {

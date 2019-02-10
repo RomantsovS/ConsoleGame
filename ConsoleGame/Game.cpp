@@ -6,5 +6,8 @@ void GameEdit::ParseSpawnArgsToRenderEntity(const Dict * args, renderEntity_s * 
 {
 	renderEntity->hModel = new RenderModelStatic;
 
-	args->GetVector("origin", "0 0", renderEntity->pos);
+	args->GetVector("origin", "0 0", renderEntity->origin);
+	args->GetVector("axis", "0 0", renderEntity->axis);
+
+	renderEntity->hModel->SetColor(static_cast<Screen::ConsoleColor>(args->GetInt("color", 15)));
 }

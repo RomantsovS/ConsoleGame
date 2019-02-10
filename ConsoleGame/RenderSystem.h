@@ -12,6 +12,9 @@ public:
 
 	virtual void Init() = 0;
 
+	virtual void SetHeight(size_t h) = 0;
+	virtual void SetWidth(size_t w) = 0;
+
 	virtual void Draw(const renderEntity_s &ent) = 0;
 
 	virtual void Clear() = 0;

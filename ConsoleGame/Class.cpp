@@ -2,7 +2,7 @@
 
 static idTypeInfo *typelist = NULL;
 
-ABSTRACT_DECLARATION(idClass)
+ABSTRACT_DECLARATION(NULL, idClass)
 
 idClass::~idClass()
 {
@@ -60,7 +60,7 @@ idTypeInfo * idClass::GetClass(const std::string name)
 	if (!initialized) {
 		// idClass::Init hasn't been called yet, so do a slow lookup
 		for (c = typelist; c != NULL; c = c->next) {
-			if (c->classname != name) {
+			if (c->classname == name) {
 				return c;
 			}
 		}
@@ -93,20 +93,41 @@ idTypeInfo * idClass::GetClass(const std::string name)
 
 classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo * cls)
 {
-	//classSpawnFunc_t func;
+	classSpawnFunc_t func;
+
+	if (cls->super) {
+		func = CallSpawnFunc(cls->super);
+		if (func == cls->Spawn) {
+			// don't call the same function twice in a row.
+			// this can happen when subclasses don't have their own spawn function.
+			return func;
+		}
+	}
 
 	(this->*cls->Spawn)();
 
 	return cls->Spawn;
 }
 
-idTypeInfo::idTypeInfo(std::string classname, idClass *(*CreateInstance)(), void(idClass::* Spawn)())
+idTypeInfo::idTypeInfo(std::string classname, std::string superclass, idClass *(*CreateInstance)(), void(idClass::* Spawn)())
 {
+	idTypeInfo *type;
 	idTypeInfo **insert;
 
 	this->classname = classname;
-	this->CreateInstance = CreateInstance;
+	this->superclass = superclass;
 	this->Spawn = Spawn;
+	this->CreateInstance = CreateInstance;
+	this->super = idClass::GetClass(superclass);
+
+	// Check if any subclasses were initialized before their superclass
+	for (type = typelist; type != NULL; type = type->next) {
+		if ((type->super == NULL) && type->superclass == this->classname &&
+			type->classname != "idClass")
+		{
+			type->super = this;
+		}
+	}
 
 	// Insert sorted
 	for (insert = &typelist; *insert; insert = &(*insert)->next) {
@@ -133,6 +154,9 @@ idTypeInfo::~idTypeInfo()
 
 void idTypeInfo::Init()
 {
+	if (super) {
+		super->Init();
+	}
 }
 
 void idTypeInfo::Shutdown()

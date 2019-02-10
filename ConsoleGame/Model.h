@@ -8,7 +8,10 @@
 
 class ModelPixel
 {
-	Vector2 pos;
+public:
+	ModelPixel(Vector2 pos, Screen::Pixel pixel);
+
+	Vector2 origin;
 
 	Screen::Pixel screenPixel;
 };
@@ -19,6 +22,8 @@ public:
 	virtual ~RenderModel();
 
 	virtual const std::list<ModelPixel> &GetJoints() const = 0;
+
+	virtual void SetColor(Screen::ConsoleColor col) = 0;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-CLASS_DECLARATION(Actor)
+CLASS_DECLARATION(Entity, Actor)
 
 Actor::Actor()
 {
