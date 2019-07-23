@@ -1,19 +1,19 @@
 #include "AI.h"
 
-CLASS_DECLARATION(Actor, AI)
+CLASS_DECLARATION(idActor, idAI)
 
-AI::AI()
+idAI::idAI()
 {
 }
 
-AI::~AI()
+idAI::~idAI()
 {
 }
 
-void AI::Spawn()
+void idAI::Spawn()
 {
 }
 
-void AI::Think()
+void idAI::Think()
 {
 }

@@ -3,14 +3,14 @@
 
 #include "Actor.h"
 
-class AI : public Actor
+class idAI : public idActor
 {
 public:
-	CLASS_PROTOTYPE(AI);
+	CLASS_PROTOTYPE(idAI);
 
-	AI();
+	idAI();
 
-	virtual ~AI() override;
+	virtual ~idAI() override;
 
 	void Spawn();
 	virtual void Think() override;

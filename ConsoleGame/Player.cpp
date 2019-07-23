@@ -1,11 +1,11 @@
 #include "Player.h"
 
-CLASS_DECLARATION(Actor, Player)
+CLASS_DECLARATION(idActor, idPlayer)
 
-Player::Player()
+idPlayer::idPlayer()
 {
 }
 
-Player::~Player()
+idPlayer::~idPlayer()
 {
 }

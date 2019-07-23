@@ -2,27 +2,44 @@
 
 #include "Dict.h"
 
-Dict::Dict()
+idDict::idDict()
 {
 }
 
-Dict::Dict(const Dict & other)
+idDict::idDict(const idDict & other)
 {
 	args.clear();
 
 	args = other.args;
 }
 
-Dict::~Dict()
+idDict::~idDict()
 {
 }
 
-void Dict::Set(std::string key, std::string value)
+void idDict::Clear()
+{
+	args.clear();
+}
+
+void idDict::Set(std::string key, std::string value)
 {
 	args.insert(std::make_pair(key, value));
 }
 
-bool Dict::GetString(const std::string key, std::string defaultString, std::string *out) const
+std::string idDict::GetString(const char * key, std::string defaultString) const
+{
+	auto iter = args.find(key);
+
+	if (iter != args.end())
+	{
+		return iter->second;
+	}
+
+	return defaultString;
+}
+
+bool idDict::GetString(const std::string key, std::string defaultString, std::string *out) const
 {
 	auto iter = args.find(key);
 	
@@ -37,7 +54,17 @@ bool Dict::GetString(const std::string key, std::string defaultString, std::stri
 	return false;
 }
 
-int Dict::GetInt(const std::string key, const int defaultInt) const
+bool idDict::GetInt(const std::string key, const std::string defaultString, int & out) const
+{
+	std::string s;
+	bool found;
+
+	found = GetString(key, defaultString, &s);
+	out = atoi(s.c_str());
+	return found;
+}
+
+int idDict::GetInt(const std::string key, const int defaultInt) const
 {
 	auto iter = args.find(key);
 
@@ -49,7 +76,7 @@ int Dict::GetInt(const std::string key, const int defaultInt) const
 	return defaultInt;
 }
 
-bool Dict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const
+bool idDict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const
 {
 	bool found;
 	std::string s;

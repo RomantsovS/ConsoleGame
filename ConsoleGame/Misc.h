@@ -3,14 +3,14 @@
 
 #include "Entity.h"
 
-class StaticEntity : public Entity
+class idStaticEntity : public idEntity
 {
 public:
-	CLASS_PROTOTYPE(StaticEntity);
+	CLASS_PROTOTYPE(idStaticEntity);
 
-	StaticEntity();
+	idStaticEntity();
 
-	virtual ~StaticEntity() override;
+	virtual ~idStaticEntity() override;
 
 	void Spawn();
 	virtual void Think() override;

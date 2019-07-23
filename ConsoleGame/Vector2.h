@@ -29,6 +29,8 @@ struct Vector2
 	std::string ToString(int precision = 2) const;
 };
 
+extern Vector2 vec2_origin;
+
 inline bool operator==(const Vector2 & l, const Vector2 &r)
 {
 	return l.x == r.x && l.y == r.y;

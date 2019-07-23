@@ -2,8 +2,11 @@
 
 #include "Screen.h"
 
-Screen::Screen(pos ht, pos wd, Pixel back) : height(ht), width(wd), backgroundPixel(back), contents(new Pixel[ht * wd]), buffer(new char[ht * (wd + 1) + 1]), FPS(0)
+Screen::Screen(pos ht, pos wd, Pixel back) : height(ht), width(wd), backgroundPixel(back), FPS(0)
 {
+	contents.resize(ht * wd);
+	buffer.resize(ht * (wd + 1) + 1);
+
 	clearContents();
 }
 

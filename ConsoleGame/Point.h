@@ -20,7 +20,7 @@ protected:
 	Screen::Pixel drawPixel;
 };*/
 
-class Point : public AI
+class Point : public idAI
 {
 public:
 	Point(Vector2 position, Screen::Pixel drawPix = Screen::Pixel('*', Screen::White));

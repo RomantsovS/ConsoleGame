@@ -1,7 +1,7 @@
 #include "Physics.h"
 
-ABSTRACT_DECLARATION(idClass, Physics)
+ABSTRACT_DECLARATION(idClass, idPhysics)
 
-Physics::~Physics()
+idPhysics::~idPhysics()
 {
 }

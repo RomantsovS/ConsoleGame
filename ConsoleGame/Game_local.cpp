@@ -1,28 +1,29 @@
-#include <conio.h>
-#include <iostream>
-#include <ctime>
+#include <exception>
 
 #include "Game_local.h"
 #include "Class.h"
+#include "RenderWorld_local.h"
+#include "Common.h"
 
-RenderWorld *gameRenderWorld = NULL;
+std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
 // the rest of the engine will only reference the "game" variable, while all local aspects stay hidden
-GameLocal gameLocal;
-Game *game = &gameLocal;
+idGameLocal gameLocal;
+idGame *game = &gameLocal;
 
-GameLocal::~GameLocal()
+idGameLocal::idGameLocal()
 {
+	Clear();
 }
 
-void GameLocal::Init()
+void idGameLocal::Init()
 {
+	Clear();
+
 	idClass::Init();
 
 	height = 10;
 	width = 50;
-
-	delayMilliseconds = 100;
 
 	colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
@@ -39,82 +40,130 @@ void GameLocal::Init()
 
 	rand_eng.seed(static_cast<unsigned>(std::time(0)));
 
-	renderSystem->Init();
+	/*unsigned snakeSize = 3;
 
-	gameRenderWorld = new RenderWorldLocal();
+	Vector2 origin(GetRandomValue(0U, width - 1), GetRandomValue(0U, height - 1));
+	Vector2 axis(0, 0);
 
-	unsigned snakeSize = 3;
+	idDict args;
 
-	/*std::default_random_engine rand_eng(static_cast<unsigned>(time(0) - 1));
-	std::uniform_int_distribution<Screen::pos> u_h(0, height- snakeSize);
-	std::uniform_int_distribution<Screen::pos> u_w(0, width);*/
+	args.Set("classname", "Player");
+	args.Set("spawnclass", "Player");
+	args.Set("origin", origin.ToString());
+	args.Set("axis", axis.ToString());
+	args.Set("color", std::to_string(GetRandomColor()));
 
-	//Vector2 pos(u_h(rand_eng), u_w(rand_eng));
-
-	//snake = std::make_shared<Snake>(snakeSize, pos.h, pos.w, Screen::Pixel(' ', Screen::Black), Screen::Pixel('*', Screen::Green));
-	//addObject(snake->);
-
-	AddRandomPoint();
-
-	gameRunning = true;
+	SpawnEntityDef(args);*/
 }
 
-void GameLocal::Frame()
+/*
+===========
+idGameLocal::Shutdown
+
+  shut down the entire game
+============
+*/
+void idGameLocal::Shutdown()
 {
-	char c = 0;
 
-	lastClock = clock();
-
-	tr.Clear();
-
-	if (_kbhit())
+	if (!common)
 	{
-		c = _getch();
+		return;
+	}
 
-		switch (c)
+	MapShutdown();
+
+	idClass::Shutdown();
+
+	// free memory allocated by class objects
+	Clear();
+}
+
+void idGameLocal::InitFromNewMap(const std::string mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
+{
+	if (!mapFileName.empty())
+	{
+		MapShutdown();
+	}
+
+	gamestate = GAMESTATE_STARTUP;
+
+	gameRenderWorld = renderWorld;
+
+	LoadMap(mapName, randseed);
+
+	MapPopulate();
+
+	gamestate = GAMESTATE_ACTIVE;
+}
+
+void idGameLocal::MapShutdown()
+{
+	gamestate = GAMESTATE_SHUTDOWN;
+
+	MapClear(true);
+
+	mapFileName.clear();
+
+	gameRenderWorld = nullptr;
+
+	gamestate = GAMESTATE_NOMAP;
+}
+
+void idGameLocal::RunFrame()
+{
+	if (!gameRenderWorld)
+	{
+		return;
+	}
+
+	// let entities think
+	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
+	{
+		ent->Think();
+	}
+
+	// remove any entities that have stopped thinking
+	if (numEntitiesToDeactivate) {
+		std::shared_ptr<idEntity> next_ent;
+		for (auto ent = activeEntities.Next(); ent != nullptr; ent = next_ent)
 		{
-		case 27:
-			gameRunning = false;
-
-			tr.Clear();
-
-			std::cout << "enter Q to quit or any key to continue: ";
-
-			std::cin >> c;
-
-			while (std::cin.get() != '\n')
-				continue;
-
-			if (c == 'Q' || c == 'q')
-			{
-				gameRunning = false;
-
-				return;
+			next_ent = ent->activeNode.Next();
+			if (!ent->thinkFlags) {
+				ent->activeNode.Remove();
 			}
-
-			gameRunning = true;
-		default:
-			//onKeyPressed(c);
-			;
 		}
+		numEntitiesToDeactivate = 0;
 	}
+}
 
-	for (auto iter = entities.begin(); iter != entities.end(); ++iter)
-	{
-		(*iter)->Think();
-	}
+bool idGameLocal::Draw(int clientNum)
+{
+	gameRenderWorld->RenderScene(nullptr);
 
-	try
-	{
-		gameRenderWorld->RenderScene();
-	}
-	catch (std::exception &err)
-	{
-		gameRunning = false;
-		std::cout << err.what() << std::endl
-			<< "press ane key to continue...\n";
-		_getch();
-	}
+	return true;
+}
+
+void idGameLocal::LoadMap(const std::string mapName, int randseed)
+{
+	mapFileName = mapName;
+
+	entities.clear();
+	entities.resize(MAX_GENTITIES);
+	activeEntities.Clear();
+	numEntitiesToDeactivate = 0;
+
+	// always leave room for the max number of clients,
+	// even if they aren't all used, so numbers inside that
+	// range are NEVER anything but clients
+	num_entities = MAX_CLIENTS;
+	firstFreeEntityIndex[0] = MAX_CLIENTS;
+
+	previousTime = 0;
+	time = 0;
+	framenum = 0;
+
+	spawnArgs.Clear();
 }
 
 /*
@@ -148,27 +197,73 @@ void Game::onKeyPressed(char c)
 	}
 	}
 }*/
-
-void GameLocal::BreakTime()
+/*
+void idGameLocal::BreakTime()
 {
 	clock_t temp;
 	temp = clock() + delayMilliseconds * CLOCKS_PER_SEC / 1000;
 	while (clock() < temp)
 	{
 	}
+}*/
+
+void idGameLocal::Clear()
+{
+	entities.clear();
+	entities.resize(MAX_GENTITIES);
+	firstFreeEntityIndex[0] = 0;
+	firstFreeEntityIndex[1] = ENTITYNUM_FIRST_NON_REPLICATED;
+	num_entities = 0;
+	activeEntities.Clear();
+	numEntitiesToDeactivate = 0;
+	colors.clear();
+	spawnArgs.Clear();
+	mapFileName.clear();
+	gamestate = GAMESTATE_UNINITIALIZED;
 }
 
-void GameLocal::AddRandomPoint()
+void idGameLocal::SpawnMapEntities()
+{
+}
+
+void idGameLocal::MapPopulate()
+{
+	// parse the key/value pairs and spawn entities
+	SpawnMapEntities();
+
+	AddRandomPoint();
+
+	//AddRandomPoint();
+}
+
+void idGameLocal::MapClear(bool clearClients)
+{
+	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++)
+	{
+		auto ent = entities[i];
+
+		if (ent)
+		{
+			ent->activeNode.SetOwner(nullptr);
+			gameLocal.UnregisterEntity(ent);
+			ent->GetPhysics()->SetSelf(nullptr);
+		}
+
+	}
+}
+
+void idGameLocal::AddRandomPoint()
 {
 	Vector2 origin(GetRandomValue(0U, width - 1), GetRandomValue(0U, height - 1));
 	Vector2 axis(0, 0);
 
-	Dict args;
+	idDict args;
 
-	args.Set("classname", "StaticEntity");
-	args.Set("spawnclass", "StaticEntity");
+	args.Set("classname", "idStaticEntity");
+	args.Set("spawnclass", "idStaticEntity");
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
+	args.Set("model", "pixel");
 	args.Set("color", std::to_string(GetRandomColor()));
 
 	SpawnEntityDef(args);
@@ -186,20 +281,6 @@ void GameLocal::AddRandomPoint()
 	//auto point = new Point(pos, Screen::Pixel('*', GetRandomColor()));
 
 	//AddObject(point);
-}
-
-void GameLocal::RemoveInactiveObjects()
-{
-	for (auto iter = entities.begin(); iter != entities.end();)
-	{
-		if (!(*iter)->isActive())
-		{
-			entities.erase(iter);
-			break;
-		}
-		else
-			++iter;
-	}
 }
 
 /*
@@ -256,7 +337,7 @@ bool Game::checkCollidePosToAllObjects(pos_type pos)
 	return true;
 }*/
 
-Screen::ConsoleColor GameLocal::GetRandomColor()
+Screen::ConsoleColor idGameLocal::GetRandomColor()
 {
 	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
 
@@ -265,11 +346,11 @@ Screen::ConsoleColor GameLocal::GetRandomColor()
 	return colors[col];
 }
 
-bool GameLocal::SpawnEntityDef(const Dict & args)
+bool idGameLocal::SpawnEntityDef(const idDict & args)
 {
 	std::string className, spawn;
 	idTypeInfo *cls;
-	idClass *obj;
+	std::shared_ptr<idClass> obj;
 
 	spawnArgs = args;
 
@@ -299,22 +380,46 @@ bool GameLocal::SpawnEntityDef(const Dict & args)
 	return false;
 }
 
-void GameLocal::RegisterEntity(Entity * ent, int forceSpawnId, const Dict & spawnArgsToCopy)
+void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy)
 {
-	entities.push_back(ent);
+	int spawn_entnum;
+
+	if (spawnCount >= (1 << (32 - GENTITYNUM_BITS))) {
+		throw std::range_error("idGameLocal::RegisterEntity: spawn count overflow");
+	}
+
+	if (!spawnArgsToCopy.GetInt("spawn_entnum", "0", spawn_entnum))
+	{
+		const int freeListType = 0;
+		const int maxEntityNum = ENTITYNUM_MAX_NORMAL;
+		int freeIndex = firstFreeEntityIndex[freeListType];
+
+		while (entities[freeIndex] && freeIndex < maxEntityNum) {
+			freeIndex++;
+		}
+		if (freeIndex >= maxEntityNum) {
+			std::range_error("no free entities");
+		}
+		spawn_entnum = freeIndex++;
+
+		firstFreeEntityIndex[freeListType] = freeIndex;
+	}
+
+	entities[spawn_entnum] = ent;
+	ent->entityNumber = spawn_entnum;
 
 	// Make a copy because TransferKeyValues clears the input parameter.
-	Dict copiedArgs = spawnArgsToCopy;
+	idDict copiedArgs = spawnArgsToCopy;
 	//ent->spawnArgs.TransferKeyValues(copiedArgs);
 
 	ent->spawnArgs = copiedArgs;
 }
 
-void GameLocal::UnregisterEntity(Entity * ent)
+void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
 {
 	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent))
 	{
-		entities[ent->entityNumber] = NULL;
+		entities[ent->entityNumber] = nullptr;
 
 		ent->entityNumber = ENTITYNUM_NONE;
 	}

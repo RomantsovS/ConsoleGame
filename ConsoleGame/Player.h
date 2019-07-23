@@ -3,14 +3,14 @@
 
 #include "Actor.h"
 
-class Player : public Actor	
+class idPlayer : public idActor	
 {
 public:
 	CLASS_PROTOTYPE(idPlayer);
 
-	Player();
+	idPlayer();
 
-	~Player();
+	~idPlayer();
 };
 
 #endif

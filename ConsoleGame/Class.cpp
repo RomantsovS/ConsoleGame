@@ -46,6 +46,13 @@ void idClass::Init()
 
 void idClass::Shutdown()
 {
+	idTypeInfo	*c;
+
+	for (c = typelist; c != NULL; c = c->next) {
+		c->Shutdown();
+	}
+	types.clear();
+
 	initialized = false;
 }
 
@@ -91,6 +98,21 @@ idTypeInfo * idClass::GetClass(const std::string name)
 	return NULL;
 }
 
+/*
+================
+idClass::GetClassname
+
+Returns the text classname of the object.
+================
+*/
+const std::string idClass::GetClassname() const
+{
+	idTypeInfo *type;
+
+	type = GetType();
+	return type->classname;
+}
+
 classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo * cls)
 {
 	classSpawnFunc_t func;
@@ -109,7 +131,7 @@ classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo * cls)
 	return cls->Spawn;
 }
 
-idTypeInfo::idTypeInfo(std::string classname, std::string superclass, idClass *(*CreateInstance)(), void(idClass::* Spawn)())
+idTypeInfo::idTypeInfo(std::string classname, std::string superclass, std::shared_ptr<idClass> (*CreateInstance)(), void(idClass::* Spawn)())
 {
 	idTypeInfo *type;
 	idTypeInfo **insert;

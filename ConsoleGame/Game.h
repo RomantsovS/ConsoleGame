@@ -1,33 +1,46 @@
-#ifndef Game_H
-#define Game_H
+#ifndef GAME_H
+#define GAME_H
 
-#include <list>
-#include <ctime>
-#include <random>
+//#include <list>
+//#include <ctime>
+//#include <random>
 
 #include "Entity.h"
-#include "tr_local.h"
-#include "Class.h"
+//#include "tr_local.h"
+//#include "Class.h"
 #include "Dict.h"
 
-class Game
+class idGame
 {
 public:
-	virtual ~Game() {}
+	virtual ~idGame() {}
 
+	// Initialize the game for the first time.
 	virtual void Init() = 0;
+
+	// Shut down the entire game.
+	virtual void Shutdown() = 0;
+
+	// Loads a map and spawns all the entities.
+	virtual void InitFromNewMap(const std::string mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
+
+	// Runs a game frame, may return a session command for level changing, etc
+	virtual void RunFrame() = 0;
+
+	// Makes rendering and sound system calls to display for a given clientNum.
+	virtual bool Draw(int clientNum) = 0;
 };
 
-extern Game *game;
+extern idGame *game;
 
-class GameEdit
+class idGameEdit
 {
 public:
-	virtual ~GameEdit() {}
+	virtual ~idGameEdit() {}
 
-	virtual void ParseSpawnArgsToRenderEntity(const Dict *args, renderEntity_s *renderEntity);
+	virtual void ParseSpawnArgsToRenderEntity(const idDict *args, renderEntity_t *renderEntity);
 };
 
-extern GameEdit *gameEdit;
+extern idGameEdit *gameEdit;
 
 #endif

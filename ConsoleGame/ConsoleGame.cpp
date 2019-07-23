@@ -1,16 +1,18 @@
 #include <iostream>
 #include <conio.h>
 
-#include "Game_local.h"
+#include "Common_local.h"
 
-int main()
+int main(int argc, const char * const * argv, const char * cmdline)
 {
-	gameLocal.Init();
+	commonLocal.Init(argc, argv, cmdline);
 
-	while (gameLocal.IsGameRunning())
+	while (commonLocal.IsGameRunning())
 	{
-		gameLocal.Frame();
+		commonLocal.Frame();
 	}
+
+	commonLocal.Quit();
 
 	_getch();
 

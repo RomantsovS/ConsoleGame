@@ -1,13 +1,19 @@
 #include "Game.h"
 #include "Vector2.h"
 #include "Model_local.h"
+#include "ModelManager.h"
 
-void GameEdit::ParseSpawnArgsToRenderEntity(const Dict * args, renderEntity_s * renderEntity)
+void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict * args, renderEntity_t * renderEntity)
 {
-	renderEntity->hModel = new RenderModelStatic;
+	auto temp = args->GetString("model");
+
+	if (!temp.empty())
+	{
+		if (!renderEntity->hModel) {
+			renderEntity->hModel = renderModelManager->FindModel(temp);
+		}
+	}
 
 	args->GetVector("origin", "0 0", renderEntity->origin);
 	args->GetVector("axis", "0 0", renderEntity->axis);
-
-	renderEntity->hModel->SetColor(static_cast<Screen::ConsoleColor>(args->GetInt("color", 15)));
 }

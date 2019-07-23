@@ -4,19 +4,19 @@
 #include "Class.h"
 #include "Vector2.h"
 
-class Entity;
+class idEntity;
 
-class Physics : public idClass
+class idPhysics : public idClass
 {
 public:
-	ABSTRACT_PROTOTYPE(Physics);
+	ABSTRACT_PROTOTYPE(idPhysics);
 
 	enum directions { LEFT, RIGHT, UP, DOWN };
 
-	virtual ~Physics() = 0;
+	virtual ~idPhysics() = 0;
 
 	// set pointer to entity using physics
-	virtual void SetSelf(Entity *e) = 0;
+	virtual void SetSelf(std::shared_ptr<idEntity> e) = 0;
 
 	// evaluate the physics with the given time step, returns true if the object moved
 	virtual bool Evaluate(int timeStepMSec, int endTimeMSec) = 0;

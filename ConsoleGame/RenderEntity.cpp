@@ -1,14 +1,21 @@
 #include "tr_local.h"
 
-RenderEntity::~RenderEntity()
+int viewEntity_t::count = 0;
+
+idRenderEntity::~idRenderEntity()
 {
 }
 
-RenderEntityLocal::RenderEntityLocal()
+idRenderEntityLocal::idRenderEntityLocal()
 {
+	parms.hModel = nullptr;
+
+	world = nullptr;
 	index = 0;
+	viewEntity = nullptr;
+	entityRefs = nullptr;
 }
 
-RenderEntityLocal::~RenderEntityLocal()
+idRenderEntityLocal::~idRenderEntityLocal()
 {
 }

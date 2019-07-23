@@ -1,0 +1,230 @@
+#include <list>
+#include <map>
+
+#include "Model_local.h"
+#include "tr_local.h"
+#include "ModelManager.h"
+
+class idRenderModelManagerLocal : public idRenderModelManager {
+public:
+	idRenderModelManagerLocal();
+	virtual ~idRenderModelManagerLocal() {}
+
+	// registers console commands and clears the list
+	virtual void Init();
+	virtual void Shutdown();
+	virtual void FreeModel(std::shared_ptr<idRenderModel> model);
+	virtual std::shared_ptr<idRenderModel> FindModel(const std::string &modelName);
+	virtual std::shared_ptr<idRenderModel> DefaultModel();
+	virtual void AddModel(std::shared_ptr<idRenderModel> model);
+	virtual void BeginLevelLoad();
+	virtual void EndLevelLoad();
+private:
+	std::vector<std::shared_ptr<idRenderModel>> models;
+	std::map<std::string, size_t> hash;
+
+	std::shared_ptr<idRenderModel> defaultModel;
+	bool insideLevelLoad; // don't actually load now
+
+	std::shared_ptr<idRenderModel> GetModel(const std::string &modelName, bool createIfNotFound);
+};
+
+idRenderModelManagerLocal localModelManager;
+idRenderModelManager * renderModelManager = &localModelManager;
+
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::FindModel(const std::string &modelName)
+{
+	return GetModel(modelName, true);
+}
+
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::DefaultModel()
+{
+	return defaultModel;
+}
+
+idRenderModelManagerLocal::idRenderModelManagerLocal()
+{
+	defaultModel = nullptr;
+	insideLevelLoad = false;
+}
+
+void idRenderModelManagerLocal::Init()
+{
+	insideLevelLoad = false;
+
+	// create a default model
+	auto model = std::make_shared<idRenderModelStatic>();
+	model->InitEmpty("_DEFAULT");
+	model->MakeDefaultModel();
+	model->SetLevelLoadReferenced(true);
+	defaultModel = model;
+	AddModel(model);
+}
+
+/*
+=================
+idRenderModelManagerLocal::Shutdown
+=================
+*/
+void idRenderModelManagerLocal::Shutdown()
+{
+	models.clear();
+	hash.clear();
+}
+
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::string & modelName, bool createIfNotFound)
+{
+	if (modelName.empty())
+		return nullptr;
+
+	// see if it is already present
+	auto key = modelName;
+	auto iter = hash.find(key);
+
+	if (iter != hash.end())
+	{
+		auto model = models[iter->second];
+
+		if (!model->IsLoaded())
+		{
+			// reload it if it was purged
+			model->LoadModel();
+		}
+		else if (insideLevelLoad && !model->IsLevelLoadReferenced())
+		{
+			// we are reusing a model already in memory, but
+			// touch all the materials to make sure they stay
+			// in memory as well
+			//model->TouchData();
+		}
+		model->SetLevelLoadReferenced(true);
+		return model;
+	}
+
+	std::shared_ptr<idRenderModel> model;
+
+	model = std::make_shared<idRenderModelStatic>();
+
+	//if (model)
+	{
+		model->InitFromFile(modelName);
+	}
+
+	if (!model)
+	{
+		if (!createIfNotFound)
+		{
+			return nullptr;
+		}
+
+		auto smodel = std::make_shared<idRenderModelStatic>();
+		smodel->InitEmpty(modelName);
+		smodel->MakeDefaultModel();
+
+		model = smodel;
+	}
+
+	model->SetLevelLoadReferenced(true);
+
+	AddModel(model);
+
+	return model;
+}
+
+/*
+=================
+idRenderModelManagerLocal::FreeModel
+=================
+*/
+void idRenderModelManagerLocal::FreeModel(std::shared_ptr<idRenderModel> model)
+{
+	if (!model)
+	{
+		return;
+	}
+	if (std::dynamic_pointer_cast<idRenderModelStatic>(model))
+	{
+		std::logic_error("idRenderModelManager::FreeModel: model " + model->Name() + " is not a static model");
+		return;
+	}
+	if (model == defaultModel)
+	{
+		std::logic_error("idRenderModelManager::FreeModel: can't free the default model");
+		return;
+	}
+
+	R_CheckForEntityDefsUsingModel(model);
+
+	model = nullptr;
+}
+
+void idRenderModelManagerLocal::AddModel(std::shared_ptr<idRenderModel> model)
+{
+	models.push_back(model);
+
+	hash[model->Name()] = models.size() - 1;
+}
+
+/*
+=================
+idRenderModelManagerLocal::BeginLevelLoad
+=================
+*/
+void idRenderModelManagerLocal::BeginLevelLoad()
+{
+	insideLevelLoad = true;
+
+	for (auto &model : models)
+	{
+		// always reload all models 
+		if (model->IsReloadable()) {
+			R_CheckForEntityDefsUsingModel(model);
+			model->PurgeModel();
+		}
+	}
+}
+
+/*
+=================
+idRenderModelManagerLocal::EndLevelLoad
+=================
+*/
+void idRenderModelManagerLocal::EndLevelLoad()
+{
+	insideLevelLoad = false;
+
+	int	purgeCount = 0;
+	int	keepCount = 0;
+	int	loadCount = 0;
+
+	// purge any models not touched
+	for (auto &model : models)
+	{
+		if (!model->IsLevelLoadReferenced() && model->IsLoaded() && model->IsReloadable()) {
+
+			//			common->Printf( "purging %s\n", model->Name() );
+
+			purgeCount++;
+
+			R_CheckForEntityDefsUsingModel(model);
+
+			model->PurgeModel();
+
+		}
+		else
+		{
+			//			common->Printf( "keeping %s\n", model->Name() );
+
+			keepCount++;
+		}
+	}
+
+	// load any new ones
+	for (auto &model : models)
+	{
+		if (model->IsLevelLoadReferenced() && !model->IsLoaded() && model->IsReloadable()) {
+			loadCount++;
+			model->LoadModel();
+		}
+	}
+}

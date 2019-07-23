@@ -1,60 +1,71 @@
 #include "tr_local.h"
 #include "Game_local.h"
+#include "RenderWorld_local.h"
+#include "ModelManager.h"
 
-RenderSystemLocal tr;
-RenderSystem * renderSystem = &tr;
+idRenderSystemLocal tr;
+idRenderSystem * renderSystem = &tr;
 
-RenderSystem::RenderSystem()
+idRenderSystem::idRenderSystem()
 {
 }
 
-RenderSystem::~RenderSystem()
+idRenderSystem::~idRenderSystem()
 {
 }
 
-RenderSystemLocal::RenderSystemLocal()
+idRenderSystemLocal::idRenderSystemLocal()
+{
+	Clear();
+}
+
+idRenderSystemLocal::~idRenderSystemLocal()
 {
 }
 
-RenderSystemLocal::~RenderSystemLocal()
+std::shared_ptr<idRenderWorld> idRenderSystemLocal::AllocRenderWorld()
 {
+	auto rw = std::make_shared<idRenderWorldLocal>();
+	worlds.push_back(rw);
+	return std::dynamic_pointer_cast<idRenderWorld>(rw);
 }
 
-void RenderSystemLocal::Init()
+void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 {
-	borderHeight = 1;
-	borderWidth = 1;
+	auto iter = std::find(worlds.begin(), worlds.end(), rw);
 
-	height = gameLocal.GetHeight() + borderHeight * 2;
-	width = gameLocal.GetWidth() + borderWidth * 2;
-
-	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
-
-	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
+	if (iter != worlds.end())
+		worlds.erase(iter);
 }
 
-void RenderSystemLocal::Draw(const renderEntity_s &ent)
+void idRenderSystemLocal::Draw(const renderEntity_t &ent)
 {
-	auto pixels = ent.hModel->GetJoints();
+	/*auto pixels = ent.hModel->
 
 	for (auto pixelIter = pixels.cbegin(); pixelIter != pixels.cend(); ++pixelIter)
 	{
 		screen.set(Vector2(borderHeight, borderWidth) + ent.origin + pixelIter->origin, pixelIter->screenPixel);
-	}
+	}*/
 }
 
-void RenderSystemLocal::Display()
+void idRenderSystemLocal::Display()
 {
 	screen.display();
 }
 
-void RenderSystemLocal::Clear()
+void idRenderSystemLocal::Clear()
 {
-	system("cls");
+	frameCount = 0;
+	viewCount = 0;
+
+	if(viewDef)
+		viewDef->renderWorld = nullptr;
+
 	screen.clear();
+	worlds.clear();
 }
 
-void RenderSystemLocal::FillBorder()
+void idRenderSystemLocal::FillBorder()
 {
 	for (size_t i = 0; i < height; ++i)
 	{
@@ -73,4 +84,11 @@ void RenderSystemLocal::FillBorder()
 		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
 			screen.set(i, j, borderPixel);
 	}
+}
+
+void idRenderSystemLocal::ClearScreen()
+{
+	system("cls");
+
+	screen.clear();
 }

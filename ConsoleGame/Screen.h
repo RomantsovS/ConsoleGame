@@ -66,10 +66,10 @@ public:
 private:
 	pos height, width;
 	Pixel backgroundPixel;
-	char *buffer;
+	std::vector<char> buffer;
 	size_t FPS;
 
-	Pixel *contents;
+	std::vector<Pixel> contents;
 
 	void clearContents();
 };

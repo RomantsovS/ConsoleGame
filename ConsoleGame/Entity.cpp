@@ -1,49 +1,148 @@
 #include "Entity.h"
 #include "Game_local.h"
+#include "ModelManager.h"
 
-ABSTRACT_DECLARATION(idClass, Entity)
+ABSTRACT_DECLARATION(idClass, idEntity)
 
-Entity::Entity()
+idEntity::idEntity() :
+	originDelta(vec2_origin)
 {
+	entityNumber = ENTITYNUM_NONE;
+	entityDefNumber = -1;
+
+	thinkFlags = 0;
+
+	physics = nullptr;
+
 	modelDefHandle = -1;
 }
 
-Entity::~Entity()
+idEntity::~idEntity()
 {
+	if (thinkFlags) {
+		BecomeInactive(thinkFlags);
+	}
+	activeNode.Remove();
+
 	// we have to set back the default physics object before unbinding because the entity
 	// specific physics object might be an entity variable and as such could already be destroyed.
-	SetPhysics(NULL);
-
-	gameLocal.UnregisterEntity(this);
+	SetPhysics(nullptr);
 }
 
-void Entity::Spawn()
+void idEntity::Spawn()
 {
+	std::string temp;
 	Vector2 origin;
 	Vector2 axis;
 
-	gameLocal.RegisterEntity(this, -1, gameLocal.GetSpawnArgs());
+	activeNode.SetOwner(shared_from_this());
+
+	gameLocal.RegisterEntity(shared_from_this(), -1, gameLocal.GetSpawnArgs());
 
 	// parse static models the same way the editor display does
 	gameEdit->ParseSpawnArgsToRenderEntity(&spawnArgs, &renderEntity);
+
+	// every object will have a unique name
+	temp = spawnArgs.GetString("name",
+		GetClassname() + spawnArgs.GetString("classname") + std::to_string(entityNumber));
+	SetName(temp);
 
 	InitDefaultPhysics(origin, axis);
 
 	origin = renderEntity.origin;
 	axis = renderEntity.axis;
+
+	SetOrigin(origin);
+	//SetAxis(axis);
+
+	temp = spawnArgs.GetString("model");
+	if (!temp.empty()) {
+		SetModel(temp);
+
+		renderEntity.hModel->SetColor(static_cast<Screen::ConsoleColor>(spawnArgs.GetInt("color", 15)));
+	}
 }
 
-void Entity::Think()
+/*
+================
+idEntity::SetName
+================
+*/
+void idEntity::SetName(const std::string newname)
+{
+	name = newname;
+}
+
+/*
+================
+idEntity::GetName
+================
+*/
+const std::string idEntity::GetName() const
+{
+	return name;
+}
+
+void idEntity::Think()
 {
 	RunPhysics();
 	Present();
 }
+/*
+================
+idEntity::IsActive
+================
+*/
+bool idEntity::IsActive() const
+{
+	return activeNode.InList();
+}
 
-void Entity::Present()
+/*
+================
+idEntity::BecomeActive
+================
+*/
+void idEntity::BecomeActive(int flags)
+{
+	int oldFlags = thinkFlags;
+	thinkFlags |= flags;
+	if (thinkFlags) {
+		if (!IsActive()) {
+			activeNode.AddToEnd(gameLocal.activeEntities);
+		}
+		else if (!oldFlags) {
+			// we became inactive this frame, so we have to decrease the count of entities to deactivate
+			gameLocal.numEntitiesToDeactivate--;
+		}
+	}
+}
+
+/*
+================
+idEntity::BecomeInactive
+================
+*/
+void idEntity::BecomeInactive(int flags)
+{
+	if (thinkFlags) {
+		thinkFlags &= ~flags;
+		if (!thinkFlags && IsActive()) {
+			gameLocal.numEntitiesToDeactivate++;
+		}
+	}
+
+	if ((flags & TH_PHYSICS))
+	{
+		BecomeActive(TH_UPDATEVISUALS);
+	}
+}
+
+void idEntity::Present()
 {
 	/*if (!gameLocal.isNewFrame) {
 		return;
-	}
+	}*/
 
 	// don't present to the renderer if the entity hasn't changed
 	if (!(thinkFlags & TH_UPDATEVISUALS)) {
@@ -52,7 +151,7 @@ void Entity::Present()
 	BecomeInactive(TH_UPDATEVISUALS);
 
 	// camera target for remote render views
-	if (cameraTarget && gameLocal.InPlayerPVS(this)) {
+	/*if (cameraTarget && gameLocal.InPlayerPVS(this)) {
 		renderEntity.remoteRenderView = cameraTarget->GetRenderView();
 	}
 
@@ -62,30 +161,40 @@ void Entity::Present()
 	}*/
 
 	// add to refresh list
-	if (modelDefHandle == -1) {
+	if (modelDefHandle == -1)
+	{
 		modelDefHandle = gameRenderWorld->AddEntityDef(&renderEntity);
 	}
-	else {
+	else
+	{
 		gameRenderWorld->UpdateEntityDef(modelDefHandle, &renderEntity);
 	}
 }
 
-renderEntity_s * Entity::GetRenderEntity()
+renderEntity_t * idEntity::GetRenderEntity()
 {
 	return &renderEntity;
 }
 
-void Entity::UpdateVisuals()
+void idEntity::SetModel(std::string modelname)
+{
+	renderEntity.hModel = renderModelManager->FindModel(modelname);
+}
+
+void idEntity::UpdateVisuals()
 {
 	UpdateModel();
 }
 
-void Entity::UpdateModel()
+void idEntity::UpdateModel()
 {
 	UpdateModelTransform();
+
+	// ensure that we call Present this frame
+	BecomeActive(TH_UPDATEVISUALS);
 }
 
-void Entity::UpdateModelTransform()
+void idEntity::UpdateModelTransform()
 {
 	Vector2 origin;
 	Vector2 axis;
@@ -96,19 +205,29 @@ void Entity::UpdateModelTransform()
 	}
 	else {
 		// Add the deltas here, used for projectiles in MP. These deltas should only affect the visuals.
-		renderEntity.axis = GetPhysics()->GetAxis() * axisDelta;
+		//renderEntity.axis = GetPhysics()->GetAxis() * axisDelta;
 		renderEntity.origin = GetPhysics()->GetOrigin() + originDelta;
 	}
 }
 
-void Entity::SetColor(const Screen::ConsoleColor & color)
+void idEntity::SetColor(const Screen::ConsoleColor & color)
 {
 	renderEntity.hModel->SetColor(color);
 
 	UpdateVisuals();
 }
 
-void Entity::SetPhysics(Physics * phys)
+/*
+================
+idEntity::UpdateAnimationControllers
+================
+*/
+bool idEntity::UpdateAnimationControllers() {
+	// any ragdoll and IK animation controllers should be updated here
+	return false;
+}
+
+void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys)
 {
 	// clear any contacts the current physics object has
 	/*if (physics) {
@@ -127,20 +246,29 @@ void Entity::SetPhysics(Physics * phys)
 	//physics->SetMaster(bindMaster, fl.bindOrientated);
 }
 
-Physics * Entity::GetPhysics() const
+std::shared_ptr<idPhysics> idEntity::GetPhysics() const
 {
 	return physics;
 }
 
-void Entity::RestorePhysics(Physics * phys)
+void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys)
 {
 	physics = phys;
 }
 
-bool Entity::RunPhysics()
+bool idEntity::RunPhysics()
 {
-	Entity *part = nullptr;
+	idEntity *part = nullptr;
 	bool moved;
+
+	// don't run physics if not enabled
+	if (!(thinkFlags & TH_PHYSICS)) {
+		// however do update any animation controllers
+		if (UpdateAnimationControllers()) {
+			BecomeActive(TH_ANIMATE);
+		}
+		return false;
+	}
 
 	const int startTime = gameLocal.previousTime;
 	const int endTime = gameLocal.time;
@@ -169,12 +297,31 @@ bool Entity::RunPhysics()
 	return false;
 }
 
-bool Entity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis)
+void idEntity::SetOrigin(const Vector2 & org)
+{
+	GetPhysics()->SetOrigin(org);
+
+	UpdateVisuals();
+}
+
+void idEntity::SetAxis(const Vector2 & axis)
+{
+	/*if (GetPhysics()->IsType(Physics_Actor::Type)) {
+		static_cast<Actor *>(this)->viewAxis = axis;
+	}
+	else {*/
+		GetPhysics()->SetAxis(axis);
+	//}
+
+	UpdateVisuals();
+}
+
+bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis)
 {
 	return false;
 }
 
-void Entity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
+void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 {
 	/*const char *temp;
 	idClipModel *clipModel = NULL;
@@ -238,15 +385,16 @@ void Entity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 		}
 	}*/
 
-	defaultPhysicsObj.SetSelf(this);
+	defaultPhysicsObj = std::make_shared< idPhysics_Static>();
+	defaultPhysicsObj->SetSelf(shared_from_this());
 	//defaultPhysicsObj.SetClipModel(clipModel, 1.0f);
-	defaultPhysicsObj.SetOrigin(origin);
-	defaultPhysicsObj.SetAxis(axis);
+	defaultPhysicsObj->SetOrigin(origin);
+	defaultPhysicsObj->SetAxis(axis);
 
-	physics = &defaultPhysicsObj;
+	physics = defaultPhysicsObj;
 }
 
-void Entity::UpdateFromPhysics(bool moveBack)
+void idEntity::UpdateFromPhysics(bool moveBack)
 {
 	/*if (IsType(Actor::Type)) {
 		Actor *actor = static_cast<Actor*>(this);
@@ -267,7 +415,7 @@ void Entity::UpdateFromPhysics(bool moveBack)
 	UpdateVisuals();
 }
 
-int Entity::GetPhysicsTimeStep() const
+int idEntity::GetPhysicsTimeStep() const
 {
 	return gameLocal.time - gameLocal.previousTime;
 }

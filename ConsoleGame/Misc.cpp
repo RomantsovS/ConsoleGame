@@ -1,20 +1,20 @@
 #include "Misc.h"
 
-CLASS_DECLARATION(Entity, StaticEntity)
+CLASS_DECLARATION(idEntity, idStaticEntity)
 
-StaticEntity::StaticEntity()
+idStaticEntity::idStaticEntity()
 {
 }
 
-StaticEntity::~StaticEntity()
+idStaticEntity::~idStaticEntity()
 {
 }
 
-void StaticEntity::Spawn()
+void idStaticEntity::Spawn()
 {
 }
 
-void StaticEntity::Think()
+void idStaticEntity::Think()
 {
-	Entity::Think();
+	idEntity::Think();
 }

@@ -3,7 +3,7 @@
 
 #include "Physics.h"
 
-class Entity;
+class idEntity;
 
 struct staticPState_s
 {
@@ -13,14 +13,14 @@ struct staticPState_s
 	Vector2	localAxis;
 };
 
-class Physics_Static : public Physics
+class idPhysics_Static : public idPhysics
 {
 public:
-	Physics_Static();
+	idPhysics_Static();
 	
-	~Physics_Static();
+	~idPhysics_Static();
 
-	void SetSelf(Entity *e) override;
+	void SetSelf(std::shared_ptr<idEntity> e) override;
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 
@@ -29,8 +29,8 @@ public:
 
 	void Activate() override;
 
-	void SaveState();
-	void RestoreState();
+	void SaveState() override;
+	void RestoreState() override;
 
 	void SetOrigin(const Vector2 &newOrigin, int id = -1) override;
 	void SetAxis(const Vector2 &newAxis, int id = -1) override;
@@ -42,7 +42,7 @@ public:
 	const Vector2 &	GetAxis(int id = 0) const override;
 protected:
 protected:
-	Entity * self;					// entity using this physics object
+	std::shared_ptr<idEntity> self; // entity using this physics object
 	staticPState_s current;			// physics state
 };
 

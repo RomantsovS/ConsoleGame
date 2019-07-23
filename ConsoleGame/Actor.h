@@ -3,14 +3,14 @@
 
 #include "Entity.h"
 
-class Actor : public Entity
+class idActor : public idEntity
 {
 public:
-	CLASS_PROTOTYPE(Actor);
+	CLASS_PROTOTYPE(idActor);
 
-	Actor();
+	idActor();
 
-	virtual ~Actor() override;
+	virtual ~idActor() override;
 
 	void Spawn();
 	virtual void Think() override;

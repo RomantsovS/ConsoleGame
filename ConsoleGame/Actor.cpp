@@ -1,19 +1,19 @@
 #include "Actor.h"
 
-CLASS_DECLARATION(Entity, Actor)
+CLASS_DECLARATION(idEntity, idActor)
 
-Actor::Actor()
+idActor::idActor()
 {
 }
 
-Actor::~Actor()
+idActor::~idActor()
 {
 }
 
-void Actor::Spawn()
+void idActor::Spawn()
 {
 }
 
-void Actor::Think()
+void idActor::Think()
 {
 }
