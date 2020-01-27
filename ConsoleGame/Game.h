@@ -22,7 +22,7 @@ public:
 	virtual void Shutdown() = 0;
 
 	// Loads a map and spawns all the entities.
-	virtual void InitFromNewMap(const std::string mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
+	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
 
 	// Runs a game frame, may return a session command for level changing, etc
 	virtual void RunFrame() = 0;

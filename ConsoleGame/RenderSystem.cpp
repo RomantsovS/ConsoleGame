@@ -2,6 +2,7 @@
 #include "Game_local.h"
 #include "RenderWorld_local.h"
 #include "ModelManager.h"
+#include "sys_public.h"
 
 idRenderSystemLocal tr;
 idRenderSystem * renderSystem = &tr;
@@ -38,19 +39,10 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 		worlds.erase(iter);
 }
 
-void idRenderSystemLocal::Draw(const renderEntity_t &ent)
-{
-	/*auto pixels = ent.hModel->
-
-	for (auto pixelIter = pixels.cbegin(); pixelIter != pixels.cend(); ++pixelIter)
-	{
-		screen.set(Vector2(borderHeight, borderWidth) + ent.origin + pixelIter->origin, pixelIter->screenPixel);
-	}*/
-}
-
 void idRenderSystemLocal::Display()
 {
-	screen.display();
+	screen.display(console);
+	tr.updateFrame = false;
 }
 
 void idRenderSystemLocal::Clear()
@@ -63,6 +55,9 @@ void idRenderSystemLocal::Clear()
 
 	screen.clear();
 	worlds.clear();
+
+	updateFrame = true;
+	console.clear();
 }
 
 void idRenderSystemLocal::FillBorder()
@@ -91,4 +86,43 @@ void idRenderSystemLocal::ClearScreen()
 	system("cls");
 
 	screen.clear();
+}
+
+const int FPS_FRAMES = 6;
+
+void idRenderSystemLocal::DrawFPS()
+{
+	static clock_t previousTimes[FPS_FRAMES];
+	static int index;
+	static clock_t previous;
+
+	static clock_t prev_frame_update_time = Sys_Milliseconds();
+
+	// don't use serverTime, because that will be drifting to
+	// correct for internet lag changes, timescales, timedemos, etc
+	auto t = Sys_Milliseconds();
+	auto frameTime = t - previous;
+	previous = t;
+
+	previousTimes[index % FPS_FRAMES] = frameTime;
+	index++;
+	if (index > FPS_FRAMES) {
+		// average multiple frames together to smooth changes out a bit
+		int total = 0;
+		for (int i = 0; i < FPS_FRAMES; i++) {
+			total += previousTimes[i];
+		}
+		if (!total) {
+			total = 1;
+		}
+		int fps = 1000000 * FPS_FRAMES / total;
+		fps = (fps + 500) / 1000;
+
+		console += std::to_string(fps) + " fps, " + std::to_string(total) + " total";
+	}
+
+	if (t - prev_frame_update_time > 65) {
+		updateFrame = true;
+		prev_frame_update_time = t;
+	}
 }

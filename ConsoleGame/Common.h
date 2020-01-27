@@ -1,6 +1,14 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+extern long long com_engineHz_numerator;
+extern long long com_engineHz_denominator;
+
+// Returns the msec the frame starts on
+inline int FRAME_TO_MSEC(long long frame) {
+	return (int)((frame * com_engineHz_numerator) / com_engineHz_denominator);
+}
+
 class idCommon
 {
 public:

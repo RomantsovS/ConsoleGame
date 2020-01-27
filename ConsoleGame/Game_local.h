@@ -25,8 +25,18 @@ enum gameState_t {
 	GAMESTATE_SHUTDOWN				// inside MapShutdown().  clearing memory.
 };
 
-class idGameLocal : public idGame
-{
+struct timeState_t {
+	int					time;
+	int					previousTime;
+	int					realClientTime;
+
+	void				Set(int t, int pt/*, int rct*/) { time = t; previousTime = pt;/* realClientTime = rct;*/ };
+	void				Get(int & t, int & pt/*, int & rct*/) { t = time; pt = previousTime;/* rct = realClientTime;*/ };
+	//void				Save(idSaveGame *savefile) const { savefile->WriteInt(time); savefile->WriteInt(previousTime); savefile->WriteInt(realClientTime); }
+	//void				Restore(idRestoreGame *savefile) { savefile->ReadInt(time); savefile->ReadInt(previousTime); savefile->ReadInt(realClientTime); }
+};
+
+class idGameLocal : public idGame {
 public:
 	std::vector<std::shared_ptr<idEntity>> entities;
 	idLinkList<idEntity> activeEntities; // all thinking entities (idEntity::thinkFlags != 0)
@@ -39,6 +49,15 @@ public:
 	int time;					// in msec
 	int	previousTime;			// time in msec of last frame
 
+	timeState_t fast;
+	timeState_t slow;
+	int						selectedGroup;
+
+	virtual void SelectTimeGroup(int timeGroup);
+	virtual int GetTimeGroupTime(int timeGroup);
+
+	void ResetSlowTimeVars();
+
 	// ---------------------- Public idGame Interface -------------------
 
 	idGameLocal();
@@ -46,7 +65,7 @@ public:
 	virtual void Init() override;
 	virtual void Shutdown() override;
 
-	virtual void InitFromNewMap(const std::string mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
+	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
 	virtual void MapShutdown();
 
 	virtual void RunFrame() override;
@@ -67,7 +86,7 @@ public:
 
 	Screen::ConsoleColor GetRandomColor();
 
-	bool SpawnEntityDef(const idDict &args);
+	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> ent = nullptr);
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
@@ -80,6 +99,8 @@ private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 
 	int spawnCount;
+	
+	idDict spawnArgs;
 
 	gameState_t gamestate; // keeps track of whether we're spawning, shutting down, or normal gameplay
 
@@ -95,8 +116,6 @@ private:
 	/*void onMoveKeyPressed(SimpleObject::directions dir);
 
 	bool checkCollidePosToAllObjects(pos_type pos);*/
-
-	idDict spawnArgs;
 
 	size_t height, width;
 

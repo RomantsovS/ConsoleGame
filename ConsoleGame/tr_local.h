@@ -144,14 +144,13 @@ public:
 	void SetHeight(size_t h) { height = h; }
 	void SetWidth(size_t w) { width = w; }
 
-	virtual void Draw(const renderEntity_t &ent);
-
 	void Display();
 
 	virtual void Clear();
 
 	void FillBorder();
 	void ClearScreen();
+	void DrawFPS();
 
 	int frameCount;		// incremented every frame
 	int viewCount;		// incremented every view (twice a scene if subviewed)
@@ -162,6 +161,8 @@ public:
 	std::shared_ptr<viewDef_t> viewDef;
 
 	Screen screen;
+	bool updateFrame;
+	std::string console;
 
 	size_t height, width, borderWidth, borderHeight;
 	Screen::Pixel borderPixel;

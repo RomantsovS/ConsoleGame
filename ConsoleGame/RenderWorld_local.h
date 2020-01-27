@@ -32,7 +32,7 @@ public:
 
 	virtual ~idRenderWorldLocal();
 
-	virtual	bool InitFromMap(const std::string mapName) override;
+	virtual	bool InitFromMap(const std::string &mapName) override;
 
 	virtual	int AddEntityDef(const renderEntity_t *re) override;
 	virtual	void UpdateEntityDef(int entityHandle, const renderEntity_t *re) override;

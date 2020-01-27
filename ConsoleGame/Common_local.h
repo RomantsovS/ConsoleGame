@@ -36,7 +36,7 @@ private:
 
 	bool mapSpawned; // cleared on Stop()
 
-	clock_t lastClock;
+	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;
 
 	bool gameRunning;

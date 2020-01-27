@@ -20,6 +20,9 @@ void idRenderSystemLocal::Init()
 	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
 
 	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
+	
+	updateFrame = true;
+	console.clear();
 }
 
 /*

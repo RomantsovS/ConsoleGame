@@ -62,12 +62,11 @@ public:
 
 	void clear() { clearContents(); }
 
-	Screen &display();
+	Screen &display(const std::string &str);
 private:
 	pos height, width;
 	Pixel backgroundPixel;
 	std::vector<char> buffer;
-	size_t FPS;
 
 	std::vector<Pixel> contents;
 

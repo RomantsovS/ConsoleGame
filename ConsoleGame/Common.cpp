@@ -6,6 +6,9 @@
 #include "Game_local.h"
 #include "tr_local.h"
 
+long long com_engineHz_numerator = 100LL * 1000LL;
+long long com_engineHz_denominator = 100LL * 60LL;
+
 idCommonLocal commonLocal;
 idCommon * common = &commonLocal;
 
@@ -42,6 +45,7 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 	renderWorld = renderSystem->AllocRenderWorld();
 
 	delayMilliseconds = 100;
+	FPSupdateMilliseconds = 1000;
 
 	gameRunning = true;
 }
@@ -81,9 +85,7 @@ void idCommonLocal::Frame()
 
 	char c = 0;
 
-	lastClock = clock();
-
-	tr.ClearScreen();
+	//tr.ClearScreen();
 
 	if (_kbhit())
 	{

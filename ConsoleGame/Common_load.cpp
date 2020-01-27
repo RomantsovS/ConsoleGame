@@ -35,7 +35,23 @@ void idCommonLocal::ExecuteMapChange()
 		game->InitFromNewMap("test", renderWorld, clock());
 	//}
 
+	//if (!mapSpawnData.savegameFile)
+	{
+		// run a single frame to catch any resources that are referenced by events posted in spawn
+		/*idUserCmdMgr emptyCommandManager;
+		gameReturn_t emptyGameReturn;
+		for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
+			emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
+		}
+		if (IsClient()) {
+			game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
+		}
+		else {*/
+			game->RunFrame(/*emptyCommandManager, emptyGameReturn*/);
+		//}
+	}
+
 	renderSystem->EndLevelLoad();
 
-	//mapSpawned = true;
+	mapSpawned = true;
 }

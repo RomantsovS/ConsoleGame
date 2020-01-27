@@ -76,6 +76,13 @@ int idDict::GetInt(const std::string key, const int defaultInt) const
 	return defaultInt;
 }
 
+Vector2 idDict::GetVector(const std::string key, const std::string defaultString) const
+{
+	Vector2 out;
+	GetVector(key, defaultString, out);
+	return out;
+}
+
 bool idDict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const
 {
 	bool found;
@@ -97,4 +104,23 @@ bool idDict::GetVector(const std::string key, std::string defaultString, Vector2
 	is >> out.x >> out.y;
 
 	return found;
+}
+
+const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const
+{
+	map_type::const_iterator iter;
+
+	if (!lastMatch.empty())
+	{
+		iter = args.lower_bound(lastMatch);
+		++iter;
+	}
+	else
+		iter = args.lower_bound(prefix);
+
+	if (iter != args.end())
+		if(iter->first.compare(0, prefix.size(), prefix))
+			return &*iter;
+
+	return nullptr;
 }

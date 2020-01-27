@@ -55,7 +55,7 @@ A NULL or empty name will make a world without a map model, which
 is still useful for displaying a bare model
 ================ =
 */
-bool idRenderWorldLocal::InitFromMap(const std::string name)
+bool idRenderWorldLocal::InitFromMap(const std::string &name)
 {
 	// if this is an empty world, initialize manually
 	if (name.empty())

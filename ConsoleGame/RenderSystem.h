@@ -33,8 +33,6 @@ public:
 	virtual void BeginLevelLoad() = 0;
 	virtual void EndLevelLoad() = 0;
 
-	virtual void Draw(const renderEntity_t &ent) = 0;
-
 	virtual void Clear() = 0;
 };
 

@@ -19,6 +19,12 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{5ddbefa3-0f9b-4c31-9d47-aefda04fd985}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sys">
+      <UniqueIdentifier>{540226a3-9e88-461c-97b9-61045ebb5785}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sys\Win32">
+      <UniqueIdentifier>{d67fb797-8f72-4620-8caa-d9cc2774e0bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Screen.h">
@@ -92,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="LinkList.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sys_public.h">
+      <Filter>Sys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="RenderSystem_init.cpp">
       <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="win_shared.cpp">
+      <Filter>Sys\Win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,6 +14,8 @@ public:
 
 	void Spawn();
 	virtual void Think() override;
+private:
+	int spawnTime;
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 #include "Screen.h"
 
-Screen::Screen(pos ht, pos wd, Pixel back) : height(ht), width(wd), backgroundPixel(back), FPS(0)
+Screen::Screen(pos ht, pos wd, Pixel back) : height(ht), width(wd), backgroundPixel(back)
 {
 	contents.resize(ht * wd);
 	buffer.resize(ht * (wd + 1) + 1);
@@ -19,24 +19,8 @@ void Screen::init()
 	//std::cout.setf()
 }
 
-Screen& Screen::display()
+Screen& Screen::display(const std::string &str)
 {
-	static clock_t lastClock = clock();
-
-	auto curClock = clock();
-
-	static std::string str = "FPS: ";
-
-	if (curClock - lastClock >= CLOCKS_PER_SEC)
-	{
-		str = "FPS: " + std::to_string(FPS);
-
-		FPS = 0;
-		lastClock = curClock;
-	}
-	else
-		FPS++;
-
 	char *p_next_write = &buffer[0];
 
 	ConsoleColor curCol;

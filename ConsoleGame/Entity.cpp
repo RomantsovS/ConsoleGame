@@ -385,7 +385,7 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 		}
 	}*/
 
-	defaultPhysicsObj = std::make_shared< idPhysics_Static>();
+	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
 	defaultPhysicsObj->SetSelf(shared_from_this());
 	//defaultPhysicsObj.SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);

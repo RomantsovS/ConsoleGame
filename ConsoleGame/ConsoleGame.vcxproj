@@ -133,6 +133,7 @@
     <ClInclude Include="Model_local.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="RenderWorld_local.h" />
+    <ClInclude Include="sys_public.h" />
     <ClInclude Include="tr_local.h" />
     <ClInclude Include="RenderSystem.h" />
     <ClInclude Include="RenderWorld.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="tr_frontend_addmodels.cpp" />
     <ClCompile Include="tr_frontend_main.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="win_shared.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

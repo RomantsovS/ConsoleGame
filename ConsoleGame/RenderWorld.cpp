@@ -1,5 +1,6 @@
 #include "tr_local.h"
 #include "RenderWorld_local.h"
+#include "Game_local.h"
 
 idRenderWorldLocal::idRenderWorldLocal()
 {
@@ -73,6 +74,9 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	// based on the model bounds, add references in each area
 	// that may contain the updated surface
 	R_CreateEntityRefs(def);
+	
+	if(!tr.updateFrame)
+		tr.updateFrame = true;
 }
 
 /*
@@ -99,8 +103,6 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 
 	R_FreeEntityDefDerivedData(def, false, false);
 
-	//R_FreeEntityDefDerivedData(def, false, false);
-
 	// if we are playing a demo, these will have been freed
 	// in R_FreeEntityDefDerivedData(), otherwise the gui
 	// object still exists in the game
@@ -110,6 +112,11 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 
 void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderView)
 {
+	if (!tr.updateFrame)
+		return;
+
+	tr.ClearScreen();
+
 	tr.FillBorder();
 
 	auto parms = std::make_shared<viewDef_t>();

@@ -3,6 +3,12 @@
 
 #include "Entity.h"
 
+class idAttachInfo
+{
+public:
+	std::shared_ptr<idEntity> ent;
+};
+
 class idActor : public idEntity
 {
 public:
@@ -13,7 +19,10 @@ public:
 	virtual ~idActor() override;
 
 	void Spawn();
-	virtual void Think() override;
+	
+	void Attach(std::shared_ptr<idEntity> ent);
+protected:
+	std::list<idAttachInfo>	attachments;
 };
 
 #endif

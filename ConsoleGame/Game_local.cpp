@@ -79,7 +79,7 @@ void idGameLocal::Shutdown()
 	Clear();
 }
 
-void idGameLocal::InitFromNewMap(const std::string mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
+void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
 {
 	if (!mapFileName.empty())
 	{
@@ -117,6 +117,20 @@ void idGameLocal::RunFrame()
 		return;
 	}
 
+	// update the game time
+	framenum++;
+	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
+	fast.time = FRAME_TO_MSEC(framenum);
+	fast.realClientTime = fast.time;
+
+	//ComputeSlowScale();
+
+	/*slow.previousTime = slow.time;
+	slow.time += idMath::Ftoi((fast.time - fast.previousTime) * slowmoScale);
+	slow.realClientTime = slow.time;*/
+
+	SelectTimeGroup(false);
+
 	// let entities think
 	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
 	{
@@ -139,7 +153,9 @@ void idGameLocal::RunFrame()
 
 bool idGameLocal::Draw(int clientNum)
 {
+	tr.DrawFPS();
 	gameRenderWorld->RenderScene(nullptr);
+	tr.console.clear();
 
 	return true;
 }
@@ -216,10 +232,15 @@ void idGameLocal::Clear()
 	num_entities = 0;
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
+	framenum = 0;
+	previousTime = 0;
+	time = 0;
 	colors.clear();
 	spawnArgs.Clear();
 	mapFileName.clear();
 	gamestate = GAMESTATE_UNINITIALIZED;
+
+	ResetSlowTimeVars();
 }
 
 void idGameLocal::SpawnMapEntities()
@@ -346,7 +367,7 @@ Screen::ConsoleColor idGameLocal::GetRandomColor()
 	return colors[col];
 }
 
-bool idGameLocal::SpawnEntityDef(const idDict & args)
+bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity> ent)
 {
 	std::string className, spawn;
 	idTypeInfo *cls;
@@ -423,4 +444,50 @@ void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
 
 		ent->entityNumber = ENTITYNUM_NONE;
 	}
+}
+
+/*
+===========
+idGameLocal::SelectTimeGroup
+============
+*/
+void idGameLocal::SelectTimeGroup(int timeGroup) {
+	if (timeGroup) {
+		fast.Get(time, previousTime/*, realClientTime*/);
+	}
+	else {
+		slow.Get(time, previousTime/*, realClientTime*/);
+	}
+
+	selectedGroup = timeGroup;
+}
+
+/*
+===========
+idGameLocal::GetTimeGroupTime
+============
+*/
+int idGameLocal::GetTimeGroupTime(int timeGroup) {
+	if (timeGroup) {
+		return fast.time;
+	}
+	else {
+		return slow.time;
+	}
+}
+
+/*
+===========
+idGameLocal::ResetSlowTimeVars
+============
+*/
+void idGameLocal::ResetSlowTimeVars() {
+	//slowmoScale = 1.0f;
+	//slowmoState = SLOWMO_STATE_OFF;
+
+	fast.previousTime = 0;
+	fast.time = 0;
+
+	slow.previousTime = 0;
+	slow.time = 0;
 }
