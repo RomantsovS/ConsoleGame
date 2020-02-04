@@ -8,7 +8,8 @@ idEntity::idEntity() :
 	originDelta(vec2_origin)
 {
 	entityNumber = ENTITYNUM_NONE;
-	entityDefNumber = -1;
+	//entityDefNumber = -1;
+
 
 	thinkFlags = 0;
 
@@ -27,6 +28,8 @@ idEntity::~idEntity()
 	// we have to set back the default physics object before unbinding because the entity
 	// specific physics object might be an entity variable and as such could already be destroyed.
 	SetPhysics(nullptr);
+
+	FreeModelDef();
 }
 
 void idEntity::Spawn()
@@ -35,6 +38,7 @@ void idEntity::Spawn()
 	Vector2 origin;
 	Vector2 axis;
 
+	spawnNode.SetOwner(shared_from_this());
 	activeNode.SetOwner(shared_from_this());
 
 	gameLocal.RegisterEntity(shared_from_this(), -1, gameLocal.GetSpawnArgs());
@@ -59,7 +63,7 @@ void idEntity::Spawn()
 	if (!temp.empty()) {
 		SetModel(temp);
 
-		renderEntity.hModel->SetColor(static_cast<Screen::ConsoleColor>(spawnArgs.GetInt("color", 15)));
+		renderEntity.color = static_cast<Screen::ConsoleColor>(spawnArgs.GetInt("color", 15));
 	}
 }
 
@@ -181,6 +185,18 @@ void idEntity::SetModel(std::string modelname)
 	renderEntity.hModel = renderModelManager->FindModel(modelname);
 }
 
+/*
+================
+idEntity::FreeModelDef
+================
+*/
+void idEntity::FreeModelDef() {
+	if (modelDefHandle != -1) {
+		gameRenderWorld->FreeEntityDef(modelDefHandle);
+		modelDefHandle = -1;
+	}
+}
+
 void idEntity::UpdateVisuals()
 {
 	UpdateModel();
@@ -212,7 +228,7 @@ void idEntity::UpdateModelTransform()
 
 void idEntity::SetColor(const Screen::ConsoleColor & color)
 {
-	renderEntity.hModel->SetColor(color);
+	renderEntity.color = color;
 
 	UpdateVisuals();
 }

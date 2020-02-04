@@ -197,5 +197,8 @@
     <ClCompile Include="win_shared.cpp">
       <Filter>Sys\Win32</Filter>
     </ClCompile>
+    <ClCompile Include="win_cpu.cpp">
+      <Filter>Sys\Win32</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

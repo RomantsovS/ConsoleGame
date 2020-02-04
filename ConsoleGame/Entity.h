@@ -21,9 +21,15 @@ class idEntity : public idClass, public std::enable_shared_from_this<idEntity>
 {
 public:
 	int entityNumber;			// index into the entity list
-	int entityDefNumber;		// index into the entity def list
+	//int entityDefNumber;		// index into the entity def list
 
+	idLinkList<idEntity> spawnNode; // for being linked into spawnedEntities list
 	idLinkList<idEntity> activeNode; // for being linked into activeEntities list
+
+	std::string name; // name of entity
+	idDict spawnArgs; // key/value pairs used to spawn and initialize entity
+
+	int thinkFlags; // TH_? flags
 
 	ABSTRACT_PROTOTYPE(idEntity);
 
@@ -50,6 +56,7 @@ public:
 	void UpdateModel();
 	void UpdateModelTransform();
 	virtual void SetColor(const Screen::ConsoleColor &color);
+	virtual void FreeModelDef();
 
 	// animation
 	virtual bool UpdateAnimationControllers();
@@ -69,11 +76,6 @@ public:
 	void SetAxis(const Vector2 &axis);
 	// retrieves the transformation going from the physics origin/axis to the visual origin/axis
 	virtual bool GetPhysicsToVisualTransform(Vector2 &origin, Vector2 &axis);
-
-	std::string name; // name of entity
-	idDict spawnArgs;				// key/value pairs used to spawn and initialize entity
-
-	int thinkFlags; // TH_? flags
 protected:
 	renderEntity_t renderEntity;
 	int modelDefHandle;

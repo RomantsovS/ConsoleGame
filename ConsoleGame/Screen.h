@@ -3,7 +3,6 @@
 
 #include <string>
 #include <iostream>
-#include <ctime>
 #include <vector>
 #include <Windows.h>
 
@@ -15,6 +14,7 @@ public:
 
 	enum ConsoleColor
 	{
+		None = -1,
 		Black = 0,
 		Blue = 1,
 		Green = 2,
@@ -35,12 +35,13 @@ public:
 
 	struct Pixel
 	{
-		char value;
-		ConsoleColor color;
-
 		Pixel() = default;
 
 		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
+		Pixel(const Pixel &p, ConsoleColor col) : value(p.value), color(col) {}
+		
+		char value;
+		ConsoleColor color;
 	};
 
 	Screen() = default;

@@ -63,6 +63,7 @@ public:
 	// md3, md5, particles, etc
 	virtual dynamicModel_t		IsDynamicModel() const = 0;
 
+	virtual Screen::ConsoleColor GetColor() const = 0;
 	virtual void SetColor(Screen::ConsoleColor col) = 0;
 };
 

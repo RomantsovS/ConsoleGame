@@ -27,6 +27,7 @@ public:
 
 	void MakeDefaultModel();
 
+	virtual Screen::ConsoleColor GetColor() const override;
 	virtual void SetColor(Screen::ConsoleColor col) override;
 public:
 	std::vector<ModelPixel> surfaces;
@@ -36,6 +37,8 @@ protected:
 	bool purged; // eventually we will have dynamic reloading
 	bool reloadable; // if not, reloadModels won't check timestamp
 	bool levelLoadReferenced; // for determining if it needs to be freed
+private:
+	Screen::ConsoleColor color;
 };
 
 #endif

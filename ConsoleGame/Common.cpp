@@ -1,6 +1,5 @@
 #include <conio.h>
 #include <iostream>
-#include <ctime>
 
 #include "Common_local.h"
 #include "Game_local.h"

@@ -7,6 +7,8 @@ idRenderModelStatic::idRenderModelStatic()
 	purged = false;
 	reloadable = true;
 	levelLoadReferenced = false;
+
+	color = Screen::ConsoleColor::None;
 }
 
 idRenderModelStatic::~idRenderModelStatic()
@@ -122,12 +124,17 @@ void idRenderModelStatic::MakeDefaultModel()
 	surfaces.emplace_back(Vector2(), Screen::Pixel('*', Screen::ConsoleColor::White));
 }
 
+Screen::ConsoleColor idRenderModelStatic::GetColor() const {
+	return color;
+}
+
 void idRenderModelStatic::SetColor(Screen::ConsoleColor col)
 {
-	for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
+	/*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
 	{
 		iter->screenPixel.color = col;
-	}
+	}*/
+	color = col;
 }
 
 ModelPixel::ModelPixel(Vector2 origin, Screen::Pixel pixel)

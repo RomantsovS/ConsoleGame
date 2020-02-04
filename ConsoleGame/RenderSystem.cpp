@@ -92,15 +92,15 @@ const int FPS_FRAMES = 6;
 
 void idRenderSystemLocal::DrawFPS()
 {
-	static clock_t previousTimes[FPS_FRAMES];
+	static long long previousTimes[FPS_FRAMES];
 	static int index;
-	static clock_t previous;
+	static long long previous;
 
-	static clock_t prev_frame_update_time = Sys_Milliseconds();
+	static auto prev_frame_update_time = Sys_Microseconds();
 
 	// don't use serverTime, because that will be drifting to
 	// correct for internet lag changes, timescales, timedemos, etc
-	auto t = Sys_Milliseconds();
+	auto t = Sys_Microseconds();
 	auto frameTime = t - previous;
 	previous = t;
 
@@ -108,20 +108,20 @@ void idRenderSystemLocal::DrawFPS()
 	index++;
 	if (index > FPS_FRAMES) {
 		// average multiple frames together to smooth changes out a bit
-		int total = 0;
+		long long total = 0;
 		for (int i = 0; i < FPS_FRAMES; i++) {
 			total += previousTimes[i];
 		}
 		if (!total) {
 			total = 1;
 		}
-		int fps = 1000000 * FPS_FRAMES / total;
+		int fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
 		fps = (fps + 500) / 1000;
 
-		console += std::to_string(fps) + " fps, " + std::to_string(total) + " total";
+		console += std::to_string(fps) + " fps, " + std::to_string(frameTime) + " microsec last frame time";
 	}
 
-	if (t - prev_frame_update_time > 65) {
+	if (t - prev_frame_update_time > 500000) {
 		updateFrame = true;
 		prev_frame_update_time = t;
 	}

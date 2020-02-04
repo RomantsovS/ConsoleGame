@@ -15,6 +15,8 @@ struct renderEntity_t
 
 	Vector2 origin;
 	Vector2 axis;
+
+	Screen::ConsoleColor color;
 };
 
 struct renderView_t {

@@ -39,6 +39,7 @@ struct timeState_t {
 class idGameLocal : public idGame {
 public:
 	std::vector<std::shared_ptr<idEntity>> entities;
+	idLinkList<idEntity> spawnedEntities; // all spawned entities
 	idLinkList<idEntity> activeEntities; // all thinking entities (idEntity::thinkFlags != 0)
 	int numEntitiesToDeactivate; // number of entities that became inactive in current frame
 

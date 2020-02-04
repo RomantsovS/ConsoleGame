@@ -32,7 +32,7 @@ void idCommonLocal::ExecuteMapChange()
 	}
 	else
 	{*/
-		game->InitFromNewMap("test", renderWorld, clock());
+		game->InitFromNewMap("test", renderWorld, Sys_Milliseconds());
 	//}
 
 	//if (!mapSpawnData.savegameFile)

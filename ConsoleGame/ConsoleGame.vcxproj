@@ -172,6 +172,7 @@
     <ClCompile Include="tr_frontend_addmodels.cpp" />
     <ClCompile Include="tr_frontend_main.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="win_cpu.cpp" />
     <ClCompile Include="win_shared.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

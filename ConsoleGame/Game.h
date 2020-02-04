@@ -1,13 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-//#include <list>
-//#include <ctime>
-//#include <random>
-
 #include "Entity.h"
-//#include "tr_local.h"
-//#include "Class.h"
 #include "Dict.h"
 
 class idGame

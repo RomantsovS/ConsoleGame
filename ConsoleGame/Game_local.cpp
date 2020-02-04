@@ -38,22 +38,9 @@ void idGameLocal::Init()
 	colors.push_back(Screen::Yellow);
 	colors.push_back(Screen::White);
 
-	rand_eng.seed(static_cast<unsigned>(std::time(0)));
+	rand_eng.seed(static_cast<unsigned>(Sys_Time()));
 
-	/*unsigned snakeSize = 3;
-
-	Vector2 origin(GetRandomValue(0U, width - 1), GetRandomValue(0U, height - 1));
-	Vector2 axis(0, 0);
-
-	idDict args;
-
-	args.Set("classname", "Player");
-	args.Set("spawnclass", "Player");
-	args.Set("origin", origin.ToString());
-	args.Set("axis", axis.ToString());
-	args.Set("color", std::to_string(GetRandomColor()));
-
-	SpawnEntityDef(args);*/
+	gamestate = GAMESTATE_NOMAP;
 }
 
 /*
@@ -129,7 +116,13 @@ void idGameLocal::RunFrame()
 	slow.time += idMath::Ftoi((fast.time - fast.previousTime) * slowmoScale);
 	slow.realClientTime = slow.time;*/
 
-	SelectTimeGroup(false);
+	SelectTimeGroup(true);
+
+	static auto lastTimePointSpawn = time;
+	if (time - lastTimePointSpawn > 10000) {
+		lastTimePointSpawn = time;
+		AddRandomPoint();
+	}
 
 	// let entities think
 	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
@@ -153,6 +146,7 @@ void idGameLocal::RunFrame()
 
 bool idGameLocal::Draw(int clientNum)
 {
+	tr.console += std::to_string(time) + " ";
 	tr.DrawFPS();
 	gameRenderWorld->RenderScene(nullptr);
 	tr.console.clear();
@@ -166,6 +160,7 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed)
 
 	entities.clear();
 	entities.resize(MAX_GENTITIES);
+	spawnedEntities.Clear();
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
 
@@ -230,6 +225,7 @@ void idGameLocal::Clear()
 	firstFreeEntityIndex[0] = 0;
 	firstFreeEntityIndex[1] = ENTITYNUM_FIRST_NON_REPLICATED;
 	num_entities = 0;
+	spawnedEntities.Clear();
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
 	framenum = 0;
@@ -266,6 +262,7 @@ void idGameLocal::MapClear(bool clearClients)
 		if (ent)
 		{
 			ent->activeNode.SetOwner(nullptr);
+			ent->spawnNode.SetOwner(nullptr);
 			gameLocal.UnregisterEntity(ent);
 			ent->GetPhysics()->SetSelf(nullptr);
 		}
@@ -298,10 +295,6 @@ void idGameLocal::AddRandomPoint()
 		if (++numIters == 10)
 			break;
 	}*/
-
-	//auto point = new Point(pos, Screen::Pixel('*', GetRandomColor()));
-
-	//AddObject(point);
 }
 
 /*
@@ -427,19 +420,26 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 	}
 
 	entities[spawn_entnum] = ent;
+	//spawnIds[spawn_entnum] = (forceSpawnId >= 0) ? forceSpawnId : spawnCount++;
 	ent->entityNumber = spawn_entnum;
+	ent->spawnNode.AddToEnd(spawnedEntities);
 
 	// Make a copy because TransferKeyValues clears the input parameter.
 	idDict copiedArgs = spawnArgsToCopy;
 	//ent->spawnArgs.TransferKeyValues(copiedArgs);
 
 	ent->spawnArgs = copiedArgs;
+
+	if (spawn_entnum >= num_entities) {
+		num_entities++;
+	}
 }
 
 void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
 {
 	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent))
 	{
+		ent->spawnNode.Remove();
 		entities[ent->entityNumber] = nullptr;
 
 		ent->entityNumber = ENTITYNUM_NONE;

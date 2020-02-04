@@ -43,11 +43,15 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
 	//---------------------------
 	// add all the model surfaces
 	//---------------------------
+
+	auto model_col = entityDef->parms.color;
+
 	for (int surfaceNum = 0; surfaceNum < model->NumSurfaces(); surfaceNum++)
 	{
 		const ModelPixel & surf = model->Surface(surfaceNum);
 
-		tr.screen.set(Vector2(tr.borderHeight, tr.borderWidth) + vEntity->entityDef->parms.origin + surf.origin, surf.screenPixel);
+		tr.screen.set(Vector2(tr.borderHeight, tr.borderWidth) + vEntity->entityDef->parms.origin + surf.origin,
+			model_col == Screen::ConsoleColor::None ? surf.screenPixel : Screen::Pixel(surf.screenPixel, model_col));
 	}
 }
 
