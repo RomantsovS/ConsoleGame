@@ -1,7 +1,7 @@
 #include "Game.h"
-#include "Vector2.h"
-#include "Model_local.h"
-#include "ModelManager.h"
+#include "../idlib/math/Vector2.h"
+#include "../renderer/Model_local.h"
+#include "../renderer/ModelManager.h"
 
 void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict * args, renderEntity_t * renderEntity)
 {

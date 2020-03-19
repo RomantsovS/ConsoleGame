@@ -1,10 +1,10 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "Class.h"
-#include "RenderWorld.h"
-#include "Dict.h"
-#include "Physics_Static.h"
+#include "d3xp/gamesys/Class.h"
+#include "Renderer/RenderWorld.h"
+#include "idlib/Dict.h"
+#include "physics/Physics_Static.h"
 #include "LinkList.h"
 
 // Think flags

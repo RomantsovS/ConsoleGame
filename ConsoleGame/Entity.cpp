@@ -1,6 +1,6 @@
 #include "Entity.h"
-#include "Game_local.h"
-#include "ModelManager.h"
+#include "d3xp/Game_local.h"
+#include "Renderer/ModelManager.h"
 
 ABSTRACT_DECLARATION(idClass, idEntity)
 
@@ -46,6 +46,9 @@ void idEntity::Spawn()
 	// parse static models the same way the editor display does
 	gameEdit->ParseSpawnArgsToRenderEntity(&spawnArgs, &renderEntity);
 
+	origin = renderEntity.origin;
+	axis = renderEntity.axis;
+
 	// every object will have a unique name
 	temp = spawnArgs.GetString("name",
 		GetClassname() + spawnArgs.GetString("classname") + std::to_string(entityNumber));
@@ -53,11 +56,8 @@ void idEntity::Spawn()
 
 	InitDefaultPhysics(origin, axis);
 
-	origin = renderEntity.origin;
-	axis = renderEntity.axis;
-
 	SetOrigin(origin);
-	//SetAxis(axis);
+	SetAxis(axis);
 
 	temp = spawnArgs.GetString("model");
 	if (!temp.empty()) {

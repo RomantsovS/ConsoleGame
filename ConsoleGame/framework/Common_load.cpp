@@ -1,6 +1,6 @@
 #include "Common_local.h"
-#include "Game.h"
-#include "RenderSystem.h"
+#include "../d3xp/Game.h"
+#include "../renderer/RenderSystem.h"
 
 /*
 ===============

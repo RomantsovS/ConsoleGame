@@ -4,7 +4,7 @@
 #include <string>
 #include <list>
 
-#include "Screen.h"
+#include "Renderer/Screen.h"
 /*#include "SimpleObject.h"
 #include "Game.h"
 

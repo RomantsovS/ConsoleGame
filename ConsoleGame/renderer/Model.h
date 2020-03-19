@@ -4,7 +4,7 @@
 #include <list>
 
 #include "Screen.h"
-#include "Vector2.h"
+#include "../idlib/math/Vector2.h"
 
 class ModelPixel
 {

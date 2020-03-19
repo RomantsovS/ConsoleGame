@@ -1,5 +1,6 @@
 #include "Common_local.h"
-#include "Game.h"
+#include "..//d3xp/Game.h"
+#include "../renderer/tr_local.h"
 
 void idCommonLocal::Draw()
 {
@@ -7,5 +8,7 @@ void idCommonLocal::Draw()
 	{
 		game->RunFrame();
 		game->Draw(0);
+
+		RB_DrawView();
 	}
 }

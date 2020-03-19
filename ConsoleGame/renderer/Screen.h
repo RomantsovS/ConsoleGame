@@ -6,7 +6,7 @@
 #include <vector>
 #include <Windows.h>
 
-#include "Vector2.h"
+#include "../idlib/math/Vector2.h"
 
 class Screen {
 public:
@@ -59,7 +59,7 @@ public:
 	pos getHeight() const { return height; }
 	pos getWidth() const { return width; }
 
-	const Pixel &getBackgroundSymbol() const { return backgroundPixel; }
+	const Pixel &getBackgroundPixel() const { return backgroundPixel; }
 
 	void clear() { clearContents(); }
 

@@ -1,8 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "Entity.h"
-#include "Dict.h"
+#include "../Entity.h"
+#include "../idlib/Dict.h"
 
 class idGame
 {

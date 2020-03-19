@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include "Common_local.h"
-#include "Game_local.h"
-#include "tr_local.h"
+#include "../d3xp/Game_local.h"
+#include "../renderer/tr_local.h"
 
 long long com_engineHz_numerator = 100LL * 1000LL;
 long long com_engineHz_denominator = 100LL * 60LL;

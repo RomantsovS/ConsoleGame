@@ -1,7 +1,7 @@
 #include <cassert>
 #include <ctime>
 
-#include "sys_public.h"
+#include "../sys_public.h"
 
 /*
 ================

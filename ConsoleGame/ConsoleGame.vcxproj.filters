@@ -25,36 +25,33 @@
     <Filter Include="Sys\Win32">
       <UniqueIdentifier>{d67fb797-8f72-4620-8caa-d9cc2774e0bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="d3xp">
+      <UniqueIdentifier>{3993fe6e-21ea-412c-9038-b28002db051a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="d3xp\GameSys">
+      <UniqueIdentifier>{9f682a5f-c8e7-4465-9331-010dcfd6b886}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="d3xp\AI">
+      <UniqueIdentifier>{56eb0375-5264-4b06-ad30-ec340ea48180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="idlib">
+      <UniqueIdentifier>{c5e224ca-eda0-4765-a4ac-69407b410ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="idlib\Math">
+      <UniqueIdentifier>{c3c0e399-f35b-4757-b7e6-b34838c7b155}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{a6c139d0-42ef-4b27-bfaa-0cfe6f33eb2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Snake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dict.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Actor.h">
@@ -63,78 +60,84 @@
     <ClInclude Include="Misc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game_local.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics_Static.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model_local.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelManager.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderWorld.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="tr_local.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Common_local.h">
-      <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderWorld_local.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="LinkList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sys_public.h">
+    <ClInclude Include="Renderer\Model.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Model_local.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\ModelManager.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderSystem.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderWorld.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderWorld_local.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\tr_local.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Screen.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Sys\sys_public.h">
       <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\Game.h">
+      <Filter>d3xp</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\Game_local.h">
+      <Filter>d3xp</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\Common.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\Common_local.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\gamesys\Class.h">
+      <Filter>d3xp\GameSys</Filter>
+    </ClInclude>
+    <ClInclude Include="ai\AI.h">
+      <Filter>d3xp\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Dict.h">
+      <Filter>idlib</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\math\Vector2.h">
+      <Filter>idlib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Physics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Physics_Static.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Physics_Base.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\Physics_RigidBody.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Screen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Snake.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsStatic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dict.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Actor.cpp">
@@ -143,62 +146,95 @@
     <ClCompile Include="Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameEdit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game_local.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tr_frontend_main.cpp">
+    <ClCompile Include="Renderer\Model.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="Renderer\ModelManager.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
+    <ClCompile Include="Renderer\RenderEntity.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWorld.cpp">
+    <ClCompile Include="Renderer\RenderSystem.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderSystem.cpp">
+    <ClCompile Include="Renderer\RenderSystem_init.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderEntity.cpp">
+    <ClCompile Include="Renderer\RenderWorld.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="tr_frontend_addmodels.cpp">
+    <ClCompile Include="Renderer\RenderWorld_defs.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Common.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="common_frame.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderWorld_portals.cpp">
+    <ClCompile Include="Renderer\RenderWorld_load.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWorld_load.cpp">
+    <ClCompile Include="Renderer\RenderWorld_portals.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="RenderWorld_defs.cpp">
+    <ClCompile Include="Renderer\tr_backend_draw.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Common_load.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderSystem_init.cpp">
+    <ClCompile Include="Renderer\tr_backend_render_tools.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="win_shared.cpp">
+    <ClCompile Include="Renderer\tr_frontend_addmodels.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\tr_frontend_main.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Screen.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Sys\Win32\win_cpu.cpp">
       <Filter>Sys\Win32</Filter>
     </ClCompile>
-    <ClCompile Include="win_cpu.cpp">
+    <ClCompile Include="Sys\Win32\win_shared.cpp">
       <Filter>Sys\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\Game.cpp">
+      <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\Game_local.cpp">
+      <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\GameEdit.cpp">
+      <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\Common.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\common_frame.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\Common_load.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\gamesys\Class.cpp">
+      <Filter>d3xp\GameSys</Filter>
+    </ClCompile>
+    <ClCompile Include="ai\AI.cpp">
+      <Filter>d3xp\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Dict.cpp">
+      <Filter>idlib</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\math\Vector2.cpp">
+      <Filter>idlib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Physics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Physics_Static.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Physics_Base.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\Physics_RigidBody.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

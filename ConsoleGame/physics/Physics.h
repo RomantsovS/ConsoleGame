@@ -1,8 +1,8 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "Class.h"
-#include "Vector2.h"
+#include "../d3xp/gamesys/Class.h"
+#include "../idlib/math/Vector2.h"
 
 class idEntity;
 

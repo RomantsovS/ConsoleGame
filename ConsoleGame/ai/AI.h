@@ -1,7 +1,7 @@
 #ifndef AI_H
 #define AI_H
 
-#include "Actor.h"
+#include "../Actor.h"
 
 class idAI : public idActor
 {

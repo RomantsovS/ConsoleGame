@@ -1,6 +1,6 @@
 #include "tr_local.h"
 #include "ModelManager.h"
-#include "Game_local.h"
+#include "../d3xp/Game_local.h"
 
 void idRenderSystemLocal::Init()
 {

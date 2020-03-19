@@ -3,7 +3,7 @@
 
 #include <list>
 
-#include "Vector2.h"
+#include "../idlib/math/Vector2.h"
 #include "Screen.h"
 #include "Model.h"
 
@@ -44,6 +44,13 @@ public:
 	virtual void RenderScene(const std::shared_ptr<renderView_t> renderView) = 0;
 
 	virtual std::shared_ptr<idRenderWorld> getptr() = 0;
+
+	//-------------- Debug Visualization  -----------------
+	// Line drawing for debug visualization
+	virtual void DebugClearLines(int time) = 0;		// a time of 0 will clear all lines and text
+
+	// Text drawing for debug visualization.
+	virtual void DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) = 0;
 };
 
 #endif

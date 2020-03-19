@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Common.h"
-#include "RenderWorld.h"
+#include "../renderer/RenderWorld.h"
 
 enum errorParm_t {
 	ERP_NONE,

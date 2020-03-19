@@ -1,6 +1,6 @@
 #include "tr_local.h"
 #include "RenderWorld_local.h"
-#include "Game_local.h"
+#include "../d3xp/Game_local.h"
 
 idRenderWorldLocal::idRenderWorldLocal()
 {
@@ -17,6 +17,9 @@ idRenderWorldLocal::~idRenderWorldLocal()
 {
 	// free all the entityDefs, lightDefs, portals, etc
 	FreeWorld();
+
+	// free up the debug lines, polys, and text
+	RB_ClearDebugText(0);
 }
 
 int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re)
@@ -195,6 +198,27 @@ void idRenderWorldLocal::PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal
 	}
 
 	PushFrustumIntoTree_r(def, 0);
+}
+
+/*
+====================
+idRenderWorldLocal::DebugClearLines
+====================
+*/
+void idRenderWorldLocal::DebugClearLines(int time) {
+	RB_ClearDebugText(time);
+}
+
+/*
+================
+idRenderWorldLocal::DrawText
+
+  oriented on the viewaxis
+  align can be 0-left, 1-center (default), 2-right
+================
+*/
+void idRenderWorldLocal::DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0) {
+	RB_AddDebugText(text, origin, color, lifetime);
 }
 
 std::shared_ptr<idRenderWorld> idRenderWorldLocal::getptr()

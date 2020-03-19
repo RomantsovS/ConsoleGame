@@ -214,4 +214,27 @@ TR_FRONTEND_ADDMODELS
 
 void R_AddModels();
 
+/*
+============================================================
+
+TR_BACKEND_DRAW
+
+============================================================
+*/
+
+void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/);
+void RB_DrawView(/*const void *data, const int stereoEye*/);
+
+/*
+=============================================================
+
+TR_BACKEND_RENDERTOOLS
+
+=============================================================
+*/
+
+void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0);
+void RB_ClearDebugText(int time);
+void RB_RenderDebugTools();
+
 #endif

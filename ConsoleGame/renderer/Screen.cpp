@@ -59,7 +59,7 @@ Screen& Screen::display(const std::string &str)
 	for (auto iter = str.cbegin(); iter != str.cend(); ++iter)
 		*p_next_write++ = *iter;
 
-	*p_next_write = '\0';
+	*p_next_write++ = '\n';
 
 	SetColor(curCol, backgroundPixel.color);
 	std::cout.write(&buffer[0], p_next_write - &buffer[0]);

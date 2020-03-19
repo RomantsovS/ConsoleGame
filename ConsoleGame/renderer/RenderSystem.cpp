@@ -1,8 +1,8 @@
 #include "tr_local.h"
-#include "Game_local.h"
+#include "../d3xp/Game_local.h"
 #include "RenderWorld_local.h"
 #include "ModelManager.h"
-#include "sys_public.h"
+#include "../Sys/sys_public.h"
 
 idRenderSystemLocal tr;
 idRenderSystem * renderSystem = &tr;
@@ -42,7 +42,7 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 void idRenderSystemLocal::Display()
 {
 	screen.display(console);
-	tr.updateFrame = false;
+	//tr.updateFrame = false;
 }
 
 void idRenderSystemLocal::Clear()

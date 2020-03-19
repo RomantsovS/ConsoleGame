@@ -5,7 +5,7 @@
 #include <array>
 
 #include "Game.h"
-#include "RenderWorld.h"
+#include "../renderer/RenderWorld.h"
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 
@@ -111,6 +111,8 @@ private:
 	// commons used by init, shutdown, and restart
 	void MapPopulate();
 	void MapClear(bool clearClients);
+
+	void RunDebugInfo();
 
 	void AddRandomPoint();
 

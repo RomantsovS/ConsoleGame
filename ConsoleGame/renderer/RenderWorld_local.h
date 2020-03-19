@@ -4,7 +4,7 @@
 #include <list>
 #include <string>
 
-#include "Vector2.h"
+#include "../idlib/math/Vector2.h"
 #include "Screen.h"
 #include "Model.h"
 #include "tr_local.h"
@@ -40,6 +40,10 @@ public:
 	//virtual const renderEntity_s *GetRenderEntity(int entityHandle) const = 0;
 
 	virtual void RenderScene(const std::shared_ptr<renderView_t> renderView);
+
+	virtual void DebugClearLines(int time) override;
+
+	virtual void DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) override;
 
 	std::string mapName; // ie: maps/tim_dm2.proc, written to demoFile
 

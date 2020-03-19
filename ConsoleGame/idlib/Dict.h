@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include "Vector2.h"
+#include "Math/Vector2.h"
 
 class idDict
 {

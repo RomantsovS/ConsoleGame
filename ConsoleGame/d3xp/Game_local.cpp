@@ -1,9 +1,9 @@
 #include <exception>
 
 #include "Game_local.h"
-#include "Class.h"
-#include "RenderWorld_local.h"
-#include "Common.h"
+#include "../d3xp/gamesys/Class.h"
+#include "../renderer/RenderWorld_local.h"
+#include "../framework/Common.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -88,6 +88,11 @@ void idGameLocal::MapShutdown()
 {
 	gamestate = GAMESTATE_SHUTDOWN;
 
+	if (gameRenderWorld) {
+		// clear any debug lines, text, and polygons
+		gameRenderWorld->DebugClearLines(0);
+	}
+
 	MapClear(true);
 
 	mapFileName.clear();
@@ -118,10 +123,17 @@ void idGameLocal::RunFrame()
 
 	SelectTimeGroup(true);
 
+	// make sure the random number counter is used each frame so random events
+	// are influenced by the player's actions
+	rand_eng.seed(Sys_Time());
+
+	// clear any debug lines from a previous frame
+	gameRenderWorld->DebugClearLines(time);
+
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 10000) {
+	if (time - lastTimePointSpawn > 100000) {
 		lastTimePointSpawn = time;
-		AddRandomPoint();
+		//AddRandomPoint();
 	}
 
 	// let entities think
@@ -142,6 +154,9 @@ void idGameLocal::RunFrame()
 		}
 		numEntitiesToDeactivate = 0;
 	}
+
+	// show any debug info for this frame
+	RunDebugInfo();
 }
 
 bool idGameLocal::Draw(int clientNum)
@@ -152,6 +167,154 @@ bool idGameLocal::Draw(int clientNum)
 	tr.console.clear();
 
 	return true;
+}
+
+/*
+================
+idGameLocal::RunDebugInfo
+================
+*/
+void idGameLocal::RunDebugInfo() {
+	std::shared_ptr<idEntity> ent;
+	/*idPlayer *player;
+
+	player = GetLocalPlayer();
+	if (!player) {
+		return;
+	}
+
+	const idVec3 &origin = player->GetPhysics()->GetOrigin();*/
+
+	if (/*g_showEntityInfo.GetBool()*/true) {
+		/*idMat3		axis = player->viewAngles.ToMat3();
+		idVec3		up = axis[2] * 5.0f;
+		idBounds	viewTextBounds(origin);
+		idBounds	viewBounds(origin);
+
+		viewTextBounds.ExpandSelf(128.0f);
+		viewBounds.ExpandSelf(512.0f);*/
+		for (auto ent = spawnedEntities.Prev(); ent != NULL; ent = ent->spawnNode.Prev()) {
+			// don't draw the worldspawn
+			/*if (ent == world) {
+				continue;
+			}*/
+
+			// skip if the entity is very far away
+			/*if (!viewBounds.IntersectsBounds(ent->GetPhysics()->GetAbsBounds())) {
+				continue;
+			}*/
+
+			/*const idBounds &entBounds = ent->GetPhysics()->GetAbsBounds();
+			int contents = ent->GetPhysics()->GetContents();
+			if (contents & CONTENTS_BODY) {
+				gameRenderWorld->DebugBounds(colorCyan, entBounds);
+			}
+			else if (contents & CONTENTS_TRIGGER) {
+				gameRenderWorld->DebugBounds(colorOrange, entBounds);
+			}
+			else if (contents & CONTENTS_SOLID) {
+				gameRenderWorld->DebugBounds(colorGreen, entBounds);
+			}
+			else {
+				if (!entBounds.GetVolume()) {
+					gameRenderWorld->DebugBounds(colorMdGrey, entBounds.Expand(8.0f));
+				}
+				else {
+					gameRenderWorld->DebugBounds(colorMdGrey, entBounds);
+				}
+			}
+			if (viewTextBounds.IntersectsBounds(entBounds)) {
+				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
+				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
+			}*/
+			auto text = ent->name + " " + std::to_string(time);
+			//gameRenderWorld->DrawText(text, Vector2(), Screen::ConsoleColor::Green, 0);
+		}
+	}
+
+	gameRenderWorld->DrawText(std::to_string(num_entities - MAX_CLIENTS), Vector2(), Screen::ConsoleColor::Yellow, 0);
+	// debug tool to draw bounding boxes around active entities
+	/*if (g_showActiveEntities.GetBool()) {
+		for (ent = activeEntities.Next(); ent != NULL; ent = ent->activeNode.Next()) {
+			idBounds	b = ent->GetPhysics()->GetBounds();
+			if (b.GetVolume() <= 0) {
+				b[0][0] = b[0][1] = b[0][2] = -8;
+				b[1][0] = b[1][1] = b[1][2] = 8;
+			}
+			if (ent->fl.isDormant) {
+				gameRenderWorld->DebugBounds(colorYellow, b, ent->GetPhysics()->GetOrigin());
+			}
+			else {
+				gameRenderWorld->DebugBounds(colorGreen, b, ent->GetPhysics()->GetOrigin());
+			}
+		}
+	}
+
+	if (g_showTargets.GetBool()) {
+		ShowTargets();
+	}
+
+	if (g_showTriggers.GetBool()) {
+		idTrigger::DrawDebugInfo();
+	}
+
+	if (ai_showCombatNodes.GetBool()) {
+		idCombatNode::DrawDebugInfo();
+	}
+
+	if (ai_showPaths.GetBool()) {
+		idPathCorner::DrawDebugInfo();
+	}
+
+	if (g_editEntityMode.GetBool()) {
+		editEntities->DisplayEntities();
+	}
+
+	if (g_showCollisionWorld.GetBool()) {
+		collisionModelManager->DrawModel(0, vec3_origin, mat3_identity, origin, 128.0f);
+	}
+
+	if (g_showCollisionModels.GetBool()) {
+		clip.DrawClipModels(player->GetEyePosition(), g_maxShowDistance.GetFloat(), pm_thirdPerson.GetBool() ? NULL : player);
+	}
+
+	if (g_showCollisionTraces.GetBool()) {
+		clip.PrintStatistics();
+	}
+
+	if (g_showPVS.GetInteger()) {
+		pvs.DrawPVS(origin, (g_showPVS.GetInteger() == 2) ? PVS_ALL_PORTALS_OPEN : PVS_NORMAL);
+	}
+
+	if (aas_test.GetInteger() >= 0) {
+		idAAS *aas = GetAAS(aas_test.GetInteger());
+		if (aas) {
+			aas->Test(origin);
+			if (ai_testPredictPath.GetBool()) {
+				idVec3 velocity;
+				predictedPath_t path;
+
+				velocity.x = cos(DEG2RAD(player->viewAngles.yaw)) * 100.0f;
+				velocity.y = sin(DEG2RAD(player->viewAngles.yaw)) * 100.0f;
+				velocity.z = 0.0f;
+				idAI::PredictPath(player, aas, origin, velocity, 1000, 100, SE_ENTER_OBSTACLE | SE_BLOCKED | SE_ENTER_LEDGE_AREA, path);
+			}
+		}
+	}
+
+	if (ai_showObstacleAvoidance.GetInteger() == 2) {
+		idAAS *aas = GetAAS(0);
+		if (aas) {
+			idVec3 seekPos;
+			obstaclePath_t path;
+
+			seekPos = player->GetPhysics()->GetOrigin() + player->viewAxis[0] * 200.0f;
+			idAI::FindPathAroundObstacles(player->GetPhysics(), aas, NULL, player->GetPhysics()->GetOrigin(), seekPos, path);
+		}
+	}
+
+	// collision map debug output
+	collisionModelManager->DebugOutput(player->GetEyePosition());*/
 }
 
 void idGameLocal::LoadMap(const std::string mapName, int randseed)

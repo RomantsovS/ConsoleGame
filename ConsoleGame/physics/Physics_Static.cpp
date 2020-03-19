@@ -1,5 +1,7 @@
 #include "Physics_Static.h"
 
+CLASS_DECLARATION(idPhysics, idPhysics_Static)
+
 idPhysics_Static::idPhysics_Static()
 {
 }

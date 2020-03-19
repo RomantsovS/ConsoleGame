@@ -16,6 +16,8 @@ struct staticPState_s
 class idPhysics_Static : public idPhysics
 {
 public:
+	CLASS_PROTOTYPE(idPhysics_Static);
+
 	idPhysics_Static();
 	
 	~idPhysics_Static();
