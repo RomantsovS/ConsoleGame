@@ -1,6 +1,6 @@
 #include "Entity.h"
-#include "d3xp/Game_local.h"
-#include "Renderer/ModelManager.h"
+#include "Game_local.h"
+#include "../renderer/ModelManager.h"
 
 ABSTRACT_DECLARATION(idClass, idEntity)
 
@@ -335,6 +335,26 @@ void idEntity::SetAxis(const Vector2 & axis)
 bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis)
 {
 	return false;
+}
+
+bool idEntity::Collide(const trace_t& collision, const Vector2& velocity)
+{
+	// this entity collides with collision.c.entityNum
+	return false;
+}
+
+void idEntity::ActivatePhysics(std::shared_ptr<idEntity> ent)
+{
+	GetPhysics()->Activate();
+}
+
+void idEntity::AddContactEntity(std::shared_ptr<idEntity> ent) {
+	GetPhysics()->AddContactEntity(ent);
+}
+
+void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent)
+{
+	GetPhysics()->RemoveContactEntity(ent);
 }
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)

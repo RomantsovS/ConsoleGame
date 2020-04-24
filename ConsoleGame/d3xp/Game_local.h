@@ -6,6 +6,8 @@
 
 #include "Game.h"
 #include "../renderer/RenderWorld.h"
+#include "physics/Clip.h"
+#include "../idlib/containers/LinkList.h"
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 
@@ -39,12 +41,13 @@ struct timeState_t {
 class idGameLocal : public idGame {
 public:
 	std::vector<std::shared_ptr<idEntity>> entities;
+	std::array<int, 2> firstFreeEntityIndex;	// first free index in the entities array. [0] for replicated entities, [1] for non-replicated
 	idLinkList<idEntity> spawnedEntities; // all spawned entities
 	idLinkList<idEntity> activeEntities; // all thinking entities (idEntity::thinkFlags != 0)
 	int numEntitiesToDeactivate; // number of entities that became inactive in current frame
-
-	std::array<int, 2> firstFreeEntityIndex;	// first free index in the entities array. [0] for replicated entities, [1] for non-replicated
 	int num_entities; // current number <= MAX_GENTITIES
+
+	idClip clip; // collision detection
 
 	int framenum;
 	int time;					// in msec
@@ -66,14 +69,18 @@ public:
 	virtual void Init() override;
 	virtual void Shutdown() override;
 
-	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
-	virtual void MapShutdown();
+	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld,
+		int randseed) override;
+	virtual void MapShutdown() override;
 
 	virtual void RunFrame() override;
 
 	virtual bool Draw(int clientNum) override;
 
 	// ---------------------- Public idGameLocal Interface -------------------
+
+	void Printf(const std::string fmt, ...) const;
+	void Warning(const std::string &fmt, ...) const;
 
 	// Initializes all map variables common to both save games and spawned games
 	void LoadMap(const std::string mapName, int randseed);
@@ -130,9 +137,9 @@ private:
 template<typename T>
 inline T idGameLocal::GetRandomValue(T min, T max)
 {
-	std::uniform_int_distribution<Screen::pos> u(min, max);
+	std::uniform_int_distribution<size_t> u(static_cast<size_t>(min), static_cast<size_t>(max));
 
-	return u(rand_eng);
+	return static_cast<T>(u(rand_eng));
 }
 
 extern idGameLocal gameLocal;

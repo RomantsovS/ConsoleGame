@@ -317,6 +317,15 @@ void idGameLocal::RunDebugInfo() {
 	collisionModelManager->DebugOutput(player->GetEyePosition());*/
 }
 
+void idGameLocal::Printf(const std::string fmt, ...) const
+{
+}
+
+void idGameLocal::Warning(const std::string& fmt, ...) const
+{
+	throw std::logic_error(fmt);
+}
+
 void idGameLocal::LoadMap(const std::string mapName, int randseed)
 {
 	mapFileName = mapName;
@@ -435,7 +444,7 @@ void idGameLocal::MapClear(bool clearClients)
 
 void idGameLocal::AddRandomPoint()
 {
-	Vector2 origin(GetRandomValue(0U, width - 1), GetRandomValue(0U, height - 1));
+	Vector2 origin(GetRandomValue(0.0f, width - 1.0f), GetRandomValue(0.0f, height - 1.0f));
 	Vector2 axis(0, 0);
 
 	idDict args;

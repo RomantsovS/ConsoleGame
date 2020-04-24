@@ -1,8 +1,11 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "../d3xp/gamesys/Class.h"
-#include "../idlib/math/Vector2.h"
+#include "../gamesys/Class.h"
+#include "../../idlib/math/Vector2.h"
+#include "Clip.h"
+
+#define CONTACT_EPSILON 1 // maximum contact seperation distance
 
 class idEntity;
 
@@ -14,9 +17,11 @@ public:
 	enum directions { LEFT, RIGHT, UP, DOWN };
 
 	virtual ~idPhysics() = 0;
-
+public: // common physics interface
 	// set pointer to entity using physics
 	virtual void SetSelf(std::shared_ptr<idEntity> e) = 0;
+	virtual std::shared_ptr<idClipModel> GetClipModel(int id = 0) const = 0;
+	virtual int GetNumClipModels() const = 0;
 
 	// evaluate the physics with the given time step, returns true if the object moved
 	virtual bool Evaluate(int timeStepMSec, int endTimeMSec) = 0;
@@ -41,6 +46,10 @@ public:
 	// get the position and orientation in world space
 	virtual const Vector2 &	GetOrigin(int id = 0) const = 0;
 	virtual const Vector2 &	GetAxis(int id = 0) const = 0;
+
+	virtual void ClearContacts() = 0;
+	virtual void AddContactEntity(std::shared_ptr<idEntity> e) = 0;
+	virtual void RemoveContactEntity(std::shared_ptr<idEntity> e) = 0;
 
 	/*virtual bool checkCollide(const Game &Game) const = 0;
 	virtual bool checkCollide(std::shared_ptr<Point> point) = 0;

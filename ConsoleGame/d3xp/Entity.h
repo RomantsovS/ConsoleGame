@@ -1,11 +1,12 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "d3xp/gamesys/Class.h"
-#include "Renderer/RenderWorld.h"
-#include "idlib/Dict.h"
+#include "../d3xp/gamesys/Class.h"
+#include "../renderer/RenderWorld.h"
+#include "../idlib/Dict.h"
 #include "physics/Physics_Static.h"
-#include "LinkList.h"
+#include "../idlib/containers/LinkList.h"
+#include "../cm/CollisionModel.h"
 
 // Think flags
 enum {
@@ -76,6 +77,14 @@ public:
 	void SetAxis(const Vector2 &axis);
 	// retrieves the transformation going from the physics origin/axis to the visual origin/axis
 	virtual bool GetPhysicsToVisualTransform(Vector2 &origin, Vector2 &axis);
+	// called from the physics object when colliding, should return true if the physics simulation should stop
+	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+	// activate the physics object, 'ent' is the entity activating this entity
+	virtual void ActivatePhysics(std::shared_ptr<idEntity> ent);
+	// add a contact entity
+	virtual void AddContactEntity(std::shared_ptr<idEntity> ent);
+	// remove a touching entity
+	virtual void RemoveContactEntity(std::shared_ptr<idEntity> ent);
 protected:
 	renderEntity_t renderEntity;
 	int modelDefHandle;

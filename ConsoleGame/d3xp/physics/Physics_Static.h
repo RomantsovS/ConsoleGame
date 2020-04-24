@@ -2,6 +2,7 @@
 #define PHYSICS_STATIC_H
 
 #include "Physics.h"
+#include "Clip.h"
 
 class idEntity;
 
@@ -21,11 +22,13 @@ public:
 	idPhysics_Static();
 	
 	~idPhysics_Static();
-
+public:	// common physics interface
 	void SetSelf(std::shared_ptr<idEntity> e) override;
 
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
+	int GetNumClipModels() const override;
 
+	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
 	int	GetTime() const override;
 
@@ -42,10 +45,14 @@ public:
 
 	const Vector2 & GetOrigin(int id = 0) const override;
 	const Vector2 &	GetAxis(int id = 0) const override;
-protected:
+
+	void ClearContacts() override;
+	void AddContactEntity(std::shared_ptr<idEntity> e) override;
+	void RemoveContactEntity(std::shared_ptr<idEntity> e) override;
 protected:
 	std::shared_ptr<idEntity> self; // entity using this physics object
 	staticPState_s current;			// physics state
+	std::shared_ptr<idClipModel> clipModel; // collision model
 };
 
 #endif

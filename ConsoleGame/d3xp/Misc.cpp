@@ -1,5 +1,5 @@
 #include "Misc.h"
-#include "d3xp/Game_local.h"
+#include "Game_local.h"
 
 CLASS_DECLARATION(idEntity, idStaticEntity)
 

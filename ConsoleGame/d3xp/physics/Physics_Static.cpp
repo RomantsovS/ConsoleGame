@@ -1,4 +1,5 @@
 #include "Physics_Static.h"
+#include "../../d3xp/Game_local.h"
 
 CLASS_DECLARATION(idPhysics, idPhysics_Static)
 
@@ -17,6 +18,28 @@ idPhysics_Static::~idPhysics_Static()
 void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e)
 {
 	self = e;
+}
+
+/*
+================
+idPhysics_Static::GetClipModel
+================
+*/
+std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const
+{
+	if (clipModel) {
+		return clipModel;
+	}
+	return gameLocal.clip.DefaultClipModel();
+}
+
+/*
+================
+idPhysics_Static::GetNumClipModels
+================
+*/
+int idPhysics_Static::GetNumClipModels() const {
+	return (clipModel != nullptr);
 }
 
 bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec)
@@ -156,4 +179,16 @@ const Vector2 & idPhysics_Static::GetOrigin(int id) const
 const Vector2 & idPhysics_Static::GetAxis(int id) const
 {
 	return current.axis;
+}
+
+void idPhysics_Static::ClearContacts()
+{
+}
+
+void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e)
+{
+}
+
+void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e)
+{
 }

@@ -95,7 +95,7 @@ inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 
 inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch)
 {
-	return set(pos.y, pos.x, ch);
+	return set(static_cast<size_t>(pos.y), static_cast<size_t>(pos.x), ch);
 }
 
 void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background);

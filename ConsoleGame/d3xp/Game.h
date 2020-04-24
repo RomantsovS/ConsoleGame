@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../Entity.h"
+#include "../d3xp/Entity.h"
 #include "../idlib/Dict.h"
 
 class idGame
@@ -17,6 +17,9 @@ public:
 
 	// Loads a map and spawns all the entities.
 	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
+
+	// Shut down the current map.
+	virtual void MapShutdown() = 0;
 
 	// Runs a game frame, may return a session command for level changing, etc
 	virtual void RunFrame() = 0;

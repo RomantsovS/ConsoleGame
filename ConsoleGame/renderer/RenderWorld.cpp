@@ -94,7 +94,7 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 {
 	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size()))
 	{
-		std::out_of_range("idRenderWorld::FreeEntityDef: handle %i " + std::to_string(entityHandle) + "> %i" + std::to_string(entityDefs.size()) + "\n");
+		throw std::out_of_range("idRenderWorld::FreeEntityDef: handle %i " + std::to_string(entityHandle) + "> %i" + std::to_string(entityDefs.size()) + "\n");
 		return;
 	}
 
@@ -113,6 +113,22 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 	entityDefs[entityHandle] = nullptr;
 }
 
+const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) const
+{
+	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
+		throw std::out_of_range("idRenderWorld::GetRenderEntity: invalid handle %i [0, %i]\n");// , entityHandle, entityDefs.Num());
+		return nullptr;
+	}
+
+	auto def = entityDefs[entityHandle];
+	if (!def) {
+		throw std::out_of_range("idRenderWorld::GetRenderEntity: handle %i is NULL\n");// , entityHandle);
+		return nullptr;
+	}
+
+	return &def->parms;
+}
+
 void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderView)
 {
 	if (!tr.updateFrame)
@@ -128,6 +144,32 @@ void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderV
 	R_RenderView(parms);
 
 	tr.Display();
+}
+
+bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start,
+	const Vector2& end, const float radius) const
+{
+	memset(&trace, 0, sizeof(trace));
+	trace.fraction = 1.0f;
+	trace.point = end;
+
+	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
+		return false;
+	}
+
+	std::shared_ptr<idRenderEntityLocal> def = entityDefs[entityHandle];
+	if (def == NULL) {
+		return false;
+	}
+
+	renderEntity_t* refEnt = &def->parms;
+
+	/*idRenderModel* model = R_EntityDefDynamicModel(def);
+	if (model == NULL) {
+		return false;
+	}*/
+
+	return true;
 }
 
 void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t* area)
