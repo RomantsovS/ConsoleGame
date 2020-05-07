@@ -158,7 +158,7 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 100000) {
+	if (time - lastTimePointSpawn > 10000) {
 		lastTimePointSpawn = time;
 		AddRandomPoint();
 	}
