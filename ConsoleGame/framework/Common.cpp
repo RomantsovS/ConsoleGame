@@ -4,6 +4,7 @@
 #include "Common_local.h"
 #include "../d3xp/Game_local.h"
 #include "../renderer/tr_local.h"
+#include "FileSystem.h"
 
 long long com_engineHz_numerator = 100LL * 1000LL;
 long long com_engineHz_denominator = 100LL * 60LL;
@@ -13,6 +14,11 @@ idCommon * common = &commonLocal;
 
 idCommonLocal::idCommonLocal()
 {
+	com_errorEntered = ERP_NONE;
+	com_shuttingDown = false;
+
+	logFile = nullptr;
+
 	renderWorld = nullptr;
 }
 
@@ -23,16 +29,19 @@ idCommonLocal::Quit
 */
 void idCommonLocal::Quit()
 {
-
 	// don't try to shutdown if we are in a recursive error
 	if (!com_errorEntered)
 	{
 		Shutdown();
 	}
+	Sys_Quit();
 }
 
 void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline)
 {
+	// initialize the file system
+	fileSystem->Init();
+
 	game->Init();
 
 	// initialize the renderSystem data structures
@@ -45,8 +54,6 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 
 	delayMilliseconds = 100;
 	FPSupdateMilliseconds = 1000;
-
-	gameRunning = true;
 }
 
 /*
@@ -62,17 +69,37 @@ void idCommonLocal::Shutdown() {
 	}
 	com_shuttingDown = true;
 
+	Printf("Stop();\n");
+	Stop();
+
+	Printf("delete renderWorld;\n");
+	renderWorld = nullptr;
+
 	// shut down the renderSystem
-	//printf("renderSystem->Shutdown();\n");
+	Printf("renderSystem->Shutdown();\n");
 	renderSystem->Shutdown();
 
+	// unload the game dll
+	Printf("UnloadGameDLL();\n");
 	// shut down the game object
 	if (game)
 	{
 		game->Shutdown();
 	}
 
-	renderWorld = nullptr;
+	// only shut down the log file after all output is done
+	Printf("CloseLogFile();\n");
+	CloseLogFile();
+
+	// shut down the file system
+	printf("fileSystem->Shutdown( false );\n");
+	fileSystem->Shutdown(false);
+}
+
+void idCommonLocal::Stop(bool resetSession)
+{
+	// clear mapSpawned and demo playing flags
+	UnloadMap();
 }
 
 void idCommonLocal::Frame()
@@ -93,8 +120,6 @@ void idCommonLocal::Frame()
 		switch (c)
 		{
 		case 27:
-			gameRunning = false;
-
 			tr.ClearScreen();
 
 			std::cout << "enter Q to quit or any key to continue: ";
@@ -106,12 +131,8 @@ void idCommonLocal::Frame()
 
 			if (c == 'Q' || c == 'q')
 			{
-				gameRunning = false;
-
-				return;
+				Quit();
 			}
-
-			gameRunning = true;
 		default:
 			//onKeyPressed(c);
 			;
@@ -124,7 +145,6 @@ void idCommonLocal::Frame()
 	}
 	catch (std::exception &err)
 	{
-		gameRunning = false;
 		std::cout << err.what() << std::endl
 			<< "press ane key to continue...\n";
 		_getch();

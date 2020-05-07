@@ -4,6 +4,9 @@
 CLASS_DECLARATION(idPhysics, idPhysics_Base)
 
 idPhysics_Base::idPhysics_Base() {
+	self.reset();
+	clipMask = 0;
+	ClearContacts();
 }
 
 idPhysics_Base::~idPhysics_Base() {
@@ -11,6 +14,10 @@ idPhysics_Base::~idPhysics_Base() {
 
 void idPhysics_Base::SetSelf(std::shared_ptr<idEntity> e) {
 	self = e;
+}
+
+void idPhysics_Base::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
+{
 }
 
 std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const
@@ -21,6 +28,42 @@ std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const
 int idPhysics_Base::GetNumClipModels() const
 {
 	return 0;
+}
+
+/*
+================
+idPhysics_Base::SetClipMask
+================
+*/
+void idPhysics_Base::SetClipMask(int mask, int id) {
+	clipMask = mask;
+}
+
+/*
+================
+idPhysics_Base::GetClipMask
+================
+*/
+int idPhysics_Base::GetClipMask(int id) const {
+	return clipMask;
+}
+
+/*
+================
+idPhysics_Base::GetBounds
+================
+*/
+const idBounds& idPhysics_Base::GetBounds(int id) const {
+	return bounds_zero;
+}
+
+/*
+================
+idPhysics_Base::GetAbsBounds
+================
+*/
+const idBounds& idPhysics_Base::GetAbsBounds(int id) const {
+	return bounds_zero;
 }
 
 bool idPhysics_Base::Evaluate(int timeStepMSec, int endTimeMSec) {
@@ -35,6 +78,11 @@ int idPhysics_Base::GetTime() const {
 }
 
 void idPhysics_Base::Activate() {
+}
+
+bool idPhysics_Base::IsAtRest() const
+{
+	return true;
 }
 
 void idPhysics_Base::SaveState() {
@@ -63,12 +111,25 @@ const Vector2 & idPhysics_Base::GetAxis(int id) const {
 	return vec2_origin;
 }
 
+void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
+{
+}
+
+/*
+================
+idPhysics_Base::GetLinearVelocity
+================
+*/
+const Vector2& idPhysics_Base::GetLinearVelocity(int id) const {
+	return vec2_origin;
+}
+
 void idPhysics_Base::ClearContacts()
 {
 	for (auto iter = contacts.begin(); iter != contacts.end(); ++iter) {
 		auto ent = gameLocal.entities[iter->entityNum];
 		if (ent) {
-			ent->RemoveContactEntity(self);
+			ent->RemoveContactEntity(self.lock());
 		}
 	}
 	contacts.clear();
@@ -111,8 +172,8 @@ void idPhysics_Base::AddContactEntitiesForContacts()
 {
 	for (size_t i = 0; i < contacts.size(); i++) {
 		auto ent = gameLocal.entities[contacts[i].entityNum];
-		if (ent && ent != self) {
-			ent->AddContactEntity(self);
+		if (ent && ent != self.lock()) {
+			ent->AddContactEntity(self.lock());
 		}
 	}
 }
@@ -122,10 +183,18 @@ void idPhysics_Base::ActivateContactEntities()
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (ent) {
-			ent->ActivatePhysics(self);
+			ent->ActivatePhysics(self.lock());
 		}
 		else {
 			iter = contactEntities.erase(iter);;
 		}
 	}
+}
+
+bool idPhysics_Base::IsOutsideWorld() const
+{
+	if (!gameLocal.clip->GetWorldBounds().Expand(0.0f).IntersectsBounds(GetAbsBounds())) {
+		return true;
+	}
+	return false;
 }

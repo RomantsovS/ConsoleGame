@@ -1,4 +1,5 @@
 #include "Class.h"
+#include "../Game_local.h"
 
 static idTypeInfo *typelist = NULL;
 
@@ -27,7 +28,7 @@ void idClass::Init()
 
 	if (initialized)
 	{
-		//gameLocal.Printf("...already initialized\n");
+		gameLocal.Printf("...already initialized\n");
 		return;
 	}
 

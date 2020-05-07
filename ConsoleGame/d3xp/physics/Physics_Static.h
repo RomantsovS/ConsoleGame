@@ -24,15 +24,22 @@ public:
 	~idPhysics_Static();
 public:	// common physics interface
 	void SetSelf(std::shared_ptr<idEntity> e) override;
-
+	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
 	int GetNumClipModels() const override;
+
+	void SetClipMask(int mask, int id = -1);
+	int GetClipMask(int id = -1) const;
+
+	const idBounds& GetBounds(int id = -1) const;
+	const idBounds& GetAbsBounds(int id = -1) const;
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
 	int	GetTime() const override;
 
 	void Activate() override;
+	bool IsAtRest() const override;
 
 	void SaveState() override;
 	void RestoreState() override;
@@ -46,11 +53,14 @@ public:	// common physics interface
 	const Vector2 & GetOrigin(int id = 0) const override;
 	const Vector2 &	GetAxis(int id = 0) const override;
 
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
+	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
+
 	void ClearContacts() override;
 	void AddContactEntity(std::shared_ptr<idEntity> e) override;
 	void RemoveContactEntity(std::shared_ptr<idEntity> e) override;
 protected:
-	std::shared_ptr<idEntity> self; // entity using this physics object
+	std::weak_ptr<idEntity> self; // entity using this physics object
 	staticPState_s current;			// physics state
 	std::shared_ptr<idClipModel> clipModel; // collision model
 };

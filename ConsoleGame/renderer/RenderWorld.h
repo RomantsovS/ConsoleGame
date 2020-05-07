@@ -9,6 +9,8 @@
 #include "../idlib/bv/Bounds.h"
 
 class idRenderEntityLocal;
+class idRenderModel;
+class Screen;
 
 struct renderEntity_t
 {
@@ -84,6 +86,8 @@ public:
 	//-------------- Debug Visualization  -----------------
 	// Line drawing for debug visualization
 	virtual void DebugClearLines(int time) = 0;		// a time of 0 will clear all lines and text
+	virtual void DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) = 0;
+	virtual void DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) = 0;
 
 	// Text drawing for debug visualization.
 	virtual void DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) = 0;

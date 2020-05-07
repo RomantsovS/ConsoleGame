@@ -20,6 +20,9 @@ struct Vector2
 		y = *iter;
 	}
 
+	void Set(const float x, const float y);
+	void Zero();
+
 	float operator[](const int index) const;
 	float& operator[](const int index);
 	Vector2 operator*(const float a) const;
@@ -35,8 +38,6 @@ struct Vector2
 
 	const float* ToFloatPtr() const;
 	float* ToFloatPtr();
-
-	void Zero();
 
 	bool Compare(const Vector2& a) const;							// exact compare, no epsilon
 
@@ -68,6 +69,9 @@ inline float Vector2::operator[](const int index) const
 
 inline float& Vector2::operator[](const int index)
 {
+	if (index > 1)
+		throw std::out_of_range("trying access vector data by index " + std::to_string(index));
+
 	return (&x)[index];
 }
 
@@ -142,6 +146,12 @@ inline Vector2 operator+(const Vector2 & l, const Vector2 & r)
 	Vector2 sum = l;
 	sum += r;
 	return sum;
+}
+
+inline void Vector2::Set(const float x, const float y)
+{
+	this->x = x;
+	this->y = y;
 }
 
 inline void Vector2::Vector2::Zero()

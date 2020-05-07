@@ -4,6 +4,8 @@
 
 void idRenderSystemLocal::Init()
 {
+	common->Printf("------- Initializing renderSystem ----\n");
+
 	// clear all our internal state
 	viewCount = 1;		// so cleared structures never match viewCount
 	// we used to memset tr, but now that it is a class, we can't, so
@@ -11,8 +13,8 @@ void idRenderSystemLocal::Init()
 
 	renderModelManager->Init();
 
-	borderHeight = 1;
-	borderWidth = 1;
+	borderHeight = 2;
+	borderWidth = 4;
 
 	height = gameLocal.GetHeight() + borderHeight * 2;
 	width = gameLocal.GetWidth() + borderWidth * 2;
@@ -21,8 +23,13 @@ void idRenderSystemLocal::Init()
 
 	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
 	
+	viewDef = nullptr;
+
 	updateFrame = true;
 	console.clear();
+
+	common->Printf("renderSystem initialized.\n");
+	common->Printf("--------------------------------------\n");
 }
 
 /*
@@ -32,6 +39,8 @@ idRenderSystemLocal::Shutdown
 */
 void idRenderSystemLocal::Shutdown()
 {
+	common->Printf("idRenderSystem::Shutdown()\n");
+
 	if (R_IsInitialized()) {
 		//globalImages->PurgeAllImages();
 	}

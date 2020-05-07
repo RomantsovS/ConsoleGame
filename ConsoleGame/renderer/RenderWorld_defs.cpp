@@ -1,6 +1,7 @@
 #include "tr_local.h"
 #include "ModelManager.h"
 #include "RenderWorld_local.h"
+#include "../idlib/sys/sys_assert.h"
 
 /*
 ===================
@@ -27,7 +28,6 @@ void R_FreeEntityDefDerivedData(std::shared_ptr<idRenderEntityLocal> def, bool k
 		ref = next;
 	}
 	def->entityRefs = nullptr;
-	def->viewEntity->entityDef = nullptr;
 }
 
 /*

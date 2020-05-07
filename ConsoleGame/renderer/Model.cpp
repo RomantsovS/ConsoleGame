@@ -3,6 +3,10 @@
 
 idRenderModelStatic::idRenderModelStatic()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idRenderModelStatic");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	name = "<undefined>";
 	purged = false;
 	reloadable = true;
@@ -13,6 +17,10 @@ idRenderModelStatic::idRenderModelStatic()
 
 idRenderModelStatic::~idRenderModelStatic()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idRenderModelStatic");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	PurgeModel();
 }
 

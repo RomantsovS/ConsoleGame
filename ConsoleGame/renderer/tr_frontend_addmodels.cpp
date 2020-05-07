@@ -18,7 +18,7 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
 	// globals we really should pass in...
 	const auto viewDef = tr.viewDef;
 
-	auto entityDef = vEntity->entityDef;
+	auto entityDef = vEntity->entityDef.lock();
 	const auto renderEntity = &entityDef->parms;
 	//const idRenderWorldLocal * world = entityDef->world;
 
@@ -51,7 +51,7 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
 		const ModelPixel & surf = model->Surface(surfaceNum);
 
 		tr.screen.set(Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +
-			vEntity->entityDef->parms.origin + surf.origin,
+			vEntity->entityDef.lock()->parms.origin + surf.origin,
 			model_col == Screen::ConsoleColor::None ? surf.screenPixel : Screen::Pixel(surf.screenPixel, model_col));
 	}
 }

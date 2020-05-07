@@ -63,6 +63,7 @@ Screen& Screen::display(const std::string &str)
 
 	SetColor(curCol, backgroundPixel.color);
 	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
+	SetColor(Screen::ConsoleColor::White, backgroundPixel.color);
 
 	return *this;
 }

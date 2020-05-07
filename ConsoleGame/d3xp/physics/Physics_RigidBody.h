@@ -6,31 +6,32 @@
 #include "Physics_Base.h"
 #include "Clip.h"
 #include "../../cm/CollisionModel.h"
+#include "../../idlib/math/Ode.h"
 
 struct rigidBodyIState_t {
-	Vector2					position;					// position of trace model
-	//idMat3					orientation;				// orientation of trace model
-	//idVec3					linearMomentum;				// translational momentum relative to center of mass
-	//idVec3					angularMomentum;			// rotational momentum relative to center of mass
+	Vector2 position; // position of trace model
+	//idMat3 orientation; // orientation of trace model
+	Vector2 linearMomentum; // translational momentum relative to center of mass
+	//idVec3 angularMomentum; // rotational momentum relative to center of mass
 
 	rigidBodyIState_t() :
-		position(vec2_origin)
+		position(vec2_origin),
 		//orientation(mat3_identity),
-		//linearMomentum(vec3_zero),
+		linearMomentum(vec2_origin)
 		//angularMomentum(vec3_zero) 
 	{
 	}
 };
 
 struct rigidBodyPState_t {
-	int						atRest;						// set when simulation is suspended
-	float					lastTimeStep;				// length of last time step
-	Vector2					localOrigin;				// origin relative to master
-	//idMat3					localAxis;					// axis relative to master
-	//idVec6					pushVelocity;				// push velocity
-	//Vector2					externalForce;				// external force relative to center of mass
-	//Vector2					externalTorque;				// external torque relative to center of mass
-	rigidBodyIState_t		i;							// state used for integration
+	int atRest; // set when simulation is suspended
+	float lastTimeStep; // length of last time step
+	Vector2 localOrigin; // origin relative to master
+	//idMat3 localAxis; // axis relative to master
+	//idVec6 pushVelocity; // push velocity
+	//Vector2 externalForce; // external force relative to center of mass
+	//Vector2 externalTorque; // external torque relative to center of mass
+	rigidBodyIState_t i; // state used for integration
 
 	rigidBodyPState_t() :
 		atRest(true),
@@ -53,14 +54,19 @@ public:
 	~idPhysics_RigidBody();
 
 public:	// common physics interface
+	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const;
 	int GetNumClipModels() const;
+
+	const idBounds& GetBounds(int id = -1) const;
+	const idBounds& GetAbsBounds(int id = -1) const;
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
 	int GetTime() const override;
 
 	void Activate() override;
+	virtual bool IsAtRest() const override;
 
 	void SaveState() override;
 	void RestoreState() override;
@@ -74,6 +80,9 @@ public:	// common physics interface
 	const Vector2 & GetOrigin(int id = 0) const override;
 	//const Vector2 &	GetAxis(int id = 0) const override;
 
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
+	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
+
 	bool EvaluateContacts();
 private:
 	// state of the rigid body
@@ -82,12 +91,15 @@ private:
 
 	std::shared_ptr<idClipModel> clipModel; // clip model used for collision detection
 
+	std::shared_ptr<idODE> integrator; // integrator
 	bool noContact; // if true do not determine contacts and no contact friction
 
 private:
+	friend void RigidBodyDerivatives(const float t, const void* clientData, const float* state, std::vector<float>& derivatives);
 	void Integrate(const float deltaTime, rigidBodyPState_t& next_);
 	bool CheckForCollisions(const float deltaTime, rigidBodyPState_t& next, trace_t& collision);
 	bool CollisionImpulse(const trace_t& collision, Vector2& impulse);
+	void Rest();
 	void DebugDraw();
 };
 

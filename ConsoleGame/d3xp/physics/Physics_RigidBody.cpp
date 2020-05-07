@@ -4,9 +4,40 @@
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_RigidBody)
 
+/*
+================
+RigidBodyDerivatives
+================
+*/
+void RigidBodyDerivatives(const float t, const void* clientData, const float* state, float* derivatives) {
+	const idPhysics_RigidBody* p = (idPhysics_RigidBody*)clientData;
+	rigidBodyIState_t* s = (rigidBodyIState_t*)state;
+	// NOTE: this struct should be build conform rigidBodyIState_t
+	struct rigidBodyDerivatives_s {		
+		Vector2 linearVelocity;
+		//idMat3				angularMatrix;
+		Vector2 force;
+		//idVec3				torque;
+	} *d = (struct rigidBodyDerivatives_s*) derivatives;
+	/*idVec3 angularVelocity;
+	idMat3 inverseWorldInertiaTensor;*/
+
+	/*inverseWorldInertiaTensor = s->orientation * p->inverseInertiaTensor * s->orientation.Transpose();
+	angularVelocity = inverseWorldInertiaTensor * s->angularMomentum;*/
+	// derivatives
+	d->linearVelocity = /*p->inverseMass **/ s->linearMomentum;
+	//d->angularMatrix = SkewSymmetric(angularVelocity) * s->orientation;
+	d->force = vec2_origin;//-p->linearFriction * s->linearMomentum + p->current.externalForce;
+	//d->torque = -p->angularFriction * s->angularMomentum + p->current.externalTorque;
+}
+
 idPhysics_RigidBody::idPhysics_RigidBody() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idPhysics_RigidBody");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	// set default rigid body properties
-	//SetClipMask(MASK_SOLID);
+	SetClipMask(MASK_SOLID);
 	//SetBouncyness(0.6f);
 	//SetFriction(0.6f, 0.6f, 0.0f);
 	clipModel = nullptr;
@@ -17,7 +48,7 @@ idPhysics_RigidBody::idPhysics_RigidBody() {
 	current.i.position.Zero();
 	//current.i.orientation.Identity();
 
-	//current.i.linearMomentum.Zero();
+	current.i.linearMomentum.Zero();
 	//current.i.angularMomentum.Zero();
 
 	saved = current;
@@ -26,24 +57,40 @@ idPhysics_RigidBody::idPhysics_RigidBody() {
 	inverseMass = 1.0f;
 	centerOfMass.Zero();
 	inertiaTensor.Identity();
-	inverseInertiaTensor.Identity();
+	inverseInertiaTensor.Identity();*/
 
 	// use the least expensive euler integrator
-	integrator = new (TAG_PHYSICS) idODE_Euler(sizeof(rigidBodyIState_t) / sizeof(float), RigidBodyDerivatives, this);
+	integrator = std::make_shared<idODE_Euler>(sizeof(rigidBodyIState_t) / sizeof(float), RigidBodyDerivatives,
+		this);
 
-	dropToFloor = false;
-	noImpact = false;
+	/*dropToFloor = false;
+	noImpact = false;*/
 	noContact = false;
 
-	hasMaster = false;
+	/*hasMaster = false;
 	isOrientated = false;*/
 }
 
 idPhysics_RigidBody::~idPhysics_RigidBody() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idPhysics_RigidBody");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	if (clipModel) {
 		clipModel = nullptr;
 	}
-	//delete integrator;
+	integrator = nullptr;
+}
+
+void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
+{
+	if (clipModel && clipModel != model && freeOld) {
+		clipModel = nullptr;
+	}
+	clipModel = model;
+	clipModel->Link(gameLocal.clip, self.lock(), 0, current.i.position);
+
+	current.i.linearMomentum.Zero();
 }
 
 /*
@@ -63,6 +110,24 @@ idPhysics_RigidBody::GetNumClipModels
 int idPhysics_RigidBody::GetNumClipModels() const
 {
 	return 1;
+}
+
+/*
+================
+idPhysics_RigidBody::GetBounds
+================
+*/
+const idBounds& idPhysics_RigidBody::GetBounds(int id) const {
+	return clipModel->GetBounds();
+}
+
+/*
+================
+idPhysics_RigidBody::GetAbsBounds
+================
+*/
+const idBounds& idPhysics_RigidBody::GetAbsBounds(int id) const {
+	return clipModel->GetAbsBounds();
 }
 
 /*
@@ -112,10 +177,9 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	}
 
 	// update the position of the clip model
-	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 
 	DebugDraw();
-
 
 	if (!noContact) {
 		// get contacts
@@ -124,6 +188,28 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 
 	if (current.atRest < 0) {
 		ActivateContactEntities();
+	}
+
+	if (collided) {
+		// if the rigid body didn't come to rest or the other entity is not at rest
+		/*ent = gameLocal.entities[collision.c.entityNum];
+		if (ent && (!cameToRest || !ent->IsAtRest())) {
+			// apply impact to other entity
+			ent->ApplyImpulse(self, collision.c.id, collision.c.point, -impulse);
+		}*/
+	}
+
+	// move the rigid body velocity back into the world frame
+	//current.pushVelocity.Zero();
+
+	current.lastTimeStep = timeStep;
+	//current.externalForce.Zero();
+	//current.externalTorque.Zero();
+
+	if (IsOutsideWorld()) {
+		gameLocal.Warning("rigid body moved outside world bounds for entity '%s' type '%s' at (%s)",
+			self.lock()->name.c_str(), self.lock()->GetType()->classname.c_str(), current.i.position.ToString(0).c_str());
+		Rest();
 	}
 
 	return true;
@@ -139,7 +225,12 @@ int idPhysics_RigidBody::GetTime() const {
 void idPhysics_RigidBody::Activate()
 {
 	current.atRest = -1;
-	self->BecomeActive(TH_PHYSICS);
+	self.lock()->BecomeActive(TH_PHYSICS);
+}
+
+bool idPhysics_RigidBody::IsAtRest() const
+{
+	return current.atRest >= 0;
 }
 
 /*
@@ -159,9 +250,22 @@ idPhysics_RigidBody::RestoreState
 void idPhysics_RigidBody::RestoreState() {
 	current = saved;
 
-	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 
 	EvaluateContacts();
+}
+
+void idPhysics_RigidBody::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
+{
+	current.i.linearMomentum = newLinearVelocity;
+	Activate();
+}
+
+const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const
+{
+	static Vector2 curLinearVelocity;
+	curLinearVelocity = current.i.linearMomentum;// *inverseMass;
+	return curLinearVelocity;
 }
 
 bool idPhysics_RigidBody::EvaluateContacts()
@@ -177,8 +281,8 @@ bool idPhysics_RigidBody::EvaluateContacts()
 	dir.SubVec3(0).Normalize();
 	dir.SubVec3(1).Normalize();*/
 	dir = vec2_origin;
-	auto num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(),
-		dir, CONTACT_EPSILON, clipModel, /*clipModel->GetAxis(),*/ clipMask, self);
+	auto num = gameLocal.clip->Contacts(contacts, 10, clipModel->GetOrigin(),
+		dir, CONTACT_EPSILON, clipModel, /*clipModel->GetAxis(),*/ clipMask, self.lock());
 	contacts.reserve(num);
 
 	AddContactEntitiesForContacts();
@@ -186,6 +290,13 @@ bool idPhysics_RigidBody::EvaluateContacts()
 	return !contacts.empty();
 }
 
+/*
+================
+idPhysics_RigidBody::Integrate
+
+  Calculate next state from the current state using an integrator.
+================
+*/
 void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& next_)
 {
 	Vector2 position;
@@ -195,7 +306,7 @@ void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& ne
 
 	//current.i.orientation.TransposeSelf();
 
-	//integrator->Evaluate((float*)&current.i, (float*)&next_.i, 0, deltaTime);
+	integrator->Evaluate((float*)&current.i, (float*)&next_.i, 0, deltaTime);
 	//next_.i.orientation.OrthoNormalizeSelf();
 
 	// apply gravity
@@ -223,7 +334,7 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPSt
 	bool collided = false;
 
 	// if there was a collision
-	if (gameLocal.clip.Motion(collision, current.i.position, next_.i.position, clipModel, clipMask, self)) {
+	if (gameLocal.clip->Motion(collision, current.i.position, next_.i.position, clipModel, clipMask, self.lock())) {
 		// set the next state to the state at the moment of impact
 		next_.i.position = collision.endpos;
 		//next_.i.orientation = collision.endAxis;
@@ -240,7 +351,15 @@ bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& im
 	Vector2 velocity;
 
 	// callback to self to let the entity know about the collision
-	return self->Collide(collision, velocity);
+	return self.lock()->Collide(collision, velocity);
+}
+
+void idPhysics_RigidBody::Rest()
+{
+	current.atRest = gameLocal.time;
+	current.i.linearMomentum.Zero();
+	//current.i.angularMomentum.Zero();
+	self.lock()->BecomeInactive(TH_PHYSICS);
 }
 
 void idPhysics_RigidBody::DebugDraw()
@@ -262,7 +381,7 @@ void idPhysics_RigidBody::SetOrigin(const Vector2 &newOrigin, int id) {
 		current.i.position = newOrigin;
 	//}
 
-	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 
 	Activate();
 }
@@ -295,7 +414,7 @@ void idPhysics_RigidBody::Translate(const Vector2& translation, int id)
 	current.localOrigin += translation;
 	current.i.position += translation;
 
-	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 
 	Activate();
 }
@@ -318,7 +437,7 @@ void idPhysics_RigidBody::Rotate(const Vector2& rotation, int id)
 		current.localOrigin = current.i.position;
 	//}
 
-	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 
 	Activate();
 }

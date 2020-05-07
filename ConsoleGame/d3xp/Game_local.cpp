@@ -4,6 +4,8 @@
 #include "../d3xp/gamesys/Class.h"
 #include "../renderer/RenderWorld_local.h"
 #include "../framework/Common.h"
+#include "../idlib/Lib.h"
+#include "../idlib/Str.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -18,11 +20,17 @@ idGameLocal::idGameLocal()
 
 void idGameLocal::Init()
 {
+	Printf("--------- Initializing Game ----------\n");
+	Printf("gamename: %s\n", GAME_VERSION);
+	Printf("gamedate: %s\n", __DATE__);
+
 	Clear();
+
+	clip = std::make_shared<idClip>();
 
 	idClass::Init();
 
-	height = 10;
+	height = 16;
 	width = 50;
 
 	colors.push_back(Screen::Green);
@@ -41,6 +49,9 @@ void idGameLocal::Init()
 	rand_eng.seed(static_cast<unsigned>(Sys_Time()));
 
 	gamestate = GAMESTATE_NOMAP;
+
+	Printf("game initialized.\n");
+	Printf("--------------------------------------\n");
 }
 
 /*
@@ -52,18 +63,24 @@ idGameLocal::Shutdown
 */
 void idGameLocal::Shutdown()
 {
-
 	if (!common)
 	{
 		return;
 	}
 
+	Printf("------------ Game Shutdown -----------\n");
+
 	MapShutdown();
+
+	// free the collision map
+	collisionModelManager->FreeMap();
 
 	idClass::Shutdown();
 
 	// free memory allocated by class objects
 	Clear();
+
+	Printf("--------------------------------------\n");
 }
 
 void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
@@ -86,6 +103,8 @@ void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idR
 
 void idGameLocal::MapShutdown()
 {
+	Printf("--------- Game Map Shutdown ----------\n");
+
 	gamestate = GAMESTATE_SHUTDOWN;
 
 	if (gameRenderWorld) {
@@ -95,11 +114,19 @@ void idGameLocal::MapShutdown()
 
 	MapClear(true);
 
+	if(clip)
+		clip->Shutdown();
+	idClipModel::ClearTraceModelCache();
+
+	collisionModelManager->FreeMap();		// Fixes an issue where when maps were reloaded the materials wouldn't get their surfaceFlags re-set.  Now we free the map collision model forcing materials to be reparsed.
+
 	mapFileName.clear();
 
 	gameRenderWorld = nullptr;
 
 	gamestate = GAMESTATE_NOMAP;
+
+	Printf("--------------------------------------\n");
 }
 
 void idGameLocal::RunFrame()
@@ -133,7 +160,7 @@ void idGameLocal::RunFrame()
 	static auto lastTimePointSpawn = time;
 	if (time - lastTimePointSpawn > 100000) {
 		lastTimePointSpawn = time;
-		//AddRandomPoint();
+		AddRandomPoint();
 	}
 
 	// let entities think
@@ -163,8 +190,10 @@ bool idGameLocal::Draw(int clientNum)
 {
 	tr.console += std::to_string(time) + " ";
 	tr.DrawFPS();
+
+	RB_RenderDebugToolsBefore();
+
 	gameRenderWorld->RenderScene(nullptr);
-	tr.console.clear();
 
 	return true;
 }
@@ -227,8 +256,16 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			auto text = ent->name + " " + std::to_string(time);
-			//gameRenderWorld->DrawText(text, Vector2(), Screen::ConsoleColor::Green, 0);
+			if (ent->IsActive())
+			{
+				char buf[256];
+				sprintf_s(buf, "ent %s %s pos [%2.3f %2.3f] vel [%2.3f %2.3f] rest %d", ent->GetName().c_str(),
+					ent->GetClassname().c_str(), ent->GetPhysics()->GetOrigin().x,
+					ent->GetPhysics()->GetOrigin().y, ent->GetPhysics()->GetLinearVelocity().x,
+					ent->GetPhysics()->GetLinearVelocity().y, ent->GetPhysics()->IsAtRest());
+
+				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 1);
+			}
 		}
 	}
 
@@ -272,9 +309,11 @@ void idGameLocal::RunDebugInfo() {
 
 	if (g_showCollisionWorld.GetBool()) {
 		collisionModelManager->DrawModel(0, vec3_origin, mat3_identity, origin, 128.0f);
-	}
+	}*/
 
-	if (g_showCollisionModels.GetBool()) {
+	clip->DrawClipSectors();
+
+	/*if (g_showCollisionModels.GetBool()) {
 		clip.DrawClipModels(player->GetEyePosition(), g_maxShowDistance.GetFloat(), pm_thirdPerson.GetBool() ? NULL : player);
 	}
 
@@ -317,18 +356,94 @@ void idGameLocal::RunDebugInfo() {
 	collisionModelManager->DebugOutput(player->GetEyePosition());*/
 }
 
-void idGameLocal::Printf(const std::string fmt, ...) const
+/*
+============
+idGameLocal::Printf
+============
+*/
+void idGameLocal::Printf(const char* fmt, ...) const
 {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->Printf("%s", text);
 }
 
-void idGameLocal::Warning(const std::string& fmt, ...) const
-{
-	throw std::logic_error(fmt);
+/*
+============
+idGameLocal::DPrintf
+============
+*/
+void idGameLocal::DPrintf(const char* fmt, ...) const {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->Printf("%s", text);
+}
+
+/*
+============
+idGameLocal::Warning
+============
+*/
+void idGameLocal::Warning(const char* fmt, ...) const {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->Warning("%s", text);
+}
+
+/*
+============
+idGameLocal::DWarning
+============
+*/
+void idGameLocal::DWarning(const char* fmt, ...) const {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->DWarning("%s", text);
+}
+
+/*
+============
+idGameLocal::Error
+============
+*/
+void idGameLocal::Error(const char* fmt, ...) const {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->Error("%s", text);
 }
 
 void idGameLocal::LoadMap(const std::string mapName, int randseed)
 {
 	mapFileName = mapName;
+
+	// load the collision map
+	collisionModelManager->LoadMap(/*mapFile*/);
+	//collisionModelManager->Preload(mapName);
 
 	entities.clear();
 	entities.resize(MAX_GENTITIES);
@@ -347,6 +462,8 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed)
 	framenum = 0;
 
 	spawnArgs.Clear();
+
+	clip->Init();
 }
 
 /*
@@ -400,15 +517,23 @@ void idGameLocal::Clear()
 	spawnedEntities.Clear();
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
+	
+	if (clip)
+	{
+		clip->Shutdown();
+		clip = nullptr;
+	}
+
 	framenum = 0;
 	previousTime = 0;
 	time = 0;
-	colors.clear();
-	spawnArgs.Clear();
 	mapFileName.clear();
+	spawnArgs.Clear();
 	gamestate = GAMESTATE_UNINITIALIZED;
 
 	ResetSlowTimeVars();
+
+	colors.clear();
 }
 
 void idGameLocal::SpawnMapEntities()
@@ -427,16 +552,16 @@ void idGameLocal::MapPopulate()
 
 void idGameLocal::MapClear(bool clearClients)
 {
-	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++)
-	{
+	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++) {
 		auto ent = entities[i];
 
 		if (ent)
 		{
-			ent->activeNode.SetOwner(nullptr);
-			ent->spawnNode.SetOwner(nullptr);
+			//ent->activeNode.SetOwner(nullptr);
+			//ent->spawnNode.SetOwner(nullptr);
+			ent->FreeModelDef();
 			gameLocal.UnregisterEntity(ent);
-			ent->GetPhysics()->SetSelf(nullptr);
+			//ent->GetPhysics()->SetSelf(nullptr);
 		}
 
 	}
@@ -444,17 +569,21 @@ void idGameLocal::MapClear(bool clearClients)
 
 void idGameLocal::AddRandomPoint()
 {
-	Vector2 origin(GetRandomValue(0.0f, width - 1.0f), GetRandomValue(0.0f, height - 1.0f));
+	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+	//Vector2 origin(0.0f, 0.0f);
 	Vector2 axis(0, 0);
 
 	idDict args;
 
-	args.Set("classname", "idStaticEntity");
-	args.Set("spawnclass", "idStaticEntity");
+	args.Set("classname", "idSimpleObject");
+	args.Set("spawnclass", "idSimpleObject");
+	//args.Set("classname", "idStaticEntity");
+	//args.Set("spawnclass", "idStaticEntity");
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(GetRandomColor()));
+	args.Set("linearVelocity", (Vector2(GetRandomValue(0.0f, 100.0f) / 1000, GetRandomValue(0.0f, 100.0f) / 1000).ToString()));
 
 	SpawnEntityDef(args);
 
@@ -571,7 +700,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 	int spawn_entnum;
 
 	if (spawnCount >= (1 << (32 - GENTITYNUM_BITS))) {
-		throw std::range_error("idGameLocal::RegisterEntity: spawn count overflow");
+		Error("idGameLocal::RegisterEntity: spawn count overflow");
 	}
 
 	if (!spawnArgsToCopy.GetInt("spawn_entnum", "0", spawn_entnum))
@@ -584,7 +713,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 			freeIndex++;
 		}
 		if (freeIndex >= maxEntityNum) {
-			std::range_error("no free entities");
+			Error("no free entities");
 		}
 		spawn_entnum = freeIndex++;
 

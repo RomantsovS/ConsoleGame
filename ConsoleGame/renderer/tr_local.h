@@ -8,15 +8,29 @@
 
 class idRenderWorldLocal;
 struct viewEntity_t;
+struct portalArea_t;
 
 // areas have references to hold all the lights and entities in them
 struct areaReference_t
 {
+	areaReference_t()
+	{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "areaReference_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+	~areaReference_t()
+	{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "areaReference_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
 	std::shared_ptr<areaReference_t> areaNext;				// chain in the area
 	std::shared_ptr<areaReference_t> areaPrev;
 	std::shared_ptr<areaReference_t> ownerNext;				// chain on either the entityDef or lightDef
-	std::shared_ptr<idRenderEntityLocal> entity;					// only one of entity / light will be non-NULL
-	struct portalArea_t *area;					// so owners can find all the areas they are in
+	std::weak_ptr<idRenderEntityLocal> entity;					// only one of entity / light will be non-NULL
+	portalArea_t *area;					// so owners can find all the areas they are in
 };
 
 class idRenderEntity
@@ -68,18 +82,22 @@ struct viewEntity_t
 {
 	viewEntity_t()
 	{
-		++count;
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "viewEntity_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	~viewEntity_t()
 	{
-		--count;
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "viewEntity_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	std::shared_ptr<viewEntity_t> next;
 
 	// back end should NOT reference the entityDef, because it can change when running SMP
-	std::shared_ptr<idRenderEntityLocal> entityDef;
+	std::weak_ptr<idRenderEntityLocal> entityDef;
 
 	// for scissor clipping, local inside renderView viewport
 	// scissorRect.Empty() is true if the viewEntity_t was never actually
@@ -91,13 +109,24 @@ struct viewEntity_t
 	// parallelAddModels will build a chain of surfaces here that will need to
 	// be linked to the lights or added to the drawsurf list in a serial code section
 	//drawSurf_t *			drawSurfs;
-
-	static int count;
 };
 
 // viewDefs are allocated on the frame temporary stack memory
 struct viewDef_t
 {
+	viewDef_t()
+	{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "viewDef_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
+	~viewDef_t()
+	{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "viewDef_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
 
 	// specified in the call to DrawScene()
 	renderView_t		renderView;
@@ -125,6 +154,22 @@ struct viewDef_t
 
 	int					areaNum;				// -1 = not in a valid area
 };
+
+// all of the information needed by the back end must be
+// contained in a idFrameData.  This entire structure is
+// duplicated so the front and back end can run in parallel
+// on an SMP machine.
+class idFrameData {
+public:
+	int	frameMemoryAllocated;
+	int frameMemoryUsed;
+	byte* frameMemory;
+
+	int highWaterAllocated;	// max used on any frame
+	int highWaterUsed;
+};
+
+extern	idFrameData* frameData;
 
 class idRenderSystemLocal : public idRenderSystem
 {
@@ -235,6 +280,9 @@ TR_BACKEND_RENDERTOOLS
 
 void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0);
 void RB_ClearDebugText(int time);
+void RB_AddDebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest);
+void RB_ClearDebugLines(int time);
+void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
 
 #endif

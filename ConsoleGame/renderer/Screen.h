@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 #include "../idlib/math/Vector2.h"
+#include "../framework/Common_local.h"
 
 class Screen {
 public:
@@ -83,10 +84,10 @@ Screen::Pixel Screen::get(pos r, pos c) const // declared as inline in the class
 inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 {
 	if (r >= height)
-		throw std::out_of_range(std::string("height: ") + std::to_string(r) + " out of range: " + std::to_string(height));
+		common->Error("Screen height: %d out of range: %d", r, height);
 
 	if (col >= width)
-		throw std::out_of_range(std::string("width: ") + std::to_string(col) + " out of range: " + std::to_string(width));
+		common->Error("Screen width: %d out of range: %d", col, width);
 
 	contents[r*width + col] = ch;  // set specified location to given value
 
@@ -95,7 +96,7 @@ inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 
 inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch)
 {
-	return set(static_cast<size_t>(pos.y), static_cast<size_t>(pos.x), ch);
+	return set(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y), ch);
 }
 
 void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background);

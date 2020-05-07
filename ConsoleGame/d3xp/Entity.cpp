@@ -10,7 +10,6 @@ idEntity::idEntity() :
 	entityNumber = ENTITYNUM_NONE;
 	//entityDefNumber = -1;
 
-
 	thinkFlags = 0;
 
 	physics = nullptr;
@@ -28,8 +27,6 @@ idEntity::~idEntity()
 	// we have to set back the default physics object before unbinding because the entity
 	// specific physics object might be an entity variable and as such could already be destroyed.
 	SetPhysics(nullptr);
-
-	FreeModelDef();
 }
 
 void idEntity::Spawn()
@@ -157,20 +154,18 @@ void idEntity::Present()
 	// camera target for remote render views
 	/*if (cameraTarget && gameLocal.InPlayerPVS(this)) {
 		renderEntity.remoteRenderView = cameraTarget->GetRenderView();
-	}
-
-	// if set to invisible, skip
-	if (!renderEntity.hModel || IsHidden()) {
-		return;
 	}*/
 
+	// if set to invisible, skip
+	if (!renderEntity.hModel /*|| IsHidden()*/) {
+		return;
+	}
+
 	// add to refresh list
-	if (modelDefHandle == -1)
-	{
+	if (modelDefHandle == -1) {
 		modelDefHandle = gameRenderWorld->AddEntityDef(&renderEntity);
 	}
-	else
-	{
+	else {
 		gameRenderWorld->UpdateEntityDef(modelDefHandle, &renderEntity);
 	}
 }
@@ -221,7 +216,7 @@ void idEntity::UpdateModelTransform()
 	}
 	else {
 		// Add the deltas here, used for projectiles in MP. These deltas should only affect the visuals.
-		//renderEntity.axis = GetPhysics()->GetAxis() * axisDelta;
+		renderEntity.axis = GetPhysics()->GetAxis() * axisDelta;
 		renderEntity.origin = GetPhysics()->GetOrigin() + originDelta;
 	}
 }
@@ -246,18 +241,18 @@ bool idEntity::UpdateAnimationControllers() {
 void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys)
 {
 	// clear any contacts the current physics object has
-	/*if (physics) {
+	if (physics) {
 		physics->ClearContacts();
-	}*/
+	}
 	// set new physics object or set the default physics if NULL
-	if (phys != NULL) {
-		//defaultPhysicsObj.SetClipModel(NULL, 1.0f);
+	if (phys) {
+		defaultPhysicsObj->SetClipModel(nullptr, 1.0f);
 		physics = phys;
 		physics->Activate();
 	}
-	/*else {
-		physics = &defaultPhysicsObj;
-	}*/
+	else {
+		physics = defaultPhysicsObj;
+	}
 	physics->UpdateTime(gameLocal.time);
 	//physics->SetMaster(bindMaster, fl.bindOrientated);
 }
@@ -310,7 +305,7 @@ bool idEntity::RunPhysics()
 		}
 	}
 
-	return false;
+	return true;
 }
 
 void idEntity::SetOrigin(const Vector2 & org)

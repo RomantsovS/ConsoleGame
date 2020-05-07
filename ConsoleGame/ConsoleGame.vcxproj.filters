@@ -55,8 +55,11 @@
     <Filter Include="idlib\Geometry">
       <UniqueIdentifier>{c6cd5d2b-51a9-4a54-8618-1ec9555ac65b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="d3xp\GameSys\AI">
+    <Filter Include="d3xp\AI">
       <UniqueIdentifier>{56eb0375-5264-4b06-ad30-ec340ea48180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="idlib\Text">
+      <UniqueIdentifier>{befe0a83-32a2-42f1-82d8-7f4eb5658a62}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -133,7 +136,7 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="d3xp\ai\AI.h">
-      <Filter>d3xp\GameSys\AI</Filter>
+      <Filter>d3xp\AI</Filter>
     </ClInclude>
     <ClInclude Include="d3xp\physics\Clip.h">
       <Filter>Physics</Filter>
@@ -162,11 +165,26 @@
     <ClInclude Include="d3xp\Player.h">
       <Filter>d3xp</Filter>
     </ClInclude>
+    <ClInclude Include="framework\File.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\FileSystem.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\sys\sys_assert.h">
+      <Filter>idlib\Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Lib.h">
+      <Filter>idlib</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Str.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\math\Ode.h">
+      <Filter>idlib\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Snake.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -258,7 +276,7 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\ai\AI.cpp">
-      <Filter>d3xp\GameSys\AI</Filter>
+      <Filter>d3xp\AI</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\physics\Clip.cpp">
       <Filter>Physics</Filter>
@@ -285,6 +303,30 @@
       <Filter>idlib\BV</Filter>
     </ClCompile>
     <ClCompile Include="idlib\math\Math.cpp">
+      <Filter>idlib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\File.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\Common_printf.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\FileSystem.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win_main.cpp">
+      <Filter>Sys\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="cm\CollisionModel_translate.cpp">
+      <Filter>CM</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\sys\sys_assert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Str.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\math\Ode.cpp">
       <Filter>idlib\Math</Filter>
     </ClCompile>
   </ItemGroup>

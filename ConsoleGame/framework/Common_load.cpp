@@ -1,6 +1,7 @@
 #include "Common_local.h"
 #include "../d3xp/Game.h"
 #include "../renderer/RenderSystem.h"
+#include "FileSystem.h"
 
 /*
 ===============
@@ -13,14 +14,30 @@ Exits with mapSpawned = true
 */
 void idCommonLocal::ExecuteMapChange()
 {
+	currentMapName = "test map";
+
+	common->Printf("--------- Execute Map Change ---------\n");
+	common->Printf("Map: %s\n", currentMapName.c_str());
+
+	int start = Sys_Milliseconds();
+
+	int sm = Sys_Milliseconds();
+	// shut down the existing game if it is running
+	UnloadMap();
+	int ms = Sys_Milliseconds() - sm;
+	common->Printf("%6d msec to unload map\n", ms);
+
 	// Free media from previous level and
 	// note which media we are going to need to load
+	sm = Sys_Milliseconds();
 	renderSystem->BeginLevelLoad();
+	ms = Sys_Milliseconds() - sm;
+	common->Printf("%6d msec to free assets\n", ms);
 
 	// let the renderSystem load all the geometry
 	if (!renderWorld->InitFromMap(""))
 	{
-		//common->Error("couldn't load %s", fullMapName.c_str());
+		common->Error("couldn't load %s"/*, fullMapName.c_str()*/);
 	}
 
 	// load and spawn all other entities ( from a savegame possibly )
@@ -32,7 +49,7 @@ void idCommonLocal::ExecuteMapChange()
 	}
 	else
 	{*/
-		game->InitFromNewMap("test", renderWorld, Sys_Milliseconds());
+		game->InitFromNewMap(currentMapName, renderWorld, Sys_Milliseconds());
 	//}
 
 	//if (!mapSpawnData.savegameFile)
@@ -54,4 +71,17 @@ void idCommonLocal::ExecuteMapChange()
 	renderSystem->EndLevelLoad();
 
 	mapSpawned = true;
+
+	int	msec = Sys_Milliseconds() - start;
+	common->Printf("%6d msec to load %s\n", msec, currentMapName.c_str());
+}
+
+void idCommonLocal::UnloadMap()
+{
+	// end the current map in the game
+	if (game) {
+		game->MapShutdown();
+	}
+
+	mapSpawned = false;
 }

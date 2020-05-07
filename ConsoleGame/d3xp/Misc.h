@@ -2,6 +2,7 @@
 #define MISC_H
 
 #include "Entity.h"
+#include "physics/Physics_RigidBody.h"
 
 class idStaticEntity : public idEntity
 {
@@ -15,7 +16,22 @@ public:
 	void Spawn();
 	virtual void Think() override;
 private:
-	int spawnTime;
+	//int spawnTime;
+};
+
+class idSimpleObject : public idEntity
+{
+public:
+	CLASS_PROTOTYPE(idSimpleObject);
+
+	idSimpleObject();
+
+	virtual ~idSimpleObject() override;
+
+	void Spawn();
+	virtual void Think() override;
+private:
+	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 };
 
 #endif

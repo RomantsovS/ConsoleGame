@@ -2,6 +2,7 @@
 #define TRACEMODEL_H
 
 #include "../bv/Bounds.h"
+#include "../../framework/Common_local.h"
 
 // trace model type
 enum traceModel_t {
@@ -18,8 +19,8 @@ enum traceModel_t {
 };
 
 // these are bit cache limits
-#define MAX_TRACEMODEL_VERTS		32
-#define MAX_TRACEMODEL_EDGES		32
+const size_t MAX_TRACEMODEL_VERTS = 4;
+const size_t MAX_TRACEMODEL_EDGES = 4;
 
 using traceModelVert_t = Vector2;
 
@@ -37,6 +38,7 @@ public:
 	idTraceModel();
 	// axial bounding box
 	idTraceModel(const idBounds& boxBounds);
+	~idTraceModel();
 
 	// axial box
 	void SetupBox(const idBounds& boxBounds);
@@ -51,6 +53,10 @@ private:
 
 inline idTraceModel::idTraceModel()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idTraceModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	type = TRM_INVALID;
 	numVerts = 0;
 	bounds.Zero();
@@ -58,8 +64,19 @@ inline idTraceModel::idTraceModel()
 
 inline idTraceModel::idTraceModel(const idBounds& boxBounds)
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idTraceModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	InitBox();
 	SetupBox(boxBounds);
+}
+
+inline idTraceModel::~idTraceModel()
+{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idTraceModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 inline void idTraceModel::SetupBox(const idBounds& boxBounds)
@@ -95,6 +112,7 @@ inline void idTraceModel::SetupBox(const idBounds& boxBounds)
 	polys[4].bounds[0][1] = boxBounds[1][1];
 	polys[5].bounds[1][0] = boxBounds[0][0];*/
 
+	bounds = boxBounds;
 }
 
 inline bool idTraceModel::Compare(const idTraceModel& trm) const

@@ -26,7 +26,7 @@ void idActor::Spawn()
 		gameLocal.SpawnEntityDef(args, ent);
 		if (!ent)
 		{
-			//gameLocal.Error("Couldn't spawn '%s' to attach to entity '%s'", kv->GetValue().c_str(), name.c_str());
+			gameLocal.Error("Couldn't spawn '%s' to attach to entity '%s'", kv->second.c_str(), name.c_str());
 		}
 		else
 		{

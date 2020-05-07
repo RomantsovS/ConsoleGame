@@ -5,19 +5,37 @@ CLASS_DECLARATION(idPhysics, idPhysics_Static)
 
 idPhysics_Static::idPhysics_Static()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idPhysics_Static");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 idPhysics_Static::~idPhysics_Static()
 {
-	/*if (self && self->GetPhysics() == this)
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idPhysics_Static");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
+	if (!self.expired() && self.lock()->GetPhysics().get() == this)
 	{
-		self->SetPhysics(NULL);
-	}*/
+		self.reset();
+	}
 }
 
 void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e)
 {
 	self = e;
+}
+
+void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
+{
+	if (clipModel && clipModel != model && freeOld) {
+		clipModel = nullptr;
+	}
+	clipModel = model;
+	if (clipModel) {
+		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	}
 }
 
 /*
@@ -30,7 +48,7 @@ std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const
 	if (clipModel) {
 		return clipModel;
 	}
-	return gameLocal.clip.DefaultClipModel();
+	return gameLocal.clip->DefaultClipModel();
 }
 
 /*
@@ -42,13 +60,55 @@ int idPhysics_Static::GetNumClipModels() const {
 	return (clipModel != nullptr);
 }
 
+/*
+================
+idPhysics_Static::SetClipMask
+================
+*/
+void idPhysics_Static::SetClipMask(int mask, int id) {
+}
+
+/*
+================
+idPhysics_Static::GetClipMask
+================
+*/
+int idPhysics_Static::GetClipMask(int id) const {
+	return 0;
+}
+
+/*
+================
+idPhysics_Static::GetBounds
+================
+*/
+const idBounds& idPhysics_Static::GetBounds(int id) const {
+	if (clipModel) {
+		return clipModel->GetBounds();
+	}
+	return bounds_zero;
+}
+
+/*
+================
+idPhysics_Static::GetAbsBounds
+================
+*/
+const idBounds& idPhysics_Static::GetAbsBounds(int id) const {
+	static idBounds absBounds;
+
+	if (clipModel) {
+		return clipModel->GetAbsBounds();
+	}
+	absBounds[0] = absBounds[1] = current.origin;
+	return absBounds;
+}
+
 bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec)
 {
-	/*Vector2 masterOrigin, oldOrigin;
-	Vector2 masterAxis, oldAxis;
+	//Vector2 masterOrigin, oldOrigin;
 
-
-	if (hasMaster) {
+	/*if (hasMaster) {
 		oldOrigin = current.origin;
 		oldAxis = current.axis;
 
@@ -82,6 +142,11 @@ void idPhysics_Static::Activate()
 {
 }
 
+bool idPhysics_Static::IsAtRest() const
+{
+	return true;
+}
+
 void idPhysics_Static::SaveState()
 {
 }
@@ -103,13 +168,13 @@ void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id)
 	}
 	else {*/
 		current.origin = newOrigin;
-	/*}
+	//}
 
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self, 0, current.origin, current.axis);
+		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
 	}
 
-	next = ConvertPStateToInterpolateState(current);
+	/*next = ConvertPStateToInterpolateState(current);
 	previous = next;*/
 }
 
@@ -141,9 +206,9 @@ void idPhysics_Static::Translate(const Vector2 & translation, int id)
 	current.localOrigin += translation;
 	current.origin += translation;
 
-	/*if (clipModel) {
-		clipModel->Link(gameLocal.clip, self, 0, current.origin, current.axis);
-	}*/
+	if (clipModel) {
+		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	}
 }
 
 void idPhysics_Static::Rotate(const Vector2 & rotation, int id)
@@ -179,6 +244,19 @@ const Vector2 & idPhysics_Static::GetOrigin(int id) const
 const Vector2 & idPhysics_Static::GetAxis(int id) const
 {
 	return current.axis;
+}
+
+void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
+{
+}
+
+/*
+================
+idPhysics_Static::GetLinearVelocity
+================
+*/
+const Vector2& idPhysics_Static::GetLinearVelocity(int id) const {
+	return vec2_origin;
 }
 
 void idPhysics_Static::ClearContacts()

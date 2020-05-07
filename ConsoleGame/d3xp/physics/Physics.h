@@ -20,8 +20,16 @@ public:
 public: // common physics interface
 	// set pointer to entity using physics
 	virtual void SetSelf(std::shared_ptr<idEntity> e) = 0;
+								// clip models
+	virtual void SetClipModel( std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true ) = 0;
 	virtual std::shared_ptr<idClipModel> GetClipModel(int id = 0) const = 0;
 	virtual int GetNumClipModels() const = 0;
+	// get/set the contents a specific clip model or the whole physics object collides with
+	virtual void SetClipMask(int mask, int id = -1) = 0;
+	virtual int GetClipMask(int id = -1) const = 0;
+	// get the bounds of a specific clip model or the whole physics object
+	virtual const idBounds& GetBounds(int id = -1) const = 0;
+	virtual const idBounds& GetAbsBounds(int id = -1) const = 0;
 
 	// evaluate the physics with the given time step, returns true if the object moved
 	virtual bool Evaluate(int timeStepMSec, int endTimeMSec) = 0;
@@ -32,6 +40,7 @@ public: // common physics interface
 	virtual int	GetTime() const = 0;
 
 	virtual void Activate() = 0;
+	virtual bool IsAtRest() const = 0;
 
 	// save and restore the physics state
 	virtual void SaveState() = 0;
@@ -46,6 +55,10 @@ public: // common physics interface
 	// get the position and orientation in world space
 	virtual const Vector2 &	GetOrigin(int id = 0) const = 0;
 	virtual const Vector2 &	GetAxis(int id = 0) const = 0;
+	// set linear and angular velocity
+	virtual void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) = 0;
+	// get linear and angular velocity
+	virtual const Vector2& GetLinearVelocity(int id = 0) const = 0;
 
 	virtual void ClearContacts() = 0;
 	virtual void AddContactEntity(std::shared_ptr<idEntity> e) = 0;

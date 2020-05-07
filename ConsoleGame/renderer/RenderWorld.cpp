@@ -1,9 +1,14 @@
 #include "tr_local.h"
 #include "RenderWorld_local.h"
 #include "../d3xp/Game_local.h"
+#include "../framework/Common_local.h"
 
 idRenderWorldLocal::idRenderWorldLocal()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idRenderWorldLocal");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	mapName.clear();
 
 	areaNodes.clear();
@@ -15,10 +20,13 @@ idRenderWorldLocal::idRenderWorldLocal()
 
 idRenderWorldLocal::~idRenderWorldLocal()
 {
+	common->DPrintf("%s dtor\n", "idRenderWorldLocal");
+
 	// free all the entityDefs, lightDefs, portals, etc
 	FreeWorld();
 
 	// free up the debug lines, polys, and text
+	RB_ClearDebugLines(0);
 	RB_ClearDebugText(0);
 }
 
@@ -44,6 +52,14 @@ int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re)
 
 void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t * re)
 {
+	if (!re->hModel /*&& !re->callback*/) {
+		common->Error("idRenderWorld::UpdateEntityDef: NULL hModel");
+	}
+
+	// create new slots if needed
+	if (entityHandle < 0 || entityHandle > LUDICROUS_INDEX) {
+		common->Error("idRenderWorld::UpdateEntityDef: index = %i", entityHandle);
+	}
 	while (entityHandle >= static_cast<int>(entityDefs.size()))
 	{
 		entityDefs.resize(entityDefs.size() + 4);
@@ -62,8 +78,7 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 			R_FreeEntityDefDerivedData(def, false, false);
 		}
 	}
-	else
-	{
+	else {
 		// creating a new one
 		def = std::make_shared<idRenderEntityLocal>();
 		entityDefs[entityHandle] = def;
@@ -78,8 +93,10 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	// that may contain the updated surface
 	R_CreateEntityRefs(def);
 	
-	if(!tr.updateFrame)
-		tr.updateFrame = true;
+	if (!tr.updateFrame)
+	{
+		//tr.updateFrame = true;
+	}
 }
 
 /*
@@ -94,13 +111,13 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 {
 	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size()))
 	{
-		throw std::out_of_range("idRenderWorld::FreeEntityDef: handle %i " + std::to_string(entityHandle) + "> %i" + std::to_string(entityDefs.size()) + "\n");
+		common->Printf("idRenderWorld::FreeEntityDef: handle %i > %i\n", entityHandle, entityDefs.size());
 		return;
 	}
 
 	auto def = entityDefs[entityHandle];
-	if (!def)
-	{
+	if (!def)	{
+		common->Printf("idRenderWorld::FreeEntityDef: handle %i is NULL\n", entityHandle);
 		return;
 	}
 
@@ -116,13 +133,13 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle)
 const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) const
 {
 	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
-		throw std::out_of_range("idRenderWorld::GetRenderEntity: invalid handle %i [0, %i]\n");// , entityHandle, entityDefs.Num());
+		common->Printf("idRenderWorld::GetRenderEntity: invalid handle %i [0, %i]\n" , entityHandle, entityDefs.size());
 		return nullptr;
 	}
 
 	auto def = entityDefs[entityHandle];
 	if (!def) {
-		throw std::out_of_range("idRenderWorld::GetRenderEntity: handle %i is NULL\n");// , entityHandle);
+		common->Printf("idRenderWorld::GetRenderEntity: handle %i is NULL\n" , entityHandle);
 		return nullptr;
 	}
 
@@ -134,16 +151,12 @@ void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderV
 	if (!tr.updateFrame)
 		return;
 
-	tr.ClearScreen();
-
 	tr.FillBorder();
 
 	auto parms = std::make_shared<viewDef_t>();
 	parms->renderWorld = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());
 
 	R_RenderView(parms);
-
-	tr.Display();
 }
 
 bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start,
@@ -248,6 +261,7 @@ idRenderWorldLocal::DebugClearLines
 ====================
 */
 void idRenderWorldLocal::DebugClearLines(int time) {
+	RB_ClearDebugLines(time);
 	RB_ClearDebugText(time);
 }
 
@@ -261,6 +275,32 @@ idRenderWorldLocal::DrawText
 */
 void idRenderWorldLocal::DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0) {
 	RB_AddDebugText(text, origin, color, lifetime);
+}
+
+void idRenderWorldLocal::DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest)
+{
+	RB_AddDebugLine(color, start, end, lifetime, depthTest);
+}
+
+void idRenderWorldLocal::DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org, const int lifetime)
+{
+	int i;
+	Vector2 v[4];
+
+	if (bounds.IsCleared()) {
+		return;
+	}
+
+	for (i = 0; i < 4; i++) {
+		v[i][0] = org[0] + bounds[(i ^ (i >> 1)) & 1][0];
+		v[i][1] = org[1] + bounds[(i >> 1) & 1][1];
+		//v[i][2] = org[2] + bounds[(i >> 2) & 1][2];
+	}
+	
+	DebugLine(color, v[0], v[1], lifetime);
+	DebugLine(color, v[1], v[2], lifetime);
+	DebugLine(color, v[0], v[3], lifetime);
+	DebugLine(color, v[3], v[2], lifetime);
 }
 
 std::shared_ptr<idRenderWorld> idRenderWorldLocal::getptr()

@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "Common.h"
-#include "../renderer/RenderWorld.h"
+#include "File.h"
 
 enum errorParm_t {
 	ERP_NONE,
@@ -12,6 +12,10 @@ enum errorParm_t {
 	ERP_DROP,						// print to console and disconnect from game
 	ERP_DISCONNECT					// don't kill server
 };
+
+#define	MAX_PRINT_MSG_SIZE	4096
+
+class idRenderWorld;
 
 class idCommonLocal : public idCommon
 {
@@ -24,24 +28,40 @@ public:
 
 	virtual void Frame() override;
 
-	bool IsGameRunning() const { return gameRunning; }
+	virtual void Printf(const char* fmt, ...) override;
+	virtual void VPrintf(const char* fmt, va_list arg) override;
+	virtual void DPrintf(const char* fmt, ...) override;
+	virtual void Warning(const char* fmt, ...) override;
+	virtual void DWarning(const char* fmt, ...) override;
+	virtual void Error(const char* fmt, ...) override;
+	virtual void FatalError(const char* fmt, ...) override;
 public:
 	void Draw();			// called by gameThread
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;
 
+	std::shared_ptr<idFile> logFile;
+	bool log_file_closed;
+
+	char errorMessage[MAX_PRINT_MSG_SIZE];
+
 	// The main render world and sound world
 	std::shared_ptr<idRenderWorld> renderWorld;
-
+	
+	std::string currentMapName;			// for checking reload on same level
 	bool mapSpawned; // cleared on Stop()
 
 	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;
 
-	bool gameRunning;
+private:
+	void CloseLogFile();
 
 	void ExecuteMapChange();
+	void UnloadMap();
+
+	void Stop(bool resetSession = true);
 };
 
 extern idCommonLocal commonLocal;

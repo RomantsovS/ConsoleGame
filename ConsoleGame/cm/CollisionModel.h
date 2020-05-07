@@ -35,7 +35,7 @@ struct trace_t {
 	contactInfo_t			c;				// contact information, only valid if fraction < 1.0
 };
 
-#define CM_BOX_EPSILON		1			// should always be larger than clip epsilon
+#define CM_BOX_EPSILON		1.0f			// should always be larger than clip epsilon
 #define CM_MAX_TRACE_DIST	4096.0f			// maximum distance a trace model may be traced, point traces are unlimited
 
 class idCollisionModelManager {
@@ -43,15 +43,16 @@ public:
 	virtual ~idCollisionModelManager() {}
 
 	// Loads collision models from a map file.
-	//virtual void			LoadMap(const idMapFile* mapFile) = 0;
+	virtual void			LoadMap(/*const idMapFile* mapFile*/) = 0;
 	// Frees all the collision models.
-	//virtual void			FreeMap() = 0;
+	virtual void			FreeMap() = 0;
 
 	// Gets the clip handle for a model.
 	virtual int LoadModel(const std::string& modelName) = 0;
-
 	// Sets up a trace model for collision with other trace models.
 	virtual int SetupTrmModel(const idTraceModel& trm/*, const idMaterial* material*/) = 0;
+	// Creates a trace model from a collision model, returns true if succesfull.
+	virtual bool TrmFromModel(const std::string& modelName, idTraceModel& trm) = 0;
 
 	// Gets the bounds of a model.
 	virtual bool GetModelBounds(int model, idBounds& bounds) const = 0;

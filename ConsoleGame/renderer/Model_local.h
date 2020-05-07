@@ -9,20 +9,20 @@ public:
 	idRenderModelStatic();
 	virtual ~idRenderModelStatic();
 
-	virtual void InitFromFile(std::string fileName);
+	virtual void InitFromFile(std::string fileName) override;
 
-	virtual void PurgeModel();
-	virtual void LoadModel();
-	virtual bool IsLoaded();
-	virtual void SetLevelLoadReferenced(bool referenced);
-	virtual bool IsLevelLoadReferenced();
+	virtual void PurgeModel() override;
+	virtual void LoadModel() override;
+	virtual bool IsLoaded() override;
+	virtual void SetLevelLoadReferenced(bool referenced) override;
+	virtual bool IsLevelLoadReferenced() override;
 
-	virtual void InitEmpty(const std::string fileName);
-	virtual const std::string Name() const;
-	virtual int NumSurfaces() const;
-	virtual const ModelPixel &Surface(int surfaceNum) const;
+	virtual void InitEmpty(const std::string fileName) override;
+	virtual const std::string Name() const override;
+	virtual int NumSurfaces() const override;
+	virtual const ModelPixel &Surface(int surfaceNum) const override;
 
-	virtual dynamicModel_t IsDynamicModel() const;
+	virtual dynamicModel_t IsDynamicModel() const override;
 	virtual bool IsReloadable() const;
 
 	void MakeDefaultModel();

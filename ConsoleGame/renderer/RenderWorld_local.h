@@ -9,6 +9,9 @@
 #include "Model.h"
 #include "tr_local.h"
 
+// assume any lightDef or entityDef index above this is an internal error
+const int LUDICROUS_INDEX = 10000;
+
 struct areaReference_t;
 
 struct portalArea_t
@@ -47,6 +50,8 @@ public:
 	virtual void DebugClearLines(int time) override;
 
 	virtual void DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) override;
+	virtual void DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) override;
+	virtual void DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
 
 	std::string mapName; // ie: maps/tim_dm2.proc, written to demoFile
 

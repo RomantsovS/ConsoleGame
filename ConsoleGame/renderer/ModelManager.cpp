@@ -68,6 +68,7 @@ idRenderModelManagerLocal::Shutdown
 */
 void idRenderModelManagerLocal::Shutdown()
 {
+	defaultModel = nullptr;
 	models.clear();
 	hash.clear();
 }
@@ -202,7 +203,7 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	{
 		if (!model->IsLevelLoadReferenced() && model->IsLoaded() && model->IsReloadable()) {
 
-			//			common->Printf( "purging %s\n", model->Name() );
+			common->Printf( "purging %s\n", model->Name().c_str() );
 
 			purgeCount++;
 
@@ -213,7 +214,7 @@ void idRenderModelManagerLocal::EndLevelLoad()
 		}
 		else
 		{
-			//			common->Printf( "keeping %s\n", model->Name() );
+			common->Printf( "keeping %s\n", model->Name().c_str() );
 
 			keepCount++;
 		}

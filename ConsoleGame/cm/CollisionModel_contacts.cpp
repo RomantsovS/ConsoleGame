@@ -1,20 +1,5 @@
 #include "CollisionModel_local.h"
 
-void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& start, const Vector2& end,
-	const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin)
-{
-	if (model < 0 || model > MAX_SUBMODELS || model > idCollisionModelManagerLocal::maxModels) {
-		throw std::logic_error("idCollisionModelManagerLocal::Translation: invalid model handle\n");
-		return;
-	}
-	if (!idCollisionModelManagerLocal::models[model]) {
-		throw std::logic_error("idCollisionModelManagerLocal::Translation: invalid model\n");
-		return;
-	}
-
-
-}
-
 /*
 ==================
 idCollisionModelManagerLocal::Contacts

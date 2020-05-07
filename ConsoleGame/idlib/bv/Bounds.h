@@ -2,6 +2,7 @@
 #define BOUNDS_H
 
 #include "../math/Vector2.h"
+#include "../math/Math.h"
 
 class idBounds {
 public:
@@ -18,14 +19,17 @@ public:
 	bool operator==(const idBounds& a) const;						// exact compare, no epsilon
 	bool operator!=(const idBounds& a) const;						// exact compare, no epsilon
 
+	void Clear();									// inside out bounds
 	void Zero(); // single point at origin
 
 	float GetRadius() const; // returns the radius relative to the bounds origin
 	bool IsCleared() const; // returns true if bounds are inside out
 
+	bool AddPoint(const Vector2& v); // add the point, returns true if the bounds expanded
 	idBounds Expand(const float d) const; // return bounds expanded in all directions with the given value
 	idBounds& ExpandSelf(const float d); // expand bounds in all directions with the given value
 
+	bool IntersectsBounds(const idBounds& a) const;	// includes touching
 	bool LineIntersection(const Vector2& start, const Vector2& end) const;
 
 					// most tight bounds for the given transformed bounds
@@ -85,6 +89,12 @@ inline bool idBounds::operator!=(const idBounds& a) const
 	return !Compare(a);
 }
 
+inline void idBounds::Clear()
+{
+	b[0][0] = b[0][1] = INFINITY;
+	b[1][0] = b[1][1] = -INFINITY;
+}
+
 inline void idBounds::Zero()
 {
 	b[0][0] = b[0][1] = b[1][0] = b[1][1] = 0;
@@ -92,6 +102,28 @@ inline void idBounds::Zero()
 
 inline bool idBounds::IsCleared() const {
 	return b[0][0] > b[1][0];
+}
+
+inline bool idBounds::AddPoint(const Vector2& v)
+{
+	bool expanded = false;
+	if (v[0] < b[0][0]) {
+		b[0][0] = v[0];
+		expanded = true;
+	}
+	if (v[0] > b[1][0]) {
+		b[1][0] = v[0];
+		expanded = true;
+	}
+	if (v[1] < b[0][1]) {
+		b[0][1] = v[1];
+		expanded = true;
+	}
+	if (v[1] > b[1][1]) {
+		b[1][1] = v[1];
+		expanded = true;
+	}
+	return expanded;
 }
 
 inline idBounds idBounds::Expand(const float d) const
@@ -109,8 +141,16 @@ inline idBounds& idBounds::ExpandSelf(const float d)
 	return *this;
 }
 
+inline bool idBounds::IntersectsBounds(const idBounds& a) const {
+	if (a.b[1][0] < b[0][0] || a.b[1][1] < b[0][1] /*|| a.b[1][2] < b[0][2]*/
+		|| a.b[0][0] > b[1][0] || a.b[0][1] > b[1][1] /*|| a.b[0][2] > b[1][2]*/) {
+		return false;
+	}
+	return true;
+}
+
 extern idBounds	bounds_zero;
-extern idBounds bounds_zeroOneCube;
-extern idBounds bounds_unitCube;
+//extern idBounds bounds_zeroOneCube;
+//extern idBounds bounds_unitCube;
 
 #endif // ! BOUNDS_H

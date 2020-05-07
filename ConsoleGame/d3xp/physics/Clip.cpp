@@ -1,14 +1,16 @@
 #include "Clip.h"
 #include "../../idlib/sys/sys_types.h"
+#include "../../idlib/sys/sys_assert.h"
 #include "../Game_local.h"
 #include "../../cm/CollisionModel.h"
 #include "../../idlib/math/Math.h"
 #include "../../idlib/math/Vector2.h"
 
-#define	MAX_SECTOR_DEPTH				12
-#define MAX_SECTORS						((1<<(MAX_SECTOR_DEPTH+1))-1)
+const size_t MAX_SECTOR_DEPTH = 4;
+const size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
 
-Vector2 vec3_boxEpsilon(CM_BOX_EPSILON, CM_BOX_EPSILON);
+//Vector2 vec3_boxEpsilon(CM_BOX_EPSILON, CM_BOX_EPSILON);
+Vector2 vec3_boxEpsilon(vec2_origin);
 
 static std::vector<std::shared_ptr<trmCache_t>> traceModelCache;
 static std::vector<std::shared_ptr<trmCache_t>> traceModelCache_Unsaved;
@@ -18,11 +20,29 @@ const static int TRACE_MODEL_SAVED = BIT(16);
 
 idClipModel::idClipModel()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idClipModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	Init();
+}
+
+idClipModel::idClipModel(const idTraceModel& trm)
+{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idClipModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
+	Init();
+	LoadModel(trm, true);
 }
 
 idClipModel::~idClipModel()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idClipModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	// make sure the clip model is no longer linked
 	Unlink();
 	/*if (traceModelIndex != -1) {
@@ -41,7 +61,7 @@ void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
 	bounds = trm.bounds;
 }
 
-void idClipModel::Link(idClip& clp)
+void idClipModel::Link(std::shared_ptr<idClip>& clp)
 {
 	//assert(idClipModel::entity);
 	if (!idClipModel::entity) {
@@ -72,10 +92,10 @@ void idClipModel::Link(idClip& clp)
 	absBounds[0] -= vec3_boxEpsilon;
 	absBounds[1] += vec3_boxEpsilon;
 
-	Link_r(clp.clipSectors.front());
+	Link_r(clp->clipSectors.front());
 }
 
-void idClipModel::Link(idClip& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle)
+void idClipModel::Link(std::shared_ptr<idClip>& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle)
 {
 	this->entity = ent;
 	this->id = newId;
@@ -99,7 +119,7 @@ void idClipModel::Unlink()
 			link->prevInSector.lock()->nextInSector = link->nextInSector;
 		}
 		else {
-			link->sector->clipLinks = link->nextInSector;
+			link->sector.lock()->clipLinks = link->nextInSector;
 		}
 		if (link->nextInSector) {
 			link->nextInSector->prevInSector = link->prevInSector;
@@ -126,14 +146,14 @@ void idClipModel::Init()
 	owner.reset();
 	origin.Zero();
 	//axis.Identity();
-	//bounds.Zero();
-	//absBounds.Zero();
+	bounds.Zero();
+	absBounds.Zero();
 	//material = NULL;
 	//contents = CONTENTS_BODY;
-	//collisionModelHandle = 0;
+	collisionModelHandle = 0;
 	renderModelHandle = -1;
 	traceModelIndex = -1;
-	clipLinks = NULL;
+	clipLinks = nullptr;
 	touchCount = -1;
 }
 
@@ -167,25 +187,25 @@ void idClipModel::Link_r(std::shared_ptr<clipSector_t> node)
 
 int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThroughSaves)
 {
-	int i, traceModelIndex;
+	int traceModelIndex;
 
 	auto hashKey = GetTraceModelHashKey(trm);
 
 	if (persistantThroughSaves) {
 		// Look Inside the saved list.
-		i = traceModelHash.at(hashKey);
-		if (i && *traceModelCache[i]->trm == trm)
+		auto iter = traceModelHash.find(hashKey);
+		if (iter != traceModelHash.end() && *traceModelCache[iter->second]->trm == trm)
 		{
-			traceModelCache[i]->refCount++;
+			traceModelCache[iter->second]->refCount++;
 		}
 	}
 	else {
 
 		// Look inside the unsaved list.
-		i = traceModelHash_Unsaved.at(hashKey);
-		if (i && *traceModelCache_Unsaved[i]->trm == trm)
+		auto iter = traceModelHash_Unsaved.find(hashKey);
+		if (iter != traceModelHash_Unsaved.end() && *traceModelCache_Unsaved[iter->second]->trm == trm)
 		{
-			traceModelCache_Unsaved[i]->refCount++;
+			traceModelCache[iter->second]->refCount++;
 		}
 	}
 
@@ -196,7 +216,7 @@ int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThrough
 	if (persistantThroughSaves) {
 		traceModelCache.push_back(entry);
 		traceModelIndex = traceModelCache.size() - 1;
-		traceModelHash[hashKey, traceModelIndex];
+		traceModelHash[hashKey] = traceModelIndex;
 
 		// Set the saved bit.
 		traceModelIndex |= TRACE_MODEL_SAVED;
@@ -204,7 +224,7 @@ int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThrough
 	else {
 		traceModelCache.push_back(entry);
 		traceModelIndex = traceModelCache.size() - 1;
-		traceModelHash[hashKey, traceModelIndex];
+		traceModelHash[hashKey] = traceModelIndex;
 
 		// Set the saved bit.
 		traceModelIndex &= TRACE_MODEL_SAVED;
@@ -221,7 +241,7 @@ void idClipModel::FreeTraceModel(int traceModelIndex)
 	if (traceModelIndex & TRACE_MODEL_SAVED) {
 
 		if (realTraceModelIndex < 0 || realTraceModelIndex >= traceModelCache.size() || traceModelCache[realTraceModelIndex]->refCount <= 0) {
-			std::logic_error("idClipModel::FreeTraceModel: tried to free uncached trace model");
+			gameLocal.Warning("idClipModel::FreeTraceModel: tried to free uncached trace model");
 			return;
 		}
 		traceModelCache[realTraceModelIndex]->refCount--;
@@ -230,7 +250,7 @@ void idClipModel::FreeTraceModel(int traceModelIndex)
 	else {
 
 		if (realTraceModelIndex < 0 || realTraceModelIndex >= traceModelCache_Unsaved.size() || traceModelCache_Unsaved[realTraceModelIndex]->refCount <= 0) {
-			std::logic_error("idClipModel::FreeTraceModel: tried to free uncached trace model");
+			gameLocal.Warning("idClipModel::FreeTraceModel: tried to free uncached trace model");
 			return;
 		}
 		traceModelCache_Unsaved[realTraceModelIndex]->refCount--;
@@ -258,6 +278,18 @@ int idClipModel::Handle() const {
 	}
 }
 
+/*
+===============
+idClipModel::ClearTraceModelCache
+===============
+*/
+void idClipModel::ClearTraceModelCache() {
+	traceModelCache.clear();
+	traceModelCache_Unsaved.clear();
+	traceModelHash.clear();
+	traceModelHash_Unsaved.clear();
+}
+
 std::shared_ptr<idTraceModel> idClipModel::GetCachedTraceModel(int traceModelIndex)
 {
 	int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
@@ -278,11 +310,21 @@ int idClipModel::GetTraceModelHashKey(const idTraceModel& trm)
 
 idClip::idClip()
 {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idClip");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
 	numClipSectors = 0;
 	clipSectors.clear();
 	worldBounds.Zero();
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
-	defaultClipModel = std::make_shared<idClipModel>();
+}
+
+idClip::~idClip()
+{
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idClip");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 void idClip::Init()
@@ -301,10 +343,11 @@ void idClip::Init()
 	CreateClipSectors_r(0, worldBounds, maxSector);
 
 	size = worldBounds[1] - worldBounds[0];
-	//gameLocal.Printf("map bounds are (%1.1f, %1.1f, %1.1f)\n", size[0], size[1], size[2]);
-	//gameLocal.Printf("max clip sector is (%1.1f, %1.1f, %1.1f)\n", maxSector[0], maxSector[1], maxSector[2]);
+	gameLocal.Printf("map bounds are (%1.1f, %1.1f)\n", size[0], size[1]);
+	gameLocal.Printf("max clip sector is (%1.1f, %1.1f)\n", maxSector[0], maxSector[1]);
 
 	// initialize a default clip model
+	defaultClipModel = std::make_shared<idClipModel>();
 	defaultClipModel->LoadModel(idTraceModel(idBounds(Vector2(0, 0)).Expand(8)));
 
 	// set counters to zero
@@ -322,9 +365,11 @@ void idClip::Shutdown()
 	}
 
 	// free the trace model used for the defaultClipModel
-	if (defaultClipModel->traceModelIndex != -1) {
+	if (defaultClipModel && defaultClipModel->traceModelIndex != -1) {
 		idClipModel::FreeTraceModel(defaultClipModel->traceModelIndex);
 		defaultClipModel->traceModelIndex = -1;
+
+		defaultClipModel = nullptr;
 	}
 
 	//clipLinkAllocator.Shutdown();
@@ -544,13 +589,13 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 		//||bounds[0][2] > bounds[1][2]
 		) {
 		// we should not go through the tree for degenerate or backwards bounds
-		throw std::logic_error("");
+		//assert(false);
 		return 0;
 	}
 
 	parms.bounds[0] = bounds[0] - vec3_boxEpsilon;
 	parms.bounds[1] = bounds[1] + vec3_boxEpsilon;
-	parms.contentMask = contentMask;
+	//parms.contentMask = contentMask;
 	parms.list = clipModelList;
 	parms.count = 0;
 	parms.maxCount = maxCount;
@@ -561,22 +606,21 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 	return parms.count;
 }
 
-std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const idBounds& bounds,
- Vector2& maxSector)
+std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const idBounds& bounds, Vector2& maxSector)
 {
 	int				i;
 	std::shared_ptr<clipSector_t> anode;
 	Vector2			size;
 	idBounds		front, back;
 
-	anode = clipSectors[idClip::numClipSectors];
+	anode = clipSectors[idClip::numClipSectors] = std::make_shared<clipSector_t>();
 	idClip::numClipSectors++;
 
 	if (depth == MAX_SECTOR_DEPTH) {
 		anode->axis = -1;
 		anode->children[0] = anode->children[1] = nullptr;
 
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < 2; i++) {
 			if (bounds[1][i] - bounds[0][i] > maxSector[i]) {
 				maxSector[i] = bounds[1][i] - bounds[0][i];
 			}
@@ -585,13 +629,14 @@ std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const
 	}
 
 	size = bounds[1] - bounds[0];
-	if (size[0] >= size[1] && size[0] >= size[2]) {
+	if (size[0] >= size[1]) {
 		anode->axis = 0;
 	}
-	else if (size[1] >= size[0] && size[1] >= size[2]) {
+	else if (size[1] >= size[0]) {
 		anode->axis = 1;
 	}
 	else {
+		common->Error("third dimension on clip sector");
 		anode->axis = 2;
 	}
 
@@ -637,9 +682,9 @@ void idClip::ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node
 		}
 
 		// if the clip model does not have any contents we are looking for
-		if (!(check->contents & parms.contentMask)) {
+		/*if (!(check->contents & parms.contentMask)) {
 			continue;
-		}
+		}*/
 
 		// if the bounds really do overlap
 		if (check->absBounds[0][0] > parms.bounds[1][0] ||
@@ -752,4 +797,36 @@ void idClip::TraceRenderModel(trace_t& trace, const Vector2& start, const Vector
 			touch->id = JOINT_HANDLE_TO_CLIPMODEL_ID(modelTrace.jointNumber);
 		}
 	}
+}
+
+void idClip::DrawClipSectors()
+{
+	const auto node = clipSectors.front();
+
+	DrawClipSectors_r(node, worldBounds);
+}
+
+bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const idBounds& bounds)
+{
+	if (node->axis == -1)
+		return false;
+
+	idBounds front, back;
+
+	front = bounds;
+	back = bounds;
+
+	front[0][node->axis] = back[1][node->axis] = node->dist;
+
+	if (!DrawClipSectors_r(node->children[0], front))
+	{
+		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, front, vec2_origin, 100);
+	}
+
+	if (!DrawClipSectors_r(node->children[1], back))
+	{
+		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, back, vec2_origin, 100);
+	}
+
+	return true;
 }

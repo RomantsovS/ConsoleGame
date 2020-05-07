@@ -42,6 +42,8 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 void idRenderSystemLocal::Display()
 {
 	screen.display(console);
+	console.clear();
+
 	//tr.updateFrame = false;
 }
 
@@ -50,11 +52,14 @@ void idRenderSystemLocal::Clear()
 	frameCount = 0;
 	viewCount = 0;
 
-	if(viewDef)
-		viewDef->renderWorld = nullptr;
-
 	screen.clear();
 	worlds.clear();
+
+	if (viewDef)
+	{
+		viewDef->renderWorld = nullptr;
+		viewDef = nullptr;
+	}
 
 	updateFrame = true;
 	console.clear();

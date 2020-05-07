@@ -7,6 +7,7 @@ void idCommonLocal::Draw()
 	if (game)
 	{
 		game->RunFrame();
+		
 		game->Draw(0);
 
 		RB_DrawView();

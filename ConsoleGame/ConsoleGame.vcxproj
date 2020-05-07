@@ -132,12 +132,18 @@
     <ClInclude Include="d3xp\Player.h" />
     <ClInclude Include="framework\Common.h" />
     <ClInclude Include="framework\Common_local.h" />
+    <ClInclude Include="framework\File.h" />
+    <ClInclude Include="framework\FileSystem.h" />
     <ClInclude Include="idlib\bv\Bounds.h" />
     <ClInclude Include="idlib\containers\LinkList.h" />
     <ClInclude Include="idlib\Dict.h" />
     <ClInclude Include="idlib\geometry\TraceModel.h" />
+    <ClInclude Include="idlib\Lib.h" />
     <ClInclude Include="idlib\math\Math.h" />
+    <ClInclude Include="idlib\math\Ode.h" />
     <ClInclude Include="idlib\math\Vector2.h" />
+    <ClInclude Include="idlib\Str.h" />
+    <ClInclude Include="idlib\sys\sys_assert.h" />
     <ClInclude Include="idlib\sys\sys_types.h" />
     <ClInclude Include="Renderer\Model.h" />
     <ClInclude Include="Renderer\ModelManager.h" />
@@ -153,7 +159,7 @@
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel_contacts.cpp" />
     <ClCompile Include="cm\CollisionModel_load.cpp" />
-    <ClCompile Include="ConsoleGame.cpp" />
+    <ClCompile Include="cm\CollisionModel_translate.cpp" />
     <ClCompile Include="d3xp\Actor.cpp" />
     <ClCompile Include="d3xp\ai\AI.cpp" />
     <ClCompile Include="d3xp\Entity.cpp" />
@@ -171,10 +177,16 @@
     <ClCompile Include="framework\Common.cpp" />
     <ClCompile Include="framework\common_frame.cpp" />
     <ClCompile Include="framework\Common_load.cpp" />
+    <ClCompile Include="framework\Common_printf.cpp" />
+    <ClCompile Include="framework\File.cpp" />
+    <ClCompile Include="framework\FileSystem.cpp" />
     <ClCompile Include="idlib\bv\Bounds.cpp" />
     <ClCompile Include="idlib\Dict.cpp" />
     <ClCompile Include="idlib\math\Math.cpp" />
+    <ClCompile Include="idlib\math\Ode.cpp" />
     <ClCompile Include="idlib\math\Vector2.cpp" />
+    <ClCompile Include="idlib\Str.cpp" />
+    <ClCompile Include="idlib\sys\sys_assert.cpp" />
     <ClCompile Include="Renderer\Model.cpp" />
     <ClCompile Include="Renderer\ModelManager.cpp" />
     <ClCompile Include="Renderer\RenderEntity.cpp" />
@@ -192,6 +204,7 @@
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Sys\Win32\win_cpu.cpp" />
     <ClCompile Include="Sys\Win32\win_shared.cpp" />
+    <ClCompile Include="sys\win_main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

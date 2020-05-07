@@ -1,4 +1,5 @@
 #include "RenderWorld_local.h"
+#include "../framework/Common_local.h"
 
 /*
 ================
@@ -18,8 +19,7 @@ void idRenderWorldLocal::FreeWorld() {
 		// there shouldn't be any remaining lightRefs or entityRefs
 		if (area->entityRefs->areaNext != area->entityRefs)
 		{
-			throw std::logic_error("FreeWorld: unexpected remaining entityRefs");
-			//common->Error("FreeWorld: unexpected remaining entityRefs");
+			common->Error("FreeWorld: unexpected remaining entityRefs");
 		}
 		area->entityRefs->areaNext = nullptr;
 		area->entityRefs->areaPrev = nullptr;
@@ -76,10 +76,12 @@ bool idRenderWorldLocal::InitFromMap(const std::string &name)
 			//ClearPortalStates();
 			return true;
 		//}
-		//common->Printf("idRenderWorldLocal::InitFromMap: timestamp has changed, reloading.\n");
+		common->Printf("idRenderWorldLocal::InitFromMap: timestamp has changed, reloading.\n");
 	}
 
 	FreeWorld();
+
+	mapName = name;
 
 	ReadBinaryAreaPortals();
 	ReadBinaryNodes();
@@ -186,12 +188,12 @@ void idRenderWorldLocal::FreeDefs()
 	// free all entityDefs
 	for (size_t i = 0; i < entityDefs.size(); i++) {
 		auto mod = entityDefs[i];
-		if (mod && mod->world == shared_from_this())
+		if (mod && mod->world.get() == this)
 		{
 			FreeEntityDef(i);
 			entityDefs[i] = nullptr;
 		}
 	}
 
-	entityDefs.clear();
+	//entityDefs.clear();
 }

@@ -11,6 +11,9 @@
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 
+// the "gameversion" client command will print this plus compile date
+#define	GAME_VERSION		"baseDOOM-1"
+
 const int MAX_CLIENTS = 8;
 const int GENTITYNUM_BITS = 12;
 const int MAX_GENTITIES = 1 << GENTITYNUM_BITS;
@@ -47,7 +50,7 @@ public:
 	int numEntitiesToDeactivate; // number of entities that became inactive in current frame
 	int num_entities; // current number <= MAX_GENTITIES
 
-	idClip clip; // collision detection
+	std::shared_ptr<idClip> clip; // collision detection
 
 	int framenum;
 	int time;					// in msec
@@ -79,8 +82,11 @@ public:
 
 	// ---------------------- Public idGameLocal Interface -------------------
 
-	void Printf(const std::string fmt, ...) const;
-	void Warning(const std::string &fmt, ...) const;
+	void Printf(const char* fmt, ...) const;
+	void DPrintf(const char* fmt, ...) const;
+	void Warning(const char* fmt, ...) const;
+	void DWarning(const char* fmt, ...) const;
+	void Error(const char* fmt, ...) const;
 
 	// Initializes all map variables common to both save games and spawned games
 	void LoadMap(const std::string mapName, int randseed);
@@ -105,6 +111,7 @@ public:
 	size_t GetWidth() { return width; }
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
+	//idMapFile* mapFile;				// will be NULL during the game unless in-game editing is used
 
 	int spawnCount;
 	
@@ -143,5 +150,8 @@ inline T idGameLocal::GetRandomValue(T min, T max)
 }
 
 extern idGameLocal gameLocal;
+
+// content masks
+const int MASK_SOLID = 1;
 
 #endif

@@ -71,7 +71,7 @@ private:
 	idLinkList *		head;
 	idLinkList *		next;
 	idLinkList *		prev;
-	std::shared_ptr<type> owner;
+	std::weak_ptr<type> owner;
 };
 
 /*
@@ -83,7 +83,7 @@ Node is initialized to be the head of an empty list
 */
 template< class type >
 idLinkList<type>::idLinkList() {
-	owner = NULL;
+	owner.reset();
 	head = this;
 	next = this;
 	prev = this;
@@ -269,7 +269,7 @@ std::shared_ptr<type> idLinkList<type>::Next() const {
 	if (!next || (next == head)) {
 		return nullptr;
 	}
-	return next->owner;
+	return next->owner.lock();
 }
 
 /*
@@ -284,7 +284,7 @@ std::shared_ptr<type> idLinkList<type>::Prev() const {
 	if (!prev || (prev == head)) {
 		return nullptr;
 	}
-	return prev->owner;
+	return prev->owner.lock();
 }
 
 /*
@@ -326,7 +326,7 @@ Gets the object that is associated with this node.
 */
 template< class type >
 std::shared_ptr<type> idLinkList<type>::Owner() const {
-	return owner;
+	return owner.lock();
 }
 
 /*

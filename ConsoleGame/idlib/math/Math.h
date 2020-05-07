@@ -16,6 +16,7 @@ public:
 	static int FloatHash(const float* array, const int numFloats);
 
 	static const float M_MS2SEC; // milliseconds to seconds multiplier
+	//static const float INFINITY; // huge number which should be larger than any valid number used
 };
 
 /*
