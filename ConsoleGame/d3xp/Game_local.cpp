@@ -31,13 +31,13 @@ void idGameLocal::Init()
 	idClass::Init();
 
 	height = 16;
-	width = 50;
+	width = 90;
 
-	colors.push_back(Screen::Green);
+	//colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
 	colors.push_back(Screen::Red);
 	colors.push_back(Screen::Magenta);
-	colors.push_back(Screen::Brown);
+	//colors.push_back(Screen::Brown);
 	colors.push_back(Screen::LightGray);
 	colors.push_back(Screen::LightGreen);
 	colors.push_back(Screen::LightCyan);
@@ -158,7 +158,7 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 10000) {
+	if (time - lastTimePointSpawn > 10) {
 		lastTimePointSpawn = time;
 		AddRandomPoint();
 	}
@@ -583,7 +583,7 @@ void idGameLocal::AddRandomPoint()
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(GetRandomColor()));
-	args.Set("linearVelocity", (Vector2(GetRandomValue(0.0f, 100.0f) / 1000, GetRandomValue(0.0f, 100.0f) / 1000).ToString()));
+	args.Set("linearVelocity", (Vector2(GetRandomValue(-100.0f, 100.0f) / 10, GetRandomValue(-100.0f, 100.0f) / 10).ToString()));
 
 	SpawnEntityDef(args);
 

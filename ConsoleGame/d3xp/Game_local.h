@@ -144,9 +144,21 @@ private:
 template<typename T>
 inline T idGameLocal::GetRandomValue(T min, T max)
 {
-	std::uniform_int_distribution<size_t> u(static_cast<size_t>(min), static_cast<size_t>(max));
+	T cur_min = max(min, 0);
 
-	return static_cast<T>(u(rand_eng));
+	if (min < 0)
+		max = max - min;
+
+	std::uniform_int_distribution<size_t> u(static_cast<size_t>(cur_min), static_cast<size_t>(max));
+
+	T cur_val = static_cast<T>(u(rand_eng));
+
+	if (min < 0)
+	{
+		cur_val += min;
+	}
+
+	return cur_val;
 }
 
 extern idGameLocal gameLocal;

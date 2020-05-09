@@ -126,7 +126,7 @@ void idRenderSystemLocal::DrawFPS()
 		console += std::to_string(fps) + " fps, " + std::to_string(frameTime) + " microsec last frame time";
 	}
 
-	if (t - prev_frame_update_time > 500000) {
+	if (t - prev_frame_update_time > 100000) {
 		updateFrame = true;
 		prev_frame_update_time = t;
 	}
