@@ -21,7 +21,7 @@ idGameLocal::idGameLocal()
 void idGameLocal::Init()
 {
 	Printf("--------- Initializing Game ----------\n");
-	Printf("gamename: %s\n", GAME_VERSION);
+	Printf("gamename: %s\n", GAME_VERSION.c_str());
 	Printf("gamedate: %s\n", __DATE__);
 
 	Clear();
@@ -31,7 +31,7 @@ void idGameLocal::Init()
 	idClass::Init();
 
 	height = 16;
-	width = 90;
+	width = 87;
 
 	//colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
@@ -158,7 +158,7 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 10) {
+	if (time - lastTimePointSpawn > 10000) {
 		lastTimePointSpawn = time;
 		AddRandomPoint();
 	}
@@ -214,6 +214,11 @@ void idGameLocal::RunDebugInfo() {
 
 	const idVec3 &origin = player->GetPhysics()->GetOrigin();*/
 
+	char buf[256];
+	sprintf_s(buf, "num ents %d", num_entities - MAX_CLIENTS);
+
+	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 1);
+
 	if (/*g_showEntityInfo.GetBool()*/true) {
 		/*idMat3		axis = player->viewAngles.ToMat3();
 		idVec3		up = axis[2] * 5.0f;
@@ -259,17 +264,16 @@ void idGameLocal::RunDebugInfo() {
 			if (ent->IsActive())
 			{
 				char buf[256];
-				sprintf_s(buf, "ent %s %s pos [%2.3f %2.3f] vel [%2.3f %2.3f] rest %d", ent->GetName().c_str(),
-					ent->GetClassname().c_str(), ent->GetPhysics()->GetOrigin().x,
-					ent->GetPhysics()->GetOrigin().y, ent->GetPhysics()->GetLinearVelocity().x,
-					ent->GetPhysics()->GetLinearVelocity().y, ent->GetPhysics()->IsAtRest());
+				sprintf_s(buf, "ent %s pos [%6.3f %6.3f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
+					ent->GetPhysics()->GetOrigin().x, ent->GetPhysics()->GetOrigin().y,
+					ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
+					ent->GetPhysics()->IsAtRest());
 
 				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 1);
 			}
 		}
 	}
 
-	gameRenderWorld->DrawText(std::to_string(num_entities - MAX_CLIENTS), Vector2(), Screen::ConsoleColor::Yellow, 0);
 	// debug tool to draw bounding boxes around active entities
 	/*if (g_showActiveEntities.GetBool()) {
 		for (ent = activeEntities.Next(); ent != NULL; ent = ent->activeNode.Next()) {
@@ -713,7 +717,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 			freeIndex++;
 		}
 		if (freeIndex >= maxEntityNum) {
-			Error("no free entities");
+			Error("entities overflow %d %d", freeIndex, maxEntityNum);
 		}
 		spawn_entnum = freeIndex++;
 

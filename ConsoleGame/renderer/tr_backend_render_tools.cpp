@@ -88,9 +88,10 @@ RB_DrawText
 */
 static void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color) {
 	if (!text.empty()) {
-		SetColor(color, tr.screen.getBackgroundPixel().color);
-		std::cout << text << std::endl;
-		SetColor(Screen::ConsoleColor::White, tr.screen.getBackgroundPixel().color);
+		//SetColor(color, tr.screen.getBackgroundPixel().color);
+		//std::cout << text << std::endl;
+		//SetColor(Screen::ConsoleColor::White, tr.screen.getBackgroundPixel().color);
+		tr.screen.writeInColor(text, color);
 	}
 }
 
@@ -178,14 +179,14 @@ void RB_ShowDebugLines() {
 	line = rb_debugLines;
 	for (i = 0; i < rb_numDebugLines; i++, line++) {
 		if (!line->depthTest) {
-			for (x_pos = line->start.x; x_pos <= line->end.x; ++x_pos)
+			for (x_pos = static_cast<Screen::pos_type>(line->start.x); x_pos <= line->end.x; ++x_pos)
 			{
-				tr.screen.set(static_cast<size_t>(x_pos) + tr.borderHeight, static_cast<size_t>(line->start.y) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen.set(static_cast<Screen::pos_type>(x_pos) + tr.borderHeight, static_cast<Screen::pos_type>(line->start.y) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
 			}
 			
-			for (y_pos = line->start.y; y_pos <= line->end.y; ++y_pos)
+			for (y_pos = static_cast<Screen::pos_type>(line->start.y); y_pos <= line->end.y; ++y_pos)
 			{
-				tr.screen.set(static_cast<size_t>(line->start.x) + tr.borderHeight, static_cast<size_t>(y_pos) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) + tr.borderHeight, static_cast<Screen::pos_type>(y_pos) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
 			}
 		}
 	}

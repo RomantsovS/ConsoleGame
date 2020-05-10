@@ -67,28 +67,28 @@ void idRenderSystemLocal::Clear()
 
 void idRenderSystemLocal::FillBorder()
 {
-	for (size_t i = 0; i < height; ++i)
+	for (Screen::pos_type i = 0; i < height; ++i)
 	{
-		for (size_t j = 0; j < borderWidth; ++j)
+		for (Screen::pos_type j = 0; j < borderWidth; ++j)
 			screen.set(i, j, borderPixel);
 
-		for (size_t j = width - 1; j > width - 1 - borderWidth; --j)
+		for (Screen::pos_type j = width - 1; j > width - 1 - borderWidth; --j)
 			screen.set(i, j, borderPixel);
 	}
 
-	for (size_t j = 0; j < width; ++j)
+	for (Screen::pos_type j = 0; j < width; ++j)
 	{
-		for (size_t i = 0; i < borderHeight; ++i)
+		for (Screen::pos_type i = 0; i < borderHeight; ++i)
 			screen.set(i, j, borderPixel);
 
-		for (size_t i = height - 1; i > height - 1 - borderHeight; --i)
+		for (Screen::pos_type i = height - 1; i > height - 1 - borderHeight; --i)
 			screen.set(i, j, borderPixel);
 	}
 }
 
 void idRenderSystemLocal::ClearScreen()
 {
-	system("cls");
+	//system("cls");
 
 	screen.clear();
 }
@@ -126,7 +126,7 @@ void idRenderSystemLocal::DrawFPS()
 		console += std::to_string(fps) + " fps, " + std::to_string(frameTime) + " microsec last frame time";
 	}
 
-	if (t - prev_frame_update_time > 100000) {
+	if (t - prev_frame_update_time > 500000) {
 		updateFrame = true;
 		prev_frame_update_time = t;
 	}

@@ -11,7 +11,7 @@
 
 class Screen {
 public:
-    typedef std::string::size_type pos;
+	using pos_type = SHORT;
 
 	enum ConsoleColor
 	{
@@ -46,42 +46,58 @@ public:
 	};
 
 	Screen() = default;
-	Screen(pos ht, pos wd, Pixel back);
+	Screen(pos_type ht, pos_type wd, Pixel back);
 
 	~Screen();
 
 	void init();
 
-    inline Screen::Pixel get(pos ht, pos wd) const; // explicitly inline
+    inline Screen::Pixel get(pos_type ht, pos_type wd) const; // explicitly inline
 
-    Screen &set(pos r, pos col, Screen::Pixel ch);
+    Screen &set(pos_type r, pos_type col, Screen::Pixel ch);
 	Screen &set(Vector2 pos, Screen::Pixel ch);
 	
-	pos getHeight() const { return height; }
-	pos getWidth() const { return width; }
+	pos_type getHeight() const { return height; }
+	pos_type getWidth() const { return width; }
 
 	const Pixel &getBackgroundPixel() const { return backgroundPixel; }
 
 	void clear() { clearContents(); }
 
-	Screen &display(const std::string &str);
+	void display(const std::string &str);
+	void writeInColor(COORD coord, const char* symbol, size_t lenght, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
+	void writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
+
+	bool readInput(unsigned& key);
+	std::string waitConsoleInput();
+
+	void writeConsoleOutput(const std::string& text);
+	void clearConsoleOutut();
+
+	void setDrawOutputBuffer();
+	void setStdOutputBuffer();
 private:
-	pos height, width;
+	pos_type height, width;
 	Pixel backgroundPixel;
-	std::vector<char> buffer;
+	//std::vector<char> buffer;
+	char *buffer;
+	HANDLE h_console_draw;
+	HANDLE h_console_std_out;
+	HANDLE h_console_std_in;
 
 	std::vector<Pixel> contents;
+	COORD cur_write_coord;
 
 	void clearContents();
 };
 
-Screen::Pixel Screen::get(pos r, pos c) const // declared as inline in the class
+Screen::Pixel Screen::get(pos_type r, pos_type c) const // declared as inline in the class
 {
-    pos row = r * width;      // compute row location
+	pos_type row = r * width;      // compute row location
     return contents[row + c]; // return character at the given column
 }
 
-inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
+inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch)
 {
 	if (r >= height)
 		common->Error("Screen height: %d out of range: %d", r, height);
@@ -96,9 +112,7 @@ inline Screen &Screen::set(pos r, pos col, Screen::Pixel ch)
 
 inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch)
 {
-	return set(static_cast<size_t>(pos.x), static_cast<size_t>(pos.y), ch);
+	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
-
-void SetColor(Screen::ConsoleColor text, Screen::ConsoleColor background);
 
 #endif

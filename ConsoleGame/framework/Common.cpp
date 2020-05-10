@@ -1,5 +1,5 @@
-#include <conio.h>
-#include <iostream>
+//#include <conio.h>
+//#include <iostream>
 
 #include "Common_local.h"
 #include "../d3xp/Game_local.h"
@@ -109,34 +109,29 @@ void idCommonLocal::Frame()
 	if (!mapSpawned)
 		ExecuteMapChange();
 
-	char c = 0;
+	unsigned key = 0;
+	std::string text_input;
 
-	//tr.ClearScreen();
-
-	if (_kbhit())
+	if (tr.screen.readInput(key))
 	{
-		c = _getch();
-
-		switch (c)
+		switch (key)
 		{
 		case 27:
-			tr.ClearScreen();
+			tr.screen.setStdOutputBuffer();
 
-			std::cout << "enter Q to quit or any key to continue: ";
+			tr.screen.writeConsoleOutput("enter Q to quit or any key to continue: ");
 
-			std::cin >> c;
-
-			while (std::cin.get() != '\n')
-				continue;
-
-			if (c == 'Q' || c == 'q')
+			text_input = tr.screen.waitConsoleInput();
+			
+			if (text_input == "Q" || text_input == "q")
 			{
 				Quit();
 			}
 		default:
-			//onKeyPressed(c);
 			;
 		}
+		tr.screen.clearConsoleOutut();
+		tr.screen.setDrawOutputBuffer();
 	}
 
 	try
@@ -145,8 +140,6 @@ void idCommonLocal::Frame()
 	}
 	catch (std::exception &err)
 	{
-		std::cout << err.what() << std::endl
-			<< "press ane key to continue...\n";
-		_getch();
+		common->Error(err.what());
 	}
 }

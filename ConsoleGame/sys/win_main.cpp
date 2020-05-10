@@ -13,7 +13,7 @@ Show the early console as an error dialog
 =============
 */
 void Sys_Error(const std::string& error, ...) {
-
+	MessageBox(NULL, TEXT(error.c_str()), TEXT("Sys Error"), MB_OK);
 	exit(EXIT_FAILURE);
 }
 

@@ -186,8 +186,8 @@ public:
 	virtual void BeginLevelLoad();
 	virtual void EndLevelLoad();
 
-	void SetHeight(size_t h) { height = h; }
-	void SetWidth(size_t w) { width = w; }
+	void SetHeight(Screen::pos_type h) { height = h; }
+	void SetWidth(Screen::pos_type w) { width = w; }
 
 	void Display();
 
@@ -209,7 +209,7 @@ public:
 	bool updateFrame;
 	std::string console;
 
-	size_t height, width, borderWidth, borderHeight;
+	Screen::pos_type height, width, borderWidth, borderHeight;
 	Screen::Pixel borderPixel;
 };
 

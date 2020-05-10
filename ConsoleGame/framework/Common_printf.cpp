@@ -226,5 +226,5 @@ void idCommonLocal::FatalError(const char* fmt, ...)
 	va_end(argptr);
 	errorMessage[sizeof(errorMessage) - 1] = '\0';
 
-	Sys_Error("%s", errorMessage);
+	Sys_Error(errorMessage);
 }

@@ -12,7 +12,7 @@
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 
 // the "gameversion" client command will print this plus compile date
-#define	GAME_VERSION		"baseDOOM-1"
+const std::string GAME_VERSION = "baseDOOM-1";
 
 const int MAX_CLIENTS = 8;
 const int GENTITYNUM_BITS = 12;
@@ -107,8 +107,8 @@ public:
 
 	const idDict &GetSpawnArgs() const { return spawnArgs; }
 
-	size_t GetHeight() { return height; }
-	size_t GetWidth() { return width; }
+	short GetHeight() { return height; }
+	short GetWidth() { return width; }
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	//idMapFile* mapFile;				// will be NULL during the game unless in-game editing is used
@@ -134,7 +134,7 @@ private:
 
 	bool checkCollidePosToAllObjects(pos_type pos);*/
 
-	size_t height, width;
+	short height, width;
 
 	std::vector<Screen::ConsoleColor> colors;
 

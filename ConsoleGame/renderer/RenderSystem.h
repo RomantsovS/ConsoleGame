@@ -20,8 +20,8 @@ public:
 	// only called before quitting
 	virtual void Shutdown() = 0;
 
-	virtual void SetHeight(size_t h) = 0;
-	virtual void SetWidth(size_t w) = 0;
+	virtual void SetHeight(short h) = 0;
+	virtual void SetWidth(short w) = 0;
 
 	// allocate a renderWorld to be used for drawing
 	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() = 0;
