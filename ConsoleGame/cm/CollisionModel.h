@@ -18,7 +18,7 @@ struct contactInfo_t {
 	contactType_t			type;			// contact type
 	Vector2					point;			// point of contact
 	//Vector2					normal;			// contact plane normal
-	float					dist;			// contact plane distance
+	//float					dist;			// contact plane distance
 	int						contents;		// contents at other side of surface
 	//const idMaterial* material;		// surface material
 	int						modelFeature;	// contact feature on model
@@ -35,8 +35,13 @@ struct trace_t {
 	contactInfo_t			c;				// contact information, only valid if fraction < 1.0
 };
 
-#define CM_BOX_EPSILON		1.0f			// should always be larger than clip epsilon
-#define CM_MAX_TRACE_DIST	4096.0f			// maximum distance a trace model may be traced, point traces are unlimited
+extern const float CM_CLIP_EPSILON;
+extern const float CM_BOX_EPSILON;
+extern const float CM_POINT_SIZE;
+//extern const float CM_POINT_BOX;
+extern const float CM_MAX_TRACE_DIST;
+extern Vector2 vec3_pointEpsilon;
+extern Vector2 vec2_point_size;
 
 class idCollisionModelManager {
 public:
@@ -61,7 +66,7 @@ public:
 	virtual void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) = 0;
 	// stores all contact points of the trm with the model, returns the number of contacts
-	virtual int Contacts(std::vector<contactInfo_t>::iterator contacts, const int maxContacts, const Vector2& start,
+	virtual int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
 		const Vector2& dir, const float depth, const std::shared_ptr<idTraceModel> trm,
 		int contentMask, int model, const Vector2& modelOrigin) = 0;
 };

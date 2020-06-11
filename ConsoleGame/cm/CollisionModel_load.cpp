@@ -30,12 +30,12 @@ void idCollisionModelManagerLocal::Clear() {
 	numModels = 0;
 	models.clear();
 	//memset(trmPolygons, 0, sizeof(trmPolygons));
-	//trmBrushes[0] = NULL;
+	trmBrushes[0] = nullptr;
 	//trmMaterial = NULL;
 	//numProcNodes = 0;
 	//procNodes = NULL;
 	getContacts = false;
-	//contacts = nullptr;
+	contacts = nullptr;
 	maxContacts = 0;
 	numContacts = 0;
 }
@@ -51,12 +51,22 @@ void idCollisionModelManagerLocal::FreeTrmModelStructure()
 
 	/*for (i = 0; i < MAX_TRACEMODEL_POLYS; i++) {
 		FreePolygon(models[MAX_SUBMODELS], trmPolygons[i]->p);
-	}
+	}*/
 	FreeBrush(models[MAX_SUBMODELS], trmBrushes[0]->b);
+	trmBrushes[0]->b = nullptr;
 
-	models[MAX_SUBMODELS]->node->polygons = NULL;
-	models[MAX_SUBMODELS]->node->brushes = NULL;*/
+	//models[MAX_SUBMODELS]->node->polygons = NULL;
+	models[MAX_SUBMODELS]->node->brushes = nullptr;
 	FreeModel(models[MAX_SUBMODELS]);
+}
+
+void idCollisionModelManagerLocal::FreeBrush(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_brush_t> brush)
+{
+	model->numBrushes--;
+	model->brushMemory -= sizeof(cm_brush_t);
+	/*if (model->brushBlock == NULL) {
+		Mem_Free(brush);
+	}*/
 }
 
 void idCollisionModelManagerLocal::FreeModel(std::shared_ptr<cm_model_t> model)
@@ -199,7 +209,10 @@ int idCollisionModelManagerLocal::LoadModel(const std::string& modelName) {
 
 	models[numModels] = LoadBinaryModel(generatedFileName);
 	if (models[numModels]) {
+		models[numModels]->name = modelName;
+
 		numModels++;
+
 		/*if (cvarSystem->GetCVarBool("fs_buildresources")) {
 			// for resource gathering write this model to the preload file for this map
 			fileSystem->AddCollisionPreload(modelName);
@@ -210,17 +223,46 @@ int idCollisionModelManagerLocal::LoadModel(const std::string& modelName) {
 	return 0;
 }
 
+/*
+================
+idCollisionModelManagerLocal::SetupTrmModel
+
+Trace models (item boxes, etc) are converted to collision models on the fly, using the last model slot
+as a reusable temporary buffer
+================
+*/
 int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm)
 {
+	int i;
+	const traceModelVert_t* trmVert;
+
 	auto model = models[MAX_SUBMODELS];
+	model->node->brushes = nullptr;
+
 	// if not a valid trace model
 	if (trm.type == TRM_INVALID) {
 		return TRACE_MODEL_HANDLE;
 	}
 	// vertices
 	model->numVertices = trm.numVerts;
+	trmVert = trm.verts;
+	for (i = 0; i < trm.numVerts; i++, trmVert++) {
+		model->vertices[i].p = *trmVert;
+	}
+	// if the trace model is convex
+	if (trm.isConvex) {
+		// setup brush for position test
+		trmBrushes[0]->b->bounds = trm.bounds;
+		// link brush at node
+		trmBrushes[0]->next = model->node->brushes;
+		//trmBrushes[0]->b->material = material;
+		model->node->brushes = trmBrushes[0];
+	}
+
 	// model bounds
 	model->bounds = trm.bounds;
+	// convex
+	model->isConvex = trm.isConvex;
 
 	return TRACE_MODEL_HANDLE;
 }
@@ -259,22 +301,101 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::AllocModel()
 	model->vertices.clear();
 	//model->maxEdges = 0;
 	//model->numEdges = 0;
-	/*model->edges = NULL;
-	model->node = NULL;
-	model->nodeBlocks = NULL;
-	model->polygonRefBlocks = NULL;
-	model->brushRefBlocks = NULL;
-	model->polygonBlock = NULL;
+	//model->edges = NULL;
+	model->node = nullptr;
+	/*model->nodeBlocks = NULL;
+	model->polygonRefBlocks = NULL;*/
+	model->brushRefBlocks = nullptr;
+	/*model->polygonBlock = NULL;
 	model->brushBlock = NULL;*/
-	model->usedMemory = 0;
+	model->numBrushes = model->brushMemory =
+		model->numNodes = model->numBrushRefs =
+		model->usedMemory = 0;
 
 	return model;
+}
+
+/*
+================
+idCollisionModelManagerLocal::AllocNode
+================
+*/
+std::shared_ptr<cm_node_t> idCollisionModelManagerLocal::AllocNode(std::shared_ptr<cm_model_t> model, int blockSize) {
+	int i;
+	std::shared_ptr<cm_node_t> node;
+	std::shared_ptr<cm_nodeBlock_t> nodeBlock;
+
+	if (!model->nodeBlocks || !model->nodeBlocks->nextNode) {
+		nodeBlock = std::make_shared<cm_nodeBlock_t>();
+		nodeBlock->nextNode = std::make_shared<cm_node_t>();
+		nodeBlock->next = model->nodeBlocks;
+		model->nodeBlocks = nodeBlock;
+		node = nodeBlock->nextNode;
+		for (i = 0; i < blockSize - 1; i++) {
+			node->parent = std::make_shared<cm_node_t>();
+			node = node->parent;
+		}
+		node->parent = nullptr;
+	}
+
+	node = model->nodeBlocks->nextNode;
+	model->nodeBlocks->nextNode = node->parent;
+	node->parent = nullptr;
+
+	return node;
+}
+
+std::shared_ptr<cm_brushRef_t> idCollisionModelManagerLocal::AllocBrushReference(std::shared_ptr<cm_model_t> model, int blockSize)
+{
+	int i;
+	std::shared_ptr<cm_brushRef_t> bref;
+	std::shared_ptr<cm_brushRefBlock_t> brefBlock;
+
+	if (!model->brushRefBlocks || !model->brushRefBlocks->nextRef) {
+		brefBlock = std::make_shared<cm_brushRefBlock_t>();
+		brefBlock->nextRef = std::make_shared<cm_brushRef_t>();
+		brefBlock->next = model->brushRefBlocks;
+		model->brushRefBlocks = brefBlock;
+		bref = brefBlock->nextRef;
+		for (i = 0; i < blockSize - 1; i++) {
+			bref->next = std::make_shared<cm_brushRef_t>();
+			bref = bref->next;
+		}
+		bref->next = nullptr;
+	}
+
+	bref = model->brushRefBlocks->nextRef;
+	model->brushRefBlocks->nextRef = bref->next;
+
+	return bref;
+}
+
+std::shared_ptr<cm_brush_t> idCollisionModelManagerLocal::AllocBrush(std::shared_ptr<cm_model_t> model)
+{
+	int size;
+
+	size = sizeof(cm_brush_t);
+	model->numBrushes++;
+	model->brushMemory += size;
+	
+	auto brush = std::make_shared<cm_brush_t>();
+
+	return brush;
+}
+
+void idCollisionModelManagerLocal::AddBrushToNode(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b)
+{
+	auto bref = AllocBrushReference(model, 1);
+	bref->b = b;
+	bref->next = node->brushes;
+	node->brushes = bref;
+	model->numBrushRefs++;
 }
 
 void idCollisionModelManagerLocal::SetupTrmModelStructure()
 {
 	//int i;
-	//cm_node_t* node;
+	std::shared_ptr<cm_node_t> node;
 	std::shared_ptr<cm_model_t> model;
 
 	// setup model
@@ -283,13 +404,121 @@ void idCollisionModelManagerLocal::SetupTrmModelStructure()
 	//assert(models);
 	models[MAX_SUBMODELS] = model;
 	// create node to hold the collision data
-	/*node = (cm_node_t*)AllocNode(model, 1);
+	node = AllocNode(model, 1);
 	node->planeType = -1;
-	model->node = node;*/
+	model->node = node;
 	// allocate vertex and edge arrays
 	model->numVertices = 0;
 	model->maxVertices = MAX_TRACEMODEL_VERTS;
 	model->vertices.resize(model->maxVertices);
+
+	// allocate brush for position test
+	trmBrushes[0] = AllocBrushReference(model, 1);
+	trmBrushes[0]->b = AllocBrush(model);
+	//trmBrushes[0]->b->primitiveNum = 0;
+	trmBrushes[0]->b->bounds.Clear();
+	//trmBrushes[0]->b->checkcount = 0;
+	trmBrushes[0]->b->contents = -1;		// all contents
+	//trmBrushes[0]->b->material = trmMaterial;
+	//trmBrushes[0]->b->numPlanes = 0;
+}
+
+void idCollisionModelManagerLocal::ConvertBrush(std::shared_ptr<cm_model_t> model, int primitiveNum)
+{
+	int contents;
+	idBounds bounds;
+
+	contents = 1;
+	bounds.Clear();
+
+	bounds.AddPoint(vec2_origin);
+	bounds.AddPoint(Vector2(gameLocal.GetHeight() + CM_BOX_EPSILON, gameLocal.GetWidth() + CM_BOX_EPSILON));
+
+	// create brush for position test
+	auto brush = AllocBrush(model);
+	//brush->checkcount = 0;
+	brush->contents = contents;
+	//brush->material = material;
+	//brush->primitiveNum = primitiveNum;
+	brush->bounds = bounds;
+	/*brush->numPlanes = mapBrush->GetNumSides();
+	for (i = 0; i < mapBrush->GetNumSides(); i++) {
+		brush->planes[i] = planes[i];
+	}*/
+	AddBrushToNode(model, model->node, brush);
+}
+
+/*
+================
+CM_CountNodeBrushes
+================
+*/
+static int CM_CountNodeBrushes(const std::shared_ptr<cm_node_t> node) {
+	int count;
+
+	count = 0;
+	for (auto bref = node->brushes; bref; bref = bref->next) {
+		count++;
+	}
+	return count;
+}
+
+/*
+================
+CM_R_GetModelBounds
+================
+*/
+static void CM_R_GetNodeBounds(idBounds* bounds, std::shared_ptr<cm_node_t> node) {
+	while (1) {
+		for (auto bref = node->brushes; bref; bref = bref->next) {
+			bounds->AddPoint(bref->b->bounds[0]);
+			bounds->AddPoint(bref->b->bounds[1]);
+		}
+		if (node->planeType == -1) {
+			break;
+		}
+		CM_R_GetNodeBounds(bounds, node->children[1]);
+		node = node->children[0];
+	}
+}
+
+/*
+================
+CM_GetNodeBounds
+================
+*/
+void CM_GetNodeBounds(idBounds* bounds, std::shared_ptr<cm_node_t> node) {
+	bounds->Clear();
+	CM_R_GetNodeBounds(bounds, node);
+	if (bounds->IsCleared()) {
+		bounds->Zero();
+	}
+}
+
+/*
+================
+CM_GetNodeContents
+================
+*/
+int CM_GetNodeContents(std::shared_ptr<cm_node_t> node) {
+	int contents;
+	//cm_polygonRef_t* pref;
+
+	contents = 0;
+	while (1) {
+		/*for (pref = node->polygons; pref; pref = pref->next) {
+			contents |= pref->p->contents;
+		}*/
+		for (auto bref = node->brushes; bref; bref = bref->next) {
+			contents |= bref->b->contents;
+		}
+		if (node->planeType == -1) {
+			break;
+		}
+		contents |= CM_GetNodeContents(node->children[1]);
+		node = node->children[0];
+	}
+	return contents;
 }
 
 void idCollisionModelManagerLocal::FinishModel(std::shared_ptr<cm_model_t> model)
@@ -297,13 +526,10 @@ void idCollisionModelManagerLocal::FinishModel(std::shared_ptr<cm_model_t> model
 	// remove all unused vertices and edges
 	//OptimizeArrays(model);
 	// get model bounds from brush and polygon bounds
-	//CM_GetNodeBounds(&model->bounds, model->node);
-	model->bounds.Clear();
-	model->bounds.AddPoint(vec2_origin);
-	model->bounds.AddPoint(Vector2(static_cast<float>(gameLocal.GetHeight() - 1), static_cast<float>(gameLocal.GetWidth() - 1)));
+	CM_GetNodeBounds(&model->bounds, model->node);
 
 	// get model contents
-	//model->contents = CM_GetNodeContents(model->node);
+	model->contents = CM_GetNodeContents(model->node);
 	// total memory used by this model
 	model->usedMemory = model->numVertices * sizeof(cm_vertex_t);
 }
@@ -410,7 +636,7 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	std::shared_ptr<cm_model_t> model;
 	idBounds bounds;
 	std::string name;
-	//int i , brushCount;
+	int brushCount;
 
 	// if the entity has no primitives
 	/*if (mapEnt->GetNumPrimitives() < 1) {
@@ -433,7 +659,7 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	//}
 
 	model = AllocModel();
-	//model->node = AllocNode(model, NODE_BLOCK_SIZE_SMALL);
+	model->node = AllocNode(model, NODE_BLOCK_SIZE_SMALL);
 
 	CM_EstimateVertsAndEdges(/*mapEnt,*/ &model->maxVertices/*, &model->maxEdges*/);
 	model->numVertices = 0;
@@ -452,29 +678,30 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 		idMapPrimitive* mapPrim;
 
 		mapPrim = mapEnt->GetPrimitive(i);
-		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {
-			ConvertBrush(model, static_cast<idMapBrush*>(mapPrim), i);
-			continue;
+		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {*/
+			ConvertBrush(model, 1);
+			/*continue;
 		}
-	}
+	}*/
 
 	// create an axial bsp tree for the model if it has more than just a bunch brushes
 	brushCount = CM_CountNodeBrushes(model->node);
-	if (brushCount > 4) {
+	/*if (brushCount > 4) {
 		model->node = CreateAxialBSPTree(model, model->node);
 	}
-	else {
+	else {*/
 		model->node->planeType = -1;
-	}*/
+	//}
 
 	// get bounds for hash
-	/*if (brushCount) {
+	if (brushCount) {
 		CM_GetNodeBounds(&bounds, model->node);
+
 	}
 	else {
 		bounds[0].Set(0, 0);
 		bounds[1].Set(50, 50);
-	}*/
+	}
 
 	// different models do not share edges and vertices with each other, so clear the hash
 	//ClearHash(bounds);
@@ -513,22 +740,60 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::LoadBinaryModelFromFil
 	auto model = AllocModel();
 	model->name = "def cm model name";
 
-	model->bounds = idBounds(Vector2(0, 0));
+	model->bounds.Zero();
+	model->bounds.AddPoint(vec2_point_size);
+	model->isConvex = true;
 	model->numVertices = 1;
-
+	model->numBrushes = 1;
+	model->numNodes = 1;
+	model->numBrushRefs = 1;
 	model->maxVertices = model->numVertices;
 
 	model->vertices.resize(1);
 	for(size_t i = 0; i != 1; ++i)
-		model->vertices[i].p = Vector2(0, 0);
+		model->vertices[i].p = vec2_origin;
 
-	model->usedMemory = model->numVertices * sizeof(Vector2);
+	model->brushMemory = 1;
+
+	std::vector<std::shared_ptr<cm_brush_t>> brushes;
+	brushes.resize(model->numBrushes);
+
+	for (int i = 0; i != brushes.size(); ++i)
+	{
+		brushes[i] = AllocBrush(model);
+		brushes[i]->bounds.Zero();
+		brushes[i]->bounds.AddPoint(vec2_point_size);
+	}
+
+	struct local {
+		static void ReadNodeTree(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> node, std::vector<std::shared_ptr<cm_brush_t>>& brushes) {
+			int i = 0;
+			
+			std::shared_ptr<cm_brushRef_t> bref = collisionModelManagerLocal.AllocBrushReference(model, model->numBrushRefs);
+			bref->b = brushes[i];
+			bref->next = node->brushes;
+			node->brushes = bref;
+
+			/*if (node->planeType != -1) {
+				node->children[0] = collisionModelManagerLocal.AllocNode(model, model->numNodes);
+				node->children[1] = collisionModelManagerLocal.AllocNode(model, model->numNodes);
+				node->children[0]->parent = node;
+				node->children[1]->parent = node;
+				ReadNodeTree(file, model, node->children[0], polys, brushes);
+				ReadNodeTree(file, model, node->children[1], polys, brushes);
+			}*/
+		}
+	};
+	model->node = AllocNode(model, model->numNodes + 1);
+	local::ReadNodeTree(model, model->node, brushes);
+
+	model->usedMemory = model->numVertices * sizeof(Vector2) +
 		//model->numEdges * sizeof(cm_edge_t) +
 		//model->polygonMemory +
-		//model->brushMemory +
-		//model->numNodes * sizeof(cm_node_t) +
+		model->brushMemory +
+		model->numNodes * sizeof(cm_node_t) +
 		//model->numPolygonRefs * sizeof(cm_polygonRef_t) +
-		//model->numBrushRefs * sizeof(cm_brushRef_t);
+		model->numBrushRefs * sizeof(cm_brushRef_t);
 	return model;
 }
 
@@ -554,14 +819,17 @@ bool idCollisionModelManagerLocal::TrmFromModel(const std::shared_ptr<cm_model_t
 	trm.numVerts = 0;
 	//trm.numEdges = 1;
 	//trm.numPolys = 0;
-	trm.bounds.Clear();
+	trm.bounds.Zero();
 
 	// copy vertices
 	for (i = 0; i < model->numVertices; i++) {
 		trm.verts[i] = model->vertices[i].p;
-		trm.bounds.AddPoint(trm.verts[i]);
+		trm.bounds.AddPoint(trm.verts[i] + vec2_point_size);
 	}
 	trm.numVerts = model->numVertices;
+
+	// assume convex
+	trm.isConvex = true;
 
 	return true;
 }

@@ -45,7 +45,7 @@ void idSimpleObject::Spawn()
 	}
 
 	if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-		gameLocal.Error("idMoveable '%s': cannot load collision model %s", name, clipModelName);
+		gameLocal.Error("idSimpleObject '%s': cannot load collision model %s", name, clipModelName);
 		return;
 	}
 
@@ -66,4 +66,14 @@ void idSimpleObject::Spawn()
 void idSimpleObject::Think()
 {
 	idEntity::Think();
+}
+
+bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity)
+{
+	if (collision.c.entityNum == ENTITYNUM_WORLD)
+	{
+		return true;
+	}
+
+	return false;
 }

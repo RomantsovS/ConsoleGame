@@ -62,7 +62,7 @@ public:
 
 	void Spawn();
 	void CallSpawn();
-	//bool IsType(const TypeInfo &c) const;
+	bool IsType(const idTypeInfo &c) const;
 	const std::string GetClassname() const;
 
 	// Static functions
@@ -85,6 +85,8 @@ public:
 
 	idTypeInfo *super;
 	idTypeInfo *next;
+	int typeNum;
+	int lastChild;
 
 	idTypeInfo(std::string classname, std::string superclass, std::shared_ptr<idClass> (*CreateInstance)(), void (idClass::*Spawn)());
 	
@@ -93,7 +95,34 @@ public:
 	void Init();
 	void Shutdown();
 
-	//bool IsType(const TypeInfo &superclass) const;
+	bool IsType(const idTypeInfo &superclass) const;
 };
+
+/*
+================
+idTypeInfo::IsType
+
+Checks if the object's class is a subclass of the class defined by the
+passed in idTypeInfo.
+================
+*/
+inline bool idTypeInfo::IsType(const idTypeInfo& type) const {
+	return ((typeNum >= type.typeNum) && (typeNum <= type.lastChild));
+}
+
+/*
+================
+idClass::IsType
+
+Checks if the object's class is a subclass of the class defined by the
+passed in idTypeInfo.
+================
+*/
+inline bool idClass::IsType(const idTypeInfo& superclass) const {
+	idTypeInfo* subclass;
+
+	subclass = GetType();
+	return subclass->IsType(superclass);
+}
 
 #endif

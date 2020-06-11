@@ -197,7 +197,7 @@ void idCommonLocal::Error(const char* fmt, ...)
 
 	Printf("********************\nERROR: %s\n********************\n", errorMessage);
 
-	Sys_Error("%s", errorMessage);
+	Sys_Error(errorMessage);
 }
 
 void idCommonLocal::FatalError(const char* fmt, ...)

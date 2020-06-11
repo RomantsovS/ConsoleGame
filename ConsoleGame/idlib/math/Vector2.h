@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 
+#include "Math.h"
+
 struct Vector2
 {
 	Vector2() = default;
@@ -33,9 +35,11 @@ struct Vector2
 
 	Vector2 Cross(const Vector2& a) const;
 	float LengthSqr() const;
+	float Normalize(); // returns length
 
 	int GetDimension() const;
-
+	Vector2 GetIntegerVectorFloor() const;
+	Vector2 GetIntegerVectorCeil() const;
 	const float* ToFloatPtr() const;
 	float* ToFloatPtr();
 
@@ -64,6 +68,9 @@ inline bool operator!=(const Vector2 & l, const Vector2 &r)
 
 inline float Vector2::operator[](const int index) const
 {
+	if (index > 1)
+		throw std::out_of_range("trying access vector data by index " + std::to_string(index));
+
 	return (&x)[index];
 }
 
@@ -98,9 +105,34 @@ inline float Vector2::LengthSqr() const
 	return (x * x + y * y);
 }
 
+inline float Vector2::Normalize() {
+	float sqrLength, invLength;
+
+	sqrLength = x * x + y * y;// +z * z;
+	invLength = idMath::InvSqrt(sqrLength);
+	x *= invLength;
+	y *= invLength;
+	//z *= invLength;
+	return invLength * sqrLength;
+}
+
 inline int Vector2::GetDimension() const
 {
 	return 2;
+}
+
+inline Vector2 Vector2::GetIntegerVectorFloor() const
+{
+	Vector2 res(static_cast<float>(floor(x)), static_cast<float>(floor(y)));
+
+	return res;
+}
+
+inline Vector2 Vector2::GetIntegerVectorCeil() const
+{
+	Vector2 res(static_cast<float>(ceil(x)), static_cast<float>(ceil(y)));
+
+	return res;
 }
 
 inline const float* Vector2::ToFloatPtr() const
@@ -135,8 +167,8 @@ inline Vector2 &Vector2::operator+=(const Vector2 & r)
 
 inline Vector2& Vector2::operator-=(const Vector2& a)
 {
-	x += a.x;
-	y += a.y;
+	x -= a.x;
+	y -= a.y;
 
 	return *this;
 }
@@ -146,6 +178,16 @@ inline Vector2 operator+(const Vector2 & l, const Vector2 & r)
 	Vector2 sum = l;
 	sum += r;
 	return sum;
+}
+
+template<typename T>
+inline Vector2 operator/(const Vector2& l, const T val)
+{
+	Vector2 res = l;
+	res.x /= val;
+	res.y /= val;
+
+	return res;
 }
 
 inline void Vector2::Set(const float x, const float y)

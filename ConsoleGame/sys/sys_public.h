@@ -11,7 +11,7 @@ void Sys_Quit();
 int Sys_Milliseconds();
 long long Sys_Microseconds();
 
-int Sys_Time();
+long Sys_Time();
 
 // for accurate performance testing
 double Sys_GetClockTicks();

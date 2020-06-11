@@ -140,6 +140,8 @@ void idGameLocal::RunFrame()
 	framenum++;
 	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
 	fast.time = FRAME_TO_MSEC(framenum);
+	//fast.previousTime = fast.time;
+	//fast.time = FRAME_TO_MSEC(Sys_Milliseconds());
 	fast.realClientTime = fast.time;
 
 	//ComputeSlowScale();
@@ -152,13 +154,13 @@ void idGameLocal::RunFrame()
 
 	// make sure the random number counter is used each frame so random events
 	// are influenced by the player's actions
-	rand_eng.seed(Sys_Time());
+	rand_eng.seed(Sys_Milliseconds());
 
 	// clear any debug lines from a previous frame
 	gameRenderWorld->DebugClearLines(time);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 10000) {
+	if (time - lastTimePointSpawn > 1000) {
 		lastTimePointSpawn = time;
 		AddRandomPoint();
 	}
@@ -188,7 +190,11 @@ void idGameLocal::RunFrame()
 
 bool idGameLocal::Draw(int clientNum)
 {
-	tr.console += std::to_string(time) + " ";
+	static char buf[256];
+
+	sprintf_s(buf, "current game time %d", time);
+	tr.console.append(buf);
+
 	tr.DrawFPS();
 
 	RB_RenderDebugToolsBefore();
@@ -204,6 +210,9 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
+	if (!tr.update_info)
+		return;
+
 	std::shared_ptr<idEntity> ent;
 	/*idPlayer *player;
 
@@ -217,7 +226,7 @@ void idGameLocal::RunDebugInfo() {
 	char buf[256];
 	sprintf_s(buf, "num ents %d", num_entities - MAX_CLIENTS);
 
-	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 1);
+	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
 
 	if (/*g_showEntityInfo.GetBool()*/true) {
 		/*idMat3		axis = player->viewAngles.ToMat3();
@@ -261,7 +270,7 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			if (ent->IsActive())
+			if (true || ent->IsActive())
 			{
 				char buf[256];
 				sprintf_s(buf, "ent %s pos [%6.3f %6.3f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
@@ -269,7 +278,7 @@ void idGameLocal::RunDebugInfo() {
 					ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
 					ent->GetPhysics()->IsAtRest());
 
-				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 1);
+				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 0);
 			}
 		}
 	}
@@ -358,6 +367,16 @@ void idGameLocal::RunDebugInfo() {
 
 	// collision map debug output
 	collisionModelManager->DebugOutput(player->GetEyePosition());*/
+}
+
+void idGameLocal::PrintSpawnedEntities()
+{
+	for (auto ent = spawnedEntities.Next(); ent != nullptr; ent = ent->spawnNode.Next()) {
+		Printf("ent %s pos [%6.3f %6.3f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
+			ent->GetPhysics()->GetOrigin().x, ent->GetPhysics()->GetOrigin().y,
+			ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
+			ent->GetPhysics()->IsAtRest());
+	}
 }
 
 /*
@@ -552,6 +571,7 @@ void idGameLocal::MapPopulate()
 	AddRandomPoint();
 
 	//AddRandomPoint();
+	//AddRandomPoint();
 }
 
 void idGameLocal::MapClear(bool clearClients)
@@ -573,9 +593,25 @@ void idGameLocal::MapClear(bool clearClients)
 
 void idGameLocal::AddRandomPoint()
 {
-	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
-	//Vector2 origin(0.0f, 0.0f);
+	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 6.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+	//Vector2 origin = { 10, 23.1f };
 	Vector2 axis(0, 0);
+
+	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
+
+	int num_attempts = 0;
+	float searching_radius = 0.0f;
+	int finded_ents = 0;
+	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
+	{
+		if (num_attempts++ > 100)
+		{
+			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+			return;
+		}
+
+		origin = Vector2(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+	}
 
 	idDict args;
 
@@ -587,19 +623,33 @@ void idGameLocal::AddRandomPoint()
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(GetRandomColor()));
-	args.Set("linearVelocity", (Vector2(GetRandomValue(-100.0f, 100.0f) / 10, GetRandomValue(-100.0f, 100.0f) / 10).ToString()));
+	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
+	args.Set("linearVelocity", (Vector2(GetRandomValue(-100.0f, 100.0f) / (100.0f - GetHeight()), GetRandomValue(-100.0f, 100.0f) / (100.0f - GetWidth())).ToString()));
+	//args.Set("linearVelocity", (Vector2(0.0f, 10.0f).ToString()));
+
+	std::shared_ptr<idEntity> ent;
+	SpawnEntityDef(args, ent);
+
+	return;
+
+	origin = { 10, 22.0f };
+
+	/*while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
+	{
+		if (num_attempts++ > 100)
+		{
+			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+			return;
+		}
+
+		origin = Vector2(10.0f, GetRandomValue(0.0f, GetWidth() - 1.0f));
+	}*/
+
+	args.Set("origin", origin.ToString());
+	args.Set("color", std::to_string(Screen::ConsoleColor::Blue));
+	args.Set("linearVelocity", (Vector2(0.0f, 10.0f).ToString()));
 
 	SpawnEntityDef(args);
-
-	size_t numIters = 0;
-
-	/*while (!checkCollidePosToAllObjects(pos))
-	{
-		pos = { u_h(rand_eng), u_w(rand_eng) };
-
-		if (++numIters == 10)
-			break;
-	}*/
 }
 
 /*
@@ -693,6 +743,10 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity> 
 
 		obj->CallSpawn();
 
+		if (/*ent && obj->IsType(idEntity::Type)*/true) {
+			ent = std::dynamic_pointer_cast<idEntity>(obj);
+		}
+
 		return true;
 	}
 
@@ -749,6 +803,31 @@ void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
 
 		ent->entityNumber = ENTITYNUM_NONE;
 	}
+}
+
+/*
+================
+idGameLocal::EntitiesWithinRadius
+================
+*/
+int idGameLocal::EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const {
+	std::shared_ptr<idEntity> ent;
+	idBounds bo(org);
+	bo.AddPoint(org + vec2_point_size);
+
+	int entCount = 0;
+
+	bo.ExpandSelf(radius);
+	for (ent = spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next()) {
+		if (ent->GetPhysics()->GetAbsBounds().IntersectsBounds(bo)) {
+			entityList[entCount++] = ent;
+
+			if (entCount >= maxCount)
+				break;
+		}
+	}
+
+	return entCount;
 }
 
 /*

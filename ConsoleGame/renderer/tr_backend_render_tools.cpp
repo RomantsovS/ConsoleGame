@@ -82,15 +82,13 @@ void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Scree
 ================
 RB_DrawText
 
-  oriented on the viewaxis
+  oriented on the viewaxis>	ConsoleGame.exe!RB_DrawText(const std::string & text, const Vector2 & origin, const Screen::ConsoleColor & color) Line 93	C++
+
   align can be 0-left, 1-center (default), 2-right
 ================
 */
 static void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color) {
 	if (!text.empty()) {
-		//SetColor(color, tr.screen.getBackgroundPixel().color);
-		//std::cout << text << std::endl;
-		//SetColor(Screen::ConsoleColor::White, tr.screen.getBackgroundPixel().color);
 		tr.screen.writeInColor(text, color);
 	}
 }
@@ -198,16 +196,15 @@ RB_RenderDebugTools
 =================
 */
 void RB_RenderDebugToolsBefore() {
-	if (!tr.updateFrame)
+	if (!tr.update_frame)
 		return;
 
 	tr.ClearScreen();
+	tr.FillBorder();
 
 	RB_ShowDebugLines();
 }
 
 void RB_RenderDebugTools() {
-	tr.Display();
-
 	RB_ShowDebugText();
 }

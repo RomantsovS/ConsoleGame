@@ -36,7 +36,7 @@ idBounds::LineIntersection
 ============
 */
 bool idBounds::LineIntersection(const Vector2& start, const Vector2& end) const {
-	const Vector2 center = (b[0] + b[1]) * 0.5f;
+	/*const Vector2 center = (b[0] + b[1]) * 0.5f;
 	const Vector2 extents = b[1] - center;
 	const Vector2 lineDir = 0.5f * (end - start);
 	const Vector2 lineCenter = start + lineDir;
@@ -69,7 +69,13 @@ bool idBounds::LineIntersection(const Vector2& start, const Vector2& end) const 
 
 	if (idMath::Fabs(cross[2]) > extents[0] * ld1 + extents[1] * ld0) {
 		return false;
-	}
+	}*/
+
+	bool contain_start = ContainsPoint(start);
+	bool contain_end = ContainsPoint(end);
+
+	return (contain_start && !contain_end) ||
+		(!contain_start && contain_end);
 
 	return true;
 }
@@ -81,7 +87,7 @@ idBounds::FromTransformedBounds
 */
 void idBounds::FromTransformedBounds(const idBounds& bounds, const Vector2& origin) {
 	//int i;
-	Vector2 center, extents, rotatedExtents;
+	Vector2 center, extents;// , rotatedExtents;
 
 	center = (bounds[0] + bounds[1]) * 0.5f;
 	extents = bounds[1] - center;
@@ -93,8 +99,8 @@ void idBounds::FromTransformedBounds(const idBounds& bounds, const Vector2& orig
 	}*/
 
 	center = origin + center;// * axis;
-	b[0] = center - rotatedExtents;
-	b[1] = center + rotatedExtents;
+	b[0] = center;// -rotatedExtents;
+	b[1] = center;// +rotatedExtents;
 }
 
 void idBounds::FromPointTranslation(const Vector2& point, const Vector2& translation)

@@ -5,7 +5,7 @@
 idCollisionModelManagerLocal::Contacts
 ==================
 */
-int idCollisionModelManagerLocal::Contacts(std::vector<contactInfo_t>::iterator contacts, const int maxContacts,
+int idCollisionModelManagerLocal::Contacts(contactInfo_t* contacts, const int maxContacts,
 	const Vector2& start, const Vector2& dir, const float depth, const std::shared_ptr<idTraceModel> trm,
 	int contentMask, int model, const Vector2& modelOrigin) {
 	trace_t results;

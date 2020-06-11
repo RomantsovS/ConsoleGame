@@ -5,7 +5,7 @@
 #include "../../idlib/math/Vector2.h"
 #include "Clip.h"
 
-#define CONTACT_EPSILON 1 // maximum contact seperation distance
+const float CONTACT_EPSILON = 0.25f; // maximum contact seperation distance
 
 class idEntity;
 
@@ -40,6 +40,7 @@ public: // common physics interface
 	virtual int	GetTime() const = 0;
 
 	virtual void Activate() = 0;
+	virtual void PutToRest() = 0;
 	virtual bool IsAtRest() const = 0;
 
 	// save and restore the physics state

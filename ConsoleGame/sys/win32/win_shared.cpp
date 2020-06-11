@@ -29,6 +29,6 @@ long long Sys_Microseconds() {
 	return ((long long)((long long)Sys_GetClockTicks() << 10)) / ticksPerMicrosecondTimes1024;
 }
 
-int Sys_Time() {
+long Sys_Time() {
 	return clock();
 }

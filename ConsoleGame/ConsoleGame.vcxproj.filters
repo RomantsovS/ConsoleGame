@@ -111,9 +111,6 @@
     <ClInclude Include="idlib\Dict.h">
       <Filter>idlib</Filter>
     </ClInclude>
-    <ClInclude Include="idlib\math\Vector2.h">
-      <Filter>idlib\Math</Filter>
-    </ClInclude>
     <ClInclude Include="idlib\sys\sys_types.h">
       <Filter>idlib\Sys</Filter>
     </ClInclude>
@@ -182,6 +179,12 @@
     </ClInclude>
     <ClInclude Include="idlib\math\Ode.h">
       <Filter>idlib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\math\Vector2.h">
+      <Filter>idlib\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\CmdSystem.h">
+      <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +331,21 @@
     </ClCompile>
     <ClCompile Include="idlib\math\Ode.cpp">
       <Filter>idlib\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="cm\CollisionModel_trace.cpp">
+      <Filter>CM</Filter>
+    </ClCompile>
+    <ClCompile Include="cm\CollisionModel_contents.cpp">
+      <Filter>CM</Filter>
+    </ClCompile>
+    <ClCompile Include="cm\CollisionModel_files.cpp">
+      <Filter>CM</Filter>
+    </ClCompile>
+    <ClCompile Include="cm\CollisionModel.cpp">
+      <Filter>CM</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\gamesys\SysCmds.cpp">
+      <Filter>d3xp\GameSys</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

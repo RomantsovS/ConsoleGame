@@ -62,7 +62,8 @@ public:
 
 	const Pixel &getBackgroundPixel() const { return backgroundPixel; }
 
-	void clear() { clearContents(); }
+	void clear();
+	void clearTextInfo();
 
 	void display(const std::string &str);
 	void writeInColor(COORD coord, const char* symbol, size_t lenght, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
@@ -99,10 +100,10 @@ Screen::Pixel Screen::get(pos_type r, pos_type c) const // declared as inline in
 
 inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch)
 {
-	if (r >= height)
+	if (r >= height || r < 0)
 		common->Error("Screen height: %d out of range: %d", r, height);
 
-	if (col >= width)
+	if (col >= width || col < 0)
 		common->Error("Screen width: %d out of range: %d", col, width);
 
 	contents[r*width + col] = ch;  // set specified location to given value

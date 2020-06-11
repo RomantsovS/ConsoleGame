@@ -56,12 +56,23 @@ void Screen::init()
 	}*/
 }
 
+void Screen::clear()
+{
+	clearContents();
+}
+
+void Screen::clearTextInfo()
+{
+	DWORD written;
+	FillConsoleOutputCharacter(h_console_draw, ' ', width * 20, COORD({ 0, height + 1 }), &written);
+}
+
 void Screen::display(const std::string &str)
 {
+	cur_write_coord = { 0, 0 };
+
 	char* p_next_write = &buffer[0];
 	ConsoleColor curCol = Screen::ConsoleColor::None;
-
-	cur_write_coord = { 0, 0 };
 
 	for (pos_type y = 0; y < height; y++)
 	{
@@ -88,13 +99,20 @@ void Screen::display(const std::string &str)
 		}
 	}
 
-	for (auto iter = str.cbegin(); iter != str.cend(); ++iter)
+	std::string text_full_string = str;
+
+	if (str.size() % width != 0)
+	{
+		text_full_string.append(width - (str.size() % width), ' ');
+	}
+
+	for (auto iter = text_full_string.cbegin(); iter != text_full_string.cend(); ++iter)
 		*p_next_write++ = *iter;
 
 	auto lenght = p_next_write - &buffer[0];
 	writeInColor(cur_write_coord, buffer, lenght, curCol);
 
-	cur_write_coord.Y += static_cast<SHORT>(ceil(lenght / width)) + 2;
+	cur_write_coord.Y += static_cast<SHORT>(ceil(lenght / width)) + 1;
 	cur_write_coord.X = 0;
 }
 
@@ -120,11 +138,14 @@ void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen
 
 void Screen::writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background)
 {
-	std::string text_full_str = text;
-	if(text.size() % width != 0)
-		text_full_str.append(width - (text.size() % width), ' ');
+	std::string text_full_string = text;
 
-	writeInColor(cur_write_coord, text_full_str.c_str(), text_full_str.size(), color_text, color_background);
+	if (text.size() % width != 0)
+	{
+		text_full_string.append(width - (text.size() % width), ' ');
+	}
+
+	writeInColor(cur_write_coord, text_full_string.c_str(), text_full_string.size(), color_text, color_background);
 
 	cur_write_coord.Y += static_cast<SHORT>(ceil(static_cast<pos_type>(text.size()) / width)) + 1;
 	cur_write_coord.X = 0;
@@ -175,8 +196,12 @@ std::string Screen::waitConsoleInput()
 		{
 			if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
 				return std::string();
-			if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_RETURN)
+			else if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_RETURN)
 				return text_input;
+			else if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_SHIFT ||
+				input_record.Event.KeyEvent.wVirtualKeyCode == VK_CONTROL) {
+				continue;
+			}
 
 			text_input += input_record.Event.KeyEvent.uChar.AsciiChar;
 			WriteConsole(h_console_std_out, &input_record.Event.KeyEvent.uChar.AsciiChar, 1, &written, NULL);

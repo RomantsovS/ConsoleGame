@@ -107,7 +107,7 @@ private:
 	idBounds bounds; // bounds
 	idBounds absBounds; // absolute bounds
 	//const idMaterial* material; // material for trace models
-	//int contents; // all contents ored together
+	int contents; // all contents ored together
 	int collisionModelHandle;	// handle to collision model
 	int traceModelIndex; // trace model used for collision detection
 	int renderModelHandle; // render model def handle
@@ -162,8 +162,8 @@ idClip::ClipModelsTouchingBounds_r
 */
 struct listParms_t {
 	idBounds		bounds;
-	//int				contentMask;
-	std::shared_ptr<idClipModel>* list;
+	int				contentMask;
+	std::vector<std::shared_ptr<idClipModel>>* list;
 	int				count;
 	int				maxCount;
 };
@@ -187,15 +187,15 @@ public:
 
 	// clip versus the rest of the world
 	bool Translation(trace_t& results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idClipModel> mdl, int contentMask, const std::shared_ptr<idEntity> passEntity);
+		const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity);
 	bool Motion(trace_t& results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idClipModel> mdl, int contentMask, const std::shared_ptr<idEntity> passEntity);
+		const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity);
 
-	int Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
-		const Vector2& dir, const float depth, const std::shared_ptr<idClipModel> mdl, int contentMask,
-		const std::shared_ptr<idEntity> passEntity);
+	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
+		const Vector2& dir, const float depth, const std::shared_ptr<idClipModel>& mdl, int contentMask,
+		const std::shared_ptr<idEntity>& passEntity);
 
-	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::shared_ptr<idClipModel>* clipModelList,
+	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<std::shared_ptr<idClipModel>>& clipModelList,
 		int maxCount) const;
 
 	const idBounds& GetWorldBounds() const;
@@ -222,7 +222,7 @@ private:
 	void ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node, listParms_t& parms) const;
 	const std::shared_ptr<idTraceModel> TraceModelForClipModel(const std::shared_ptr<idClipModel> mdl) const;
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
-		const std::shared_ptr<idEntity> passEntity, std::shared_ptr<idClipModel>* clipModelList) const;
+		const std::shared_ptr<idEntity> passEntity, std::vector<std::shared_ptr<idClipModel>>& clipModelList) const;
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
 		std::shared_ptr<idClipModel> touch) const;
 

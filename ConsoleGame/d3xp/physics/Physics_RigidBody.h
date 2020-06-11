@@ -66,7 +66,8 @@ public:	// common physics interface
 	int GetTime() const override;
 
 	void Activate() override;
-	virtual bool IsAtRest() const override;
+	void PutToRest() override;
+	bool IsAtRest() const override;
 
 	void SaveState() override;
 	void RestoreState() override;
@@ -99,6 +100,7 @@ private:
 	void Integrate(const float deltaTime, rigidBodyPState_t& next_);
 	bool CheckForCollisions(const float deltaTime, rigidBodyPState_t& next, trace_t& collision);
 	bool CollisionImpulse(const trace_t& collision, Vector2& impulse);
+	bool TestIfAtRest() const;
 	void Rest();
 	void DebugDraw();
 };

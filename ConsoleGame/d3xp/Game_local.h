@@ -30,13 +30,15 @@ enum gameState_t {
 	GAMESTATE_SHUTDOWN				// inside MapShutdown().  clearing memory.
 };
 
-struct timeState_t {
-	int					time;
-	int					previousTime;
-	int					realClientTime;
+using game_time_type = int;
 
-	void				Set(int t, int pt/*, int rct*/) { time = t; previousTime = pt;/* realClientTime = rct;*/ };
-	void				Get(int & t, int & pt/*, int & rct*/) { t = time; pt = previousTime;/* rct = realClientTime;*/ };
+struct timeState_t {
+	game_time_type time;
+	game_time_type previousTime;
+	game_time_type realClientTime;
+
+	void Set(game_time_type t, game_time_type pt/*, int rct*/) { time = t; previousTime = pt;/* realClientTime = rct;*/ };
+	void Get(game_time_type& t, game_time_type& pt/*, int & rct*/) { t = time; pt = previousTime;/* rct = realClientTime;*/ };
 	//void				Save(idSaveGame *savefile) const { savefile->WriteInt(time); savefile->WriteInt(previousTime); savefile->WriteInt(realClientTime); }
 	//void				Restore(idRestoreGame *savefile) { savefile->ReadInt(time); savefile->ReadInt(previousTime); savefile->ReadInt(realClientTime); }
 };
@@ -53,7 +55,7 @@ public:
 	std::shared_ptr<idClip> clip; // collision detection
 
 	int framenum;
-	int time;					// in msec
+	game_time_type time;					// in msec
 	int	previousTime;			// time in msec of last frame
 
 	timeState_t fast;
@@ -104,8 +106,9 @@ public:
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
-
 	const idDict &GetSpawnArgs() const { return spawnArgs; }
+
+	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
 
 	short GetHeight() { return height; }
 	short GetWidth() { return width; }
@@ -127,6 +130,10 @@ private:
 	void MapClear(bool clearClients);
 
 	void RunDebugInfo();
+	void PrintSpawnedEntities();
+
+	//void InitConsoleCommands();
+	//void ShutdownConsoleCommands();
 
 	void AddRandomPoint();
 

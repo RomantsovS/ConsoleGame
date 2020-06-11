@@ -80,6 +80,14 @@ int idPhysics_Base::GetTime() const {
 void idPhysics_Base::Activate() {
 }
 
+/*
+================
+idPhysics_Base::PutToRest
+================
+*/
+void idPhysics_Base::PutToRest() {
+}
+
 bool idPhysics_Base::IsAtRest() const
 {
 	return true;
@@ -193,7 +201,7 @@ void idPhysics_Base::ActivateContactEntities()
 
 bool idPhysics_Base::IsOutsideWorld() const
 {
-	if (!gameLocal.clip->GetWorldBounds().Expand(0.0f).IntersectsBounds(GetAbsBounds())) {
+	if (!gameLocal.clip->GetWorldBounds().Expand(1.0f).IntersectsBounds(GetAbsBounds())) {
 		return true;
 	}
 	return false;

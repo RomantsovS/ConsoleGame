@@ -145,7 +145,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	trace_t collision;
 	Vector2 impulse;
 	float timeStep;
-	bool collided;
+	bool collided, cameToRest = false;
 
 	timeStep = MS2SEC(timeStepMSec);
 	current.lastTimeStep = timeStep;
@@ -183,7 +183,18 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 
 	if (!noContact) {
 		// get contacts
-		EvaluateContacts();
+		//EvaluateContacts();
+
+		// check if the body has come to rest
+		if (TestIfAtRest()) {
+			// put to rest
+			Rest();
+			cameToRest = true;
+		}
+		else {
+			// apply contact friction
+			//ContactFriction(timeStep);
+		}
 	}
 
 	if (current.atRest < 0) {
@@ -226,6 +237,11 @@ void idPhysics_RigidBody::Activate()
 {
 	current.atRest = -1;
 	self.lock()->BecomeActive(TH_PHYSICS);
+}
+
+void idPhysics_RigidBody::PutToRest()
+{
+	Rest();
 }
 
 bool idPhysics_RigidBody::IsAtRest() const
@@ -280,10 +296,11 @@ bool idPhysics_RigidBody::EvaluateContacts()
 	dir.SubVec3(1) = current.i.angularMomentum;
 	dir.SubVec3(0).Normalize();
 	dir.SubVec3(1).Normalize();*/
-	dir = vec2_origin;
-	auto num = gameLocal.clip->Contacts(contacts, 10, clipModel->GetOrigin(),
+	dir = current.i.linearMomentum;
+	dir.Normalize();
+	auto num = gameLocal.clip->Contacts(&contacts[0], 10, clipModel->GetOrigin(),
 		dir, CONTACT_EPSILON, clipModel, /*clipModel->GetAxis(),*/ clipMask, self.lock());
-	contacts.reserve(num);
+	contacts.resize(num);
 
 	AddContactEntitiesForContacts();
 
@@ -352,6 +369,20 @@ bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& im
 
 	// callback to self to let the entity know about the collision
 	return self.lock()->Collide(collision, velocity);
+}
+
+bool idPhysics_RigidBody::TestIfAtRest() const
+{
+	if (current.atRest >= 0) {
+		return true;
+	}
+
+	// need at least 3 contact points to come to rest
+	if (contacts.size() < 3) {
+		return false;
+	}
+
+	return true;
 }
 
 void idPhysics_RigidBody::Rest()

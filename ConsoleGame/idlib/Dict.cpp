@@ -24,7 +24,7 @@ void idDict::Clear()
 
 void idDict::Set(std::string key, std::string value)
 {
-	args.insert(std::make_pair(key, value));
+	args.insert_or_assign(key, value);
 }
 
 std::string idDict::GetString(const char * key, std::string defaultString) const

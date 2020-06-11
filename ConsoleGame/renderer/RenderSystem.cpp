@@ -42,9 +42,6 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 void idRenderSystemLocal::Display()
 {
 	screen.display(console);
-	console.clear();
-
-	//tr.updateFrame = false;
 }
 
 void idRenderSystemLocal::Clear()
@@ -61,7 +58,7 @@ void idRenderSystemLocal::Clear()
 		viewDef = nullptr;
 	}
 
-	updateFrame = true;
+	update_frame = update_info = true;
 	console.clear();
 }
 
@@ -88,8 +85,6 @@ void idRenderSystemLocal::FillBorder()
 
 void idRenderSystemLocal::ClearScreen()
 {
-	//system("cls");
-
 	screen.clear();
 }
 
@@ -102,6 +97,7 @@ void idRenderSystemLocal::DrawFPS()
 	static long long previous;
 
 	static auto prev_frame_update_time = Sys_Microseconds();
+	static auto prev_info_update_time = prev_frame_update_time;
 
 	// don't use serverTime, because that will be drifting to
 	// correct for internet lag changes, timescales, timedemos, etc
@@ -123,11 +119,19 @@ void idRenderSystemLocal::DrawFPS()
 		int fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
 		fps = (fps + 500) / 1000;
 
-		console += std::to_string(fps) + " fps, " + std::to_string(frameTime) + " microsec last frame time";
+		static char buf[256];
+
+		sprintf_s(buf, " %5d fps, %10lld microsec last frame time", fps, frameTime);
+		console.append(buf);
 	}
 
-	if (t - prev_frame_update_time > 500000) {
-		updateFrame = true;
+	if (t - prev_frame_update_time > 50000) {
+		update_frame = true;
 		prev_frame_update_time = t;
+	}
+
+	if (t - prev_info_update_time > 100000) {
+		update_info = true;
+		prev_info_update_time = t;
 	}
 }

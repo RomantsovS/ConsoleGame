@@ -2,7 +2,6 @@
 #define BOUNDS_H
 
 #include "../math/Vector2.h"
-#include "../math/Math.h"
 
 class idBounds {
 public:
@@ -29,6 +28,7 @@ public:
 	idBounds Expand(const float d) const; // return bounds expanded in all directions with the given value
 	idBounds& ExpandSelf(const float d); // expand bounds in all directions with the given value
 
+	bool ContainsPoint(const Vector2& p) const;			// includes touching
 	bool IntersectsBounds(const idBounds& a) const;	// includes touching
 	bool LineIntersection(const Vector2& start, const Vector2& end) const;
 
@@ -91,8 +91,8 @@ inline bool idBounds::operator!=(const idBounds& a) const
 
 inline void idBounds::Clear()
 {
-	b[0][0] = b[0][1] = INFINITY;
-	b[1][0] = b[1][1] = -INFINITY;
+	b[0][0] = b[0][1] = idMath::INFINITY;
+	b[1][0] = b[1][1] = -idMath::INFINITY;
 }
 
 inline void idBounds::Zero()
@@ -139,6 +139,14 @@ inline idBounds& idBounds::ExpandSelf(const float d)
 	b[1][0] += d;
 	b[1][1] += d;
 	return *this;
+}
+
+inline bool idBounds::ContainsPoint(const Vector2& p) const {
+	if (p[0] < b[0][0] || p[1] < b[0][1] //|| p[2] < b[0][2]
+		|| p[0] > b[1][0] || p[1] > b[1][1] /*|| p[2] > b[1][2]*/) {
+		return false;
+	}
+	return true;
 }
 
 inline bool idBounds::IntersectsBounds(const idBounds& a) const {

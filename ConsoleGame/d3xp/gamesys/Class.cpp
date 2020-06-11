@@ -26,6 +26,8 @@ void idClass::Init()
 	idTypeInfo *c;
 	int num = 0;
 
+	gameLocal.Printf("Initializing class hierarchy\n");
+
 	if (initialized)
 	{
 		gameLocal.Printf("...already initialized\n");
@@ -37,12 +39,22 @@ void idClass::Init()
 		c->Init();
 	}
 
+	// number the types according to the class hierarchy so we can quickly determine if a class
+	// is a subclass of another
+	/*num = 0;
+	for (c = classHierarchy.GetNext(); c != NULL; c = c->node.GetNext(), num++) {
+		c->typeNum = num;
+		c->lastChild += num;
+	}*/
+
 	for (c = typelist; c != NULL; c = c->next, num++) {
 		types.push_back(c);
 		//typenums[c->typeNum] = c;
 	}
 
 	initialized = true;
+
+	gameLocal.Printf("...%i classes\n", types.size());
 }
 
 void idClass::Shutdown()
@@ -142,6 +154,8 @@ idTypeInfo::idTypeInfo(std::string classname, std::string superclass, std::share
 	this->Spawn = Spawn;
 	this->CreateInstance = CreateInstance;
 	this->super = idClass::GetClass(superclass);
+	typeNum = 0;
+	lastChild = 0;
 
 	// Check if any subclasses were initialized before their superclass
 	for (type = typelist; type != NULL; type = type->next) {
@@ -177,13 +191,31 @@ idTypeInfo::~idTypeInfo()
 
 void idTypeInfo::Init()
 {
+	idTypeInfo* c;
+
 	if (super) {
 		super->Init();
+	}
+
+	// add to our node hierarchy
+	/*if (super) {
+		node.ParentTo(super->node);
+	}
+	else {
+		node.ParentTo(classHierarchy);
+	}
+	node.SetOwner(this);*/
+
+	// keep track of the number of children below each class
+	for (c = super; c != NULL; c = c->super) {
+		c->lastChild++;
 	}
 }
 
 void idTypeInfo::Shutdown()
 {
+	typeNum = 0;
+	lastChild = 0;
 }
 
 bool idClass::initialized = false;

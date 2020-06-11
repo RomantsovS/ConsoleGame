@@ -206,7 +206,7 @@ public:
 	std::shared_ptr<viewDef_t> viewDef;
 
 	Screen screen;
-	bool updateFrame;
+	bool update_frame, update_info;
 	std::string console;
 
 	Screen::pos_type height, width, borderWidth, borderHeight;

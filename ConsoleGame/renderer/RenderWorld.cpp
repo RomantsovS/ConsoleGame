@@ -93,9 +93,9 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	// that may contain the updated surface
 	R_CreateEntityRefs(def);
 	
-	if (!tr.updateFrame)
+	if (!tr.update_frame)
 	{
-		//tr.updateFrame = true;
+		//tr.update_frame = true;
 	}
 }
 
@@ -148,10 +148,8 @@ const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) cons
 
 void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderView)
 {
-	if (!tr.updateFrame)
+	if (!tr.update_frame)
 		return;
-
-	tr.FillBorder();
 
 	auto parms = std::make_shared<viewDef_t>();
 	parms->renderWorld = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());

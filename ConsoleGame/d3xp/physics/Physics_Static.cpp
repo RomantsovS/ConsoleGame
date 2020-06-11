@@ -142,6 +142,14 @@ void idPhysics_Static::Activate()
 {
 }
 
+/*
+================
+idPhysics_Static::PutToRest
+================
+*/
+void idPhysics_Static::PutToRest() {
+}
+
 bool idPhysics_Static::IsAtRest() const
 {
 	return true;

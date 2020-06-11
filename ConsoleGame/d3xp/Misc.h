@@ -30,6 +30,8 @@ public:
 
 	void Spawn();
 	virtual void Think() override;
+
+	virtual bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 };

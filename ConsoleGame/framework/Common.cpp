@@ -5,6 +5,7 @@
 #include "../d3xp/Game_local.h"
 #include "../renderer/tr_local.h"
 #include "FileSystem.h"
+#include "../d3xp/CmdSystem.h"
 
 long long com_engineHz_numerator = 100LL * 1000LL;
 long long com_engineHz_denominator = 100LL * 60LL;
@@ -126,6 +127,10 @@ void idCommonLocal::Frame()
 			if (text_input == "Q" || text_input == "q")
 			{
 				Quit();
+			}
+			else if (text_input == "listEntities")
+			{
+				Cmd_EntityList_f();
 			}
 		default:
 			;

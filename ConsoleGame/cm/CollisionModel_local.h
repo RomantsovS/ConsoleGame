@@ -5,8 +5,10 @@
 #include "../idlib/bv/Bounds.h"
 #include "../../framework/Common_local.h"
 
-#define	MAX_SUBMODELS						2048
-#define	TRACE_MODEL_HANDLE					MAX_SUBMODELS
+extern const int MAX_SUBMODELS;
+extern const size_t TRACE_MODEL_HANDLE;
+
+extern const size_t NODE_BLOCK_SIZE_SMALL;
 
 /*
 ===============================================================================
@@ -21,6 +23,47 @@ struct cm_vertex_t {
 	//int						checkcount;			// for multi-check avoidance
 	//unsigned long			side;				// each bit tells at which side this vertex passes one of the trace model edges
 	//unsigned long			sideSet;			// each bit tells if sidedness for the trace model edge has been calculated yet
+};
+
+struct cm_brush_t {
+	cm_brush_t() {
+		//checkcount = 0;
+		contents = 0;
+		//material = NULL;
+		//primitiveNum = 0;
+		//numPlanes = 0;
+	}
+	//int						checkcount;			// for multi-check avoidance
+	idBounds				bounds;				// brush bounds
+	int						contents;			// contents of brush
+	//const idMaterial* material;			// material
+	//int						primitiveNum;		// number of brush primitive
+	//int						numPlanes;			// number of bounding planes
+	//idPlane					planes[1];			// variable sized
+};
+
+struct cm_brushRef_t {
+	std::shared_ptr<cm_brush_t> b;					// pointer to brush
+	std::shared_ptr<cm_brushRef_t> next;			// next brush in chain
+};
+
+struct cm_brushRefBlock_t {
+	std::shared_ptr<cm_brushRef_t> nextRef;			// next brush reference in block
+	std::shared_ptr<cm_brushRefBlock_t> next;			// next block with brush references
+};
+
+struct cm_node_t {
+	int						planeType;			// node axial plane type
+	//float					planeDist;			// node plane distance
+	//std::shared_ptr<cm_polygonRef_t> polygons;			// polygons in node
+	std::shared_ptr<cm_brushRef_t> brushes;		// brushes in node
+	std::shared_ptr<cm_node_t> parent;			// parent of this node
+	std::shared_ptr<cm_node_t> children[2];		// node children
+};
+
+struct cm_nodeBlock_t {
+	std::shared_ptr<cm_node_t> nextNode;			// next node in block
+	std::shared_ptr<cm_nodeBlock_t> next;			// next block with nodes
 };
 
 struct cm_model_t {
@@ -49,26 +92,90 @@ struct cm_model_t {
 	//int						maxEdges;			// size of edge array
 	//int						numEdges;			// number of edges
 	//cm_edge_t* edges;				// array with all edges used by the model
-	//cm_node_t* node;				// first node of spatial subdivision
+	std::shared_ptr<cm_node_t> node;				// first node of spatial subdivision
 	// blocks with allocated memory
-	/*cm_nodeBlock_t* nodeBlocks;			// list with blocks of nodes
-	cm_polygonRefBlock_t* polygonRefBlocks;	// list with blocks of polygon references
-	cm_brushRefBlock_t* brushRefBlocks;		// list with blocks of brush references
-	cm_polygonBlock_t* polygonBlock;		// memory block with all polygons
-	cm_brushBlock_t* brushBlock;			// memory block with all brushes
-	*/// statistics
+	std::shared_ptr<cm_nodeBlock_t> nodeBlocks;			// list with blocks of nodes
+	//cm_polygonRefBlock_t* polygonRefBlocks;	// list with blocks of polygon references
+	std::shared_ptr<cm_brushRefBlock_t> brushRefBlocks;		// list with blocks of brush references
+	//cm_polygonBlock_t* polygonBlock;		// memory block with all polygons
+	//std::shared_ptr<cm_brushBlock_t> brushBlock;			// memory block with all brushes
+	// statistics
 	/*int						numPolygons;
-	int						polygonMemory;
+	int						polygonMemory;*/
 	int						numBrushes;
 	int						brushMemory;
 	int						numNodes;
 	int						numBrushRefs;
-	int						numPolygonRefs;
+	/*int						numPolygonRefs;
 	int						numInternalEdges;
 	int						numSharpEdges;
 	int						numRemovedPolys;
 	int						numMergedPolys;*/
 	int						usedMemory;
+};
+
+/*
+===============================================================================
+
+Data used during collision detection calculations
+
+===============================================================================
+*/
+
+struct cm_trmVertex_t {
+	int used;										// true if this vertex is used for collision detection
+	Vector2 p;										// vertex position
+	Vector2 endp;									// end point of vertex after movement
+	int polygonSide;								// side of polygon this vertex is on (rotational collision)
+	//idPluecker pl;									// pluecker coordinate for vertex movement
+	//idVec3 rotationOrigin;							// rotation origin for this vertex
+	idBounds rotationBounds;						// rotation bounds for this vertex
+};
+
+struct cm_traceWork_t {
+	int numVerts;
+	cm_trmVertex_t vertices[MAX_TRACEMODEL_VERTS];	// trm vertices
+	//int numEdges;
+	//cm_trmEdge_t edges[MAX_TRACEMODEL_EDGES + 1];		// trm edges
+	//int numPolys;
+	//cm_trmPolygon_t polys[MAX_TRACEMODEL_POLYS];	// trm polygons
+	std::shared_ptr<cm_model_t> model;								// model colliding with
+	Vector2 start;									// start of trace
+	Vector2 end;									// end of trace
+	Vector2 dir;									// trace direction
+	idBounds bounds;								// bounds of full trace
+	idBounds size;									// bounds of transformed trm relative to start
+	Vector2 extents;									// largest of abs(size[0]) and abs(size[1]) for BSP trace
+	int contents;									// ignore polygons that do not have any of these contents flags
+	trace_t trace;									// collision detection result
+
+	//bool rotation;									// true if calculating rotational collision
+	bool pointTrace;								// true if only tracing a point
+	bool positionTest;								// true if not tracing but doing a position test
+	bool isConvex;									// true if the trace model is convex
+	//bool axisIntersectsTrm;							// true if the rotation axis intersects the trace model
+	bool getContacts;								// true if retrieving contacts
+	bool quickExit;									// set to quickly stop the collision detection calculations
+
+	Vector2 origin;									// origin of rotation in model space
+	//idVec3 axis;									// rotation axis in model space
+	//idMat3 matrix;									// rotates axis of rotation to the z-axis
+	//float angle;									// angle for rotational collision
+	//float maxTan;									// max tangent of half the positive angle used instead of fraction
+	//float radius;									// rotation radius of trm start
+	//idRotation modelVertexRotation;					// inverse rotation for model vertices
+
+	contactInfo_t* contacts;						// array with contacts
+	int maxContacts;								// max size of contact array
+	int numContacts;								// number of contacts found
+
+	//idPlane heartPlane1;							// polygons should be near anough the trace heart planes
+	//float maxDistFromHeartPlane1;
+	//idPlane heartPlane2;
+	//float maxDistFromHeartPlane2;
+	//idPluecker polygonEdgePlueckerCache[CM_MAX_POLYGON_EDGES];
+	//idPluecker polygonVertexPlueckerCache[CM_MAX_POLYGON_EDGES];
+	//idVec3 polygonRotationOriginCache[CM_MAX_POLYGON_EDGES];
 };
 
 class idCollisionModelManagerLocal : public idCollisionModelManager {
@@ -93,21 +200,38 @@ public:
 	void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) override;
 	// stores all contact points of the trm with the model, returns the number of contacts
-	int Contacts(std::vector<contactInfo_t>::iterator contacts, const int maxContacts, const Vector2& start,
+	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
 		const Vector2& dir, const float depth, const std::shared_ptr<idTraceModel> trm, 
 		int contentMask, int model, const Vector2& modelOrigin) override;
+
+private:			// CollisionMap_translate.cpp
+	void SetupTrm(cm_traceWork_t* tw, const std::shared_ptr<idTraceModel> trm);
+	void TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
+		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin);
+private:			// CollisionMap_contents.cpp
+	bool TestTrmVertsInBrush(cm_traceWork_t* tw, std::shared_ptr<cm_brush_t> b);
+private:			// CollisionMap_trace.cpp
+	void TraceTrmThroughNode(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node);
+	void TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node, float p1f, float p2f, Vector2& p1, Vector2& p2);
+	void TraceThroughModel(cm_traceWork_t* tw);
 private:			// CollisionMap_load.cpp
 	void Clear();
 	void FreeTrmModelStructure();
 
 	// model deallocation
+	void FreeBrush(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_brush_t> brush);
 	void FreeModel(std::shared_ptr<cm_model_t> model);
 
 	// creation of axial BSP tree
 	std::shared_ptr<cm_model_t> AllocModel();
+	std::shared_ptr<cm_node_t> AllocNode(std::shared_ptr<cm_model_t> model, int blockSize);
+	std::shared_ptr<cm_brushRef_t> AllocBrushReference(std::shared_ptr<cm_model_t> model, int blockSize);
+	std::shared_ptr<cm_brush_t> AllocBrush(std::shared_ptr<cm_model_t> model);
+	void AddBrushToNode(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b);
 	void SetupTrmModelStructure();
 	
 	// creation of raw polygons
+	void ConvertBrush(std::shared_ptr<cm_model_t> model, /*const idMapBrush* mapBrush,*/ int primitiveNum);
 	void FinishModel(std::shared_ptr<cm_model_t> model);
 	void BuildModels(/*const idMapFile* mapFile*/);
 	int FindModel(const std::string& name);
@@ -122,9 +246,13 @@ private:			// collision map data
 	int maxModels;
 	int numModels;
 	std::vector<std::shared_ptr<cm_model_t>> models;
+	// polygons and brush for trm model
+	std::shared_ptr<cm_brushRef_t> trmBrushes[1];
 	// for retrieving contact points
 	bool			getContacts;
-	std::vector<contactInfo_t>::iterator contacts;
+	contactInfo_t* contacts;
 	int				maxContacts;
 	int				numContacts;
 };
+
+void CM_AddContact(cm_traceWork_t* tw);

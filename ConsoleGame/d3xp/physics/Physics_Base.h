@@ -35,6 +35,7 @@ public:	// common physics interface
 	int	GetTime() const override;
 
 	void Activate() override;
+	void PutToRest() override;
 	virtual bool IsAtRest() const override;
 
 	void SaveState() override;
