@@ -166,15 +166,23 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	// check for collisions from the current to the next state
 	collided = CheckForCollisions(timeStep, next_step, collision);
 
-	// set the new state
-	current = next_step;
-
 	if (collided) {
 		// apply collision impulse
 		if (CollisionImpulse(collision, impulse)) {
-			current.atRest = gameLocal.time;
+			next_step.atRest = gameLocal.time;
 		}
+		/*else {
+			if (current.i.position == next_step.i.position)
+			{
+				clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+				DebugDraw();
+				return false;
+			}
+		}*/
 	}
+
+	// set the new state
+	current = next_step;
 
 	// update the position of the clip model
 	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
@@ -183,7 +191,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 
 	if (!noContact) {
 		// get contacts
-		//EvaluateContacts();
+		EvaluateContacts();
 
 		// check if the body has come to rest
 		if (TestIfAtRest()) {
@@ -198,7 +206,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	}
 
 	if (current.atRest < 0) {
-		ActivateContactEntities();
+		//ActivateContactEntities();
 	}
 
 	if (collided) {
@@ -378,7 +386,7 @@ bool idPhysics_RigidBody::TestIfAtRest() const
 	}
 
 	// need at least 3 contact points to come to rest
-	if (contacts.size() < 3) {
+	if (contacts.size() < 2) {
 		return false;
 	}
 

@@ -112,6 +112,8 @@ public:
 
 	short GetHeight() { return height; }
 	short GetWidth() { return width; }
+
+	const std::vector<Screen::ConsoleColor>& GetColors() const { return colors; }
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	//idMapFile* mapFile;				// will be NULL during the game unless in-game editing is used

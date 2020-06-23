@@ -40,21 +40,28 @@ void idCommonLocal::Quit()
 
 void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline)
 {
-	// initialize the file system
-	fileSystem->Init();
+	try {
+		// initialize the file system
+		fileSystem->Init();
 
-	game->Init();
+		game->Init();
 
-	// initialize the renderSystem data structures
-	renderSystem->Init();
+		// initialize the renderSystem data structures
+		renderSystem->Init();
 
-	// the same idRenderWorld will be used for all games
-	// and demos, insuring that level specific models
-	// will be freed
-	renderWorld = renderSystem->AllocRenderWorld();
+		// the same idRenderWorld will be used for all games
+		// and demos, insuring that level specific models
+		// will be freed
+		renderWorld = renderSystem->AllocRenderWorld();
 
-	delayMilliseconds = 100;
-	FPSupdateMilliseconds = 1000;
+		delayMilliseconds = 100;
+		FPSupdateMilliseconds = 1000;
+
+		Printf("--- Common Initialization Complete ---\n");
+	}
+	catch (std::exception&) {
+		Sys_Error("Error during initialization");
+	}
 }
 
 /*
@@ -111,10 +118,11 @@ void idCommonLocal::Frame()
 		ExecuteMapChange();
 
 	unsigned key = 0;
-	std::string text_input;
 
 	if (tr.screen.readInput(key))
 	{
+		std::string text_input;
+
 		switch (key)
 		{
 		case 27:

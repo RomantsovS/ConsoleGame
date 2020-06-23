@@ -1,6 +1,8 @@
 #include <random>
+#include <cwchar>
 
 #include "Screen.h"
+#include "../sys/sys_public.h"
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), h_console_std_in(0), h_console_std_out(0), 
@@ -39,21 +41,21 @@ void Screen::init()
 	if(!SetConsoleActiveScreenBuffer(h_console_draw))
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
 
-	CONSOLE_CURSOR_INFO     cursorInfo;
+	CONSOLE_CURSOR_INFO cursorInfo;
 
 	GetConsoleCursorInfo(h_console_draw, &cursorInfo);
 	cursorInfo.bVisible = false; // set the cursor visibility
 	SetConsoleCursorInfo(h_console_draw, &cursorInfo);
 
-	/*DWORD dwFlags, fdwMode;
-
-	GetConsoleMode(h_console_draw, &dwFlags);
-
-	fdwMode = dwFlags & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-	if (!SetConsoleMode(h_console_draw, fdwMode))
-	{
-		MessageBox(NULL, TEXT("SetConsoleMode"), TEXT("Console Error"), MB_OK);
-	}*/
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = 0;                   // Width of each character in the font
+	cfi.dwFontSize.Y = 32;                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
+	SetCurrentConsoleFontEx(h_console_draw, FALSE, &cfi);
 }
 
 void Screen::clear()
@@ -155,6 +157,16 @@ bool Screen::readInput(unsigned& key)
 {
 	DWORD events;
 	INPUT_RECORD input_record;
+
+	// update the game time
+	static auto real_time_last = Sys_Milliseconds();
+	auto real_time = Sys_Milliseconds();
+
+	if (real_time - real_time_last < 100) {
+		return false;
+	}
+
+	real_time_last = real_time;
 
 	key = 0;
 

@@ -6,7 +6,7 @@
 #include "../../idlib/math/Math.h"
 #include "../../idlib/math/Vector2.h"
 
-const size_t MAX_SECTOR_DEPTH = 1;
+const size_t MAX_SECTOR_DEPTH = 4;
 const size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
 
 Vector2 vec3_boxEpsilon(CM_BOX_EPSILON, CM_BOX_EPSILON);
@@ -114,8 +114,8 @@ void idClipModel::Unlink()
 {
 	for (auto link = clipLinks; link; link = clipLinks) {
 		clipLinks = link->nextLink;
-		if (!link->prevInSector.expired()) {
-			link->prevInSector.lock()->nextInSector = link->nextInSector;
+		if (link->prevInSector) {
+			link->prevInSector->nextInSector = link->nextInSector;
 		}
 		else {
 			link->sector.lock()->clipLinks = link->nextInSector;
@@ -172,14 +172,14 @@ void idClipModel::Link_r(std::shared_ptr<clipSector_t> node)
 	}
 
 	auto link = std::make_shared<clipLink_t>();
-	link->clipModel = shared_from_this();
+	link->clipModel = this;
 	link->sector = node;
-	link->nextInSector = node->clipLinks.lock();
-	link->prevInSector.reset();
-	if (!node->clipLinks.expired()) {
-		node->clipLinks.lock()->prevInSector = link;
+	link->nextInSector = node->clipLinks;
+	link->prevInSector = nullptr;
+	if (node->clipLinks) {
+		node->clipLinks->prevInSector = link.get();
 	}
-	node->clipLinks = link;
+	node->clipLinks = link.get();
 	link->nextLink = clipLinks;
 	clipLinks = link;
 }
@@ -407,8 +407,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 	const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity)
 {
 	int i, num;
-	std::shared_ptr<idClipModel> touch;
-	std::vector<std::shared_ptr<idClipModel>> clipModelList;
+	std::vector<idClipModel*> clipModelList(1);
 	idBounds traceBounds;
 	float radius;
 	trace_t trace;
@@ -447,7 +446,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList);
 
 	for (i = 0; i < num; i++) {
-		touch = clipModelList[i];
+		auto touch = clipModelList[i];
 
 		if (!touch) {
 			continue;
@@ -455,7 +454,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 
 		if (touch->renderModelHandle != -1) {
 			idClip::numRenderModelTraces++;
-			TraceRenderModel(trace, start, end, radius, touch);
+			//TraceRenderModel(trace, start, end, radius, touch);
 		}
 		else {
 			idClip::numTranslations++;
@@ -481,6 +480,8 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 	const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity)
 {
+	idClip::numMotions++;
+
 	//int i, num;
 	//idClipModel* touch, * clipModelList[MAX_GENTITIES];
 	//Vector2 dir, endPosition;
@@ -521,7 +522,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 {
 	int i, j, num, n, numContacts;
 	std::shared_ptr<idClipModel> touch;
-	std::vector<std::shared_ptr<idClipModel>> clipModelList(MAX_GENTITIES);
+	std::vector<idClipModel*> clipModelList(1);
 	idBounds traceBounds;
 
 	const std::shared_ptr<idTraceModel> trm = TraceModelForClipModel(mdl);
@@ -556,7 +557,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList);
 
 	for (i = 0; i < num; i++) {
-		touch = clipModelList[i];
+		auto touch = clipModelList[i];
 
 		if (!touch) {
 			continue;
@@ -585,7 +586,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 	return numContacts;
 }
 
-int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<std::shared_ptr<idClipModel>>& clipModelList,
+int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
 	int maxCount) const
 {
 	listParms_t parms;
@@ -674,8 +675,8 @@ void idClip::ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node
 		}
 	}
 
-	for (std::shared_ptr<clipLink_t> link = node->clipLinks.lock(); link; link = link->nextInSector) {
-		std::shared_ptr<idClipModel> check = link->clipModel.lock();
+	for (clipLink_t* link = node->clipLinks; link; link = link->nextInSector) {
+		idClipModel* check = link->clipModel;
 
 		// if the clip model is enabled
 		if (!check->enabled) {
@@ -710,8 +711,9 @@ void idClip::ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node
 		}
 
 		check->touchCount = touchCount;
-		//(*(parms.list))[parms.count] = check;
-		parms.list->push_back(check);
+
+		parms.list->resize(parms.count + 1);
+		(*(parms.list))[parms.count] = check;
 		parms.count++;
 	}
 }
@@ -735,10 +737,10 @@ const std::shared_ptr<idTraceModel> idClip::TraceModelForClipModel(const std::sh
 }
 
 int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
-	const std::shared_ptr<idEntity> passEntity, std::vector<std::shared_ptr<idClipModel>>& clipModelList) const
+	const std::shared_ptr<idEntity> passEntity, std::vector<idClipModel*>& clipModelList) const
 {
 	int i, num;
-	std::shared_ptr<idClipModel> cm;
+	idClipModel* cm;
 	std::shared_ptr<idEntity> passOwner;
 
 	num = ClipModelsTouchingBounds(bounds, contentMask, clipModelList, MAX_GENTITIES);
@@ -806,6 +808,22 @@ void idClip::TraceRenderModel(trace_t& trace, const Vector2& start, const Vector
 			touch->id = JOINT_HANDLE_TO_CLIPMODEL_ID(modelTrace.jointNumber);
 		}
 	}
+}
+
+/*
+============
+idClip::PrintStatistics
+============
+*/
+void idClip::PrintStatistics() {
+	static char buf[256];
+
+	sprintf_s(buf, "t = %3d, r = %3d, m = %3d, render = %3d, contents = %3d, contacts = %3d",
+		numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
+
+	gameRenderWorld->DrawText(buf, Vector2(), gameLocal.GetColors()[8], 0);
+
+	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
 void idClip::DrawClipSectors()

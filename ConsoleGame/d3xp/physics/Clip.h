@@ -21,7 +21,7 @@ struct clipSector_t {
 	int axis;		// -1 = leaf node
 	float dist;
 	std::shared_ptr<clipSector_t> children[2];
-	std::weak_ptr<clipLink_t> clipLinks;
+	clipLink_t* clipLinks;
 };
 
 struct clipLink_t {
@@ -39,10 +39,10 @@ struct clipLink_t {
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	std::weak_ptr<idClipModel> clipModel;
+	idClipModel* clipModel;
 	std::weak_ptr<clipSector_t> sector;
-	std::weak_ptr<clipLink_t> prevInSector;
-	std::shared_ptr<clipLink_t> nextInSector;
+	clipLink_t* prevInSector;
+	clipLink_t* nextInSector;
 	std::shared_ptr<clipLink_t> nextLink;
 };
 
@@ -163,7 +163,7 @@ idClip::ClipModelsTouchingBounds_r
 struct listParms_t {
 	idBounds		bounds;
 	int				contentMask;
-	std::vector<std::shared_ptr<idClipModel>>* list;
+	std::vector<idClipModel*>* list;
 	int				count;
 	int				maxCount;
 };
@@ -195,13 +195,14 @@ public:
 		const Vector2& dir, const float depth, const std::shared_ptr<idClipModel>& mdl, int contentMask,
 		const std::shared_ptr<idEntity>& passEntity);
 
-	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<std::shared_ptr<idClipModel>>& clipModelList,
+	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
 		int maxCount) const;
 
 	const idBounds& GetWorldBounds() const;
 	std::shared_ptr<idClipModel> DefaultClipModel();
 
 	// stats and debug drawing
+	void PrintStatistics();
 	void DrawClipSectors();
 private:
 	int						numClipSectors;
@@ -222,7 +223,7 @@ private:
 	void ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node, listParms_t& parms) const;
 	const std::shared_ptr<idTraceModel> TraceModelForClipModel(const std::shared_ptr<idClipModel> mdl) const;
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
-		const std::shared_ptr<idEntity> passEntity, std::vector<std::shared_ptr<idClipModel>>& clipModelList) const;
+		const std::shared_ptr<idEntity> passEntity, std::vector<idClipModel*>& clipModelList) const;
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
 		std::shared_ptr<idClipModel> touch) const;
 

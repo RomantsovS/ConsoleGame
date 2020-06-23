@@ -5,7 +5,7 @@
 #include "../../idlib/math/Vector2.h"
 #include "Clip.h"
 
-const float CONTACT_EPSILON = 0.25f; // maximum contact seperation distance
+extern const float CONTACT_EPSILON;
 
 class idEntity;
 

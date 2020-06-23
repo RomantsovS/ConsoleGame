@@ -48,7 +48,7 @@ void idEntity::Spawn()
 
 	// every object will have a unique name
 	temp = spawnArgs.GetString("name",
-		GetClassname() + spawnArgs.GetString("classname") + std::to_string(entityNumber));
+		GetClassname() + spawnArgs.GetString("classname") + std::to_string(entityNumber - MAX_CLIENTS + 1));
 	SetName(temp);
 
 	InitDefaultPhysics(origin, axis);

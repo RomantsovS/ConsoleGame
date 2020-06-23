@@ -13,6 +13,8 @@ std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this w
 idGameLocal gameLocal;
 idGame *game = &gameLocal;
 
+const size_t frame_time_min = 10;
+
 idGameLocal::idGameLocal()
 {
 	Clear();
@@ -137,6 +139,15 @@ void idGameLocal::RunFrame()
 	}
 
 	// update the game time
+	static auto real_time_last = Sys_Milliseconds();
+	auto real_time = Sys_Milliseconds();
+
+	if (real_time - real_time_last < frame_time_min) {
+		return;
+	}
+
+	real_time_last = real_time;
+
 	framenum++;
 	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
 	fast.time = FRAME_TO_MSEC(framenum);
@@ -162,7 +173,9 @@ void idGameLocal::RunFrame()
 	static auto lastTimePointSpawn = time;
 	if (time - lastTimePointSpawn > 1000) {
 		lastTimePointSpawn = time;
-		AddRandomPoint();
+		
+		//if(activeEntities.IsListEmpty())
+			AddRandomPoint();
 	}
 
 	// let entities think
@@ -192,10 +205,10 @@ bool idGameLocal::Draw(int clientNum)
 {
 	static char buf[256];
 
-	sprintf_s(buf, "current game time %d", time);
-	tr.console.append(buf);
-
-	tr.DrawFPS();
+	if (tr.update_frame) {
+		sprintf_s(buf, ", current game time %d", time);
+		tr.console.append(buf);
+	}
 
 	RB_RenderDebugToolsBefore();
 
@@ -210,8 +223,8 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-	if (!tr.update_info)
-		return;
+	/*if (!tr.update_info)
+		return;*/
 
 	std::shared_ptr<idEntity> ent;
 	/*idPlayer *player;
@@ -224,9 +237,17 @@ void idGameLocal::RunDebugInfo() {
 	const idVec3 &origin = player->GetPhysics()->GetOrigin();*/
 
 	char buf[256];
-	sprintf_s(buf, "num ents %d", num_entities - MAX_CLIENTS);
+	
+	size_t num_active_entities = 0;
+
+	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
+		++num_active_entities;
+
+	sprintf_s(buf, "num ents %3d, active ents %3d", num_entities - MAX_CLIENTS, num_active_entities);
 
 	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
+
+	clip->PrintStatistics();
 
 	if (/*g_showEntityInfo.GetBool()*/true) {
 		/*idMat3		axis = player->viewAngles.ToMat3();
@@ -272,8 +293,8 @@ void idGameLocal::RunDebugInfo() {
 			}*/
 			if (true || ent->IsActive())
 			{
-				char buf[256];
-				sprintf_s(buf, "ent %s pos [%6.3f %6.3f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
+				static char buf[256];
+				sprintf_s(buf, "ent %30s pos [%6.2f %6.2f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
 					ent->GetPhysics()->GetOrigin().x, ent->GetPhysics()->GetOrigin().y,
 					ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
 					ent->GetPhysics()->IsAtRest());
@@ -324,17 +345,15 @@ void idGameLocal::RunDebugInfo() {
 		collisionModelManager->DrawModel(0, vec3_origin, mat3_identity, origin, 128.0f);
 	}*/
 
-	clip->DrawClipSectors();
-
 	/*if (g_showCollisionModels.GetBool()) {
 		clip.DrawClipModels(player->GetEyePosition(), g_maxShowDistance.GetFloat(), pm_thirdPerson.GetBool() ? NULL : player);
-	}
+	}*/
 
-	if (g_showCollisionTraces.GetBool()) {
-		clip.PrintStatistics();
-	}
+	//if (g_showCollisionTraces.GetBool()) {
+	clip->DrawClipSectors();
+	//}
 
-	if (g_showPVS.GetInteger()) {
+	/*if (g_showPVS.GetInteger()) {
 		pvs.DrawPVS(origin, (g_showPVS.GetInteger() == 2) ? PVS_ALL_PORTALS_OPEN : PVS_NORMAL);
 	}
 
@@ -568,10 +587,8 @@ void idGameLocal::MapPopulate()
 	// parse the key/value pairs and spawn entities
 	SpawnMapEntities();
 
-	AddRandomPoint();
-
-	//AddRandomPoint();
-	//AddRandomPoint();
+	for(int i = 0; i < 1; ++i)
+		AddRandomPoint();
 }
 
 void idGameLocal::MapClear(bool clearClients)
@@ -593,8 +610,8 @@ void idGameLocal::MapClear(bool clearClients)
 
 void idGameLocal::AddRandomPoint()
 {
-	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 6.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
-	//Vector2 origin = { 10, 23.1f };
+	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+	//Vector2 origin = { 10.0f, 5.990f };
 	Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
@@ -624,15 +641,15 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
-	args.Set("linearVelocity", (Vector2(GetRandomValue(-100.0f, 100.0f) / (100.0f - GetHeight()), GetRandomValue(-100.0f, 100.0f) / (100.0f - GetWidth())).ToString()));
-	//args.Set("linearVelocity", (Vector2(0.0f, 10.0f).ToString()));
+	args.Set("linearVelocity", (Vector2(GetRandomValue(0.0f, 0.0f) / (100.0f - GetHeight()), GetRandomValue(1.0f, 1000.0f) / (100.0f - GetWidth())).ToString()));
+	//args.Set("linearVelocity", (Vector2(0.0f, 0.10f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
 	SpawnEntityDef(args, ent);
 
 	return;
 
-	origin = { 10, 22.0f };
+	origin = { 10.0f, 7.0f };
 
 	/*while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
 	{
@@ -647,7 +664,7 @@ void idGameLocal::AddRandomPoint()
 
 	args.Set("origin", origin.ToString());
 	args.Set("color", std::to_string(Screen::ConsoleColor::Blue));
-	args.Set("linearVelocity", (Vector2(0.0f, 10.0f).ToString()));
+	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
 
 	SpawnEntityDef(args);
 }

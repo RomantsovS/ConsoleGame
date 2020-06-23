@@ -27,6 +27,13 @@ std::shared_ptr<viewEntity_t> R_SetEntityDefViewEntity(std::shared_ptr<idRenderE
 	return vModel;
 }
 
+/*
+===================
+AddAreaViewEntities
+
+Any models that are visible through the current portalStack will have their scissor rect updated.
+===================
+*/
 void idRenderWorldLocal::AddAreaViewEntities(int areaNum)
 {
 	portalArea_t * area = &portalAreas[areaNum];
@@ -45,6 +52,14 @@ void idRenderWorldLocal::AddAreaViewEntities(int areaNum)
 	}
 }
 
+/*
+===================
+AddAreaToView
+
+This may be entered multiple times with different planes
+if more than one portal sees into the area
+===================
+*/
 void idRenderWorldLocal::AddAreaToView(int areaNum)
 {
 	// mark the viewCount, so r_showPortals can display the considered portals

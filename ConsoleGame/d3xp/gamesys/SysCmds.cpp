@@ -24,7 +24,7 @@ void Cmd_EntityList_f(/*const idCmdArgs& args*/) {
 	count = 0;
 	size = 0;
 
-	gameLocal.Printf("%-4s  %-30s %-20s %s\n", " Num", "EntityDef", "Class", "pos");
+	gameLocal.Printf("%4s  %30s %16s %10s %s\n", " Num", "EntityDef", "Class", "pos", "At rest");
 	gameLocal.Printf("--------------------------------------------------------------------\n");
 	for (e = 0; e < MAX_GENTITIES; e++) {
 		auto check = gameLocal.entities[e];
@@ -37,9 +37,9 @@ void Cmd_EntityList_f(/*const idCmdArgs& args*/) {
 			continue;
 		}*/
 
-		gameLocal.Printf("%4i: %-30s %-20s [%5.2f %5.2f]\n", e,
+		gameLocal.Printf("%4i: %30s %16s [%5.2f %5.2f] %d\n", e,
 			check->GetName().c_str(), check->GetClassname().c_str(), check->GetPhysics()->GetOrigin().x,
-			check->GetPhysics()->GetOrigin().y);
+			check->GetPhysics()->GetOrigin().y, check->GetPhysics()->IsAtRest());
 
 		count++;
 		//size += check->spawnArgs.Allocated();

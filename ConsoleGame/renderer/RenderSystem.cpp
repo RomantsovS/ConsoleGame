@@ -88,7 +88,8 @@ void idRenderSystemLocal::ClearScreen()
 	screen.clear();
 }
 
-const int FPS_FRAMES = 6;
+const int FPS_FRAMES = 8;
+const size_t update_frame_time = 50000;
 
 void idRenderSystemLocal::DrawFPS()
 {
@@ -107,6 +108,9 @@ void idRenderSystemLocal::DrawFPS()
 
 	previousTimes[index % FPS_FRAMES] = frameTime;
 	index++;
+
+	int fps = 0;
+
 	if (index > FPS_FRAMES) {
 		// average multiple frames together to smooth changes out a bit
 		long long total = 0;
@@ -116,22 +120,22 @@ void idRenderSystemLocal::DrawFPS()
 		if (!total) {
 			total = 1;
 		}
-		int fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
+		fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
 		fps = (fps + 500) / 1000;
-
-		static char buf[256];
-
-		sprintf_s(buf, " %5d fps, %10lld microsec last frame time", fps, frameTime);
-		console.append(buf);
 	}
 
-	if (t - prev_frame_update_time > 50000) {
+	if (t - prev_frame_update_time > update_frame_time) {
 		update_frame = true;
 		prev_frame_update_time = t;
 	}
 
-	if (t - prev_info_update_time > 100000) {
+	if (t - prev_info_update_time > update_frame_time) {
 		update_info = true;
 		prev_info_update_time = t;
+
+		static char buf[256];
+
+		sprintf_s(buf, " %8d fps, %8lld microsec last frame time", fps, frameTime);
+		console.append(buf);
 	}
 }

@@ -160,7 +160,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		{
 			if (tw.dir[i] > 0)
 			{
-				vert->p[i] -= CM_CLIP_EPSILON;
+				vert->p[i] += CM_CLIP_EPSILON;
 				vert->endp[i] += CM_BOX_EPSILON + CM_CLIP_EPSILON;
 			}
 			else if (tw.dir[i] < 0)
@@ -170,8 +170,8 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 			}
 			else
 			{
-				vert->endp[i] += CM_BOX_EPSILON + CM_CLIP_EPSILON;
-				vert->endp[i] -= CM_BOX_EPSILON - CM_CLIP_EPSILON;
+				//vert->endp[i] += CM_BOX_EPSILON + CM_CLIP_EPSILON;
+				//vert->endp[i] -= CM_BOX_EPSILON - CM_CLIP_EPSILON;
 			}
 		}
 
@@ -182,12 +182,16 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i];// +tw.size[0][i] - CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] + CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON + CM_CLIP_EPSILON;
 		}
-		else {
+		else if(tw.start[i] > tw.end[i]) {
 			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
 			tw.bounds[1][i] = tw.start[i];// +tw.size[1][i] + CM_BOX_EPSILON;
+		}
+		else {
+			tw.bounds[0][i] = tw.end[i] + CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.start[i] + CM_CLIP_EPSILON;
 		}
 		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
 			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;

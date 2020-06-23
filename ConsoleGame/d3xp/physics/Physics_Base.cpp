@@ -194,7 +194,7 @@ void idPhysics_Base::ActivateContactEntities()
 			ent->ActivatePhysics(self.lock());
 		}
 		else {
-			iter = contactEntities.erase(iter);;
+			iter = contactEntities.erase(iter);
 		}
 	}
 }

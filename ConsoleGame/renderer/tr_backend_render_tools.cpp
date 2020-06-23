@@ -1,6 +1,6 @@
 #include "tr_local.h"
 
-#define MAX_DEBUG_LINES			256
+const size_t MAX_DEBUG_LINES = 256;
 
 struct debugLine_t {
 	Screen::ConsoleColor		rgb;
@@ -14,7 +14,7 @@ debugLine_t		rb_debugLines[MAX_DEBUG_LINES];
 int				rb_numDebugLines = 0;
 int				rb_debugLineTime = 0;
 
-const size_t MAX_DEBUG_TEXT = 8;
+const size_t MAX_DEBUG_TEXT = 10;
 
 struct debugText_t {
 	std::string text;

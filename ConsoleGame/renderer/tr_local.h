@@ -10,6 +10,8 @@ class idRenderWorldLocal;
 struct viewEntity_t;
 struct portalArea_t;
 
+//#define DEBUG_PRINT_Ctor_Dtor
+
 // areas have references to hold all the lights and entities in them
 struct areaReference_t
 {
@@ -178,20 +180,20 @@ public:
 
 	~idRenderSystemLocal();
 
-	virtual void Init();
-	virtual void Shutdown();
+	virtual void Init() override;
+	virtual void Shutdown() override;
 
-	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld();
-	virtual void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw);
-	virtual void BeginLevelLoad();
-	virtual void EndLevelLoad();
+	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() override;
+	virtual void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) override;
+	virtual void BeginLevelLoad() override;
+	virtual void EndLevelLoad() override;
 
-	void SetHeight(Screen::pos_type h) { height = h; }
-	void SetWidth(Screen::pos_type w) { width = w; }
+	void SetHeight(Screen::pos_type h) override { height = h; }
+	void SetWidth(Screen::pos_type w) override { width = w; }
 
 	void Display();
 
-	virtual void Clear();
+	virtual void Clear() override;
 
 	void FillBorder();
 	void ClearScreen();
