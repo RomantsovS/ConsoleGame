@@ -1,4 +1,5 @@
 #include "tr_local.h"
+#include "../framework/Console.h"
 
 /*
 ==================
@@ -9,10 +10,12 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 	if (tr.update_frame)
 	{
 		tr.Display();
+
 		tr.update_frame = false;
 	}
 
-	tr.console.clear();
+	// draw the half console / notify console on top of everything
+	console->Draw(false);
 
 	//-------------------------------------------------
 	// render debug tools

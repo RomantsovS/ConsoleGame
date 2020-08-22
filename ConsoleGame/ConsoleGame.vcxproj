@@ -134,7 +134,9 @@
     <ClInclude Include="framework\CmdSystem.h" />
     <ClInclude Include="framework\Common.h" />
     <ClInclude Include="framework\Common_local.h" />
+    <ClInclude Include="framework\Console.h" />
     <ClInclude Include="framework\CVarSystem.h" />
+    <ClInclude Include="framework\EditField.h" />
     <ClInclude Include="framework\EventLoop.h" />
     <ClInclude Include="framework\File.h" />
     <ClInclude Include="framework\FileSystem.h" />
@@ -195,7 +197,9 @@
     <ClCompile Include="framework\Common_load.cpp" />
     <ClCompile Include="framework\Common_menu.cpp" />
     <ClCompile Include="framework\Common_printf.cpp" />
+    <ClCompile Include="framework\Console.cpp" />
     <ClCompile Include="framework\CVarSystem.cpp" />
+    <ClCompile Include="framework\EditField.cpp" />
     <ClCompile Include="framework\EventLoop.cpp" />
     <ClCompile Include="framework\File.cpp" />
     <ClCompile Include="framework\FileSystem.cpp" />

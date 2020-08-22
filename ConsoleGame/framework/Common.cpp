@@ -5,9 +5,14 @@
 #include "KeyInput.h"
 #include "CmdSystem.h"
 #include "UsercmdGen.h"
-#include "CVarSystem.h"
 #include "EventLoop.h"
+#include "Console.h"
 
+idCVar com_allowConsole("com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key");
+
+idCVar com_showFPS("com_showFPS", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_ARCHIVE | CVAR_NOCHEAT, "show frames rendered per second");
+
+idCVar com_engineHz("com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f);
 long long com_engineHz_numerator = 100LL * 1000LL;
 long long com_engineHz_denominator = 100LL * 60LL;
 
@@ -54,6 +59,9 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// initialize key input/binding, done early so bind command exists
 		idKeyInput::Init();
 
+		// init the console so we can take prints
+		console->Init();
+
 		// initialize the file system
 		fileSystem->Init();
 
@@ -67,6 +75,8 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 
 		// run cfg execution
 		cmdSystem->ExecuteCommandBuffer();
+
+		com_engineHz_denominator = 100LL * static_cast<long long>(com_engineHz.GetFloat());
 
 		// initialize the renderSystem data structures
 		renderSystem->Init();
@@ -138,6 +148,10 @@ void idCommonLocal::Shutdown() {
 	printf("fileSystem->Shutdown( false );\n");
 	fileSystem->Shutdown(false);
 
+	// shut down the console
+	printf("console->Shutdown();\n");
+	console->Shutdown();
+
 	// shut down the key system
 	printf("idKeyInput::Shutdown();\n");
 	idKeyInput::Shutdown();
@@ -174,10 +188,14 @@ bool idCommonLocal::ProcessEvent(const sysEvent_t* event) {
 					return true;
 				}
 
+				console->Close();
+
 				StartMenu();
 				return true;
 			}
 			else {
+				console->Close();
+
 				// menus / etc
 				if (MenuEvent(event)) {
 					return true;
@@ -186,8 +204,19 @@ bool idCommonLocal::ProcessEvent(const sysEvent_t* event) {
 		}
 	}
 
+	// let the pull-down console take it if desired
+	if (console->ProcessEvent(event, false)) {
+		return true;
+	}
+
 	// menus / etc
 	if (MenuEvent(event)) {
+		return true;
+	}
+
+	// if we aren't in a game, force the console to take it
+	if (!mapSpawned) {
+		console->ProcessEvent(event, true);
 		return true;
 	}
 

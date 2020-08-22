@@ -3,6 +3,11 @@
 
 #include "Screen.h"
 #include "../sys/sys_public.h"
+#include "../framework/CVarSystem.h"
+
+idCVar window_width("window_width", "800", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar window_height("window_height", "600", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar window_font_size("window_font_size", "32", CVAR_SYSTEM | CVAR_INIT, "");
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), h_console_std_out(0), 
@@ -27,7 +32,7 @@ void Screen::init()
 	RECT r;
 	GetWindowRect(console, &r); //stores the console's current dimensions
 
-	MoveWindow(console, r.left, r.top, 800, 600, true);
+	MoveWindow(console, r.left, r.top, window_width.GetInteger(), window_height.GetInteger(), true);
 
 	buffer = new char[height * (width)];
 
@@ -50,11 +55,12 @@ void Screen::init()
 	cfi.cbSize = sizeof(cfi);
 	cfi.nFont = 0;
 	cfi.dwFontSize.X = 0;                   // Width of each character in the font
-	cfi.dwFontSize.Y = 32;                  // Height
+	cfi.dwFontSize.Y = window_font_size.GetInteger();                  // Height
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_NORMAL;
 	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
 	SetCurrentConsoleFontEx(h_console_draw, FALSE, &cfi);
+	SetCurrentConsoleFontEx(h_console_std_out, FALSE, &cfi);
 }
 
 void Screen::clear()
@@ -65,10 +71,10 @@ void Screen::clear()
 void Screen::clearTextInfo()
 {
 	DWORD written;
-	FillConsoleOutputCharacter(h_console_draw, ' ', width * 20, COORD({ 0, height + 1 }), &written);
+	FillConsoleOutputCharacter(h_console_draw, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
 }
 
-void Screen::display(const std::string &str)
+void Screen::display()
 {
 	cur_write_coord = { 0, 0 };
 
@@ -100,7 +106,7 @@ void Screen::display(const std::string &str)
 		}
 	}
 
-	std::string text_full_string = str;
+	/*std::string text_full_string = str;
 
 	if (str.size() % width != 0)
 	{
@@ -108,7 +114,7 @@ void Screen::display(const std::string &str)
 	}
 
 	for (auto iter = text_full_string.cbegin(); iter != text_full_string.cend(); ++iter)
-		*p_next_write++ = *iter;
+		*p_next_write++ = *iter;*/
 
 	auto lenght = p_next_write - &buffer[0];
 	writeInColor(cur_write_coord, buffer, lenght, curCol);

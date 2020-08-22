@@ -87,7 +87,7 @@ RB_DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-static void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color) {
+void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color) {
 	if (!text.empty()) {
 		tr.screen.writeInColor(text, color);
 	}

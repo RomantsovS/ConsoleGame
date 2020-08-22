@@ -2,6 +2,7 @@
 #include "../d3xp/Game.h"
 #include "../renderer/RenderSystem.h"
 #include "FileSystem.h"
+#include "Console.h"
 
 /*
 ===============
@@ -21,6 +22,9 @@ void idCommonLocal::ExecuteMapChange()
 
 	int start = Sys_Milliseconds();
 
+	// close console and remove any prints from the notify lines
+	console->Close();
+
 	int sm = Sys_Milliseconds();
 	// shut down the existing game if it is running
 	UnloadMap();
@@ -33,6 +37,8 @@ void idCommonLocal::ExecuteMapChange()
 	renderSystem->BeginLevelLoad();
 	ms = Sys_Milliseconds() - sm;
 	common->Printf("%6d msec to free assets\n", ms);
+
+	com_engineHz_denominator = 100LL * static_cast<long long>(com_engineHz.GetFloat());
 
 	// let the renderSystem load all the geometry
 	if (!renderWorld->InitFromMap(""))

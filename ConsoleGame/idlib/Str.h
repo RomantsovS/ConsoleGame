@@ -13,6 +13,7 @@ public:
 	static void StripTrailing(std::string& str, const char c);
 	static void SlashesToBackSlashes(std::string &str); // convert slashes
 	static bool IsNumeric(const std::string& s);
+	static bool caseInSensStringCompareCpp11(const std::string& str1, const std::string& str2);
 };
 
 int sprintf(std::string& string, const char* fmt, ...);

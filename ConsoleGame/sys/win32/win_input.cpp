@@ -76,7 +76,14 @@ int Sys_ReturnKeyboardInputEvent(const int n, int& ch, bool& state) {
 		else
 			state = false;
 
-		Sys_QueEvent(SE_KEY, ch, state, 0, NULL, 0);
+		if ((input_record.Event.KeyEvent.uChar.AsciiChar >= 'A' &&
+			input_record.Event.KeyEvent.uChar.AsciiChar <= 'Z') ||
+			(input_record.Event.KeyEvent.uChar.AsciiChar >= 'a' &&
+			input_record.Event.KeyEvent.uChar.AsciiChar <= 'z')) {
+			Sys_QueEvent(SE_CHAR, ch, state, 0, NULL, 0);
+		}
+		else
+			Sys_QueEvent(SE_KEY, ch, state, 0, NULL, 0);
 	}
 	}
 	

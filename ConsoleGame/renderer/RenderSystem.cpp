@@ -41,7 +41,7 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw)
 
 void idRenderSystemLocal::Display()
 {
-	screen.display(console);
+	screen.display();
 }
 
 void idRenderSystemLocal::Clear()
@@ -59,7 +59,6 @@ void idRenderSystemLocal::Clear()
 	}
 
 	update_frame = update_info = true;
-	console.clear();
 }
 
 void idRenderSystemLocal::FillBorder()
@@ -86,56 +85,4 @@ void idRenderSystemLocal::FillBorder()
 void idRenderSystemLocal::ClearScreen()
 {
 	screen.clear();
-}
-
-const int FPS_FRAMES = 8;
-const size_t update_frame_time = 50000;
-
-void idRenderSystemLocal::DrawFPS()
-{
-	static long long previousTimes[FPS_FRAMES];
-	static int index;
-	static long long previous;
-
-	static auto prev_frame_update_time = Sys_Microseconds();
-	static auto prev_info_update_time = prev_frame_update_time;
-
-	// don't use serverTime, because that will be drifting to
-	// correct for internet lag changes, timescales, timedemos, etc
-	auto t = Sys_Microseconds();
-	auto frameTime = t - previous;
-	previous = t;
-
-	previousTimes[index % FPS_FRAMES] = frameTime;
-	index++;
-
-	int fps = 0;
-
-	if (index > FPS_FRAMES) {
-		// average multiple frames together to smooth changes out a bit
-		long long total = 0;
-		for (int i = 0; i < FPS_FRAMES; i++) {
-			total += previousTimes[i];
-		}
-		if (!total) {
-			total = 1;
-		}
-		fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
-		fps = (fps + 500) / 1000;
-	}
-
-	if (t - prev_frame_update_time > update_frame_time) {
-		update_frame = true;
-		prev_frame_update_time = t;
-	}
-
-	if (t - prev_info_update_time > update_frame_time) {
-		update_info = true;
-		prev_info_update_time = t;
-
-		static char buf[256];
-
-		sprintf_s(buf, " %8d fps, %8lld microsec last frame time", fps, frameTime);
-		console.append(buf);
-	}
 }

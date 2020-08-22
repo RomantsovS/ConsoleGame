@@ -217,13 +217,6 @@ void idGameLocal::RunFrame()
 
 bool idGameLocal::Draw(int clientNum)
 {
-	static char buf[256];
-
-	if (tr.update_frame) {
-		sprintf_s(buf, ", current game time %d", time);
-		tr.console.append(buf);
-	}
-
 	RB_RenderDebugToolsBefore();
 
 	gameRenderWorld->RenderScene(nullptr);
@@ -237,9 +230,6 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-	/*if (!tr.update_info)
-		return;*/
-
 	std::shared_ptr<idEntity> ent;
 	/*idPlayer *player;
 

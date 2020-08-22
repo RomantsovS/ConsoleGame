@@ -65,7 +65,7 @@ public:
 	void clear();
 	void clearTextInfo();
 
-	void display(const std::string &str);
+	void display();
 	void writeInColor(COORD coord, const char* symbol, size_t lenght, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
 	void writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
 

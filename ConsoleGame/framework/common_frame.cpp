@@ -65,8 +65,6 @@ void idCommonLocal::Draw()
 {
 	if (game)
 	{
-		tr.DrawFPS();
-
 		game->RunFrame();
 		
 		game->Draw(0);

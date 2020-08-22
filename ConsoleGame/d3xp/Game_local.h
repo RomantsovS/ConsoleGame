@@ -100,26 +100,26 @@ public:
 
 	gameState_t GameState() const;
 
-	// MAIN MENU FUNCTIONS
-	virtual bool Shell_IsActive() const override { return menu_active; }
-	virtual void Shell_Show(bool show) override;
-
-	/*void onKeyPressed(char c);
-
-	bool checkCollideObjects(SimpleObject *object);*/
-
-	template <typename T>
-	T GetRandomValue(T min, T max);
-
-	Screen::ConsoleColor GetRandomColor();
-
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> ent = nullptr);
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
 	const idDict &GetSpawnArgs() const { return spawnArgs; }
 
+	// added the following to assist licensees with merge issues
+	int GetFrameNum() const { return framenum; };
+	int	 GetTime() const { return time; };
+
 	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
+
+	// MAIN MENU FUNCTIONS
+	virtual bool Shell_IsActive() const override { return menu_active; }
+	virtual void Shell_Show(bool show) override;
+
+	template <typename T>
+	T GetRandomValue(T min, T max);
+
+	Screen::ConsoleColor GetRandomColor();
 
 	short GetHeight() { return height; }
 	short GetWidth() { return width; }

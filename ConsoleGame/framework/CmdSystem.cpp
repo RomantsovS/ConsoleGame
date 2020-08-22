@@ -1,5 +1,7 @@
 #include <memory>
 #include <vector>
+#include "../idlib/Str.h"
+
 #include "CmdSystem.h"
 #include "Common_local.h"
 #include "FileSystem.h"
@@ -260,7 +262,7 @@ void idCmdSystemLocal::ExecuteTokenizedString(const idCmdArgs &args) {
 	// check registered command functions	
 	for (auto prev = &commands; *prev; prev = &cmd->next) {
 		cmd = *prev;
-		if (args.Argv(0) == cmd->name) {
+		if (idStr::caseInSensStringCompareCpp11(args.Argv(0), cmd->name)) {
 			// rearrange the links so that the command will be
 			// near the head of the list next time it is used
 			*prev = cmd->next;

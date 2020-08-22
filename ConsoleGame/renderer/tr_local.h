@@ -197,7 +197,6 @@ public:
 
 	void FillBorder();
 	void ClearScreen();
-	void DrawFPS();
 
 	int frameCount;		// incremented every frame
 	int viewCount;		// incremented every view (twice a scene if subviewed)
@@ -209,7 +208,6 @@ public:
 
 	Screen screen;
 	bool update_frame, update_info;
-	std::string console;
 
 	Screen::pos_type height, width, borderWidth, borderHeight;
 	Screen::Pixel borderPixel;
@@ -286,5 +284,6 @@ void RB_AddDebugLine(const Screen::ConsoleColor color, const Vector2& start, con
 void RB_ClearDebugLines(int time);
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
+void RB_DrawText(const std::string& text, const Vector2& origin, const Screen::ConsoleColor& color);
 
 #endif

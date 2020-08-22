@@ -24,6 +24,8 @@ But they are duplicated here for console portability
 enum class keyNum_t {
 	K_NONE,
 
+	K_BACKSPACE = 8,
+	K_ENTER = 13,
 	K_ESCAPE = 27,
 	K_1,
 	K_2,
@@ -37,7 +39,6 @@ enum class keyNum_t {
 	K_0,
 	K_MINUS,
 	K_EQUALS,
-	K_BACKSPACE,
 	K_TAB,
 	K_Q,
 	K_W,
@@ -51,7 +52,6 @@ enum class keyNum_t {
 	K_P,
 	K_LBRACKET,
 	K_RBRACKET,
-	K_ENTER,
 	K_LCTRL,
 	K_A,
 	K_S,
@@ -64,7 +64,7 @@ enum class keyNum_t {
 	K_L,
 	K_SEMICOLON,
 	K_APOSTROPHE,
-	K_GRAVE,
+	K_GRAVE = 192,
 	K_LSHIFT,
 	K_BACKSLASH,
 	K_Z,

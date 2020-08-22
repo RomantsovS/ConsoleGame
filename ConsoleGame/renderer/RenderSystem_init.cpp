@@ -29,7 +29,6 @@ void idRenderSystemLocal::Init()
 	viewDef = nullptr;
 
 	update_frame = true;
-	console.clear();
 
 	common->Printf("renderSystem initialized.\n");
 	common->Printf("--------------------------------------\n");
