@@ -4,6 +4,8 @@
 
 void idRenderSystemLocal::Init()
 {
+	Sys_InitInput();
+
 	common->Printf("------- Initializing renderSystem ----\n");
 
 	// clear all our internal state
@@ -16,8 +18,8 @@ void idRenderSystemLocal::Init()
 	borderHeight = 2;
 	borderWidth = 4;
 
-	height = gameLocal.GetHeight() + borderHeight * 2;
-	width = gameLocal.GetWidth() + borderWidth * 2;
+	height = game_height.GetInteger() + borderHeight * 2;
+	width = game_width.GetInteger() + borderWidth * 2;
 
 	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
 

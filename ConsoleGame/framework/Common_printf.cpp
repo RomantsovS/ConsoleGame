@@ -70,10 +70,10 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 
 			fileName += ".log";
 
-			logFile = fileSystem->OpenFileWrite(fileName);
+			logFile = fileSystem->OpenFileWrite(fileName, Sys_DefaultBasePath());
 			if (!logFile) {
 				logFileFailed = true;
-				FatalError("failed to open log file '%s'\n", fileName);
+				FatalError("failed to open log file '%s'\n", fileName.c_str());
 			}
 
 			recursing = false;
@@ -87,7 +87,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 			Printf("log file '%s' opened on %s\n", fileName.c_str(), buf);
 		}
 		if (logFile) {
-			logFile->Write(msg);
+			logFile->Write(msg, strlen(msg));
 			logFile->Flush();	// ForceFlush doesn't help a whole lot
 		}
 	}

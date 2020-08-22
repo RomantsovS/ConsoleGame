@@ -5,7 +5,7 @@
 #include "../sys/sys_public.h"
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
-	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), h_console_std_in(0), h_console_std_out(0), 
+	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), h_console_std_out(0), 
 	h_console_draw(0), cur_write_coord({0, 0})
 {
 }
@@ -33,9 +33,8 @@ void Screen::init()
 
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	h_console_draw = CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 
-	if (h_console_draw == INVALID_HANDLE_VALUE || h_console_std_out == INVALID_HANDLE_VALUE || h_console_std_in == INVALID_HANDLE_VALUE)
+	if (h_console_draw == INVALID_HANDLE_VALUE || h_console_std_out == INVALID_HANDLE_VALUE)
 		common->FatalError("CreateConsoleScreenBuffer  failed - (%d)\n", GetLastError());
 
 	if(!SetConsoleActiveScreenBuffer(h_console_draw))
@@ -155,7 +154,7 @@ void Screen::writeInColor(const std::string& text, ConsoleColor color_text, Cons
 
 bool Screen::readInput(unsigned& key)
 {
-	DWORD events;
+	/*DWORD events;
 	INPUT_RECORD input_record;
 
 	// update the game time
@@ -187,14 +186,14 @@ bool Screen::readInput(unsigned& key)
 			return true;
 		}
 	}
-	}
+	}*/
 
 	return false;
 }
 
 std::string Screen::waitConsoleInput()
 {
-	std::string text_input;
+	/*std::string text_input;
 	DWORD events;
 	INPUT_RECORD input_record;
 	COORD coord = { 0, 0 };
@@ -218,7 +217,9 @@ std::string Screen::waitConsoleInput()
 			text_input += input_record.Event.KeyEvent.uChar.AsciiChar;
 			WriteConsole(h_console_std_out, &input_record.Event.KeyEvent.uChar.AsciiChar, 1, &written, NULL);
 		}
-	}
+	}*/
+
+	return "";
 }
 
 void Screen::writeConsoleOutput(const std::string& text)

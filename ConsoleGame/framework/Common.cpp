@@ -1,11 +1,12 @@
-//#include <conio.h>
-//#include <iostream>
-
 #include "Common_local.h"
 #include "../d3xp/Game_local.h"
 #include "../renderer/tr_local.h"
 #include "FileSystem.h"
-#include "../d3xp/CmdSystem.h"
+#include "KeyInput.h"
+#include "CmdSystem.h"
+#include "UsercmdGen.h"
+#include "CVarSystem.h"
+#include "EventLoop.h"
 
 long long com_engineHz_numerator = 100LL * 1000LL;
 long long com_engineHz_denominator = 100LL * 60LL;
@@ -41,13 +42,39 @@ void idCommonLocal::Quit()
 void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline)
 {
 	try {
+		// init console command system
+		cmdSystem->Init();
+
+		// init CVar system
+		cvarSystem->Init();
+
+		// register all static CVars
+		idCVar::RegisterStaticVars();
+
+		// initialize key input/binding, done early so bind command exists
+		idKeyInput::Init();
+
 		// initialize the file system
 		fileSystem->Init();
 
-		game->Init();
+		// init journalling, etc
+		eventLoop->Init();
+
+		// exec the startup scripts
+		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec default.cfg\n");
+
+		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec autoexec.cfg\n");
+
+		// run cfg execution
+		cmdSystem->ExecuteCommandBuffer();
 
 		// initialize the renderSystem data structures
 		renderSystem->Init();
+
+		// init the user command input code
+		usercmdGen->Init();
+
+		game->Init();
 
 		// the same idRenderWorld will be used for all games
 		// and demos, insuring that level specific models
@@ -59,8 +86,8 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 
 		Printf("--- Common Initialization Complete ---\n");
 	}
-	catch (std::exception&) {
-		Sys_Error("Error during initialization");
+	catch (std::exception& msg) {
+		Sys_Error("Error during initialization %s", msg.what());
 	}
 }
 
@@ -83,6 +110,14 @@ void idCommonLocal::Shutdown() {
 	Printf("delete renderWorld;\n");
 	renderWorld = nullptr;
 
+	// shut down the user command input code
+	printf("usercmdGen->Shutdown();\n");
+	usercmdGen->Shutdown();
+
+	// shut down the event loop
+	printf("eventLoop->Shutdown();\n");
+	eventLoop->Shutdown();
+
 	// shut down the renderSystem
 	Printf("renderSystem->Shutdown();\n");
 	renderSystem->Shutdown();
@@ -102,6 +137,18 @@ void idCommonLocal::Shutdown() {
 	// shut down the file system
 	printf("fileSystem->Shutdown( false );\n");
 	fileSystem->Shutdown(false);
+
+	// shut down the key system
+	printf("idKeyInput::Shutdown();\n");
+	idKeyInput::Shutdown();
+
+	// shut down the cvar system
+	printf("cvarSystem->Shutdown();\n");
+	cvarSystem->Shutdown();
+
+	// shut down the console command system
+	printf("cmdSystem->Shutdown();\n");
+	cmdSystem->Shutdown();
 }
 
 void idCommonLocal::Stop(bool resetSession)
@@ -110,49 +157,45 @@ void idCommonLocal::Stop(bool resetSession)
 	UnloadMap();
 }
 
-void idCommonLocal::Frame()
-{
-	const bool pauseGame = !mapSpawned;
+/*
+===============
+idCommonLocal::ProcessEvent
+===============
+*/
+bool idCommonLocal::ProcessEvent(const sysEvent_t* event) {
+	// hitting escape anywhere brings up the menu
+	if (game && game->IsInGame()) {
+		if (event->evType == SE_KEY && event->evValue2 == 1 &&
+			(event->evValue == static_cast<int>(keyNum_t::K_ESCAPE))) {
+			if (!game->Shell_IsActive()) {
 
-	if (!mapSpawned)
-		ExecuteMapChange();
+				// menus / etc
+				if (MenuEvent(event)) {
+					return true;
+				}
 
-	unsigned key = 0;
-
-	if (tr.screen.readInput(key))
-	{
-		std::string text_input;
-
-		switch (key)
-		{
-		case 27:
-			tr.screen.setStdOutputBuffer();
-
-			tr.screen.writeConsoleOutput("enter Q to quit or any key to continue: ");
-
-			text_input = tr.screen.waitConsoleInput();
-			
-			if (text_input == "Q" || text_input == "q")
-			{
-				Quit();
+				StartMenu();
+				return true;
 			}
-			else if (text_input == "listEntities")
-			{
-				Cmd_EntityList_f();
+			else {
+				// menus / etc
+				if (MenuEvent(event)) {
+					return true;
+				}
 			}
-		default:
-			;
 		}
-		tr.screen.clearConsoleOutut();
-		tr.screen.setDrawOutputBuffer();
 	}
 
-	try
-	{
-		Draw();
+	// menus / etc
+	if (MenuEvent(event)) {
+		return true;
 	}
-	catch (std::exception &err)
-	{
-		common->Error(err.what());
+
+	// in game, exec bindings for all key downs
+	if (event->evType == SE_KEY && event->evValue2 == 1) {
+		idKeyInput::ExecKeyBinding(event->evValue);
+		return true;
 	}
+
+	return false;
 }

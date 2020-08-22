@@ -84,7 +84,6 @@ private:
 	char *buffer;
 	HANDLE h_console_draw;
 	HANDLE h_console_std_out;
-	HANDLE h_console_std_in;
 
 	std::vector<Pixel> contents;
 	COORD cur_write_coord;

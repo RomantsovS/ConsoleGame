@@ -6,6 +6,7 @@
 #include "../framework/Common.h"
 #include "../idlib/Lib.h"
 #include "../idlib/Str.h"
+#include "../framework/CmdSystem.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -14,6 +15,9 @@ idGameLocal gameLocal;
 idGame *game = &gameLocal;
 
 const size_t frame_time_min = 10;
+
+idCVar game_width("game_width", "87", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_height("game_height", "16", CVAR_SYSTEM | CVAR_INIT, "");
 
 idGameLocal::idGameLocal()
 {
@@ -32,8 +36,16 @@ void idGameLocal::Init()
 
 	idClass::Init();
 
-	height = 16;
-	width = 87;
+	InitConsoleCommands();
+
+	//The default config file contains remapped controls that support the XP weapons
+	//We want to run this once after the base doom config file has run so we can
+	//have the correct xp binds
+	cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec default.cfg\n");
+	cmdSystem->ExecuteCommandBuffer();
+
+	height = game_height.GetInteger();
+	width = game_width.GetInteger();
 
 	//colors.push_back(Screen::Green);
 	colors.push_back(Screen::Cyan);
@@ -78,6 +90,8 @@ void idGameLocal::Shutdown()
 	collisionModelManager->FreeMap();
 
 	idClass::Shutdown();
+
+	ShutdownConsoleCommands();
 
 	// free memory allocated by class objects
 	Clear();
@@ -576,6 +590,24 @@ void idGameLocal::Clear()
 	ResetSlowTimeVars();
 
 	colors.clear();
+}
+
+/*
+==============
+idGameLocal::GameState
+
+Used to allow entities to know if they're being spawned during the initial spawn.
+==============
+*/
+gameState_t	idGameLocal::GameState() const {
+	return gamestate;
+}
+
+void idGameLocal::Shell_Show(bool show)
+{
+	tr.screen.setStdOutputBuffer();
+
+	tr.screen.writeConsoleOutput("enter Q to quit or any key to continue: ");
 }
 
 void idGameLocal::SpawnMapEntities()

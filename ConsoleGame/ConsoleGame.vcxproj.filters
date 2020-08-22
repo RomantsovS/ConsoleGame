@@ -90,9 +90,6 @@
     <ClInclude Include="Renderer\Screen.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Sys\sys_public.h">
-      <Filter>Sys</Filter>
-    </ClInclude>
     <ClInclude Include="d3xp\Game.h">
       <Filter>d3xp</Filter>
     </ClInclude>
@@ -183,7 +180,34 @@
     <ClInclude Include="idlib\math\Vector2.h">
       <Filter>idlib\Math</Filter>
     </ClInclude>
-    <ClInclude Include="d3xp\CmdSystem.h">
+    <ClInclude Include="framework\KeyInput.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\UsercmdGen.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\CmdSystem.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\CmdArgs.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\sys\sys_defines.h">
+      <Filter>idlib\Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sys_public.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\sys\sys_filesystem.h">
+      <Filter>idlib\Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\CVarSystem.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\win32\win_local.h">
+      <Filter>Sys\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\EventLoop.h">
       <Filter>Framework</Filter>
     </ClInclude>
   </ItemGroup>
@@ -317,9 +341,6 @@
     <ClCompile Include="framework\FileSystem.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="sys\win_main.cpp">
-      <Filter>Sys\Win32</Filter>
-    </ClCompile>
     <ClCompile Include="cm\CollisionModel_translate.cpp">
       <Filter>CM</Filter>
     </ClCompile>
@@ -346,6 +367,33 @@
     </ClCompile>
     <ClCompile Include="d3xp\gamesys\SysCmds.cpp">
       <Filter>d3xp\GameSys</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\KeyInput.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\UsercmdGen.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win32\win_input.cpp">
+      <Filter>Sys\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win32\win_main.cpp">
+      <Filter>Sys\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\CmdSystem.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\CmdArgs.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\CVarSystem.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\EventLoop.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\Common_menu.cpp">
+      <Filter>Framework</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

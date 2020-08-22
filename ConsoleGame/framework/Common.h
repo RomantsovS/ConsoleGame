@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <string>
+#include "../sys/sys_public.h"
 
 extern long long com_engineHz_numerator;
 extern long long com_engineHz_denominator;
@@ -52,6 +53,9 @@ public:
 	// Fatal errors quit all the way to a system dialog box, which is appropriate for
 	// static internal errors or cases where the system may be corrupted.
 	virtual void				FatalError(const char* fmt, ...) = 0;
+
+	// Processes the given event.
+	virtual	bool				ProcessEvent(const sysEvent_t* event) = 0;
 };
 
 extern idCommon * common;

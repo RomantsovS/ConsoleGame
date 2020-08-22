@@ -26,6 +26,12 @@ public:
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool Draw(int clientNum) = 0;
+
+	virtual bool IsInGame() const = 0;
+
+	// MAIN MENU FUNCTIONS
+	virtual bool Shell_IsActive() const = 0;
+	virtual void Shell_Show(bool show) = 0;
 };
 
 extern idGame *game;

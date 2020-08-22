@@ -76,6 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +120,6 @@
     <ClInclude Include="cm\CollisionModel_local.h" />
     <ClInclude Include="d3xp\Actor.h" />
     <ClInclude Include="d3xp\ai\AI.h" />
-    <ClInclude Include="d3xp\CmdSystem.h" />
     <ClInclude Include="d3xp\Entity.h" />
     <ClInclude Include="d3xp\Game.h" />
     <ClInclude Include="d3xp\gamesys\Class.h" />
@@ -131,11 +131,17 @@
     <ClInclude Include="d3xp\physics\Physics_RigidBody.h" />
     <ClInclude Include="d3xp\physics\Physics_Static.h" />
     <ClInclude Include="d3xp\Player.h" />
+    <ClInclude Include="framework\CmdSystem.h" />
     <ClInclude Include="framework\Common.h" />
     <ClInclude Include="framework\Common_local.h" />
+    <ClInclude Include="framework\CVarSystem.h" />
+    <ClInclude Include="framework\EventLoop.h" />
     <ClInclude Include="framework\File.h" />
     <ClInclude Include="framework\FileSystem.h" />
+    <ClInclude Include="framework\KeyInput.h" />
+    <ClInclude Include="framework\UsercmdGen.h" />
     <ClInclude Include="idlib\bv\Bounds.h" />
+    <ClInclude Include="idlib\CmdArgs.h" />
     <ClInclude Include="idlib\containers\LinkList.h" />
     <ClInclude Include="idlib\Dict.h" />
     <ClInclude Include="idlib\geometry\TraceModel.h" />
@@ -145,6 +151,8 @@
     <ClInclude Include="idlib\math\Vector2.h" />
     <ClInclude Include="idlib\Str.h" />
     <ClInclude Include="idlib\sys\sys_assert.h" />
+    <ClInclude Include="idlib\sys\sys_defines.h" />
+    <ClInclude Include="idlib\sys\sys_filesystem.h" />
     <ClInclude Include="idlib\sys\sys_types.h" />
     <ClInclude Include="Renderer\Model.h" />
     <ClInclude Include="Renderer\ModelManager.h" />
@@ -155,7 +163,8 @@
     <ClInclude Include="Renderer\Screen.h" />
     <ClInclude Include="Renderer\tr_local.h" />
     <ClInclude Include="Snake.h" />
-    <ClInclude Include="Sys\sys_public.h" />
+    <ClInclude Include="sys\sys_public.h" />
+    <ClInclude Include="sys\win32\win_local.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cm\CollisionModel.cpp" />
@@ -180,13 +189,20 @@
     <ClCompile Include="d3xp\physics\Physics_RigidBody.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Static.cpp" />
     <ClCompile Include="d3xp\Player.cpp" />
+    <ClCompile Include="framework\CmdSystem.cpp" />
     <ClCompile Include="framework\Common.cpp" />
     <ClCompile Include="framework\common_frame.cpp" />
     <ClCompile Include="framework\Common_load.cpp" />
+    <ClCompile Include="framework\Common_menu.cpp" />
     <ClCompile Include="framework\Common_printf.cpp" />
+    <ClCompile Include="framework\CVarSystem.cpp" />
+    <ClCompile Include="framework\EventLoop.cpp" />
     <ClCompile Include="framework\File.cpp" />
     <ClCompile Include="framework\FileSystem.cpp" />
+    <ClCompile Include="framework\KeyInput.cpp" />
+    <ClCompile Include="framework\UsercmdGen.cpp" />
     <ClCompile Include="idlib\bv\Bounds.cpp" />
+    <ClCompile Include="idlib\CmdArgs.cpp" />
     <ClCompile Include="idlib\Dict.cpp" />
     <ClCompile Include="idlib\math\Math.cpp" />
     <ClCompile Include="idlib\math\Ode.cpp" />
@@ -209,8 +225,9 @@
     <ClCompile Include="Renderer\tr_frontend_main.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Sys\Win32\win_cpu.cpp" />
+    <ClCompile Include="sys\win32\win_input.cpp" />
+    <ClCompile Include="sys\win32\win_main.cpp" />
     <ClCompile Include="Sys\Win32\win_shared.cpp" />
-    <ClCompile Include="sys\win_main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

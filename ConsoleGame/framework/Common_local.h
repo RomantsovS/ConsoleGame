@@ -35,6 +35,8 @@ public:
 	virtual void DWarning(const char* fmt, ...) override;
 	virtual void Error(const char* fmt, ...) override;
 	virtual void FatalError(const char* fmt, ...) override;
+
+	virtual bool ProcessEvent(const sysEvent_t* event) override;
 public:
 	void Draw();			// called by gameThread
 private:
@@ -57,6 +59,10 @@ private:
 
 private:
 	void CloseLogFile();
+
+	bool MenuEvent(const sysEvent_t* event);
+
+	void StartMenu(bool playIntro = false);
 
 	void ExecuteMapChange();
 	void UnloadMap();
