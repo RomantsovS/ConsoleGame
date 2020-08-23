@@ -58,16 +58,12 @@ static idConsoleLocal localConsole;
 idConsole* console = &localConsole;
 
 const int FPS_FRAMES = 8;
-const size_t update_frame_time = 50000;
 
 void idConsoleLocal::DrawFPS()
 {
 	static long long previousTimes[FPS_FRAMES];
 	static int index;
 	static long long previous;
-
-	static auto prev_frame_update_time = Sys_Microseconds();
-	static auto prev_info_update_time = prev_frame_update_time;
 
 	// don't use serverTime, because that will be drifting to
 	// correct for internet lag changes, timescales, timedemos, etc
@@ -93,15 +89,7 @@ void idConsoleLocal::DrawFPS()
 		fps = (fps + 500) / 1000;
 	}
 
-	if (t - prev_frame_update_time > update_frame_time) {
-		tr.update_frame = true;
-		prev_frame_update_time = t;
-	}
-
-	if (t - prev_info_update_time > update_frame_time) {
-		tr.update_info = true;
-		prev_info_update_time = t;
-
+	if (tr.update_info) {
 		static char buf[256];
 
 		sprintf_s(buf, " %8d fps, %8lld microsec last frame time, current game time % d", fps, frameTime, gameLocal.GetTime());
@@ -185,7 +173,7 @@ void idConsoleLocal::KeyDownEvent(int key) {
 	// enter finishes the line
 	if (key == static_cast<int>(keyNum_t::K_ENTER) || key == static_cast<int>(keyNum_t::K_KP_ENTER)) {
 
-		common->Printf("]%s\n", consoleField.GetBuffer());
+		common->Printf(">%s\n", consoleField.GetBuffer());
 
 		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, consoleField.GetBuffer());	// valid command
 		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "\n");
@@ -276,7 +264,7 @@ void idConsoleLocal::Draw(bool forceFullScreen) {
 	}
 
 	if (keyCatching && tr.update_info) {
-		std::string console_text = ":" + consoleField.GetBufferString();
+		std::string console_text = std::string(":").append(consoleField.GetBuffer());
 		console_text.append("_");
 
 		RB_DrawText(console_text, vec2_origin, Screen::ConsoleColor::White);

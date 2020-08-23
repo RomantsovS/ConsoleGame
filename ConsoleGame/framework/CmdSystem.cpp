@@ -1,17 +1,22 @@
 #include <memory>
 #include <vector>
-#include "../idlib/Str.h"
+#include <list>
+#include <algorithm>
+#include <iterator>
 
+#include "../idlib/Str.h"
 #include "CmdSystem.h"
 #include "Common_local.h"
 #include "FileSystem.h"
 
+idCVar net_allowCheats("net_allowCheats", "1", CVAR_BOOL | CVAR_NOCHEAT, "Allow cheats in multiplayer");
+
 struct commandDef_t {
 	std::shared_ptr<commandDef_t> next;
 	std::string name;
-	cmdFunction_t			function;
+	cmdFunction_t function;
 	//argCompletion_t			argCompletion;
-	int						flags;
+	int flags;
 	std::string description;
 };
 
@@ -27,7 +32,7 @@ public:
 
 	virtual void AddCommand(const std::string& cmdName, cmdFunction_t function, int flags,
 		const std::string& description/*, argCompletion_t argCompletion = NULL*/) override;
-	virtual void RemoveFlaggedCommands(int flags);
+	virtual void			RemoveFlaggedCommands(int flags);
 
 	//virtual void			ExecuteCommandText(const char* text);
 	virtual void			AppendCommandText(const std::string& text) override;
@@ -35,12 +40,12 @@ public:
 	virtual void			BufferCommandText(cmdExecution_t exec, const std::string &text) override;
 	virtual void			ExecuteCommandBuffer() override;
 
-	std::shared_ptr<commandDef_t> GetCommands() const { return commands; }
+	std::list<std::shared_ptr<commandDef_t>>& GetCommands() { return commands; }
 
 private:
 	static const int		MAX_CMD_BUFFER = 0x10000;
 	
-	std::shared_ptr<commandDef_t> commands;
+	std::list<std::shared_ptr<commandDef_t>> commands;
 
 	int						textLength;
 	unsigned char			textBuf[MAX_CMD_BUFFER];
@@ -75,7 +80,7 @@ idCmdSystemLocal::ListByFlags
 */
 void idCmdSystemLocal::ListByFlags(const idCmdArgs& args, cmdFlags_t flags) {
 	//idStr match;
-	std::vector<std::shared_ptr<commandDef_t>> cmdList;
+	std::vector<std::shared_ptr<commandDef_t>> cmd_list(cmdSystemLocal.GetCommands().size());
 
 	/*if (args.Argc() > 1) {
 		match = args.Args(1, -1);
@@ -85,26 +90,26 @@ void idCmdSystemLocal::ListByFlags(const idCmdArgs& args, cmdFlags_t flags) {
 		match = "";
 	}*/
 
-	for (auto cmd = cmdSystemLocal.GetCommands(); cmd; cmd = cmd->next) {
+	/*for (auto cmd = cmdSystemLocal.GetCommands(); cmd; cmd = cmd->next) {
 		if (!(cmd->flags & flags)) {
 			continue;
 		}
-		/*if (match.Length() && idStr(cmd->name).Filter(match, false) == 0) {
+		if (match.Length() && idStr(cmd->name).Filter(match, false) == 0) {
 			continue;
-		}*/
+		}
 
 		cmdList.push_back(cmd);
-	}
+	}*/
+
+	std::copy_if(cmdSystemLocal.GetCommands().begin(), cmdSystemLocal.GetCommands().end(), cmd_list.begin(), [&](auto& cmd) {return cmd->flags& flags; });
 
 	//cmdList.SortWithTemplate( idSort_CommandDef() );
 
-	for (size_t i = 0; i < cmdList.size(); i++) {
-		auto cmd = cmdList[i];
-
-		common->Printf("  %-21s %s\n", cmd->name, cmd->description);
+	for (auto cmd : cmd_list) {
+		common->Printf("  %-21s %s\n", cmd->name.c_str(), cmd->description.c_str());
 	}
 
-	common->Printf("%i commands\n", cmdList.size());
+	common->Printf("%i commands\n", cmd_list.size());
 }
 
 /*
@@ -189,10 +194,7 @@ idCmdSystemLocal::Shutdown
 ============
 */
 void idCmdSystemLocal::Shutdown() {
-	for (auto cmd = commands; cmd; cmd = commands) {
-		commands = commands->next;
-		cmd = nullptr;
-	}
+	commands.clear();
 
 	/*completionString.Clear();
 	completionParms.Clear();
@@ -209,13 +211,13 @@ void idCmdSystemLocal::AddCommand(const std::string& cmdName, cmdFunction_t func
 	const std::string& description/*, argCompletion_t argCompletion = NULL*/) {
 
 	// fail if the command already exists
-	for (auto cmd = commands; cmd; cmd = cmd->next) {
-		if (cmdName == cmd->name) {
-			if (function != cmd->function) {
-				common->Printf("idCmdSystemLocal::AddCommand: %s already defined\n", cmdName);
-			}
-			return;
+	auto iter = std::find_if(commands.begin(), commands.end(), [&](auto cmd) {return cmd->name == cmdName; });
+	
+	if (iter != commands.end()) {
+		if (function != (*iter)->function) {
+			common->Printf("idCmdSystemLocal::AddCommand: %s already defined\n", cmdName);
 		}
+		return;
 	}
 
 	auto cmd = std::make_shared<commandDef_t>();
@@ -224,8 +226,7 @@ void idCmdSystemLocal::AddCommand(const std::string& cmdName, cmdFunction_t func
 	//cmd->argCompletion = argCompletion;
 	cmd->flags = flags;
 	cmd->description = description;
-	cmd->next = commands;
-	commands = cmd;
+	commands.push_front(cmd);
 }
 
 /*
@@ -234,16 +235,7 @@ idCmdSystemLocal::RemoveFlaggedCommands
 ============
 */
 void idCmdSystemLocal::RemoveFlaggedCommands(int flags) {
-	decltype(commands) last, cmd;
-
-	for (last = commands, cmd = last; cmd; cmd = last) {
-		if (last->flags & flags) {
-			last = last->next;
-			cmd = nullptr;
-			continue;
-		}
-		last = cmd->next;
-	}
+	commands.erase(std::remove_if(commands.begin(), commands.end(), [&](auto cmd) {return cmd->flags & flags; }), commands.end());
 }
 
 /*
@@ -252,24 +244,21 @@ idCmdSystemLocal::ExecuteTokenizedString
 ============
 */
 void idCmdSystemLocal::ExecuteTokenizedString(const idCmdArgs &args) {
-	std::shared_ptr<commandDef_t> cmd;
-
 	// execute the command line
 	if (!args.Argc()) {
 		return;		// no tokens
 	}
 
 	// check registered command functions	
-	for (auto prev = &commands; *prev; prev = &cmd->next) {
-		cmd = *prev;
+	for (auto iter = commands.begin(); iter != commands.end(); ++iter) {
+		auto cmd = *iter;
+
 		if (idStr::caseInSensStringCompareCpp11(args.Argv(0), cmd->name)) {
 			// rearrange the links so that the command will be
 			// near the head of the list next time it is used
-			*prev = cmd->next;
-			cmd->next = commands;
-			commands = cmd;
+			std::iter_swap(commands.begin(), iter);
 
-			if ((cmd->flags & (CMD_FL_CHEAT | CMD_FL_TOOL)) /*&& common->IsMultiplayer() && !net_allowCheats.GetBool()*/) {
+			if ((cmd->flags & (CMD_FL_CHEAT | CMD_FL_TOOL))  && !net_allowCheats.GetBool()) {
 				common->Printf("Command '%s' not valid in multiplayer mode.\n", cmd->name.c_str());
 				return;
 			}

@@ -4,6 +4,8 @@
 #include "UsercmdGen.h"
 #include "EventLoop.h"
 
+constexpr size_t update_frame_time = 50000;
+
 void idCommonLocal::Frame()
 {
 	/*unsigned key = 0;
@@ -67,6 +69,21 @@ void idCommonLocal::Draw()
 	{
 		game->RunFrame();
 		
+		static auto prev_frame_update_time = Sys_Microseconds();
+		static auto prev_info_update_time = prev_frame_update_time;
+
+		auto t = Sys_Microseconds();
+
+		if (t - prev_frame_update_time > update_frame_time) {
+			tr.update_frame = true;
+			prev_frame_update_time = t;
+		}
+
+		if (t - prev_info_update_time > update_frame_time) {
+			tr.update_info = true;
+			prev_info_update_time = t;
+		}
+
 		game->Draw(0);
 
 		RB_DrawView();

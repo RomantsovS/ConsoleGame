@@ -386,10 +386,10 @@ void idCVarSystemLocal::Init() {
 	modifiedFlags = 0;
 
 	cmdSystem->AddCommand("set", Set_f, CMD_FL_SYSTEM, "sets a cvar");
-	cmdSystem->AddCommand("seta", Set_f, CMD_FL_SYSTEM, "sets a cvar");
+	/*cmdSystem->AddCommand("seta", Set_f, CMD_FL_SYSTEM, "sets a cvar");
 	cmdSystem->AddCommand("sets", Set_f, CMD_FL_SYSTEM, "sets a cvar");
 	cmdSystem->AddCommand("sett", Set_f, CMD_FL_SYSTEM, "sets a cvar");
-	cmdSystem->AddCommand("setu", Set_f, CMD_FL_SYSTEM, "sets a cvar");
+	cmdSystem->AddCommand("setu", Set_f, CMD_FL_SYSTEM, "sets a cvar");*/
 
 	initialized = true;
 }

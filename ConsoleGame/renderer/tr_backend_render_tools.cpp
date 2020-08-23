@@ -1,6 +1,7 @@
 #include "tr_local.h"
+#include "../framework/CVarSystem.h"
 
-const size_t MAX_DEBUG_LINES = 256;
+constexpr size_t MAX_DEBUG_LINES = 256;
 
 struct debugLine_t {
 	Screen::ConsoleColor		rgb;
@@ -14,7 +15,8 @@ debugLine_t		rb_debugLines[MAX_DEBUG_LINES];
 int				rb_numDebugLines = 0;
 int				rb_debugLineTime = 0;
 
-const size_t MAX_DEBUG_TEXT = 10;
+constexpr size_t MAX_DEBUG_TEXT = 10;
+idCVar max_debug_text("max_debug_text", "10", CVAR_TOOL, "", 0, MAX_DEBUG_TEXT);
 
 struct debugText_t {
 	std::string text;
@@ -42,7 +44,7 @@ void RB_ClearDebugText(int time) {
 	if (!time) {
 		// free up our strings
 		text = rb_debugText;
-		for (i = 0; i < MAX_DEBUG_TEXT; i++, text++) {
+		for (i = 0; i < max_debug_text.GetInteger(); i++, text++) {
 			text->text.clear();
 		}
 		rb_numDebugText = 0;
@@ -69,7 +71,7 @@ RB_AddDebugText
 ================
 */
 void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) {
-	if (rb_numDebugText < MAX_DEBUG_TEXT) {
+	if (rb_numDebugText < max_debug_text.GetInteger()) {
 		auto debugText = &rb_debugText[rb_numDebugText++];
 		debugText->text = text;
 		debugText->origin = origin;

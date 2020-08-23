@@ -14,15 +14,16 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 		tr.update_frame = false;
 	}
 
-	// draw the half console / notify console on top of everything
-	console->Draw(false);
+	if (tr.update_info)
+	{
+		tr.screen.clearTextInfo();
+
+		// draw the half console / notify console on top of everything
+		console->Draw(false);
 
 	//-------------------------------------------------
 	// render debug tools
 	//-------------------------------------------------
-	if (tr.update_info)
-	{
-		tr.screen.clearTextInfo();
 		RB_RenderDebugTools();
 		tr.update_info = false;
 	}

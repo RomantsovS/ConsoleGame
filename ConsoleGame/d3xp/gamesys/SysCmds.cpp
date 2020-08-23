@@ -48,6 +48,15 @@ void Cmd_EntityList_f(const idCmdArgs &args) {
 }
 
 /*
+===================
+Cmd_EntityList_f
+===================
+*/
+void Cmd_Quit(const idCmdArgs& args) {
+	common->Quit();
+}
+
+/*
 =================
 idGameLocal::InitConsoleCommands
 
@@ -61,6 +70,7 @@ void idGameLocal::InitConsoleCommands() {
 	cmdSystem->AddCommand("listThreads", idThread::ListThreads_f, CMD_FL_GAME | CMD_FL_CHEAT, "lists script threads");
 	*/
 	cmdSystem->AddCommand("listEntities", Cmd_EntityList_f, CMD_FL_GAME | CMD_FL_CHEAT, "lists game entities");
+	cmdSystem->AddCommand("quit", Cmd_Quit, CMD_FL_GAME, "quits game");
 	/*cmdSystem->AddCommand("listActiveEntities", Cmd_ActiveEntityList_f, CMD_FL_GAME | CMD_FL_CHEAT, "lists active game entities");
 	cmdSystem->AddCommand("listMonsters", idAI::List_f, CMD_FL_GAME | CMD_FL_CHEAT, "lists monsters");
 	cmdSystem->AddCommand("listSpawnArgs", Cmd_ListSpawnArgs_f, CMD_FL_GAME | CMD_FL_CHEAT, "list the spawn args of an entity", idGameLocal::ArgCompletion_EntityName);

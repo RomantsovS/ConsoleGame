@@ -1,7 +1,7 @@
 #include "EditField.h"
 #include "../sys/sys_public.h"
 
-constexpr int MAX_EDIT_LINE = 256;
+constexpr int MAX_EDIT_LINE = 50;
 
 /*
 ===============
@@ -27,7 +27,7 @@ idEditField::Clear
 ===============
 */
 void idEditField::Clear() {
-	buffer[0] = 0;
+	buffer.clear();
 }
 
 /*
