@@ -133,10 +133,10 @@ private:
 
 	int				mouseDx, mouseDy;	// added to by mouse events
 	float			joystickAxis[MAX_JOYSTICK_AXIS];	// set by joystick events
-	*/
+	
 	int				pollTime;
 	int				lastPollTime;
-	/*float			lastLookValuePitch;
+	float			lastLookValuePitch;
 	float			lastLookValueYaw;
 
 	static idCVar	in_yawSpeed;
@@ -162,9 +162,6 @@ idUsercmdGenLocal::idUsercmdGenLocal
 */
 idUsercmdGenLocal::idUsercmdGenLocal() {
 	initialized = false;
-
-	pollTime = 0;
-	lastPollTime = 0;
 
 	Clear();
 }
@@ -385,12 +382,6 @@ idUsercmdGenLocal::BuildCurrentUsercmd
 ================
 */
 void idUsercmdGenLocal::BuildCurrentUsercmd(int deviceNum) {
-
-	pollTime = Sys_Milliseconds();
-	if (pollTime - lastPollTime > 100) {
-		lastPollTime = pollTime - 100;
-	}
-
 	// initialize current usercmd
 	InitCurrent();
 
@@ -402,6 +393,4 @@ void idUsercmdGenLocal::BuildCurrentUsercmd(int deviceNum) {
 
 	// create the usercmd
 	MakeCurrent();
-
-	lastPollTime = pollTime;
 }

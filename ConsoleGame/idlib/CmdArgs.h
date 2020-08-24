@@ -8,7 +8,7 @@
 
 class idCmdArgs {
 public:
-	idCmdArgs() { tokenized.resize(MAX_COMMAND_STRING); }
+	idCmdArgs() { }
 	idCmdArgs(const std::string &text, bool keepAsStrings) { TokenizeString(text, keepAsStrings); }
 
 	void operator=(const idCmdArgs& args);
@@ -37,7 +37,7 @@ private:
 
 	//int argc; // number of arguments
 	std::vector<std::string> argv;			// points into tokenized
-	std::string tokenized;		// will have 0 bytes inserted
+	//std::string tokenized;		// will have 0 bytes inserted
 };
 
 #endif

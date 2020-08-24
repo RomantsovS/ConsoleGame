@@ -188,6 +188,10 @@ struct sysEvent_t {
 void Sys_Error(const char* error, ...);
 void Sys_Quit();
 
+// allow game to yield CPU time
+// NOTE: due to SYS_MINSLEEP this is very bad portability karma, and should be completely removed
+void Sys_Sleep(int msec);
+
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
 int Sys_Milliseconds();

@@ -1,5 +1,46 @@
 #include "tr_local.h"
 #include "../framework/CVarSystem.h"
+#include "../d3xp/Game_local.h"
+
+const int FPS_FRAMES = 8;
+
+void DrawFPS()
+{
+	static long long previousTimes[FPS_FRAMES];
+	static int index;
+	static long long previous;
+
+	// don't use serverTime, because that will be drifting to
+	// correct for internet lag changes, timescales, timedemos, etc
+	auto t = Sys_Microseconds();
+	auto frameTime = t - previous;
+	previous = t;
+
+	previousTimes[index % FPS_FRAMES] = frameTime;
+	index++;
+
+	int fps = 0;
+
+	if (index > FPS_FRAMES) {
+		// average multiple frames together to smooth changes out a bit
+		long long total = 0;
+		for (int i = 0; i < FPS_FRAMES; i++) {
+			total += previousTimes[i];
+		}
+		if (!total) {
+			total = 1;
+		}
+		fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
+		fps = (fps + 500) / 1000;
+	}
+
+	if (tr.update_info) {
+		static char buf[256];
+
+		sprintf_s(buf, " %8d fps, %8lld microsec last frame time, current game time % d", fps, frameTime, gameLocal.GetTime());
+		RB_DrawText(buf, vec2_origin, Screen::ConsoleColor::White);
+	}
+}
 
 constexpr size_t MAX_DEBUG_LINES = 256;
 

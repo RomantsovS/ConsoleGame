@@ -43,6 +43,15 @@ void Sys_Quit() {
 
 /*
 ==============
+Sys_Sleep
+==============
+*/
+void Sys_Sleep(int msec) {
+	Sleep(msec);
+}
+
+/*
+==============
 Sys_Mkdir
 ==============
 */

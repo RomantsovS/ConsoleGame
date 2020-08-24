@@ -364,10 +364,9 @@ idCmdSystemLocal::ExecuteCommandBuffer
 ============
 */
 void idCmdSystemLocal::ExecuteCommandBuffer() {
-	int			i;
+	int i;
 	char* text;
-	int			quotes;
-	idCmdArgs	args;
+	int quotes;
 
 	while (textLength) {
 
@@ -394,6 +393,8 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 		}
 
 		text[i] = 0;
+
+		idCmdArgs args;
 
 		/*if (!strcmp(text, "_execTokenized")) {
 			args = tokenizedCmds[0];

@@ -143,6 +143,7 @@ private:
 	void MapClear(bool clearClients);
 
 	void RunDebugInfo();
+	void RunDebugInfoScreen();
 	void PrintSpawnedEntities();
 
 	void InitConsoleCommands();

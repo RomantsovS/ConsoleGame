@@ -6,7 +6,7 @@ idCmdArgs::operator=
 ============
 */
 void idCmdArgs::operator=(const idCmdArgs& args) {
-	tokenized = args.tokenized;
+	//tokenized = args.tokenized;
 	argv = args.argv;
 }
 

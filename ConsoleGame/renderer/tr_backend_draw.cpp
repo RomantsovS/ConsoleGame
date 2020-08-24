@@ -14,6 +14,10 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 		tr.update_frame = false;
 	}
 
+	if (com_showFPS.GetBool()) {
+		DrawFPS();
+	}
+
 	if (tr.update_info)
 	{
 		tr.screen.clearTextInfo();

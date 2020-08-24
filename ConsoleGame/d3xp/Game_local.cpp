@@ -152,16 +152,6 @@ void idGameLocal::RunFrame()
 		return;
 	}
 
-	// update the game time
-	static auto real_time_last = Sys_Milliseconds();
-	auto real_time = Sys_Milliseconds();
-
-	if (real_time - real_time_last < frame_time_min) {
-		return;
-	}
-
-	real_time_last = real_time;
-
 	framenum++;
 	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
 	fast.time = FRAME_TO_MSEC(framenum);
@@ -189,7 +179,7 @@ void idGameLocal::RunFrame()
 		lastTimePointSpawn = time;
 		
 		//if(activeEntities.IsListEmpty())
-			AddRandomPoint();
+			//AddRandomPoint();
 	}
 
 	// let entities think
@@ -212,6 +202,7 @@ void idGameLocal::RunFrame()
 	}
 
 	// show any debug info for this frame
+	RunDebugInfoScreen();
 	RunDebugInfo();
 }
 
@@ -230,7 +221,9 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-	std::shared_ptr<idEntity> ent;
+	if (!tr.update_info)
+		return;
+
 	/*idPlayer *player;
 
 	player = GetLocalPlayer();
@@ -353,10 +346,6 @@ void idGameLocal::RunDebugInfo() {
 		clip.DrawClipModels(player->GetEyePosition(), g_maxShowDistance.GetFloat(), pm_thirdPerson.GetBool() ? NULL : player);
 	}*/
 
-	//if (g_showCollisionTraces.GetBool()) {
-	clip->DrawClipSectors();
-	//}
-
 	/*if (g_showPVS.GetInteger()) {
 		pvs.DrawPVS(origin, (g_showPVS.GetInteger() == 2) ? PVS_ALL_PORTALS_OPEN : PVS_NORMAL);
 	}
@@ -390,6 +379,20 @@ void idGameLocal::RunDebugInfo() {
 
 	// collision map debug output
 	collisionModelManager->DebugOutput(player->GetEyePosition());*/
+}
+
+/*
+================
+idGameLocal::RunDebugInfoScreen
+================
+*/
+void idGameLocal::RunDebugInfoScreen() {
+	if (!tr.update_frame)
+		return;
+
+	//if (g_showCollisionTraces.GetBool()) {
+	clip->DrawClipSectors();
+	//}
 }
 
 void idGameLocal::PrintSpawnedEntities()

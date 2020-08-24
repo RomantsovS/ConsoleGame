@@ -54,6 +54,9 @@ private:
 	std::string currentMapName;			// for checking reload on same level
 	bool mapSpawned; // cleared on Stop()
 
+	int gameFrame;			// Frame number of the local game
+	double gameTimeResidual;	// left over msec from the last game frame
+
 	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;
 

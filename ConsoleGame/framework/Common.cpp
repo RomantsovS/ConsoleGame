@@ -27,6 +27,9 @@ idCommonLocal::idCommonLocal()
 	logFile = nullptr;
 
 	renderWorld = nullptr;
+
+	gameFrame = 0;
+	gameTimeResidual = 0;
 }
 
 /*
