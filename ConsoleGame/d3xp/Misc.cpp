@@ -70,9 +70,13 @@ void idSimpleObject::Think()
 
 bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity)
 {
-	if (collision.c.entityNum == ENTITYNUM_WORLD)
-	{
+	if (collision.c.entityNum == ENTITYNUM_WORLD) {
 		return true;
+	}
+	else {
+		auto ent = gameLocal.entities[collision.c.entityNum];
+		if (!ent->IsActive())
+			return true;
 	}
 
 	return false;

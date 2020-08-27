@@ -18,8 +18,8 @@ public:
 	static void				ClearStates();*/
 
 	static keyNum_t StringToKeyNum(const std::string& str);		// This is used by the "bind" command
-	/*static const char* KeyNumToString(keyNum_t keyNum);		// This is the inverse of StringToKeyNum, used for config files
-	static const char* LocalizedKeyName(keyNum_t keyNum);	// This returns text suitable to print on screen
+	static const std::string KeyNumToString(keyNum_t keyNum);		// This is the inverse of StringToKeyNum, used for config files
+	/*static const char* LocalizedKeyName(keyNum_t keyNum);	// This returns text suitable to print on screen
 */
 	static void SetBinding(int keyNum, const std::string& binding);
 	/*static const char* GetBinding(int keyNum);

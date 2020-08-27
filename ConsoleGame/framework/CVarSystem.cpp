@@ -319,6 +319,8 @@ public:
 
 	virtual void SetCVarString(const std::string& name, const std::string& value, int flags = 0) override;
 
+	virtual bool Command(const idCmdArgs& args) override;
+
 	virtual void SetModifiedFlags(int flags) override;
 
 	idInternalCVar* FindInternal(const std::string& name) const;
@@ -445,6 +447,35 @@ idCVarSystemLocal::SetCVarString
 */
 void idCVarSystemLocal::SetCVarString(const std::string& name, const std::string& value, int flags) {
 	SetInternal(name, value, flags);
+}
+
+/*
+============
+idCVarSystemLocal::Command
+============
+*/
+bool idCVarSystemLocal::Command(const idCmdArgs& args) {
+	idInternalCVar* internal;
+
+	internal = FindInternal(args.Argv(0));
+
+	if (internal == NULL) {
+		return false;
+	}
+
+	if (args.Argc() == 1) {
+		// print the variable
+		common->Printf("\"%s\" is:\"%s\" default:\"%s\"\n",
+			internal->nameString.c_str(), internal->valueString.c_str(), internal->resetString.c_str());
+		if (!internal->GetDescription().empty()) {
+			common->Printf("%s\n", internal->GetDescription().c_str());
+		}
+	}
+	else {
+		// set the value
+		internal->Set(args.Args(), false, false);
+	}
+	return true;
 }
 
 /*

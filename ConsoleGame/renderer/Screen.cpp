@@ -5,14 +5,16 @@
 #include "../sys/sys_public.h"
 #include "../framework/CVarSystem.h"
 
-idCVar window_width("window_width", "800", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar window_height("window_height", "600", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar window_font_size("window_font_size", "32", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar text_info_max_height("text_info_max_height", "20", CVAR_SYSTEM | CVAR_INIT, "");
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
-	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), h_console_std_out(0), 
-	h_console_draw(0), cur_write_coord({0, 0})
+	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), cur_write_coord({0, 0}),
+	window_rect({ 0, 0, 1, 1 })
 {
+	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
+	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
 
 Screen::~Screen()
@@ -23,44 +25,70 @@ Screen::~Screen()
 
 void Screen::init()
 {
-	contents.resize(height * width);
-	clearContents();
+	if (h_console_std_out == INVALID_HANDLE_VALUE)
+		common->FatalError("Bad h_console_std_out");
 
-	cur_write_coord = { 0, 0 };
+	// Change console visual size to a minimum so ScreenBuffer can shrink
+		// below the actual visual size
+	SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
 
-	HWND console = GetConsoleWindow();
+	/*HWND console = GetConsoleWindow();
 	RECT r;
 	GetWindowRect(console, &r); //stores the console's current dimensions
 
-	MoveWindow(console, r.left, r.top, window_width.GetInteger(), window_height.GetInteger(), true);
+	MoveWindow(console, r.left, r.top, window_width.GetInteger(), window_height.GetInteger(), true);*/
 
-	buffer = new char[height * (width)];
+	// Set the size of the screen buffer
+	COORD coord = { (short)width, (short)height + static_cast<short>(text_info_max_height.GetInteger()) };
+	if (!SetConsoleScreenBufferSize(h_console_std_out, coord))
+		common->FatalError("SetConsoleScreenBufferSize failed - (%d)'n", GetLastError());
 
-	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
-	h_console_draw = CreateConsoleScreenBuffer(GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-
-	if (h_console_draw == INVALID_HANDLE_VALUE || h_console_std_out == INVALID_HANDLE_VALUE)
-		common->FatalError("CreateConsoleScreenBuffer  failed - (%d)\n", GetLastError());
-
-	if(!SetConsoleActiveScreenBuffer(h_console_draw))
+	if(!SetConsoleActiveScreenBuffer(h_console_std_out))
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
 
 	CONSOLE_CURSOR_INFO cursorInfo;
 
-	GetConsoleCursorInfo(h_console_draw, &cursorInfo);
+	GetConsoleCursorInfo(h_console_std_out, &cursorInfo);
 	cursorInfo.bVisible = false; // set the cursor visibility
-	SetConsoleCursorInfo(h_console_draw, &cursorInfo);
+	SetConsoleCursorInfo(h_console_std_out, &cursorInfo);
 
 	CONSOLE_FONT_INFOEX cfi;
 	cfi.cbSize = sizeof(cfi);
 	cfi.nFont = 0;
-	cfi.dwFontSize.X = 0;                   // Width of each character in the font
-	cfi.dwFontSize.Y = window_font_size.GetInteger();                  // Height
+	cfi.dwFontSize.X = window_font_width.GetInteger(); // Width of each character in the font
+	cfi.dwFontSize.Y = window_font_height.GetInteger(); // Height
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_NORMAL;
 	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
-	SetCurrentConsoleFontEx(h_console_draw, FALSE, &cfi);
 	SetCurrentConsoleFontEx(h_console_std_out, FALSE, &cfi);
+
+	// Get screen buffer info and check the maximum allowed window size. Return
+		// error if exceeded, so user knows their dimensions/fontsize are too large
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	if (!GetConsoleScreenBufferInfo(h_console_std_out, &csbi))
+		common->FatalError("GetConsoleScreenBufferInfo");
+	if (height > csbi.dwMaximumWindowSize.Y)
+		common->FatalError("Screen Height / Font Height Too Big");
+	if (width > csbi.dwMaximumWindowSize.X)
+		common->FatalError("Screen Width / Font Width Too Big");
+
+	// Set Physical Console Window Size
+	window_rect = { 0, 0, (short)width - 1, (short)height + static_cast<short>(text_info_max_height.GetInteger()) - 1 };
+	if (!SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect))
+		common->FatalError("SetConsoleWindowInfo wrong width or height");
+
+	// Set flags to allow mouse input		
+	if (!SetConsoleMode(h_console_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
+		common->FatalError("SetConsoleMode std in");
+
+	// Allocate memory for screen buffer
+	buffer = new CHAR_INFO[width * height];
+	memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
+
+	contents.resize(height * width);
+	clearContents();
+
+	cur_write_coord = { 0, 0 };
 }
 
 void Screen::clear()
@@ -71,14 +99,14 @@ void Screen::clear()
 void Screen::clearTextInfo()
 {
 	DWORD written;
-	FillConsoleOutputCharacter(h_console_draw, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
+	FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
 }
 
 void Screen::display()
 {
 	cur_write_coord = { 0, 0 };
 
-	char* p_next_write = &buffer[0];
+	/*char* p_next_write = &buffer[0];
 	ConsoleColor curCol = Screen::ConsoleColor::None;
 
 	for (pos_type y = 0; y < height; y++)
@@ -106,21 +134,22 @@ void Screen::display()
 		}
 	}
 
-	/*std::string text_full_string = str;
-
-	if (str.size() % width != 0)
-	{
-		text_full_string.append(width - (str.size() % width), ' ');
-	}
-
-	for (auto iter = text_full_string.cbegin(); iter != text_full_string.cend(); ++iter)
-		*p_next_write++ = *iter;*/
-
 	auto lenght = p_next_write - &buffer[0];
 	writeInColor(cur_write_coord, buffer, lenght, curCol);
 
 	cur_write_coord.Y += static_cast<SHORT>(ceil(lenght / width)) + 1;
-	cur_write_coord.X = 0;
+	cur_write_coord.X = 0;*/
+
+	for (pos_type y = 0; y < height; ++y) {
+		for (pos_type x = 0; x < width; ++x) {
+			buffer[y * width + x].Char.AsciiChar = contents[y * width + x].value;
+			buffer[y * width + x].Attributes = contents[y * width + x].color;
+
+		}
+	}
+
+	WriteConsoleOutput(h_console_std_out, buffer, { (short)width, (short)height }, { 0,0 }, &window_rect);
+	cur_write_coord.Y += height;
 }
 
 void Screen::clearContents()
@@ -139,8 +168,8 @@ void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen
 	std::vector<WORD> attribute(lenght, (WORD)((color_background << 4) | color_text | FOREGROUND_INTENSITY));
 	DWORD written;
 	
-	WriteConsoleOutputAttribute(h_console_draw, &attribute[0], lenght, coord, &written);
-	WriteConsoleOutputCharacter(h_console_draw, symbol, lenght, coord, &written);
+	WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght, coord, &written);
+	WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght, coord, &written);
 }
 
 void Screen::writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background)
@@ -245,7 +274,7 @@ void Screen::clearConsoleOutut()
 
 void Screen::setDrawOutputBuffer()
 {
-	if (!SetConsoleActiveScreenBuffer(h_console_draw))
+	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
 }
 

@@ -121,5 +121,9 @@ std::string idCmdArgs::CutQuotes(const std::string& str)
 	if (res[res.size() - 1] == '\"')
 		res = res.substr(0, res.size() - 1);
 
+	auto pos = res.find_last_of('\"');
+	if (pos != std::string::npos) {
+		res = res.substr(0, pos);
+	}
 	return res;
 }

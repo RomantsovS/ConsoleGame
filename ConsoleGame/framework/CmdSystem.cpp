@@ -274,9 +274,9 @@ void idCmdSystemLocal::ExecuteTokenizedString(const idCmdArgs &args) {
 	}
 
 	// check cvars
-	/*if (cvarSystem->Command(args)) {
+	if (cvarSystem->Command(args)) {
 		return;
-	}*/
+	}
 
 	common->Printf("Unknown command '%s'\n", args.Argv(0).c_str());
 }

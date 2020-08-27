@@ -4,10 +4,6 @@
 #include "KeyInput.h"
 
 std::vector<userCmdString_t> userCmdStrings = {
-	{ "_moveUp",		UB_MOVEUP }
-};
-/*
-std::vector<userCmdString_t> userCmdStrings = {
 	{ "_moveUp",		UB_MOVEUP },
 	{ "_moveDown",		UB_MOVEDOWN },
 	{ "_left",			UB_LOOKLEFT },
@@ -58,8 +54,8 @@ std::vector<userCmdString_t> userCmdStrings = {
 	{ "_impulse30",		UB_IMPULSE30 },
 	{ "_impulse31",		UB_IMPULSE31 },
 
-	{ NULL,				UB_NONE }
-};*/
+	{ "",				UB_NONE }
+};
 
 class idUsercmdGenLocal : public idUsercmdGen {
 public:
@@ -111,9 +107,9 @@ private:
 	void			Key(int keyNum, bool down);
 
 	/*idVec3			viewangles;
-	int				impulseSequence;
+	int				impulseSequence;*/
 	int				impulse;
-
+	/*
 	buttonState_t	toggled_crouch;
 	buttonState_t	toggled_run;
 	buttonState_t	toggled_zoom;*/
@@ -162,6 +158,8 @@ idUsercmdGenLocal::idUsercmdGenLocal
 */
 idUsercmdGenLocal::idUsercmdGenLocal() {
 	initialized = false;
+
+	impulse = 0;
 
 	Clear();
 }
@@ -244,9 +242,9 @@ inits the current command for this frame
 */
 void idUsercmdGenLocal::InitCurrent() {
 	memset(&cmd, 0, sizeof(cmd));
-	/*cmd.impulseSequence = impulseSequence;
+	//cmd.impulseSequence = impulseSequence;
 	cmd.impulse = impulse;
-	cmd.buttons |= (in_alwaysRun.GetBool() && common->IsMultiplayer()) ? BUTTON_RUN : 0;*/
+	//cmd.buttons |= (in_alwaysRun.GetBool() && common->IsMultiplayer()) ? BUTTON_RUN : 0;
 }
 
 /*
@@ -262,6 +260,8 @@ void idUsercmdGenLocal::MakeCurrent() {
 
 	// get basic movement from keyboard
 	KeyMove();
+
+	impulse = cmd.impulse;
 }
 
 /*
@@ -337,12 +337,12 @@ void idUsercmdGenLocal::Key(int keyNum, bool down) {
 
 	if (down) {
 		buttonState[action]++;
-		/*if (!Inhibited()) {
+		//if (!Inhibited()) {
 			if (action >= UB_IMPULSE0 && action <= UB_IMPULSE31) {
 				cmd.impulse = action - UB_IMPULSE0;
-				cmd.impulseSequence++;
+				//cmd.impulseSequence++;
 			}
-		}*/
+		//}
 	}
 	else {
 		buttonState[action]--;

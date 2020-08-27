@@ -55,14 +55,14 @@ public:
 	usercmd_t() :
 		/*forwardmove(),
 		rightmove(),*/
-		buttons()
+		buttons(),
 		/*clientGameMilliseconds(0),
 		serverGameMilliseconds(0),
 		fireCount(0),
 		mx(),
-		my(),
-		impulse(),
-		impulseSequence(),
+		my(),*/
+		impulse()
+		/*impulseSequence(),
 		pos(0.0f, 0.0f, 0.0f),
 		speedSquared(0.0f)*/
 	{
@@ -80,10 +80,10 @@ public:
 	/*int			clientGameMilliseconds;			// time this usercmd was sent from the client
 	int			serverGameMilliseconds;			// interpolated server time this was applied on
 	uint16		fireCount;						// number of times we've fired
-
+*/
 	// Not syncronized
-	byte		impulse;						// impulse command
-	byte		impulseSequence;				// incremented every time there's a new impulse
+	unsigned char impulse;						// impulse command
+	/*byte		impulseSequence;				// incremented every time there's a new impulse
 
 	short		mx;								// mouse delta x
 	short		my;								// mouse delta y

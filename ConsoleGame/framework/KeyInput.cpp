@@ -20,7 +20,9 @@ struct keyname_t {
 
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
 std::vector<keyname_t> keynames = {
-	keyname_t({keyNum_t::K_ESCAPE, "ESCAPE", "#str_07020"})
+	keyname_t({keyNum_t::K_SPACE, "SPACE", "#str_07021"}),
+	keyname_t({keyNum_t::K_TAB, "TAB", "#str_07018"}),
+	keyname_t({keyNum_t::K_F1, "F1", "#str_07018"})
 };
 
 /*std::vector<keyname_t> keynames = {
@@ -228,6 +230,21 @@ keyNum_t idKeyInput::StringToKeyNum(const std::string& str) {
 }
 
 /*
+========================
+idKeyInput::KeyNumToString
+========================
+*/
+const std::string idKeyInput::KeyNumToString(keyNum_t keynum) {
+	// check for a key string
+	auto iter = std::find_if(keynames.begin(), keynames.end(), [&keynum](auto& kn) {return kn.keynum == keynum; });
+
+	if (iter != keynames.end())
+		return iter->name;
+
+	return "?";
+}
+
+/*
 ===================
 idKeyInput::SetBinding
 ===================
@@ -268,17 +285,17 @@ void Key_Bind_f(const idCmdArgs& args) {
 		return;
 	}
 	b = static_cast<int>(idKeyInput::StringToKeyNum(args.Argv(1)));
-	if (b == -1) {
-		common->Printf("\"%s\" isn't a valid key\n", args.Argv(1));
+	if (b == static_cast<int>(keyNum_t::K_NONE)) {
+		common->Printf("\"%s\" isn't a valid key\n", args.Argv(1).c_str());
 		return;
 	}
 
 	if (c == 2) {
 		if (!keys[b].binding.empty()) {
-			common->Printf("\"%s\" = \"%s\"\n", args.Argv(1), keys[b].binding.c_str());
+			common->Printf("\"%s\" = \"%s\"\n", args.Argv(1).c_str(), keys[b].binding.c_str());
 		}
 		else {
-			common->Printf("\"%s\" is not bound\n", args.Argv(1));
+			common->Printf("\"%s\" is not bound\n", args.Argv(1).c_str());
 		}
 		return;
 	}
@@ -293,6 +310,19 @@ void Key_Bind_f(const idCmdArgs& args) {
 	}
 
 	idKeyInput::SetBinding(b, cmd);
+}
+
+/*
+============
+Key_ListBinds_f
+============
+*/
+void Key_ListBinds_f(const idCmdArgs& args) {
+	for (int i = 0; i < static_cast<int>(keyNum_t::K_LAST_KEY); i++) {
+		if (!keys[i].binding.empty()) {
+			common->Printf("%s \"%s\"\n", idKeyInput::KeyNumToString((keyNum_t)i).c_str(), keys[i].binding.c_str());
+		}
+	}
 }
 
 /*
@@ -338,6 +368,7 @@ void idKeyInput::Init() {
 
 	// register our functions
 	cmdSystem->AddCommand("bind", Key_Bind_f, CMD_FL_SYSTEM, "binds a command to a key");
+	cmdSystem->AddCommand("listBinds", Key_ListBinds_f, CMD_FL_SYSTEM, "lists key bindings");
 }
 
 /*

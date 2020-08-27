@@ -16,7 +16,7 @@ void idRenderSystemLocal::Init()
 	renderModelManager->Init();
 
 	borderHeight = 2;
-	borderWidth = 4;
+	borderWidth = 2;
 
 	height = game_height.GetInteger() + borderHeight * 2;
 	width = game_width.GetInteger() + borderWidth * 2;

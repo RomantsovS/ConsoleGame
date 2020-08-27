@@ -3,6 +3,7 @@
 
 #include <string>
 #include "../idlib/sys/sys_types.h"
+#include "../idlib/CmdArgs.h"
 
 enum cvarFlags_t {
 	CVAR_ALL = -1,		// all flags
@@ -124,6 +125,10 @@ public:
 
 	// Registers a CVar.
 	virtual void			Register(idCVar* cvar) = 0;
+
+	// Called by the command system when argv(0) doesn't match a known command.
+	// Returns true if argv(0) is a variable reference and prints or changes the CVar.
+	virtual bool			Command(const idCmdArgs& args) = 0;
 
 	// Sets the value of a CVar by name.
 	virtual void			SetCVarString(const std::string& name, const std::string& value, int flags = 0) = 0;

@@ -10,8 +10,6 @@ class idRenderWorldLocal;
 struct viewEntity_t;
 struct portalArea_t;
 
-//#define DEBUG_PRINT_Ctor_Dtor
-
 // areas have references to hold all the lights and entities in them
 struct areaReference_t
 {
@@ -74,6 +72,8 @@ public:
 	std::shared_ptr<areaReference_t> entityRefs;				// chain of all references
 };
 
+//#define DEBUG_PRINT_Ctor_Dtor
+
 // a viewEntity is created whenever a idRenderEntityLocal is considered for inclusion
 // in the current view, but it may still turn out to be culled.
 // viewEntity are allocated on the frame temporary stack memory
@@ -91,9 +91,16 @@ struct viewEntity_t
 
 	~viewEntity_t()
 	{
+		clean();
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "viewEntity_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
+	void clean() {
+		while (next) {
+			next = std::move(next->next);
+		}
 	}
 
 	std::shared_ptr<viewEntity_t> next;
@@ -131,9 +138,9 @@ struct viewDef_t
 	}
 
 	// specified in the call to DrawScene()
-	renderView_t		renderView;
+	//renderView_t		renderView;
 
-	viewEntity_t		worldSpace;
+	//viewEntity_t		worldSpace;
 
 	std::shared_ptr<idRenderWorldLocal> renderWorld;
 
@@ -156,22 +163,6 @@ struct viewDef_t
 
 	int					areaNum;				// -1 = not in a valid area
 };
-
-// all of the information needed by the back end must be
-// contained in a idFrameData.  This entire structure is
-// duplicated so the front and back end can run in parallel
-// on an SMP machine.
-class idFrameData {
-public:
-	int	frameMemoryAllocated;
-	int frameMemoryUsed;
-	byte* frameMemory;
-
-	int highWaterAllocated;	// max used on any frame
-	int highWaterUsed;
-};
-
-extern	idFrameData* frameData;
 
 class idRenderSystemLocal : public idRenderSystem
 {

@@ -16,8 +16,13 @@ idGame *game = &gameLocal;
 
 const size_t frame_time_min = 10;
 
-idCVar game_width("game_width", "87", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar game_height("game_height", "16", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_width("game_width", "80", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_height("game_height", "50", CVAR_SYSTEM | CVAR_INIT, "");
+
+void AddRandomPoints(const idCmdArgs& args) {
+	for (int i = 0; i < 100; ++i)
+		gameLocal.AddRandomPoint();
+}
 
 idGameLocal::idGameLocal()
 {
@@ -29,6 +34,8 @@ void idGameLocal::Init()
 	Printf("--------- Initializing Game ----------\n");
 	Printf("gamename: %s\n", GAME_VERSION.c_str());
 	Printf("gamedate: %s\n", __DATE__);
+
+	cmdSystem->AddCommand("addrandompoints", AddRandomPoints, CMD_FL_GAME, "addes random point(s)");
 
 	Clear();
 
@@ -172,14 +179,16 @@ void idGameLocal::RunFrame()
 	rand_eng.seed(Sys_Milliseconds());
 
 	// clear any debug lines from a previous frame
-	gameRenderWorld->DebugClearLines(time);
+	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
 	if (time - lastTimePointSpawn > 1000) {
 		lastTimePointSpawn = time;
 		
-		//if(activeEntities.IsListEmpty())
-			//AddRandomPoint();
+		//if (activeEntities.IsListEmpty()) {
+			for (int i = 0; i < 10; ++i)
+				AddRandomPoint();
+		//}
 	}
 
 	// let entities think
@@ -515,47 +524,6 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed)
 	clip->Init();
 }
 
-/*
-void Game::onKeyPressed(char c)
-{
-	switch (c)
-	{
-	case 72: case 'w':
-	{
-		onMoveKeyPressed(SimpleObject::UP);
-
-		break;
-	}
-	case 80: case 's':
-	{
-		onMoveKeyPressed(SimpleObject::DOWN);
-
-		break;
-	}
-	case 75: case 'a':
-	{
-		onMoveKeyPressed(SimpleObject::LEFT);
-
-		break;
-	}
-	case 77: case 'd':
-	{
-		onMoveKeyPressed(SimpleObject::RIGHT);
-
-		break;
-	}
-	}
-}*/
-/*
-void idGameLocal::BreakTime()
-{
-	clock_t temp;
-	temp = clock() + delayMilliseconds * CLOCKS_PER_SEC / 1000;
-	while (clock() < temp)
-	{
-	}
-}*/
-
 void idGameLocal::Clear()
 {
 	entities.clear();
@@ -612,7 +580,7 @@ void idGameLocal::MapPopulate()
 	// parse the key/value pairs and spawn entities
 	SpawnMapEntities();
 
-	for(int i = 0; i < 1; ++i)
+	for(int i = 0; i < 100; ++i)
 		AddRandomPoint();
 }
 
@@ -648,7 +616,7 @@ void idGameLocal::AddRandomPoint()
 	{
 		if (num_attempts++ > 100)
 		{
-			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+			//Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
 			return;
 		}
 
@@ -664,34 +632,13 @@ void idGameLocal::AddRandomPoint()
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
-	args.Set("color", std::to_string(GetRandomColor()));
+	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
-	args.Set("linearVelocity", (Vector2(GetRandomValue(0.0f, 0.0f) / (100.0f - GetHeight()), GetRandomValue(1.0f, 1000.0f) / (100.0f - GetWidth())).ToString()));
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-100.0f, 100.0f), gameLocal.GetRandomValue(-100.0f, 100.0f)).ToString());
 	//args.Set("linearVelocity", (Vector2(0.0f, 0.10f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
-	SpawnEntityDef(args, ent);
-
-	return;
-
-	origin = { 10.0f, 7.0f };
-
-	/*while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
-	{
-		if (num_attempts++ > 100)
-		{
-			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
-			return;
-		}
-
-		origin = Vector2(10.0f, GetRandomValue(0.0f, GetWidth() - 1.0f));
-	}*/
-
-	args.Set("origin", origin.ToString());
-	args.Set("color", std::to_string(Screen::ConsoleColor::Blue));
-	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
-
-	SpawnEntityDef(args);
+	gameLocal.SpawnEntityDef(args, ent);
 }
 
 /*

@@ -9,6 +9,8 @@
 #include "physics/Clip.h"
 #include "../idlib/containers/LinkList.h"
 #include "../framework/CVarSystem.h"
+#include "../idlib/CmdArgs.h"
+
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 extern idCVar game_width;
@@ -125,6 +127,7 @@ public:
 	short GetWidth() { return width; }
 
 	const std::vector<Screen::ConsoleColor>& GetColors() const { return colors; }
+	void AddRandomPoint();
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	//idMapFile* mapFile;				// will be NULL during the game unless in-game editing is used
@@ -148,8 +151,6 @@ private:
 
 	void InitConsoleCommands();
 	void ShutdownConsoleCommands();
-
-	void AddRandomPoint();
 
 	/*void onMoveKeyPressed(SimpleObject::directions dir);
 
