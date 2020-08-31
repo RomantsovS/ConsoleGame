@@ -1,7 +1,11 @@
 #include <vector>
+
 #include "UsercmdGen.h"
 #include "../sys/sys_public.h"
 #include "KeyInput.h"
+#include "../idlib/math/Math.h"
+
+const int KEY_MOVESPEED = 127;
 
 std::vector<userCmdString_t> userCmdStrings = {
 	{ "_moveUp",		UB_MOVEUP },
@@ -204,14 +208,14 @@ void idUsercmdGenLocal::KeyMove() {
 	int forward = 0;
 	int side = 0;
 
-	/*side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
+	side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
 	side -= KEY_MOVESPEED * ButtonState(UB_MOVELEFT);
 
 	forward += KEY_MOVESPEED * ButtonState(UB_MOVEFORWARD);
 	forward -= KEY_MOVESPEED * ButtonState(UB_MOVEBACK);
 
 	cmd.forwardmove += idMath::ClampChar(forward);
-	cmd.rightmove += idMath::ClampChar(side);*/
+	cmd.rightmove += idMath::ClampChar(side);
 }
 
 /*

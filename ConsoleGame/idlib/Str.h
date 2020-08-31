@@ -4,9 +4,8 @@
 #include <string>
 
 class idStr {
-
 public:
-	template <typename T>
+	template<typename T>
 	static std::string GetFromValue(const T i);
 
 	static int vsnPrintf(char* dest, int size, const char* fmt, va_list argptr);
@@ -15,6 +14,8 @@ public:
 	static bool IsNumeric(const std::string& s);
 	static bool caseInSensStringCompareCpp11(const std::string& str1, const std::string& str2);
 };
+
+std::string va(const char* fmt, ...);
 
 int sprintf(std::string& string, const char* fmt, ...);
 

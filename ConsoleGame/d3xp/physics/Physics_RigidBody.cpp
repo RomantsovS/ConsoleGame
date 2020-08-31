@@ -458,29 +458,6 @@ void idPhysics_RigidBody::Translate(const Vector2& translation, int id)
 	Activate();
 }
 
-void idPhysics_RigidBody::Rotate(const Vector2& rotation, int id)
-{
-	/*idVec3 masterOrigin;
-	idMat3 masterAxis;*/
-
-	//current.i.orientation *= rotation.ToMat3();
-	current.i.position *= rotation;
-
-	/*if (hasMaster) {
-		self->GetMasterPosition(masterOrigin, masterAxis);
-		current.localAxis *= rotation.ToMat3();
-		current.localOrigin = (current.i.position - masterOrigin) * masterAxis.Transpose();
-	}
-	else {*/
-		//current.localAxis = current.i.orientation;
-		current.localOrigin = current.i.position;
-	//}
-
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
-
-	Activate();
-}
-
 /*
 ================
 idPhysics_RigidBody::GetOrigin

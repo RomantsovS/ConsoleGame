@@ -79,11 +79,11 @@ public:
 	void Link(std::shared_ptr<idClip>& clp);				// must have been linked with an entity and id before
 	void Link(std::shared_ptr<idClip>& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
 	void Unlink(); // unlink from sectors
-	/*void					SetPosition(const idVec3& newOrigin, const idMat3& newAxis);	// unlinks the clip model
-	void					Translate(const idVec3& translation);							// unlinks the clip model
+	//void					SetPosition(const idVec3& newOrigin, const idMat3& newAxis);	// unlinks the clip model
+	void Translate(const Vector2& translation);							// unlinks the clip model
 	//void					Rotate(const idRotation& rotation);							// unlinks the clip model
-	void					Enable();						// enable for clipping
-	void					Disable();*/					// keep linked but disable for clipping
+	void Enable();						// enable for clipping
+	void Disable();					// keep linked but disable for clipping
 	void SetEntity(std::shared_ptr<idEntity> newEntity);
 	std::shared_ptr<idEntity> GetEntity() const;
 	void SetId(int newId);
@@ -154,6 +154,18 @@ inline bool idClipModel::IsTraceModel() const
 	return (traceModelIndex != -1);
 }
 
+inline void idClipModel::Translate(const Vector2& translation) {
+	Unlink();
+	origin += translation;
+}
+
+inline void idClipModel::Enable() {
+	enabled = true;
+}
+
+inline void idClipModel::Disable() {
+	enabled = false;
+}
 
 /*
 ====================

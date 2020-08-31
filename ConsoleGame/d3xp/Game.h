@@ -29,6 +29,9 @@ public:
 
 	virtual bool IsInGame() const = 0;
 
+	virtual int GetLocalClientNum() const = 0;
+
+
 	// MAIN MENU FUNCTIONS
 	virtual bool Shell_IsActive() const = 0;
 	virtual void Shell_Show(bool show) = 0;

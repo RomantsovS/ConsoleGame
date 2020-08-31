@@ -29,6 +29,8 @@ public:
 
 	static float Fabs(float f); // returns the absolute value of the floating point value
 
+	static signed char ClampChar(int i);
+
 	static int FloatHash(const float* array, const int numFloats);
 
 	template<typename T>
@@ -76,6 +78,21 @@ idMath::Fabs
 */
 inline float idMath::Fabs(float f) {
 	return fabsf(f);
+}
+
+/*
+========================
+idMath::ClampChar
+========================
+*/
+inline signed char idMath::ClampChar(int i) {
+	if (i < -128) {
+		return -128;
+	}
+	if (i > 127) {
+		return 127;
+	}
+	return static_cast<signed char>(i);
 }
 
 /*

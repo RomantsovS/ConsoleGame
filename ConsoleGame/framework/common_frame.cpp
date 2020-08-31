@@ -93,7 +93,7 @@ void idCommonLocal::Frame()
 			usercmdGen->Clear();
 		}
 
-		usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
+		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
 
 		Draw();
 	}

@@ -119,7 +119,7 @@ const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const 
 		iter = args.lower_bound(prefix);
 
 	if (iter != args.end())
-		if(iter->first.compare(0, prefix.size(), prefix))
+		if(!iter->first.compare(0, prefix.size(), prefix))
 			return &*iter;
 
 	return nullptr;

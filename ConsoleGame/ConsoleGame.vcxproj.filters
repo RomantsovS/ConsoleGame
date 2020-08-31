@@ -216,6 +216,12 @@
     <ClInclude Include="framework\EditField.h">
       <Filter>Framework</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\physics\Physics_Actor.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\physics\Physics_Player.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp">
@@ -406,6 +412,15 @@
     </ClCompile>
     <ClCompile Include="framework\EditField.cpp">
       <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\Game_network.cpp">
+      <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\physics\Physics_Actor.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\physics\Physics_Player.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

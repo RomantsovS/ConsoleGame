@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Math/Vector2.h"
+#include "Str.h"
 
 class idDict
 {
@@ -20,6 +21,7 @@ public:
 	void Clear();
 
 	void Set(std::string key, std::string value);
+	void SetInt(const std::string& key, int val);
 
 	// these return default values of 0.0, 0 and false
 	std::string GetString(const char *key, std::string defaultString = "") const;
@@ -36,5 +38,9 @@ public:
 private:
 	map_type args;
 };
+
+inline void idDict::SetInt(const std::string& key, int val) {
+	Set(key, va("%i", val));
+}
 
 #endif

@@ -55,11 +55,11 @@ public:
 
 public:	// common physics interface
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
-	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const;
-	int GetNumClipModels() const;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
+	int GetNumClipModels() const override;
 
-	const idBounds& GetBounds(int id = -1) const;
-	const idBounds& GetAbsBounds(int id = -1) const;
+	const idBounds& GetBounds(int id = -1) const override;
+	const idBounds& GetAbsBounds(int id = -1) const override;
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
@@ -76,7 +76,7 @@ public:	// common physics interface
 	void SetAxis(const Vector2 &newAxis, int id = -1) override;
 
 	void Translate(const Vector2 &translation, int id = -1) override;
-	void Rotate(const Vector2 &rotation, int id = -1) override;
+	//void Rotate(const Vector2 &rotation, int id = -1) override;
 
 	const Vector2 & GetOrigin(int id = 0) const override;
 	//const Vector2 &	GetAxis(int id = 0) const override;
@@ -96,7 +96,7 @@ private:
 	bool noContact; // if true do not determine contacts and no contact friction
 
 private:
-	friend void RigidBodyDerivatives(const float t, const void* clientData, const float* state, std::vector<float>& derivatives);
+	friend void RigidBodyDerivatives(const float t, const void* clientData, const float* state, float* derivatives);
 	void Integrate(const float deltaTime, rigidBodyPState_t& next_);
 	bool CheckForCollisions(const float deltaTime, rigidBodyPState_t& next, trace_t& collision);
 	bool CollisionImpulse(const trace_t& collision, Vector2& impulse);

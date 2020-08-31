@@ -10,7 +10,7 @@
 #include "../idlib/containers/LinkList.h"
 #include "../framework/CVarSystem.h"
 #include "../idlib/CmdArgs.h"
-
+#include "Player.h"
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 extern idCVar game_width;
@@ -82,12 +82,15 @@ public:
 	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld,
 		int randseed) override;
 	virtual void MapShutdown() override;
-
 	virtual void RunFrame() override;
-
+	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
+	void RunSingleUserCmd(usercmd_t& cmd, idPlayer& player);
+	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	virtual bool Draw(int clientNum) override;
 
 	virtual bool IsInGame() const override  { return GameState() == GAMESTATE_ACTIVE; }
+
+	virtual int GetLocalClientNum() const override;
 
 	// ---------------------- Public idGameLocal Interface -------------------
 
@@ -101,18 +104,23 @@ public:
 	void LoadMap(const std::string mapName, int randseed);
 
 	gameState_t GameState() const;
-
-	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> ent = nullptr);
+	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
 	const idDict &GetSpawnArgs() const { return spawnArgs; }
 
+	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
+
 	// added the following to assist licensees with merge issues
 	int GetFrameNum() const { return framenum; };
-	int	 GetTime() const { return time; };
+	int GetTime() const { return time; };
 
-	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
+	std::shared_ptr<idPlayer> GetLocalPlayer() const;
+
+	Vector2 SelectInitialSpawnPoint(std::shared_ptr<idPlayer> player);
+
+	void SyncPlayersWithLobbyUsers(bool initial);
 
 	// MAIN MENU FUNCTIONS
 	virtual bool Shell_IsActive() const override { return menu_active; }
@@ -148,6 +156,8 @@ private:
 	void RunDebugInfo();
 	void RunDebugInfoScreen();
 	void PrintSpawnedEntities();
+
+	void SpawnPlayer(int clientNum);
 
 	void InitConsoleCommands();
 	void ShutdownConsoleCommands();

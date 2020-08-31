@@ -53,8 +53,8 @@ const int IMPULSE_31 = 31;			// quick 3
 class usercmd_t {
 public:
 	usercmd_t() :
-		/*forwardmove(),
-		rightmove(),*/
+		forwardmove(),
+		rightmove(),
 		buttons(),
 		/*clientGameMilliseconds(0),
 		serverGameMilliseconds(0),
@@ -72,10 +72,10 @@ public:
 	}
 
 	// Syncronized
-	/*short		angles[3];						// view angles
+	//short		angles[3];						// view angles
 	signed char	forwardmove;					// forward/backward movement
 	signed char	rightmove;						// left/right movement
-	*/
+	
 	unsigned char buttons;						// buttons
 	/*int			clientGameMilliseconds;			// time this usercmd was sent from the client
 	int			serverGameMilliseconds;			// interpolated server time this was applied on

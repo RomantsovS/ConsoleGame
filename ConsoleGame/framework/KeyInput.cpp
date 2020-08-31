@@ -22,7 +22,8 @@ struct keyname_t {
 std::vector<keyname_t> keynames = {
 	keyname_t({keyNum_t::K_SPACE, "SPACE", "#str_07021"}),
 	keyname_t({keyNum_t::K_TAB, "TAB", "#str_07018"}),
-	keyname_t({keyNum_t::K_F1, "F1", "#str_07018"})
+	keyname_t({keyNum_t::K_F1, "F1", "#str_07018"}),
+	keyname_t({keyNum_t::K_UPARROW, "UPARROW", "#str_07023"})
 };
 
 /*std::vector<keyname_t> keynames = {

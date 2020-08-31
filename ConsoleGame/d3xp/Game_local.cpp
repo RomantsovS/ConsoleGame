@@ -7,6 +7,7 @@
 #include "../idlib/Lib.h"
 #include "../idlib/Str.h"
 #include "../framework/CmdSystem.h"
+#include "Player.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -113,6 +114,8 @@ void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idR
 		MapShutdown();
 	}
 
+	Printf("----------- Game Map Init ------------\n");
+
 	gamestate = GAMESTATE_STARTUP;
 
 	gameRenderWorld = renderWorld;
@@ -120,6 +123,8 @@ void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idR
 	LoadMap(mapName, randseed);
 
 	MapPopulate();
+
+	SyncPlayersWithLobbyUsers(true);
 
 	gamestate = GAMESTATE_ACTIVE;
 }
@@ -152,12 +157,97 @@ void idGameLocal::MapShutdown()
 	Printf("--------------------------------------\n");
 }
 
+/*
+========================
+idGameLocal::GetLocalClientNum
+========================
+*/
+int idGameLocal::GetLocalClientNum() const {
+	return 0;
+}
+
+/*
+===========
+idGameLocal::SpawnPlayer
+============
+*/
+void idGameLocal::SpawnPlayer(int clientNum) {
+	idDict args;
+
+	// they can connect
+	Printf("SpawnPlayer: %i\n", clientNum);
+
+	args.SetInt("spawn_entnum", clientNum);
+	args.Set("name", va("player%d", clientNum + 1));
+
+	// precache the player
+	args.Set("classname", "idPlayer");
+	args.Set("spawnclass", "idPlayer");
+
+	args.Set("model", "pixel");
+	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
+
+	args.Set("linearVelocity", Vector2(0.0f, 10.0f).ToString());
+
+	std::shared_ptr<idEntity> ent;
+	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
+		Error("Failed to spawn player as '%s'", args.GetString("classname").c_str());
+	}
+
+	// make sure it's a compatible class
+	if (!ent->IsType(idPlayer::Type)) {
+		Error("'%s' spawned the player as a '%s'.  Player spawnclass must be a subclass of idPlayer.", args.GetString("classname").c_str(), ent->GetClassname().c_str());
+	}
+}
+
+/*
+================
+idGameLocal::GetLocalPlayer
+
+Nothing in the game tic should EVER make a decision based on what the
+local client number is, it shouldn't even be aware that there is a
+draw phase even happening.  This just returns client 0, which will
+be correct for single player.
+================
+*/
+std::shared_ptr<idPlayer> idGameLocal::GetLocalPlayer() const {
+	if (GetLocalClientNum() < 0) {
+		return NULL;
+	}
+
+	if (!entities[GetLocalClientNum()] || !entities[GetLocalClientNum()]->IsType(idPlayer::Type)) {
+		// not fully in game yet
+		return NULL;
+	}
+	return std::static_pointer_cast<idPlayer>(entities[GetLocalClientNum()]);
+}
+
+/*
+================
+idGameLocal::RunEntityThink
+================
+*/
+void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
+	if (ent.entityNumber < MAX_CLIENTS) {
+		// Players may run more than one think per frame in MP,
+		// if there is a large buffer of usercmds from the network.
+		// Players will always run exactly one think in singleplayer.
+		RunAllUserCmdsForPlayer(/*userCmdMgr,*/ ent.entityNumber);
+	}
+	else {
+		// Non-player entities always run one think.
+		ent.Think();
+	}
+}
+
 void idGameLocal::RunFrame()
 {
 	if (!gameRenderWorld)
 	{
 		return;
 	}
+
+	auto player = GetLocalPlayer();
 
 	framenum++;
 	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
@@ -182,11 +272,11 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 1000) {
+	if (time - lastTimePointSpawn > 10000) {
 		lastTimePointSpawn = time;
 		
 		//if (activeEntities.IsListEmpty()) {
-			for (int i = 0; i < 10; ++i)
+			for (int i = 0; i < 1; ++i)
 				AddRandomPoint();
 		//}
 	}
@@ -194,7 +284,7 @@ void idGameLocal::RunFrame()
 	// let entities think
 	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
 	{
-		ent->Think();
+		RunEntityThink(*ent);
 	}
 
 	// remove any entities that have stopped thinking
@@ -213,6 +303,46 @@ void idGameLocal::RunFrame()
 	// show any debug info for this frame
 	RunDebugInfoScreen();
 	RunDebugInfo();
+}
+
+/*
+====================
+idGameLocal::RunSinglelUserCmd
+
+Runs a Think or a ClientThink for a player. Will write the client's
+position and firecount to the usercmd.
+====================
+*/
+void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, idPlayer& player) {
+	player.HandleUserCmds(cmd);
+
+	player.Think();
+}
+
+/*
+====================
+idGameLocal::RunAllUserCmdsForPlayer
+Runs a Think or ClientThink for each usercmd, but leaves a few cmds in the buffer
+so that we have something to process while we wait for more from the network.
+====================
+*/
+void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber) {
+	// Run thinks on any players that have queued up usercmds for networking.
+	//assert(playerNumber < MAX_PLAYERS);
+
+	if (!entities[playerNumber]) {
+		return;
+	}
+
+	idPlayer& player = static_cast<idPlayer&>(*entities[playerNumber]);
+
+	// Only run a single userCmd each game frame for local players, otherwise when
+	// we are running < 60fps things like footstep sounds may get started right on top
+	// of each other instead of spread out in time.
+	if (player.IsLocallyControlled()) {
+			RunSingleUserCmd(player.usercmd, player);
+		return;
+	}
 }
 
 bool idGameLocal::Draw(int clientNum)
@@ -580,7 +710,7 @@ void idGameLocal::MapPopulate()
 	// parse the key/value pairs and spawn entities
 	SpawnMapEntities();
 
-	for(int i = 0; i < 100; ++i)
+	for(int i = 0; i < 1; ++i)
 		AddRandomPoint();
 }
 
@@ -634,11 +764,13 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
-	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-100.0f, 100.0f), gameLocal.GetRandomValue(-100.0f, 100.0f)).ToString());
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
 	//args.Set("linearVelocity", (Vector2(0.0f, 0.10f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
-	gameLocal.SpawnEntityDef(args, ent);
+	if (!gameLocal.SpawnEntityDef(args, &ent)) {
+		Warning("Failed to spawn random point as '%s'", args.GetString("classname").c_str());
+	}
 }
 
 /*
@@ -704,36 +836,42 @@ Screen::ConsoleColor idGameLocal::GetRandomColor()
 	return colors[col];
 }
 
-bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity> ent)
+bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>* ent)
 {
-	std::string className, spawn;
+	std::string classname, spawn, error, name;
 	idTypeInfo *cls;
 	std::shared_ptr<idClass> obj;
 
 	spawnArgs = args;
 
-	spawnArgs.GetString("classname", "", &className);
+	if (spawnArgs.GetString("name", "", &name)) {
+		sprintf(error, " on '%s'", name.c_str());
+	}
 
+	spawnArgs.GetString("classname", "", &classname);
+
+	// check if we should spawn a class object
 	spawnArgs.GetString("spawnclass", "", &spawn);
-
 	if (!spawn.empty()) {
 
 		cls = idClass::GetClass(spawn);
 		if (!cls)
 		{
+			Warning("Could not spawn '%s'.  Class '%s' not found%s.", classname.c_str(), spawn, error.c_str());
 			return false;
 		}
 
 		obj = cls->CreateInstance();
 		if (!obj)
 		{
+			Warning("Could not spawn '%s'. Instance could not be created%s.", classname, error.c_str());
 			return false;
 		}
 
 		obj->CallSpawn();
 
-		if (/*ent && obj->IsType(idEntity::Type)*/true) {
-			ent = std::dynamic_pointer_cast<idEntity>(obj);
+		if (ent && obj->IsType(idEntity::Type)) {
+			*ent = std::dynamic_pointer_cast<idEntity>(obj);
 		}
 
 		return true;
@@ -817,6 +955,36 @@ int idGameLocal::EntitiesWithinRadius(const Vector2 org, float radius, std::vect
 	}
 
 	return entCount;
+}
+
+/*
+===========
+idGameLocal::SelectInitialSpawnPoint
+spectators are spawned randomly anywhere
+in-game clients are spawned based on distance to active players (randomized on the first half)
+upon map restart, initial spawns are used (randomized ordered list of spawns flagged "initial")
+  if there are more players than initial spots, overflow to regular spawning
+============
+*/
+Vector2 idGameLocal::SelectInitialSpawnPoint(std::shared_ptr<idPlayer> player) {
+	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+
+	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
+
+	int num_attempts = 0;
+	float searching_radius = 0.0f;
+	int finded_ents = 0;
+	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
+	{
+		if (num_attempts++ > 100)
+		{
+			Error("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+		}
+
+		origin = Vector2(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+	}
+
+	return origin;
 }
 
 /*

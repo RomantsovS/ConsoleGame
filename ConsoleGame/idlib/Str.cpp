@@ -36,6 +36,20 @@ int idStr::vsnPrintf(char* dest, int size, const char* fmt, va_list argptr)
 	return ret;
 }
 
+std::string va(const char* fmt, ...) {
+	std::string str;
+	int l;
+	va_list argptr;
+	char buffer[32000];
+
+	va_start(argptr, fmt);
+	l = idStr::vsnPrintf(buffer, sizeof(buffer) - 1, fmt, argptr);
+	va_end(argptr);
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	return buffer;
+}
+
 /*
 ============
 sprintf
