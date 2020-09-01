@@ -123,6 +123,7 @@
     <ClInclude Include="d3xp\Entity.h" />
     <ClInclude Include="d3xp\Game.h" />
     <ClInclude Include="d3xp\gamesys\Class.h" />
+    <ClInclude Include="d3xp\gamesys\SysCvar.h" />
     <ClInclude Include="d3xp\Game_local.h" />
     <ClInclude Include="d3xp\Misc.h" />
     <ClInclude Include="d3xp\physics\Clip.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="d3xp\GameEdit.cpp" />
     <ClCompile Include="d3xp\gamesys\Class.cpp" />
     <ClCompile Include="d3xp\gamesys\SysCmds.cpp" />
+    <ClCompile Include="d3xp\gamesys\SysCvar.cpp" />
     <ClCompile Include="d3xp\Game_local.cpp" />
     <ClCompile Include="d3xp\Game_network.cpp" />
     <ClCompile Include="d3xp\Misc.cpp" />

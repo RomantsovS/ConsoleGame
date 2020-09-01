@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Game_local.h"
+#include "gamesys/SysCvar.h"
 
 CLASS_DECLARATION(idActor, idPlayer)
 
@@ -161,7 +162,8 @@ idPlayer::AdjustSpeed
 ==============
 */
 void idPlayer::AdjustSpeed() {
-	physicsObj->SetSpeed(0.0f, 0.0f);
+	auto speed = pm_walkspeed.GetFloat();
+	physicsObj->SetSpeed(speed, 0.0f);
 }
 
 /*

@@ -23,7 +23,10 @@ std::vector<keyname_t> keynames = {
 	keyname_t({keyNum_t::K_SPACE, "SPACE", "#str_07021"}),
 	keyname_t({keyNum_t::K_TAB, "TAB", "#str_07018"}),
 	keyname_t({keyNum_t::K_F1, "F1", "#str_07018"}),
-	keyname_t({keyNum_t::K_UPARROW, "UPARROW", "#str_07023"})
+	keyname_t({keyNum_t::K_UPARROW, "UPARROW", "#str_07023"}),
+	keyname_t({keyNum_t::K_LEFTARROW, "LEFTARROW", "#str_07025"}),
+	keyname_t({keyNum_t::K_RIGHTARROW, "RIGHTARROW", "#str_07026"}),
+	keyname_t({keyNum_t::K_DOWNARROW, "DOWNARROW", "#str_07024"})
 };
 
 /*std::vector<keyname_t> keynames = {

@@ -66,16 +66,16 @@ void idPhysics_Player::WalkMove() {
 	idPhysics_Player::Friction();
 
 	if (command.forwardmove > 0) {
-		this->SetLinearVelocity(Vector2(1.0f, 0.0f));
+		this->SetLinearVelocity(Vector2(walkSpeed, 0.0f));
 	}
 	else if (command.forwardmove < 0) {
-		this->SetLinearVelocity(Vector2(-1.0f, 0.0f));
+		this->SetLinearVelocity(Vector2(-walkSpeed, 0.0f));
 	}
 	else if (command.rightmove > 0) {
-		this->SetLinearVelocity(Vector2(0.0f, 1.0f));
+		this->SetLinearVelocity(Vector2(0.0f, walkSpeed));
 	}
 	else if (command.rightmove < 0) {
-		this->SetLinearVelocity(Vector2(0.0f, -1.0f));
+		this->SetLinearVelocity(Vector2(0.0f, -walkSpeed));
 	}
 
 	idPhysics_Player::SlideMove();

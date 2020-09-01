@@ -8,6 +8,7 @@
 #include "../idlib/Str.h"
 #include "../framework/CmdSystem.h"
 #include "Player.h"
+#include "../framework/UsercmdGen.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -276,8 +277,8 @@ void idGameLocal::RunFrame()
 		lastTimePointSpawn = time;
 		
 		//if (activeEntities.IsListEmpty()) {
-			for (int i = 0; i < 1; ++i)
-				AddRandomPoint();
+			//for (int i = 0; i < 1; ++i)
+				//AddRandomPoint();
 		//}
 	}
 
@@ -340,7 +341,8 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 	// we are running < 60fps things like footstep sounds may get started right on top
 	// of each other instead of spread out in time.
 	if (player.IsLocallyControlled()) {
-			RunSingleUserCmd(player.usercmd, player);
+		auto cmd = usercmdGen->GetCurrentUsercmd();
+		RunSingleUserCmd(cmd, player);
 		return;
 	}
 }

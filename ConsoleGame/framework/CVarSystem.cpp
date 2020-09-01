@@ -249,7 +249,7 @@ idInternalCVar::Set
 void idInternalCVar::Set(std::string newValue, bool force, bool fromServer) {
 	if (/*common->IsMultiplayer() &&*/ !fromServer) {
 #ifndef ID_TYPEINFO
-		if ((flags & CVAR_NETWORKSYNC) /*&& common->IsClient()*/) {
+		if (/*(flags & CVAR_NETWORKSYNC) && common->IsClient()*/false) {
 			common->Printf("%s is a synced over the network and cannot be changed on a multiplayer client.\n", nameString.c_str());
 			return;
 		}

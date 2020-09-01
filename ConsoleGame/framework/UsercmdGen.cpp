@@ -211,8 +211,8 @@ void idUsercmdGenLocal::KeyMove() {
 	side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
 	side -= KEY_MOVESPEED * ButtonState(UB_MOVELEFT);
 
-	forward += KEY_MOVESPEED * ButtonState(UB_MOVEFORWARD);
-	forward -= KEY_MOVESPEED * ButtonState(UB_MOVEBACK);
+	forward -= KEY_MOVESPEED * ButtonState(UB_MOVEUP);
+	forward += KEY_MOVESPEED * ButtonState(UB_MOVEDOWN);
 
 	cmd.forwardmove += idMath::ClampChar(forward);
 	cmd.rightmove += idMath::ClampChar(side);
