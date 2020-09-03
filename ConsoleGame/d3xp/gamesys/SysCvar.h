@@ -3,6 +3,8 @@
 
 #include "../../framework/CVarSystem.h"
 
+extern idCVar g_showCollisionTraces;
+
 extern idCVar pm_walkspeed;
 
 #endif // !D3XP_GAMESYS_SYSCVAR_H_

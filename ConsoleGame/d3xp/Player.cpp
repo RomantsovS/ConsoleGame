@@ -106,13 +106,30 @@ idPlayer::SetClipModel
 ==============
 */
 void idPlayer::SetClipModel() {
-	idBounds bounds;
+	/*idBounds bounds;
 	bounds.Zero();
 	bounds.AddPoint(Vector2(1, 1));
 
 	auto newClip = std::make_shared<idClipModel>(idTraceModel(bounds));
-	newClip->Translate(physicsObj->PlayerGetOrigin());
-	physicsObj->SetClipModel(newClip, 1.0f);
+	newClip->Translate(physicsObj->PlayerGetOrigin());*/
+
+	idTraceModel trm;
+	std::string clipModelName;
+
+	// check if a clip model is set
+	spawnArgs.GetString("clipmodel", "", &clipModelName);
+	if (!clipModelName[0]) {
+		clipModelName = spawnArgs.GetString("model");		// use the visual model
+	}
+
+	if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
+		gameLocal.Error("idSimpleObject '%s': cannot load collision model %s", name, clipModelName);
+		return;
+	}
+
+	auto newClip = std::make_shared<idClipModel>(trm);
+
+	physicsObj->SetClipModel(newClip, 0.0f);
 }
 
 /*

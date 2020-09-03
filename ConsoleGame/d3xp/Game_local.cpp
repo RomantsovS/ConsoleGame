@@ -9,6 +9,7 @@
 #include "../framework/CmdSystem.h"
 #include "Player.h"
 #include "../framework/UsercmdGen.h"
+#include "gamesys/SysCvar.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -273,12 +274,12 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 10000) {
+	if (time - lastTimePointSpawn > 1000) {
 		lastTimePointSpawn = time;
 		
 		//if (activeEntities.IsListEmpty()) {
-			//for (int i = 0; i < 1; ++i)
-				//AddRandomPoint();
+			for (int i = 0; i < 1; ++i)
+				AddRandomPoint();
 		//}
 	}
 
@@ -531,9 +532,9 @@ void idGameLocal::RunDebugInfoScreen() {
 	if (!tr.update_frame)
 		return;
 
-	//if (g_showCollisionTraces.GetBool()) {
-	clip->DrawClipSectors();
-	//}
+	if (g_showCollisionTraces.GetBool()) {
+		clip->DrawClipSectors();
+	}
 }
 
 void idGameLocal::PrintSpawnedEntities()
@@ -766,7 +767,7 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
-	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-1.0f, 1.0f), gameLocal.GetRandomValue(-1.0f, 1.0f)).ToString());
 	//args.Set("linearVelocity", (Vector2(0.0f, 0.10f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
