@@ -767,7 +767,7 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
-	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-1.0f, 1.0f), gameLocal.GetRandomValue(-1.0f, 1.0f)).ToString());
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
 	//args.Set("linearVelocity", (Vector2(0.0f, 0.10f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
