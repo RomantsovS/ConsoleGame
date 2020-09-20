@@ -53,6 +53,13 @@ public:	// common physics interface
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
 	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
 
+	void DisableClip() override;
+	void EnableClip() override;
+
+	void UnlinkClip() override;
+	void LinkClip() override;
+
+	bool EvaluateContacts() override;
 	void ClearContacts() override;
 	virtual void AddContactEntity(std::shared_ptr<idEntity> e) override;
 	virtual void RemoveContactEntity(std::shared_ptr<idEntity> e) override;

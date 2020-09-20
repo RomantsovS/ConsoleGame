@@ -3,6 +3,7 @@
 #include "../../idlib/math/Math.h"
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_RigidBody)
+END_CLASS
 
 /*
 ================
@@ -88,7 +89,9 @@ void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float
 		clipModel = nullptr;
 	}
 	clipModel = model;
-	clipModel->Link(gameLocal.clip, self.lock(), 0, current.i.position);
+	if (clipModel) {
+		clipModel->Link(gameLocal.clip, self.lock(), 0, current.i.position);
+	}
 
 	current.i.linearMomentum.Zero();
 }
@@ -206,7 +209,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	}
 
 	if (current.atRest < 0) {
-		//ActivateContactEntities();
+		ActivateContactEntities();
 	}
 
 	if (collided) {
@@ -292,8 +295,43 @@ const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const
 	return curLinearVelocity;
 }
 
-bool idPhysics_RigidBody::EvaluateContacts()
-{
+/*
+================
+idPhysics_RigidBody::DisableClip
+================
+*/
+void idPhysics_RigidBody::DisableClip() {
+	clipModel->Disable();
+}
+
+/*
+================
+idPhysics_RigidBody::EnableClip
+================
+*/
+void idPhysics_RigidBody::EnableClip() {
+	clipModel->Enable();
+}
+
+/*
+================
+idPhysics_RigidBody::UnlinkClip
+================
+*/
+void idPhysics_RigidBody::UnlinkClip() {
+	clipModel->Unlink();
+}
+
+/*
+================
+idPhysics_RigidBody::LinkClip
+================
+*/
+void idPhysics_RigidBody::LinkClip() {
+	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+}
+
+bool idPhysics_RigidBody::EvaluateContacts() {
 	Vector2 dir;
 
 	ClearContacts();

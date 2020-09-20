@@ -123,6 +123,7 @@
     <ClInclude Include="d3xp\Entity.h" />
     <ClInclude Include="d3xp\Game.h" />
     <ClInclude Include="d3xp\gamesys\Class.h" />
+    <ClInclude Include="d3xp\gamesys\Event.h" />
     <ClInclude Include="d3xp\gamesys\SysCvar.h" />
     <ClInclude Include="d3xp\Game_local.h" />
     <ClInclude Include="d3xp\Misc.h" />
@@ -147,6 +148,7 @@
     <ClInclude Include="framework\UsercmdGen.h" />
     <ClInclude Include="idlib\bv\Bounds.h" />
     <ClInclude Include="idlib\CmdArgs.h" />
+    <ClInclude Include="idlib\containers\Hierarchy.h" />
     <ClInclude Include="idlib\containers\LinkList.h" />
     <ClInclude Include="idlib\Dict.h" />
     <ClInclude Include="idlib\geometry\TraceModel.h" />
@@ -185,6 +187,7 @@
     <ClCompile Include="d3xp\Game.cpp" />
     <ClCompile Include="d3xp\GameEdit.cpp" />
     <ClCompile Include="d3xp\gamesys\Class.cpp" />
+    <ClCompile Include="d3xp\gamesys\Event.cpp" />
     <ClCompile Include="d3xp\gamesys\SysCmds.cpp" />
     <ClCompile Include="d3xp\gamesys\SysCvar.cpp" />
     <ClCompile Include="d3xp\Game_local.cpp" />

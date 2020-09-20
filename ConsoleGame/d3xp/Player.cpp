@@ -3,6 +3,7 @@
 #include "gamesys/SysCvar.h"
 
 CLASS_DECLARATION(idActor, idPlayer)
+END_CLASS
 
 idPlayer::idPlayer() {
 }
@@ -98,6 +99,20 @@ void idPlayer::SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_an
 	// run a client frame to drop exactly to the floor,
 	// initialize animations and other things
 	Think();
+}
+
+/*
+==============
+idPlayer::Collide
+==============
+*/
+bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) {
+	auto other = gameLocal.entities[collision.c.entityNum];
+	if (other) {
+		other->PostEventMS(&EV_Remove, 0);
+		//gameLocal.AddRandomPoint();
+	}
+	return false;
 }
 
 /*

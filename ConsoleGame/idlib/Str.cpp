@@ -24,6 +24,27 @@ std::string idStr::GetFromValue<float>(const float i)
 	return std::string(text);
 }
 
+/*
+=============
+idStr::Copynz
+
+Safe strncpy that ensures a trailing zero
+=============
+*/
+void idStr::Copynz(char* dest, const char* src, int destsize) {
+	if (!src) {
+		//common->Warning("idStr::Copynz: NULL src");
+		return;
+	}
+	if (destsize < 1) {
+		//common->Warning("idStr::Copynz: destsize < 1");
+		return;
+	}
+
+	strncpy_s(dest, destsize - 1, src, 256);
+	dest[destsize - 1] = 0;
+}
+
 int idStr::vsnPrintf(char* dest, int size, const char* fmt, va_list argptr)
 {
 	int ret = vsnprintf_s(dest, size, size, fmt, argptr);

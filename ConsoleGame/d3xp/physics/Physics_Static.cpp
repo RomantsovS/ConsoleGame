@@ -2,6 +2,7 @@
 #include "../../d3xp/Game_local.h"
 
 CLASS_DECLARATION(idPhysics, idPhysics_Static)
+END_CLASS
 
 idPhysics_Static::idPhysics_Static()
 {
@@ -267,14 +268,64 @@ const Vector2& idPhysics_Static::GetLinearVelocity(int id) const {
 	return vec2_origin;
 }
 
-void idPhysics_Static::ClearContacts()
-{
+/*
+================
+idPhysics_Static::DisableClip
+================
+*/
+void idPhysics_Static::DisableClip() {
+	if (clipModel) {
+		clipModel->Disable();
+	}
 }
 
-void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e)
-{
+/*
+================
+idPhysics_Static::EnableClip
+================
+*/
+void idPhysics_Static::EnableClip() {
+	if (clipModel) {
+		clipModel->Enable();
+	}
 }
 
-void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e)
-{
+/*
+================
+idPhysics_Static::UnlinkClip
+================
+*/
+void idPhysics_Static::UnlinkClip() {
+	if (clipModel) {
+		clipModel->Unlink();
+	}
+}
+
+/*
+================
+idPhysics_Static::LinkClip
+================
+*/
+void idPhysics_Static::LinkClip() {
+	if (clipModel) {
+		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	}
+}
+
+/*
+================
+idPhysics_Static::EvaluateContacts
+================
+*/
+bool idPhysics_Static::EvaluateContacts() {
+	return false;
+}
+
+void idPhysics_Static::ClearContacts() {
+}
+
+void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e) {
+}
+
+void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e) {
 }

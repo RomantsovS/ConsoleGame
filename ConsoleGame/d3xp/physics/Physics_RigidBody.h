@@ -84,6 +84,12 @@ public:	// common physics interface
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
 	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
 
+	void DisableClip();
+	void EnableClip();
+
+	void UnlinkClip();
+	void LinkClip();
+
 	bool EvaluateContacts();
 private:
 	// state of the rigid body

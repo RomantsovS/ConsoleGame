@@ -29,6 +29,8 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LINKLIST_H__
 #define __LINKLIST_H__
 
+#include <memory>
+
 /*
 ==============================================================================
 
@@ -43,7 +45,7 @@ template< class type >
 class idLinkList {
 public:
 	idLinkList();
-	~idLinkList();
+	virtual ~idLinkList();
 
 	bool				IsListEmpty() const;
 	bool				InList() const;

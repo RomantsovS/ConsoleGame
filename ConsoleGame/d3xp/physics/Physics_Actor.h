@@ -38,10 +38,13 @@ public:	// common physics interface
 
 	const Vector2& GetOrigin(int id = 0) const override;
 
-	void DisableClip();
-	void EnableClip();
+	void DisableClip() override;
+	void EnableClip() override;
 
-	bool EvaluateContacts();
+	void UnlinkClip() override;
+	void LinkClip() override;
+
+	bool EvaluateContacts() override;
 
 protected:
 	std::shared_ptr<idClipModel> clipModel;			// clip model used for collision detection

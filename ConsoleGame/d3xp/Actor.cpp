@@ -2,17 +2,15 @@
 #include "Game_local.h"
 
 CLASS_DECLARATION(idEntity, idActor)
+END_CLASS
 
-idActor::idActor()
-{
+idActor::idActor() {
 }
 
-idActor::~idActor()
-{
+idActor::~idActor() {
 }
 
-void idActor::Spawn()
-{
+void idActor::Spawn() {
 	// spawn any attachments we might have
 	auto kv = spawnArgs.MatchPrefix("def_attach");
 	while (kv)
@@ -41,8 +39,7 @@ void idActor::Spawn()
 idActor::Attach
 ================
 */
-void idActor::Attach(std::shared_ptr<idEntity> ent)
-{
+void idActor::Attach(std::shared_ptr<idEntity> ent) {
 	Vector2 origin;
 	idAttachInfo attach;
 	attachments.push_back(attach);

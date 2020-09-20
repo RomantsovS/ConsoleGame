@@ -44,6 +44,7 @@ void idGameLocal::Init()
 
 	clip = std::make_shared<idClip>();
 
+	idEvent::Init();
 	idClass::Init();
 
 	InitConsoleCommands();
@@ -96,10 +97,12 @@ void idGameLocal::Shutdown()
 
 	MapShutdown();
 
-	// free the collision map
-	collisionModelManager->FreeMap();
+	idEvent::Shutdown();
 
 	idClass::Shutdown();
+
+	// free the collision map
+	collisionModelManager->FreeMap();
 
 	ShutdownConsoleCommands();
 
@@ -278,8 +281,8 @@ void idGameLocal::RunFrame()
 		lastTimePointSpawn = time;
 		
 		//if (activeEntities.IsListEmpty()) {
-			for (int i = 0; i < 1; ++i)
-				AddRandomPoint();
+			//for (int i = 0; i < 1; ++i)
+				//AddRandomPoint();
 		//}
 	}
 
@@ -301,6 +304,9 @@ void idGameLocal::RunFrame()
 		}
 		numEntitiesToDeactivate = 0;
 	}
+
+	// service any pending events
+	idEvent::ServiceEvents();
 
 	// show any debug info for this frame
 	RunDebugInfoScreen();
@@ -713,7 +719,13 @@ void idGameLocal::MapPopulate()
 	// parse the key/value pairs and spawn entities
 	SpawnMapEntities();
 
-	for(int i = 0; i < 1; ++i)
+	// execute pending events before the very first game frame
+	// this makes sure the map script main() function is called
+	// before the physics are run so entities can bind correctly
+	Printf("==== Processing events ====\n");
+	idEvent::ServiceEvents();
+
+	for(int i = 0; i < 10; ++i)
 		AddRandomPoint();
 }
 
@@ -722,13 +734,8 @@ void idGameLocal::MapClear(bool clearClients)
 	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++) {
 		auto ent = entities[i];
 
-		if (ent)
-		{
-			//ent->activeNode.SetOwner(nullptr);
-			//ent->spawnNode.SetOwner(nullptr);
-			ent->FreeModelDef();
-			gameLocal.UnregisterEntity(ent);
-			//ent->GetPhysics()->SetSelf(nullptr);
+		if (ent) {
+			ent->Remove();
 		}
 
 	}
@@ -773,6 +780,9 @@ void idGameLocal::AddRandomPoint()
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {
 		Warning("Failed to spawn random point as '%s'", args.GetString("classname").c_str());
+	}
+	else {
+		//ent->PostEventMS(&EV_Remove, 1000);
 	}
 }
 
@@ -926,10 +936,15 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 
 void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
 {
-	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent))
-	{
+	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent)) {
 		ent->spawnNode.Remove();
 		entities[ent->entityNumber] = nullptr;
+
+		int freeListType = (ent->entityNumber >= ENTITYNUM_FIRST_NON_REPLICATED) ? 1 : 0;
+
+		if (ent->entityNumber >= MAX_CLIENTS && ent->entityNumber < firstFreeEntityIndex[freeListType]) {
+			firstFreeEntityIndex[freeListType] = ent->entityNumber;
+		}
 
 		ent->entityNumber = ENTITYNUM_NONE;
 	}

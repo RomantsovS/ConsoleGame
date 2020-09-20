@@ -2,6 +2,7 @@
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics, idPhysics_Base)
+END_CLASS
 
 idPhysics_Base::idPhysics_Base() {
 	self.reset();
@@ -130,6 +131,47 @@ idPhysics_Base::GetLinearVelocity
 */
 const Vector2& idPhysics_Base::GetLinearVelocity(int id) const {
 	return vec2_origin;
+}
+
+/*
+================
+idPhysics_Base::DisableClip
+================
+*/
+void idPhysics_Base::DisableClip() {
+}
+
+/*
+================
+idPhysics_Base::EnableClip
+================
+*/
+void idPhysics_Base::EnableClip() {
+}
+
+/*
+================
+idPhysics_Base::UnlinkClip
+================
+*/
+void idPhysics_Base::UnlinkClip() {
+}
+
+/*
+================
+idPhysics_Base::LinkClip
+================
+*/
+void idPhysics_Base::LinkClip() {
+}
+
+/*
+================
+idPhysics_Base::EvaluateContacts
+================
+*/
+bool idPhysics_Base::EvaluateContacts() {
+	return false;
 }
 
 void idPhysics_Base::ClearContacts()

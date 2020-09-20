@@ -17,6 +17,8 @@ static std::map<int, int> traceModelHash;
 static std::map<int, int> traceModelHash_Unsaved;
 const static int TRACE_MODEL_SAVED = BIT(16);
 
+//#define DEBUG_PRINT_Ctor_Dtor
+
 idClipModel::idClipModel()
 {
 #ifdef DEBUG_PRINT_Ctor_Dtor

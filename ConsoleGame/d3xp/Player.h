@@ -24,6 +24,8 @@ public:
 	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
 	void SetClipModel();	// spectator mode uses a different bbox size
 
+	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+
 	void HandleUserCmds(const usercmd_t& newcmd);
 
 	bool IsLocallyControlled() const;

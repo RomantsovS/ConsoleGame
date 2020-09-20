@@ -2,6 +2,7 @@
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_Actor)
+END_CLASS
 
 /*
 ================
@@ -109,6 +110,24 @@ idPhysics_Actor::EnableClip
 */
 void idPhysics_Actor::EnableClip() {
 	clipModel->Enable();
+}
+
+/*
+================
+idPhysics_Actor::UnlinkClip
+================
+*/
+void idPhysics_Actor::UnlinkClip() {
+	clipModel->Unlink();
+}
+
+/*
+================
+idPhysics_Actor::LinkClip
+================
+*/
+void idPhysics_Actor::LinkClip() {
+	clipModel->Link(gameLocal.clip, self.lock(), 0, clipModel->GetOrigin());
 }
 
 /*

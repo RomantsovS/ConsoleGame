@@ -225,6 +225,12 @@
     <ClInclude Include="d3xp\gamesys\SysCvar.h">
       <Filter>d3xp\GameSys</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\gamesys\Event.h">
+      <Filter>d3xp\GameSys</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\containers\Hierarchy.h">
+      <Filter>idlib\Containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp">
@@ -426,6 +432,9 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\gamesys\SysCvar.cpp">
+      <Filter>d3xp\GameSys</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\gamesys\Event.cpp">
       <Filter>d3xp\GameSys</Filter>
     </ClCompile>
   </ItemGroup>

@@ -61,13 +61,17 @@ public: // common physics interface
 	// get linear and angular velocity
 	virtual const Vector2& GetLinearVelocity(int id = 0) const = 0;
 
+	virtual void DisableClip() = 0;
+	virtual void EnableClip() = 0;
+	// link/unlink the clip models contained by this physics object
+	virtual void UnlinkClip() = 0;
+	virtual void LinkClip() = 0;
+	// contacts
+	virtual bool EvaluateContacts() = 0;
+
 	virtual void ClearContacts() = 0;
 	virtual void AddContactEntity(std::shared_ptr<idEntity> e) = 0;
 	virtual void RemoveContactEntity(std::shared_ptr<idEntity> e) = 0;
-
-	/*virtual bool checkCollide(const Game &Game) const = 0;
-	virtual bool checkCollide(std::shared_ptr<Point> point) = 0;
-	virtual bool checkCollide(const pos_type pos) const = 0;*/
 };
 
 #endif

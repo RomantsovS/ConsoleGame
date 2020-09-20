@@ -3,6 +3,7 @@
 #include "../renderer/ModelManager.h"
 
 ABSTRACT_DECLARATION(idClass, idEntity)
+END_CLASS
 
 idEntity::idEntity() :
 	originDelta(vec2_origin)
@@ -17,20 +18,14 @@ idEntity::idEntity() :
 	modelDefHandle = -1;
 }
 
-idEntity::~idEntity()
-{
+idEntity::~idEntity() {
 	if (thinkFlags) {
 		BecomeInactive(thinkFlags);
 	}
 	activeNode.Remove();
-
-	// we have to set back the default physics object before unbinding because the entity
-	// specific physics object might be an entity variable and as such could already be destroyed.
-	SetPhysics(nullptr);
 }
 
-void idEntity::Spawn()
-{
+void idEntity::Spawn() {
 	std::string temp;
 	Vector2 origin;
 	Vector2 axis;
@@ -64,13 +59,24 @@ void idEntity::Spawn()
 	}
 }
 
+void idEntity::Remove() {
+	// we have to set back the default physics object before unbinding because the entity
+	// specific physics object might be an entity variable and as such could already be destroyed.
+	SetPhysics(nullptr);
+
+	defaultPhysicsObj->SetClipModel(nullptr, 1.0);
+	defaultPhysicsObj = nullptr;
+
+	FreeModelDef();
+	gameLocal.UnregisterEntity(shared_from_this());
+}
+
 /*
 ================
 idEntity::SetName
 ================
 */
-void idEntity::SetName(const std::string newname)
-{
+void idEntity::SetName(const std::string newname) {
 	name = newname;
 }
 
@@ -84,8 +90,7 @@ const std::string idEntity::GetName() const
 	return name;
 }
 
-void idEntity::Think()
-{
+void idEntity::Think() {
 	RunPhysics();
 	Present();
 }
@@ -94,8 +99,7 @@ void idEntity::Think()
 idEntity::IsActive
 ================
 */
-bool idEntity::IsActive() const
-{
+bool idEntity::IsActive() const {
 	return activeNode.InList();
 }
 
@@ -104,8 +108,7 @@ bool idEntity::IsActive() const
 idEntity::BecomeActive
 ================
 */
-void idEntity::BecomeActive(int flags)
-{
+void idEntity::BecomeActive(int flags) {
 	int oldFlags = thinkFlags;
 	thinkFlags |= flags;
 	if (thinkFlags) {
@@ -124,8 +127,7 @@ void idEntity::BecomeActive(int flags)
 idEntity::BecomeInactive
 ================
 */
-void idEntity::BecomeInactive(int flags)
-{
+void idEntity::BecomeInactive(int flags) {
 	if (thinkFlags) {
 		thinkFlags &= ~flags;
 		if (!thinkFlags && IsActive()) {
@@ -139,8 +141,7 @@ void idEntity::BecomeInactive(int flags)
 	}
 }
 
-void idEntity::Present()
-{
+void idEntity::Present() {
 	/*if (!gameLocal.isNewFrame) {
 		return;
 	}*/
@@ -354,11 +355,11 @@ void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent)
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 {
-	/*const char *temp;
-	idClipModel *clipModel = NULL;
+	//const char *temp;
+	std::shared_ptr<idClipModel> clipModel;
 
 	// check if a clipmodel key/value pair is set
-	if (spawnArgs.GetString("clipmodel", "", &temp)) {
+	/*if (spawnArgs.GetString("clipmodel", "", &temp)) {
 		if (idClipModel::CheckModel(temp)) {
 			clipModel = new (TAG_PHYSICS_CLIP_ENTITY) idClipModel(temp);
 		}
@@ -418,7 +419,7 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 
 	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
 	defaultPhysicsObj->SetSelf(shared_from_this());
-	//defaultPhysicsObj.SetClipModel(clipModel, 1.0f);
+	defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);
 	defaultPhysicsObj->SetAxis(axis);
 

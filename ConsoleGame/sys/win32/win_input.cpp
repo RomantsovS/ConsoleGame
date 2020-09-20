@@ -27,7 +27,7 @@ Sys_InitInput
 ===========
 */
 void Sys_InitInput() {
-	common->Printf("\n------- Input Initialization -------\n");
+	common->Printf("------- Input Initialization -------\n");
 
 	IN_StartupKeyboard();
 

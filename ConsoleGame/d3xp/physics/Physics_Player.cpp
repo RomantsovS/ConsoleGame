@@ -2,6 +2,7 @@
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics_Actor, idPhysics_Player)
+END_CLASS
 
 /*
 ==================

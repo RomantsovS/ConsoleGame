@@ -2,14 +2,13 @@
 #include "Game_local.h"
 
 CLASS_DECLARATION(idEntity, idStaticEntity)
+END_CLASS
 
-idStaticEntity::idStaticEntity()
-{
+idStaticEntity::idStaticEntity() {
 	//spawnTime = 0;
 }
 
-idStaticEntity::~idStaticEntity()
-{
+idStaticEntity::~idStaticEntity() {
 }
 
 void idStaticEntity::Spawn()
@@ -17,23 +16,20 @@ void idStaticEntity::Spawn()
 	//spawnTime = gameLocal.time;
 }
 
-void idStaticEntity::Think()
-{
+void idStaticEntity::Think() {
 	idEntity::Think();
 }
 
 CLASS_DECLARATION(idEntity, idSimpleObject)
+END_CLASS
 
-idSimpleObject::idSimpleObject()
-{
+idSimpleObject::idSimpleObject() {
 }
 
-idSimpleObject::~idSimpleObject()
-{
+idSimpleObject::~idSimpleObject() {
 }
 
-void idSimpleObject::Spawn()
-{
+void idSimpleObject::Spawn() {
 	idTraceModel trm;
 	float density;
 	std::string clipModelName;
@@ -63,18 +59,24 @@ void idSimpleObject::Spawn()
 	physicsObj->SetLinearVelocity(linearVelocity);
 }
 
-void idSimpleObject::Think()
-{
+void idSimpleObject::Think() {
 	idEntity::Think();
 }
 
-bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity)
-{
+void idSimpleObject::Remove() {
+	physicsObj->SetClipModel(nullptr, 0.0f);
+
+	physicsObj = nullptr;
+	idEntity::Remove();
+}
+
+bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity) {
 	if (collision.c.entityNum == ENTITYNUM_WORLD) {
 		return true;
 	}
 	else {
 		auto ent = gameLocal.entities[collision.c.entityNum];
+
 		if (!ent->IsActive())
 			return true;
 	}
