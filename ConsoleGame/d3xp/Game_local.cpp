@@ -22,6 +22,9 @@ const size_t frame_time_min = 10;
 idCVar game_width("game_width", "80", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_height("game_height", "50", CVAR_SYSTEM | CVAR_INIT, "");
 
+idCVar game_add_point_delay("game_add_point_delay", "1000", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT, "");
+
 void AddRandomPoints(const idCmdArgs& args) {
 	for (int i = 0; i < 100; ++i)
 		gameLocal.AddRandomPoint();
@@ -277,13 +280,11 @@ void idGameLocal::RunFrame()
 	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > 1000) {
+	if (time - lastTimePointSpawn > game_add_point_delay.GetInteger()) {
 		lastTimePointSpawn = time;
 		
-		//if (activeEntities.IsListEmpty()) {
-			//for (int i = 0; i < 1; ++i)
-				AddRandomPoint();
-		//}
+		for (int i = 0; i < game_add_point_count.GetInteger(); ++i)
+			AddRandomPoint();
 	}
 
 	// let entities think

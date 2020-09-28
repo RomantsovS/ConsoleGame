@@ -6,7 +6,7 @@
 #include "../../idlib/math/Math.h"
 #include "../../idlib/math/Vector2.h"
 
-const size_t MAX_SECTOR_DEPTH = 4;
+const size_t MAX_SECTOR_DEPTH = 5;
 const size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
 
 Vector2 vec3_boxEpsilon(CM_BOX_EPSILON, CM_BOX_EPSILON);
