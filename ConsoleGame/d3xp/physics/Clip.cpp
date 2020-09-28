@@ -28,6 +28,16 @@ idClipModel::idClipModel()
 	Init();
 }
 
+/*
+================
+idClipModel::idClipModel
+================
+*/
+idClipModel::idClipModel(const std::string& name) {
+	Init();
+	LoadModel(name);
+}
+
 idClipModel::idClipModel(const idTraceModel& trm)
 {
 #ifdef DEBUG_PRINT_Ctor_Dtor
@@ -49,6 +59,29 @@ idClipModel::~idClipModel()
 	/*if (traceModelIndex != -1) {
 		FreeTraceModel(traceModelIndex);
 	}*/
+}
+
+/*
+================
+idClipModel::LoadModel
+================
+*/
+bool idClipModel::LoadModel(const std::string& name) {
+	renderModelHandle = -1;
+	if (traceModelIndex != -1) {
+		FreeTraceModel(traceModelIndex);
+		traceModelIndex = -1;
+	}
+	collisionModelHandle = collisionModelManager->LoadModel(name);
+	if (collisionModelHandle) {
+		collisionModelManager->GetModelBounds(collisionModelHandle, bounds);
+		collisionModelManager->GetModelContents(collisionModelHandle, contents);
+		return true;
+	}
+	else {
+		bounds.Zero();
+		return false;
+	}
 }
 
 void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
@@ -110,6 +143,15 @@ void idClipModel::Link(std::shared_ptr<idClip>& clp, std::shared_ptr<idEntity> e
 		}
 	}
 	this->Link(clp);
+}
+
+/*
+============
+idClipModel::CheckModel
+============
+*/
+int idClipModel::CheckModel(const std::string& name) {
+	return collisionModelManager->LoadModel(name);
 }
 
 void idClipModel::Unlink()

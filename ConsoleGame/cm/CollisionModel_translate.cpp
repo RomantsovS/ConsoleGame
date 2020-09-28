@@ -95,7 +95,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 
 	// if case special position test
 	if (start[0] == end[0] && start[1] == end[1]) {
-		//idCollisionModelManagerLocal::ContentsTrm(results, start, trm, contentMask, model, modelOrigin);
+		idCollisionModelManagerLocal::ContentsTrm(results, start, trm, contentMask, model, modelOrigin);
 		return;
 	}
 

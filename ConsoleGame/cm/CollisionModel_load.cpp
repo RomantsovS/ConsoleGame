@@ -291,6 +291,22 @@ bool idCollisionModelManagerLocal::GetModelBounds(int model, idBounds& bounds) c
 	return true;
 }
 
+/*
+===================
+idCollisionModelManagerLocal::GetModelContents
+===================
+*/
+bool idCollisionModelManagerLocal::GetModelContents(int model, int& contents) const {
+	if (model < 0 || model > MAX_SUBMODELS || model >= numModels || !models[model]) {
+		common->Printf("idCollisionModelManagerLocal::GetModelContents: invalid model handle\n");
+		return false;
+	}
+
+	contents = models[model]->contents;
+
+	return true;
+}
+
 std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::AllocModel()
 {
 	auto model = std::make_shared<cm_model_t>();
@@ -763,6 +779,7 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::LoadBinaryModelFromFil
 		brushes[i] = AllocBrush(model);
 		brushes[i]->bounds.Zero();
 		brushes[i]->bounds.AddPoint(vec2_point_size);
+		brushes[i]->contents = -1;
 	}
 
 	struct local {

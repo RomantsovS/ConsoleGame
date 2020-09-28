@@ -71,9 +71,11 @@ class idClipModel : public std::enable_shared_from_this<idClipModel>{
 	friend class idClip;
 public:
 	idClipModel();
+	explicit idClipModel(const std::string& name);
 	explicit idClipModel(const idTraceModel& trm);
 	~idClipModel();
 
+	bool LoadModel(const std::string&  name);
 	void LoadModel(const idTraceModel& trm, bool persistantThroughSave = true);
 
 	void Link(std::shared_ptr<idClip>& clp);				// must have been linked with an entity and id before
@@ -96,6 +98,7 @@ public:
 	bool IsTraceModel() const; // returns true if this is a trace model
 	int Handle() const; // returns handle used to collide vs this model
 
+	static int CheckModel(const std::string& name);
 	static void ClearTraceModelCache();
 private:
 	bool enabled; // true if this clip model is used for clipping

@@ -79,3 +79,15 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, std::
 	}
 	return false;
 }
+
+/*
+==================
+idCollisionModelManagerLocal::ContentsTrm
+==================
+*/
+int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& start,
+	const std::shared_ptr<idTraceModel> trm, int contentMask,
+	int model, const Vector2& modelOrigin) {
+	results->fraction = (results->c.contents == 0);
+	return results->c.contents;
+}

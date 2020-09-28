@@ -282,7 +282,7 @@ void idGameLocal::RunFrame()
 		
 		//if (activeEntities.IsListEmpty()) {
 			//for (int i = 0; i < 1; ++i)
-				//AddRandomPoint();
+				AddRandomPoint();
 		//}
 	}
 
@@ -383,12 +383,15 @@ void idGameLocal::RunDebugInfo() {
 
 	char buf[256];
 	
-	size_t num_active_entities = 0;
+	size_t num_spawned_entities = 0, num_active_entities = 0;
+
+	for (auto ent = spawnedEntities.Prev(); ent != NULL; ent = ent->spawnNode.Prev())
+		++num_spawned_entities;
 
 	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
 		++num_active_entities;
 
-	sprintf_s(buf, "num ents %3d, active ents %3d", num_entities - MAX_CLIENTS, num_active_entities);
+	sprintf_s(buf, "num ents %3d, active ents %3d", num_spawned_entities, num_active_entities);
 
 	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
 
@@ -725,7 +728,7 @@ void idGameLocal::MapPopulate()
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
 
-	for(int i = 0; i < 10; ++i)
+	for(int i = 0; i < 1; ++i)
 		AddRandomPoint();
 }
 
@@ -744,7 +747,7 @@ void idGameLocal::MapClear(bool clearClients)
 void idGameLocal::AddRandomPoint()
 {
 	Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
-	//Vector2 origin = { 10.0f, 5.990f };
+	//Vector2 origin = { 0.0f, 1.0f };
 	Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
@@ -765,13 +768,18 @@ void idGameLocal::AddRandomPoint()
 
 	idDict args;
 
-	args.Set("classname", "idSimpleObject");
-	args.Set("spawnclass", "idSimpleObject");
-	//args.Set("classname", "idStaticEntity");
-	//args.Set("spawnclass", "idStaticEntity");
+	if (GetRandomValue(0, 10)) {
+		args.Set("classname", "idSimpleObject");
+		args.Set("spawnclass", "idSimpleObject");
+	}
+	else {
+		args.Set("classname", "idStaticEntity");
+		args.Set("spawnclass", "idStaticEntity");
+	}
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
+	args.Set("clipmodel", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	//args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
 	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());

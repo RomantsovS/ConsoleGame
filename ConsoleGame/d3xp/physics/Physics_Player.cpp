@@ -41,7 +41,9 @@ bool idPhysics_Player::SlideMove() {
 
 		if (true) {
 			// let the entity know about the collision
-			self.lock()->Collide(trace, current.velocity);
+			if (self.lock()->Collide(trace, current.velocity)) {
+				current.origin = end;
+			}
 		}
 	}
 
@@ -154,7 +156,7 @@ bool idPhysics_Player::Evaluate(int timeStepMSec, int endTimeMSec) {
 	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
 
 	if (IsOutsideWorld()) {
-		gameLocal.Warning("clip model outside world bounds for entity '%s' at (%s)", self.lock()->name.c_str(), current.origin.ToString(0));
+		gameLocal.Warning("clip model outside world bounds for entity '%s' at (%s)", self.lock()->name.c_str(), current.origin.ToString(0).c_str());
 	}
 
 	return true; //( current.origin != oldOrigin );

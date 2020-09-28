@@ -61,7 +61,8 @@ public:
 
 	// Gets the bounds of a model.
 	virtual bool GetModelBounds(int model, idBounds& bounds) const = 0;
-
+	// Gets all contents flags of brushes and polygons of a model ored together.
+	virtual bool GetModelContents(int model, int& contents) const = 0;
 	// translates a trm and reports the first collision if any
 	virtual void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) = 0;

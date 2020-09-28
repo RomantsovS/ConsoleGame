@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Game_local.h"
 #include "gamesys/SysCvar.h"
+#include "Misc.h"
 
 CLASS_DECLARATION(idActor, idPlayer)
 END_CLASS
@@ -109,8 +110,12 @@ idPlayer::Collide
 bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
-		other->PostEventMS(&EV_Remove, 0);
-		//gameLocal.AddRandomPoint();
+		if (other->IsType(idSimpleObject::Type)) {
+			other->PostEventMS(&EV_Remove, 0);
+			return true;
+		}
+		else if (other->IsType(idStaticEntity::Type)) {
+		}
 	}
 	return false;
 }

@@ -355,17 +355,17 @@ void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent)
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 {
-	//const char *temp;
+	std::string temp;
 	std::shared_ptr<idClipModel> clipModel;
 
 	// check if a clipmodel key/value pair is set
-	/*if (spawnArgs.GetString("clipmodel", "", &temp)) {
+	if (spawnArgs.GetString("clipmodel", "", &temp)) {
 		if (idClipModel::CheckModel(temp)) {
-			clipModel = new (TAG_PHYSICS_CLIP_ENTITY) idClipModel(temp);
+			clipModel = std::make_shared<idClipModel>(temp);
 		}
 	}
 
-	if (!spawnArgs.GetBool("noclipmodel", "0")) {
+	/*if (!spawnArgs.GetBool("noclipmodel", "0")) {
 
 		// check if mins/maxs or size key/value pairs are set
 		if (!clipModel) {

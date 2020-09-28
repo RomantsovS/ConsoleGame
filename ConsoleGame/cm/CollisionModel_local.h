@@ -195,7 +195,8 @@ public:
 
 	// bounds of the model
 	bool GetModelBounds(int model, idBounds& bounds) const override;
-
+	// all contents flags of brushes and polygons ored together
+	bool GetModelContents(int model, int& contents) const override;
 	// translates a trm and reports the first collision if any
 	void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) override;
@@ -210,6 +211,9 @@ private:			// CollisionMap_translate.cpp
 		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin);
 private:			// CollisionMap_contents.cpp
 	bool TestTrmVertsInBrush(cm_traceWork_t* tw, std::shared_ptr<cm_brush_t> b);
+	int ContentsTrm(trace_t* results, const Vector2& start,
+		const std::shared_ptr<idTraceModel> trm, int contentMask,
+		int model, const Vector2& modelOrigin);
 private:			// CollisionMap_trace.cpp
 	void TraceTrmThroughNode(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node);
 	void TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node, float p1f, float p2f, Vector2& p1, Vector2& p2);
