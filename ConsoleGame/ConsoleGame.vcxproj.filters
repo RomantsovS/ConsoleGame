@@ -231,6 +231,9 @@
     <ClInclude Include="idlib\containers\Hierarchy.h">
       <Filter>idlib\Containers</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\AFEntity.h">
+      <Filter>d3xp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp">
@@ -436,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="d3xp\gamesys\Event.cpp">
       <Filter>d3xp\GameSys</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\AFEntity.cpp">
+      <Filter>d3xp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

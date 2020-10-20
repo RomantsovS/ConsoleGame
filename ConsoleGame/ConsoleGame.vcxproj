@@ -119,6 +119,7 @@
     <ClInclude Include="cm\CollisionModel.h" />
     <ClInclude Include="cm\CollisionModel_local.h" />
     <ClInclude Include="d3xp\Actor.h" />
+    <ClInclude Include="d3xp\AFEntity.h" />
     <ClInclude Include="d3xp\ai\AI.h" />
     <ClInclude Include="d3xp\Entity.h" />
     <ClInclude Include="d3xp\Game.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="cm\CollisionModel_trace.cpp" />
     <ClCompile Include="cm\CollisionModel_translate.cpp" />
     <ClCompile Include="d3xp\Actor.cpp" />
+    <ClCompile Include="d3xp\AFEntity.cpp" />
     <ClCompile Include="d3xp\ai\AI.cpp" />
     <ClCompile Include="d3xp\Entity.cpp" />
     <ClCompile Include="d3xp\Game.cpp" />
