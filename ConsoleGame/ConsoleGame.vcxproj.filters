@@ -234,6 +234,9 @@
     <ClInclude Include="d3xp\AFEntity.h">
       <Filter>d3xp</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\physics\Physics_AF.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp">
@@ -442,6 +445,9 @@
     </ClCompile>
     <ClCompile Include="d3xp\AFEntity.cpp">
       <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\physics\Physics_AF.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

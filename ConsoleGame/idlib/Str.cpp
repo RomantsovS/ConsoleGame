@@ -89,6 +89,7 @@ int sprintf(std::string& string, const char* fmt, ...) {
 	buffer[sizeof(buffer) - 1] = '\0';
 
 	string = buffer;
+
 	return l;
 }
 

@@ -114,8 +114,8 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	tw.maxContacts = idCollisionModelManagerLocal::maxContacts;
 	tw.numContacts = 0;
 	tw.model = idCollisionModelManagerLocal::models[model];
-	tw.start = start - modelOrigin.GetIntegerVectorFloor();
-	tw.end = end - modelOrigin.GetIntegerVectorFloor();
+	tw.start = start.GetIntegerVectorFloor() - modelOrigin.GetIntegerVectorFloor();
+	tw.end = end.GetIntegerVectorFloor() - modelOrigin.GetIntegerVectorFloor();
 	tw.dir = end - start;
 
 	// the trace fraction is too inaccurate to describe translations over huge distances
@@ -154,24 +154,16 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		// get axial trm size after rotations
 		tw.size.AddPoint(vert->p - tw.start);
 		// calculate the end position of each vertex for a full trace
-		vert->endp = vert->p + tw.dir;
+		vert->endp = tw.end;
 
-		for (i = 0; i < 2; ++i)
-		{
-			if (tw.dir[i] > 0)
-			{
+		for (i = 0; i < 2; i++) {
+			if (tw.start[i] < tw.end[i]) {
 				vert->p[i] += CM_CLIP_EPSILON;
-				vert->endp[i] += CM_BOX_EPSILON + CM_CLIP_EPSILON;
+				vert->endp[i] += CM_BOX_EPSILON;
 			}
-			else if (tw.dir[i] < 0)
-			{
-				vert->p[i] += CM_CLIP_EPSILON;
-				vert->endp[i] -= CM_BOX_EPSILON - CM_CLIP_EPSILON;
-			}
-			else
-			{
-				//vert->endp[i] += CM_BOX_EPSILON + CM_CLIP_EPSILON;
-				//vert->endp[i] -= CM_BOX_EPSILON - CM_CLIP_EPSILON;
+			else if (tw.start[i] > tw.end[i]) {
+				vert->p[i] -= CM_CLIP_EPSILON;
+				vert->endp[i] -= CM_BOX_EPSILON;
 			}
 		}
 
@@ -182,16 +174,21 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] + CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON + CM_CLIP_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i];// -CM_BOX_EPSILON;
+			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON;
 		}
 		else if(tw.start[i] > tw.end[i]) {
 			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.start[i];// +tw.size[1][i] + CM_BOX_EPSILON;
+			tw.bounds[1][i] = tw.start[i] +tw.size[1][i];
 		}
 		else {
-			tw.bounds[0][i] = tw.end[i] + CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.start[i] + CM_CLIP_EPSILON;
+			tw.bounds[0][i] = tw.start[i];
+			tw.bounds[1][i] = tw.start[i];
+
+			if (tw.start[i] >= CM_POINT_SIZE) {
+				tw.bounds[0][i] += CM_CLIP_EPSILON;
+				tw.bounds[1][i] += CM_CLIP_EPSILON;
+			}
 		}
 		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
 			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;

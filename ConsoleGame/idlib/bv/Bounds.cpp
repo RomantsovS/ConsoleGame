@@ -74,8 +74,8 @@ bool idBounds::LineIntersection(const Vector2& start, const Vector2& end) const 
 	bool contain_start = ContainsPoint(start);
 	bool contain_end = ContainsPoint(end);
 
-	return (contain_start && !contain_end) ||
-		(!contain_start && contain_end);
+	return ((contain_start && !contain_end) ||
+		(!contain_start && contain_end));
 
 	return true;
 }

@@ -5,7 +5,7 @@
 #include "../framework/UsercmdGen.h"
 #include "physics/Physics_Player.h"
 
-class idPlayer : public idActor	
+class idPlayer : public idActor
 {
 public:
 	usercmd_t usercmd;

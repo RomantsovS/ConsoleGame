@@ -13,6 +13,7 @@ public:
 	Vector2& operator[](const int index);
 	idBounds operator+(const Vector2& t) const;				// returns translated bounds
 	idBounds& operator+=(const Vector2& t);					// translate the bounds
+	idBounds& operator+=(const idBounds& a);
 
 	bool Compare(const idBounds& a) const;							// exact compare, no epsilon
 	bool operator==(const idBounds& a) const;						// exact compare, no epsilon
@@ -25,6 +26,7 @@ public:
 	bool IsCleared() const; // returns true if bounds are inside out
 
 	bool AddPoint(const Vector2& v); // add the point, returns true if the bounds expanded
+	bool AddBounds(const idBounds& a); // add the bounds, returns true if the bounds expanded
 	idBounds Expand(const float d) const; // return bounds expanded in all directions with the given value
 	idBounds& ExpandSelf(const float d); // expand bounds in all directions with the given value
 
@@ -41,18 +43,15 @@ private:
 	Vector2 b[2];
 };
 
-inline idBounds::idBounds()
-{
+inline idBounds::idBounds() {
 }
 
-inline idBounds::idBounds(const Vector2& mins, const Vector2& maxs)
-{
+inline idBounds::idBounds(const Vector2& mins, const Vector2& maxs) {
 	b[0] = mins;
 	b[1] = maxs;
 }
 
-inline idBounds::idBounds(const Vector2& point)
-{
+inline idBounds::idBounds(const Vector2& point) {
 	b[0] = point;
 	b[1] = point;
 }
@@ -72,6 +71,11 @@ inline idBounds idBounds::operator+(const Vector2& t) const {
 inline idBounds& idBounds::operator+=(const Vector2& t) {
 	b[0] += t;
 	b[1] += t;
+	return *this;
+}
+
+inline idBounds& idBounds::operator+=(const idBounds& a) {
+	idBounds::AddBounds(a);
 	return *this;
 }
 
@@ -123,6 +127,35 @@ inline bool idBounds::AddPoint(const Vector2& v)
 		b[1][1] = v[1];
 		expanded = true;
 	}
+	return expanded;
+}
+
+inline bool idBounds::AddBounds(const idBounds& a) {
+	bool expanded = false;
+	if (a.b[0][0] < b[0][0]) {
+		b[0][0] = a.b[0][0];
+		expanded = true;
+	}
+	if (a.b[0][1] < b[0][1]) {
+		b[0][1] = a.b[0][1];
+		expanded = true;
+	}
+	/*if (a.b[0][2] < b[0][2]) {
+		b[0][2] = a.b[0][2];
+		expanded = true;
+	}*/
+	if (a.b[1][0] > b[1][0]) {
+		b[1][0] = a.b[1][0];
+		expanded = true;
+	}
+	if (a.b[1][1] > b[1][1]) {
+		b[1][1] = a.b[1][1];
+		expanded = true;
+	}
+	/*if (a.b[1][2] > b[1][2]) {
+		b[1][2] = a.b[1][2];
+		expanded = true;
+	}*/
 	return expanded;
 }
 

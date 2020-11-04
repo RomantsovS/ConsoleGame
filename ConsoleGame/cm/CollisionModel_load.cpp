@@ -447,8 +447,8 @@ void idCollisionModelManagerLocal::ConvertBrush(std::shared_ptr<cm_model_t> mode
 	contents = 1;
 	bounds.Clear();
 
-	bounds.AddPoint(vec2_origin - Vector2(CM_CLIP_EPSILON, CM_CLIP_EPSILON));
-	bounds.AddPoint(Vector2(gameLocal.GetHeight() + CM_BOX_EPSILON, gameLocal.GetWidth() + CM_BOX_EPSILON));
+	bounds.AddPoint(vec2_origin - Vector2(CM_BOX_EPSILON, CM_BOX_EPSILON));
+	bounds.AddPoint(Vector2(gameLocal.GetHeight() + CM_CLIP_EPSILON, gameLocal.GetWidth() + CM_CLIP_EPSILON));
 
 	// create brush for position test
 	auto brush = AllocBrush(model);

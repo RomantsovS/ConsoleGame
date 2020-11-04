@@ -60,7 +60,7 @@ Chooses a spawn location and spawns the player
 */
 void idPlayer::SpawnFromSpawnSpot() {
 	Vector2 spawn_origin;
-	Vector2	spawn_angles;
+	Vector2 spawn_angles;
 
 	SelectInitialSpawnPoint(spawn_origin, spawn_angles);
 	SpawnToPoint(spawn_origin, spawn_angles);

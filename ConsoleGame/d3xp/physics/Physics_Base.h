@@ -32,7 +32,7 @@ public:	// common physics interface
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
-	int	GetTime() const override;
+	int GetTime() const override;
 
 	void Activate() override;
 	void PutToRest() override;

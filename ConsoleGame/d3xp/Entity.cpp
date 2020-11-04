@@ -42,8 +42,9 @@ void idEntity::Spawn() {
 	axis = renderEntity.axis;
 
 	// every object will have a unique name
-	temp = spawnArgs.GetString("name",
-		GetClassname() + spawnArgs.GetString("classname") + std::to_string(entityNumber - MAX_CLIENTS + 1));
+	std::string def_name;
+	sprintf(def_name, "%s_%s_%d", GetClassname().c_str(), spawnArgs.GetString("classname").c_str(), (entityNumber - MAX_CLIENTS + 1));
+	temp = spawnArgs.GetString("name", def_name);
 	SetName(temp);
 
 	InitDefaultPhysics(origin, axis);

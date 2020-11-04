@@ -439,8 +439,7 @@ void idPhysics_RigidBody::Rest()
 	self.lock()->BecomeInactive(TH_PHYSICS);
 }
 
-void idPhysics_RigidBody::DebugDraw()
-{
+void idPhysics_RigidBody::DebugDraw() {
 }
 
 /*

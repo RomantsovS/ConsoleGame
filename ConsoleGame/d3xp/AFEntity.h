@@ -15,7 +15,8 @@ articulated figure. Only used for debugging!
 
 ===============================================================================
 */
-const int GIB_DELAY = 200;  // only gib this often to keep performace hits when blowing up several mobs
+
+#include "physics/Physics_AF.h"
 
 class idMultiModelAF : public idEntity {
 public:
@@ -28,13 +29,33 @@ public:
 	virtual void Present() override;
 
 protected:
-	idPhysics_AF physicsObj;
+	std::shared_ptr<idPhysics_AF> physicsObj;
 
-	void SetModelForId(int id, const idStr& modelName);
+	void SetModelForId(int id, const std::string& modelName);
 
 private:
 	std::vector<std::shared_ptr<idRenderModel>> modelHandles;
 	std::vector<int> modelDefHandles;
+};
+
+/*
+===============================================================================
+
+idChain
+
+Chain hanging down from the ceiling. Only used for debugging!
+
+===============================================================================
+*/
+
+class idChain : public idMultiModelAF {
+public:
+	CLASS_PROTOTYPE(idChain);
+
+	void Spawn();
+
+protected:
+	void BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks);
 };
 
 #endif
