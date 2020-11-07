@@ -284,7 +284,7 @@ void idGameLocal::RunFrame()
 		lastTimePointSpawn = time;
 		
 		for (int i = 0; i < game_add_point_count.GetInteger(); ++i) {
-			//AddRandomPoint();
+			AddRandomPoint();
 		}
 	}
 
@@ -748,14 +748,40 @@ void idGameLocal::MapClear(bool clearClients)
 
 void idGameLocal::AddRandomPoint()
 {
-	//Vector2 origin(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
-	Vector2 origin = { 4.0f, 14.0f };
+	idDict args;
+
+	size_t ent_type = GetRandomValue(1, 1);
+
+	float searching_radius = 0.0f;
+	float ent_size = 1.0f;
+	float start_pos = 0.0f;
+
+	if (ent_type == 0) {
+		args.Set("classname", "idStaticEntity");
+		args.Set("spawnclass", "idStaticEntity");
+	}
+	else if (ent_type == 1) {
+		args.Set("classname", "idChain");
+		args.Set("spawnclass", "idChain");
+
+		size_t links = GetRandomValue(2, 15);
+		args.Set("links", std::to_string(links));
+		searching_radius = static_cast<float>(links);
+		ent_size = searching_radius;
+		start_pos = searching_radius;
+	}
+	else {
+		args.Set("classname", "idSimpleObject");
+		args.Set("spawnclass", "idSimpleObject");
+	}
+
+	Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
+	//Vector2 origin = { 4.0f, 14.0f };
 	Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
 	int num_attempts = 0;
-	float searching_radius = 0.0f;
 	int finded_ents = 0;
 	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
 	{
@@ -765,28 +791,16 @@ void idGameLocal::AddRandomPoint()
 			return;
 		}
 
-		origin = Vector2(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
+		origin = Vector2(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
 	}
 
-	idDict args;
-
-	if (GetRandomValue(0, 0)) {
-		args.Set("classname", "idStaticEntity");
-		args.Set("spawnclass", "idStaticEntity");
-	}
-	else {
-		args.Set("classname", "idChain");
-		args.Set("spawnclass", "idChain");
-	}
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
 	args.Set("model", "pixel");
 	args.Set("clipmodel", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
-	args.Set("color", std::to_string(Screen::ConsoleColor::Yellow));
 	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
-	args.Set("linearVelocity", (Vector2(0.0f, 4.0f).ToString()));
-	args.Set("links", "10");
+	//args.Set("linearVelocity", (Vector2(0.0f, 4.0f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {

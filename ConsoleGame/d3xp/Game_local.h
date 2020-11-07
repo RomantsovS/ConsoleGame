@@ -183,12 +183,14 @@ inline T idGameLocal::GetRandomValue(T min, T max)
 	if (min < 0)
 		max = max - min;
 
+	if (min > max)
+		Error("Error getting random value. Min %3f, max %3f", min, max);
+
 	std::uniform_int_distribution<size_t> u(static_cast<size_t>(cur_min), static_cast<size_t>(max));
 
 	T cur_val = static_cast<T>(u(rand_eng));
 
-	if (min < 0)
-	{
+	if (min < 0) {
 		cur_val += min;
 	}
 

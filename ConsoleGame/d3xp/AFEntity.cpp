@@ -110,7 +110,7 @@ idChain::BuildChain
   this allows an object to be attached to multiple chains while keeping a single tree structure
 ================
 */
-void idChain::BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks) {
+void idChain::BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks, const Vector2& dir) {
 	int i;
 	std::shared_ptr<idAFBody> body, lastBody;
 	Vector2 org;
@@ -143,7 +143,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin, float l
 		// visual model for body
 		SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
 
-		org[1] -= linkLength;
+		org += dir;
 
 		lastBody = body;
 	}
@@ -166,9 +166,18 @@ void idChain::Spawn() {
 	physicsObj->SetClipMask(MASK_SOLID);
 	SetPhysics(physicsObj);
 
-	BuildChain("link", origin, 1.0f, numLinks);
-
 	Vector2 linearVelocity;
 	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
+
+	Vector2 dir = vec2_origin;
+	if (abs(linearVelocity.x) > abs(linearVelocity.y)) {
+		dir.x = 1.0f * (linearVelocity.x < 0 ? 1 : -1);
+	}
+	else {
+		dir.y = 1.0f * (linearVelocity.y < 0 ? 1 : -1);
+	}
+
+	BuildChain("link", origin, 1.0f, numLinks, dir);
+
 	physicsObj->SetLinearVelocity(linearVelocity, 0);
 }

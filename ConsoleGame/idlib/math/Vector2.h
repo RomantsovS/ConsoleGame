@@ -29,6 +29,7 @@ struct Vector2
 	float& operator[](const int index);
 	Vector2 operator*(const float a) const;
 	Vector2 operator-(const Vector2& a) const;
+	Vector2 operator-() const;
 	Vector2 &operator+=(const Vector2 & r);
 	Vector2& operator-=(const Vector2& a);
 	Vector2& operator*=(const Vector2& r);
@@ -155,6 +156,11 @@ inline Vector2 operator*(const Vector2 & l, const Vector2 & r)
 inline Vector2 Vector2::operator-(const Vector2& a) const
 {
 	return Vector2(x - a.x, y - a.y);
+}
+
+inline Vector2 Vector2::operator-() const
+{
+	return Vector2(-x, -y);
 }
 
 inline Vector2 &Vector2::operator+=(const Vector2 & r)

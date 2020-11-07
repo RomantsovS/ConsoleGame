@@ -55,7 +55,7 @@ public:
 	void Spawn();
 
 protected:
-	void BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks);
+	void BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks, const Vector2& dir);
 };
 
 #endif
