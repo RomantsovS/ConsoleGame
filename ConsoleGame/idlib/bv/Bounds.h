@@ -32,6 +32,7 @@ public:
 
 	bool ContainsPoint(const Vector2& p) const;			// includes touching
 	bool IntersectsBounds(const idBounds& a) const;	// includes touching
+	bool ContainsBounds(const idBounds& a) const;	// includes touching
 	bool LineIntersection(const Vector2& start, const Vector2& end) const;
 
 					// most tight bounds for the given transformed bounds
@@ -188,6 +189,11 @@ inline bool idBounds::IntersectsBounds(const idBounds& a) const {
 		return false;
 	}
 	return true;
+}
+
+inline bool idBounds::ContainsBounds(const idBounds& a) const {
+	return b[0][0] < a.b[0][0] && b[0][1] < a.b[0][1] &&
+		b[1][0] > a.b[1][0] && b[1][1] > a.b[1][1];
 }
 
 extern idBounds	bounds_zero;

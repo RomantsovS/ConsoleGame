@@ -114,8 +114,8 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	tw.maxContacts = idCollisionModelManagerLocal::maxContacts;
 	tw.numContacts = 0;
 	tw.model = idCollisionModelManagerLocal::models[model];
-	tw.start = start.GetIntegerVectorFloor() - modelOrigin.GetIntegerVectorFloor();
-	tw.end = end.GetIntegerVectorFloor() - modelOrigin.GetIntegerVectorFloor();
+	tw.start = start - modelOrigin.GetIntegerVectorFloor();
+	tw.end = end - modelOrigin.GetIntegerVectorFloor();
 	tw.dir = end - start;
 
 	// the trace fraction is too inaccurate to describe translations over huge distances
@@ -174,21 +174,16 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i] + tw.size[0][i];// -CM_BOX_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] + CM_BOX_EPSILON;
 			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON;
 		}
 		else if(tw.start[i] > tw.end[i]) {
 			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.start[i] +tw.size[1][i];
+			tw.bounds[1][i] = tw.start[i] + tw.size[1][i];
 		}
 		else {
 			tw.bounds[0][i] = tw.start[i];
 			tw.bounds[1][i] = tw.start[i];
-
-			if (tw.start[i] >= CM_POINT_SIZE) {
-				tw.bounds[0][i] += CM_CLIP_EPSILON;
-				tw.bounds[1][i] += CM_CLIP_EPSILON;
-			}
 		}
 		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
 			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;

@@ -58,7 +58,8 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, std::
 			}
 		}*/
 		//if (i >= b->numPlanes) {
-		if(b->bounds.LineIntersection(*p, tw->vertices[j].endp)) {
+		//if(b->bounds.LineIntersection(*p, tw->vertices[j].endp)) {
+		if(!b->bounds.ContainsBounds(tw->bounds)) {
 			tw->trace.fraction = 0.0f;
 			tw->trace.c.type = CONTACT_TRMVERTEX;
 			//tw->trace.c.normal = b->planes[bestPlane].Normal();
