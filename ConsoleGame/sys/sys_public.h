@@ -223,4 +223,7 @@ const char* Sys_DefaultBasePath();
 // and has a function signature with 'FILE' in it, it kinda needs to be here =/
 using idFileHandle = std::fstream;
 
+
+char* getLastErrorMsg();
+
 #endif

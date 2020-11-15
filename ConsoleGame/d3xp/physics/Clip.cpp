@@ -6,8 +6,8 @@
 #include "../../idlib/math/Math.h"
 #include "../../idlib/math/Vector2.h"
 
-const size_t MAX_SECTOR_DEPTH = 5;
-const size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
+idCVar cm_max_sector_depth("cm_max_sector_depth", "5", CVAR_SYSTEM | CVAR_INIT, "");
+size_t MAX_SECTORS;
 
 Vector2 vec3_boxEpsilon(CM_BOX_EPSILON, CM_BOX_EPSILON);
 
@@ -198,6 +198,8 @@ void idClipModel::Init()
 	traceModelIndex = -1;
 	clipLinks = nullptr;
 	touchCount = -1;
+
+	MAX_SECTORS = ((1 << (cm_max_sector_depth.GetInteger() + 1)) - 1);
 }
 
 void idClipModel::Link_r(std::shared_ptr<clipSector_t> node)
@@ -667,7 +669,7 @@ std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const
 	anode = clipSectors[idClip::numClipSectors] = std::make_shared<clipSector_t>();
 	idClip::numClipSectors++;
 
-	if (depth == MAX_SECTOR_DEPTH) {
+	if (depth == cm_max_sector_depth.GetInteger()) {
 		anode->axis = -1;
 		anode->children[0] = anode->children[1] = nullptr;
 

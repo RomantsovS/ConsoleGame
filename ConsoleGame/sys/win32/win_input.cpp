@@ -7,7 +7,7 @@ bool IN_StartupKeyboard() {
     win32.h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 
     if (win32.h_console_std_in == INVALID_HANDLE_VALUE)
-        common->FatalError("CreateConsoleScreenBuffer  failed - (%d)\n", GetLastError());
+        common->FatalError("CreateConsoleScreenBuffer  failed - (%s)\n", GetLastError());
 
     common->Printf("keyboard: win input initialized.\n");
     return true;

@@ -194,8 +194,8 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
-	args.Set("origin", Vector2(3.0f, 15.0f).ToString());
-	args.Set("linearVelocity", Vector2(0.0f, 10.0f).ToString());
+	args.Set("origin", Vector2(15.0f, 0.16f).ToString());
+	args.Set("linearVelocity", Vector2(0.0f, -10.0f).ToString());
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -750,7 +750,7 @@ void idGameLocal::AddRandomPoint()
 {
 	idDict args;
 
-	size_t ent_type = GetRandomValue(1, 1);
+	size_t ent_type = GetRandomValue(1, 2);
 
 	float searching_radius = 0.0f;
 	float ent_size = 1.0f;
@@ -764,7 +764,7 @@ void idGameLocal::AddRandomPoint()
 		args.Set("classname", "idChain");
 		args.Set("spawnclass", "idChain");
 
-		size_t links = GetRandomValue(4, 4);
+		size_t links = GetRandomValue(3, 10);
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
 		ent_size = searching_radius;
@@ -775,8 +775,8 @@ void idGameLocal::AddRandomPoint()
 		args.Set("spawnclass", "idSimpleObject");
 	}
 
-	//Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
-	Vector2 origin = { 5.0f, 5.0f };
+	Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
+	//Vector2 origin = { 10.0f, 0.16f };
 	Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
@@ -799,8 +799,8 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "pixel");
 	args.Set("clipmodel", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
-	//args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
-	args.Set("linearVelocity", (Vector2(-5.0f, -5.0f).ToString()));
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
+	//args.Set("linearVelocity", (Vector2(0.0f, -10.0f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {

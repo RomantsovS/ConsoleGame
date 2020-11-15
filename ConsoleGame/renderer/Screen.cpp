@@ -17,14 +17,12 @@ Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
 
-Screen::~Screen()
-{
+Screen::~Screen() {
 	if(buffer)
 		delete[] buffer;
 }
 
-void Screen::init()
-{
+void Screen::init() {
 	if (h_console_std_out == INVALID_HANDLE_VALUE)
 		common->FatalError("Bad h_console_std_out");
 
@@ -32,19 +30,14 @@ void Screen::init()
 		// below the actual visual size
 	SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
 
-	/*HWND console = GetConsoleWindow();
-	RECT r;
-	GetWindowRect(console, &r); //stores the console's current dimensions
-
-	MoveWindow(console, r.left, r.top, window_width.GetInteger(), window_height.GetInteger(), true);*/
-
 	// Set the size of the screen buffer
 	COORD coord = { (short)width, (short)height + static_cast<short>(text_info_max_height.GetInteger()) };
-	if (!SetConsoleScreenBufferSize(h_console_std_out, coord))
-		common->FatalError("SetConsoleScreenBufferSize failed - (%d)'n", GetLastError());
+	if (!SetConsoleScreenBufferSize(h_console_std_out, coord)) {
+		common->FatalError("SetConsoleScreenBufferSize failed - (%s)\n", getLastErrorMsg());
+	}
 
 	if(!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
 
 	CONSOLE_CURSOR_INFO cursorInfo;
 
@@ -91,60 +84,22 @@ void Screen::init()
 	cur_write_coord = { 0, 0 };
 }
 
-void Screen::clear()
-{
+void Screen::clear() {
 	clearContents();
 }
 
-void Screen::clearTextInfo()
-{
+void Screen::clearTextInfo() {
 	DWORD written;
 	FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
 }
 
-void Screen::display()
-{
+void Screen::display() {
 	cur_write_coord = { 0, 0 };
-
-	/*char* p_next_write = &buffer[0];
-	ConsoleColor curCol = Screen::ConsoleColor::None;
-
-	for (pos_type y = 0; y < height; y++)
-	{
-		for (pos_type x = 0; x < width; x++)
-		{
-			if (curCol == Screen::ConsoleColor::None)
-			{
-				curCol = contents[y * width + x].color;
-			}
-			else
-			{
-				if (curCol != contents[y * width + x].color)
-				{
-					writeInColor(cur_write_coord, buffer, p_next_write - &buffer[0], curCol);
-
-					curCol = contents[y * width + x].color;
-
-					cur_write_coord = { x, y };
-					p_next_write = &buffer[0];
-				}
-			}
-
-			*p_next_write++ = contents[y * width + x].value;
-		}
-	}
-
-	auto lenght = p_next_write - &buffer[0];
-	writeInColor(cur_write_coord, buffer, lenght, curCol);
-
-	cur_write_coord.Y += static_cast<SHORT>(ceil(lenght / width)) + 1;
-	cur_write_coord.X = 0;*/
 
 	for (pos_type y = 0; y < height; ++y) {
 		for (pos_type x = 0; x < width; ++x) {
 			buffer[y * width + x].Char.AsciiChar = contents[y * width + x].value;
 			buffer[y * width + x].Attributes = contents[y * width + x].color;
-
 		}
 	}
 
@@ -152,16 +107,14 @@ void Screen::display()
 	cur_write_coord.Y += height;
 }
 
-void Screen::clearContents()
-{
+void Screen::clearContents() {
 	for (size_t i = 0; i != height * width; ++i)
 	{
 		contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
 	}
 }
 
-void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::ConsoleColor color_text, Screen::ConsoleColor color_background)
-{
+void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::ConsoleColor color_text, Screen::ConsoleColor color_background) {
 	if (color_background == ConsoleColor::None)
 		color_background = backgroundPixel.color;
 
@@ -275,11 +228,11 @@ void Screen::clearConsoleOutut()
 void Screen::setDrawOutputBuffer()
 {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
 }
 
 void Screen::setStdOutputBuffer()
 {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%d)\n", GetLastError());
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
 }

@@ -142,9 +142,8 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	for (i = 0; i < tw.numVerts; i++) {
 		// set trm at start position
 		tw.vertices[i].p += tw.start;
+		tw.vertices[i].used = true;
 	}
-
-	tw.vertices[0].used = true;
 
 	// setup trm vertices
 	for (vert = tw.vertices, i = 0; i < tw.numVerts; i++, vert++) {
@@ -154,16 +153,15 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		// get axial trm size after rotations
 		tw.size.AddPoint(vert->p - tw.start);
 		// calculate the end position of each vertex for a full trace
-		vert->endp = tw.end;
+		vert->endp = vert->p + tw.dir;
 
-		for (i = 0; i < 2; i++) {
-			if (tw.start[i] < tw.end[i]) {
-				vert->p[i] += CM_CLIP_EPSILON;
-				vert->endp[i] += CM_BOX_EPSILON;
+		for (size_t j = 0; j < 2; j++) {
+			if (tw.start[j] < tw.end[j]) {
+				vert->endp[j] += CM_CLIP_EPSILON;
 			}
-			else if (tw.start[i] > tw.end[i]) {
-				vert->p[i] -= CM_CLIP_EPSILON;
-				vert->endp[i] -= CM_BOX_EPSILON;
+
+			if (vert->p[j] == CM_POINT_SIZE) {
+				vert->p[j] += CM_CLIP_EPSILON;
 			}
 		}
 
@@ -174,16 +172,21 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] + CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] - CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
 		else if(tw.start[i] > tw.end[i]) {
-			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.start[i] + tw.size[1][i];
+			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.start[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
 		else {
 			tw.bounds[0][i] = tw.start[i];
 			tw.bounds[1][i] = tw.start[i];
+
+			if (tw.start[i] >= CM_POINT_SIZE) {
+				tw.bounds[0][i] += CM_CLIP_EPSILON;
+				tw.bounds[1][i] += CM_CLIP_EPSILON;
+			}
 		}
 		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
 			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;

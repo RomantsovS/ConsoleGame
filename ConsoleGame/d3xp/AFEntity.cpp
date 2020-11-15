@@ -90,6 +90,20 @@ void idMultiModelAF::Think() {
 	Present();
 }
 
+bool idMultiModelAF::Collide(const trace_t& collision, const Vector2& velocity) {
+	if (collision.c.entityNum == ENTITYNUM_WORLD) {
+		return true;
+	}
+	else {
+		auto ent = gameLocal.entities[collision.c.entityNum];
+
+		if (!ent->IsActive())
+			return true;
+	}
+
+	return false;
+}
+
 /*
 ===============================================================================
 
@@ -170,11 +184,11 @@ void idChain::Spawn() {
 	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
 
 	Vector2 dir = vec2_origin;
-	if (abs(linearVelocity.x) > abs(linearVelocity.y)) {
-		dir.x = 1.0f * (linearVelocity.x < 0 ? 1 : -1);
-	}
-	else {
-		dir.y = 1.0f * (linearVelocity.y < 0 ? 1 : -1);
+	for (size_t i = 0; i < 2; ++i) {
+		if (linearVelocity[i] > 0)
+			dir[i] = -1.0f;
+		else
+			dir[i] = 1.0f;
 	}
 
 	BuildChain("link", origin, 1.0f, numLinks, dir);

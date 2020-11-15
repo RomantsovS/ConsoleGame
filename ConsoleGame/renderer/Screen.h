@@ -52,9 +52,9 @@ public:
 
 	void init();
 
-    inline Screen::Pixel get(pos_type ht, pos_type wd) const; // explicitly inline
+	inline Screen::Pixel get(pos_type ht, pos_type wd) const; // explicitly inline
 
-    Screen &set(pos_type r, pos_type col, Screen::Pixel ch);
+	Screen &set(pos_type r, pos_type col, Screen::Pixel ch);
 	Screen &set(Vector2 pos, Screen::Pixel ch);
 	
 	pos_type getHeight() const { return height; }

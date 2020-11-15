@@ -447,8 +447,8 @@ void idCollisionModelManagerLocal::ConvertBrush(std::shared_ptr<cm_model_t> mode
 	contents = 1;
 	bounds.Clear();
 
-	bounds.AddPoint(vec2_origin - Vector2(CM_BOX_EPSILON, CM_BOX_EPSILON));
-	bounds.AddPoint(Vector2(gameLocal.GetHeight() + CM_CLIP_EPSILON, gameLocal.GetWidth() + CM_CLIP_EPSILON));
+	bounds.AddPoint(vec2_origin);
+	bounds.AddPoint(Vector2(gameLocal.GetHeight(), gameLocal.GetWidth()));
 
 	// create brush for position test
 	auto brush = AllocBrush(model);
@@ -765,9 +765,8 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::LoadBinaryModelFromFil
 	model->numBrushRefs = 1;
 	model->maxVertices = model->numVertices;
 
-	model->vertices.resize(1);
-	for(size_t i = 0; i != 1; ++i)
-		model->vertices[i].p = vec2_origin;
+	model->vertices.resize(model->numVertices);
+	model->vertices[0].p = vec2_origin;
 
 	model->brushMemory = 1;
 
