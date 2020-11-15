@@ -87,6 +87,8 @@ public:
 	int GetBodyId(const std::shared_ptr<idAFBody>& body) const;
 	// retrieve body or constraint
 	std::shared_ptr<idAFBody> GetBody(const std::string& bodyName) const;
+	// delete body or constraint
+	void DeleteBody(const int id);
 
 	void UpdateClipModels();
 public:	// common physics interface

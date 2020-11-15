@@ -704,6 +704,28 @@ std::shared_ptr<idAFBody> idPhysics_AF::GetBody(const std::string& bodyName) con
 
 /*
 ================
+idPhysics_AF::DeleteBody
+================
+*/
+void idPhysics_AF::DeleteBody(const int id) {
+	if (id < 0 || id > static_cast<int>(bodies.size())) {
+		gameLocal.Error("DeleteBody: no body with id %d.", id);
+		return;
+	}
+
+	// remove the body
+	bodies[id]->SetClipModel(nullptr);
+	bodies[id] = nullptr;
+	bodies.erase(bodies.begin() + id);
+
+	// set new body ids
+	for (size_t j = 0; j < bodies.size(); j++) {
+		bodies[j]->clipModel->SetId(j);
+	}
+}
+
+/*
+================
 idPhysics_AF::IsAtRest
 ================
 */

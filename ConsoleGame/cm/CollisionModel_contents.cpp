@@ -88,7 +88,6 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) {
 	
 	int i;
-	Vector2 dir;
 	cm_traceWork_t tw;
 
 	// fast point case
@@ -140,12 +139,12 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] + CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON + CM_CLIP_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] - CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
 		else if (tw.start[i] > tw.end[i]) {
-			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
-			tw.bounds[1][i] = tw.start[i];// +tw.size[1][i] + CM_BOX_EPSILON;
+			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_CLIP_EPSILON;
+			tw.bounds[1][i] = tw.start[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
 		else {
 			tw.bounds[0][i] = tw.end[i] + CM_CLIP_EPSILON;

@@ -152,8 +152,7 @@ inline const Vector2& idClipModel::GetOrigin() const {
 	return origin;
 }
 
-inline bool idClipModel::IsTraceModel() const
-{
+inline bool idClipModel::IsTraceModel() const {
 	return (traceModelIndex != -1);
 }
 
@@ -168,6 +167,14 @@ inline void idClipModel::Enable() {
 
 inline void idClipModel::Disable() {
 	enabled = false;
+}
+
+inline void idClipModel::SetId(int newId) {
+	id = newId;
+}
+
+inline int idClipModel::GetId() const {
+	return id;
 }
 
 /*

@@ -90,6 +90,15 @@ void idMultiModelAF::Think() {
 	Present();
 }
 
+void idMultiModelAF::Remove() {
+	for (size_t i = physicsObj->GetNumClipModels(); i > 0;  --i) {
+		physicsObj->DeleteBody(i - 1);
+	}
+
+	physicsObj = nullptr;
+	idEntity::Remove();
+}
+
 bool idMultiModelAF::Collide(const trace_t& collision, const Vector2& velocity) {
 	if (collision.c.entityNum == ENTITYNUM_WORLD) {
 		return true;

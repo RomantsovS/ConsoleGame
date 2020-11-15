@@ -31,7 +31,7 @@ public:
 	void Spawn();
 	virtual void Think() override;
 
-	virtual void Remove();
+	virtual void Remove() override;
 
 	virtual bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:

@@ -11,8 +11,7 @@ idStaticEntity::idStaticEntity() {
 idStaticEntity::~idStaticEntity() {
 }
 
-void idStaticEntity::Spawn()
-{
+void idStaticEntity::Spawn() {
 	//spawnTime = gameLocal.time;
 }
 

@@ -171,16 +171,6 @@ void idClipModel::Unlink()
 	}
 }
 
-inline void idClipModel::SetId(int newId)
-{
-	id = newId;
-}
-
-inline int idClipModel::GetId() const
-{
-	return id;
-}
-
 void idClipModel::Init()
 {
 	enabled = true;
