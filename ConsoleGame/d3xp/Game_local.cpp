@@ -195,7 +195,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	args.Set("origin", Vector2(15.0f, 0.16f).ToString());
-	args.Set("linearVelocity", Vector2(0.0f, 10.0f).ToString());
+	args.Set("linearVelocity", Vector2(0.0f, 0.0f).ToString());
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -444,7 +444,7 @@ void idGameLocal::RunDebugInfo() {
 			if (true || ent->IsActive())
 			{
 				static char buf[256];
-				sprintf_s(buf, "ent %30s pos [%6.2f %6.2f] vel [%6.3f %6.3f] rest %d", ent->GetName().c_str(),
+				sprintf_s(buf, "ent %20s pos [%5.2f %5.2f] vel [%6.2f %6.2f] rest %d", ent->GetName().c_str(),
 					ent->GetPhysics()->GetOrigin().x, ent->GetPhysics()->GetOrigin().y,
 					ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
 					ent->GetPhysics()->IsAtRest());
@@ -730,7 +730,7 @@ void idGameLocal::MapPopulate()
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
 
-	for(int i = 0; i < 1; ++i)
+	for(int i = 0; i < 100; ++i)
 		AddRandomPoint();
 }
 
@@ -750,7 +750,7 @@ void idGameLocal::AddRandomPoint()
 {
 	idDict args;
 
-	size_t ent_type = GetRandomValue(0, 0);
+	size_t ent_type = GetRandomValue(1, 2);
 
 	float searching_radius = 0.0f;
 	float ent_size = 1.0f;
@@ -764,7 +764,7 @@ void idGameLocal::AddRandomPoint()
 		args.Set("classname", "idChain");
 		args.Set("spawnclass", "idChain");
 
-		size_t links = GetRandomValue(3, 10);
+		size_t links = GetRandomValue(3, 15);
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
 		ent_size = searching_radius;
@@ -787,7 +787,7 @@ void idGameLocal::AddRandomPoint()
 	{
 		if (num_attempts++ > 100)
 		{
-			//Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
 			return;
 		}
 
@@ -807,7 +807,7 @@ void idGameLocal::AddRandomPoint()
 		Warning("Failed to spawn random point as '%s'", args.GetString("classname").c_str());
 	}
 	else {
-		ent->PostEventMS(&EV_Remove, 100000);
+		//ent->PostEventMS(&EV_Remove, 1000);
 	}
 
 
@@ -847,15 +847,13 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>*
 	if (!spawn.empty()) {
 
 		cls = idClass::GetClass(spawn);
-		if (!cls)
-		{
-			Warning("Could not spawn '%s'.  Class '%s' not found%s.", classname.c_str(), spawn.c_str(), error.c_str());
+		if (!cls) {
+			Warning("Could not spawn '%s'. Class '%s' not found%s.", classname.c_str(), spawn.c_str(), error.c_str());
 			return false;
 		}
 
 		obj = cls->CreateInstance();
-		if (!obj)
-		{
+		if (!obj) {
 			Warning("Could not spawn '%s'. Instance could not be created%s.", classname, error.c_str());
 			return false;
 		}

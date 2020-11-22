@@ -262,8 +262,7 @@ idClass::GetClassname
 Returns the text classname of the object.
 ================
 */
-const std::string idClass::GetClassname() const
-{
+const std::string idClass::GetClassname() const {
 	idTypeInfo* type;
 
 	type = GetType();
@@ -275,7 +274,7 @@ const std::string idClass::GetClassname() const
 idClass::PostEventArgs
 ================
 */
-bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {	
+bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {
 	va_list		args;
 
 	//assert(ev);

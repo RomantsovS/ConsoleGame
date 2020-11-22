@@ -43,7 +43,7 @@ void idEntity::Spawn() {
 
 	// every object will have a unique name
 	std::string def_name;
-	sprintf(def_name, "%s_%s_%d", GetClassname().c_str(), spawnArgs.GetString("classname").c_str(), (entityNumber - MAX_CLIENTS + 1));
+	sprintf(def_name, "%s_%d", GetClassname().c_str(), (entityNumber - MAX_CLIENTS + 1));
 	temp = spawnArgs.GetString("name", def_name);
 	SetName(temp);
 
@@ -86,8 +86,7 @@ void idEntity::SetName(const std::string newname) {
 idEntity::GetName
 ================
 */
-const std::string idEntity::GetName() const
-{
+const std::string idEntity::GetName() const {
 	return name;
 }
 
