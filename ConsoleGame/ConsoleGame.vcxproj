@@ -137,6 +137,7 @@
     <ClInclude Include="d3xp\physics\Physics_RigidBody.h" />
     <ClInclude Include="d3xp\physics\Physics_Static.h" />
     <ClInclude Include="d3xp\Player.h" />
+    <ClInclude Include="d3xp\PlayerChain.h" />
     <ClInclude Include="framework\CmdSystem.h" />
     <ClInclude Include="framework\Common.h" />
     <ClInclude Include="framework\Common_local.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="d3xp\physics\Physics_RigidBody.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Static.cpp" />
     <ClCompile Include="d3xp\Player.cpp" />
+    <ClCompile Include="d3xp\PlayerChain.cpp" />
     <ClCompile Include="framework\CmdSystem.cpp" />
     <ClCompile Include="framework\Common.cpp" />
     <ClCompile Include="framework\common_frame.cpp" />

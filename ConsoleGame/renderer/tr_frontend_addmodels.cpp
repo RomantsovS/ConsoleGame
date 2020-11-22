@@ -5,8 +5,7 @@ std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderE
 {
 	auto model = def->parms.hModel;
 
-	if (model->IsDynamicModel() == DM_STATIC)
-	{
+	if (model->IsDynamicModel() == DM_STATIC) {
 		return model;
 	}
 
@@ -35,8 +34,7 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
 	// create a dynamic model if the geometry isn't static
 	//---------------------------
 	auto model = R_EntityDefDynamicModel(entityDef);
-	if (!model || model->NumSurfaces() <= 0)
-	{
+	if (!model || model->NumSurfaces() <= 0) {
 		return;
 	}
 
@@ -44,10 +42,9 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
 	// add all the model surfaces
 	//---------------------------
 
-	auto model_col = entityDef->parms.color;
+	auto model_col = renderEntity->color;
 
-	for (int surfaceNum = 0; surfaceNum < model->NumSurfaces(); surfaceNum++)
-	{
+	for (int surfaceNum = 0; surfaceNum < model->NumSurfaces(); surfaceNum++) {
 		const ModelPixel & surf = model->Surface(surfaceNum);
 
 		tr.screen.set(Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +

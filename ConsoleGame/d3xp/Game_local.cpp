@@ -189,8 +189,8 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("name", va("player%d", clientNum + 1));
 
 	// precache the player
-	args.Set("classname", "idPlayer");
-	args.Set("spawnclass", "idPlayer");
+	args.Set("classname", "PlayerChain");
+	args.Set("spawnclass", "PlayerChain");
 
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
@@ -730,7 +730,7 @@ void idGameLocal::MapPopulate()
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
 
-	for(int i = 0; i < 100; ++i)
+	for(int i = 0; i < game_add_point_count.GetInteger(); ++i)
 		AddRandomPoint();
 }
 
