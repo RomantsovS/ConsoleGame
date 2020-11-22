@@ -194,8 +194,8 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
-	args.Set("origin", Vector2(15.0f, 0.16f).ToString());
-	args.Set("linearVelocity", Vector2(0.0f, 0.0f).ToString());
+	args.Set("origin", Vector2(10.0f, 10.0f).ToString());
+	args.Set("linearVelocity", Vector2(10.0f, 0.0f).ToString());
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -444,10 +444,10 @@ void idGameLocal::RunDebugInfo() {
 			if (true || ent->IsActive())
 			{
 				static char buf[256];
-				sprintf_s(buf, "ent %20s pos [%5.2f %5.2f] vel [%6.2f %6.2f] rest %d", ent->GetName().c_str(),
-					ent->GetPhysics()->GetOrigin().x, ent->GetPhysics()->GetOrigin().y,
-					ent->GetPhysics()->GetLinearVelocity().x, ent->GetPhysics()->GetLinearVelocity().y,
-					ent->GetPhysics()->IsAtRest());
+				auto phys = ent->GetPhysics();
+				sprintf_s(buf, "ent %30s pos [%5.2f %5.2f] vel [%6.2f %6.2f] rest %d", ent->GetName().c_str(),
+					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,
+					phys->IsAtRest());
 
 				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 0);
 			}

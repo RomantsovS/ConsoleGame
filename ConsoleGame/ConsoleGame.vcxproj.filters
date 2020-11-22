@@ -240,6 +240,9 @@
     <ClInclude Include="d3xp\PlayerChain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\physics\Physics_PlayerChain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Snake.cpp">
@@ -453,6 +456,9 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\PlayerChain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\physics\Physics_PlayerChain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

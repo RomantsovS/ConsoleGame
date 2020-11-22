@@ -23,6 +23,7 @@ struct AFBodyPState_t {
 class idAFBody {
 
 	friend class idPhysics_AF;
+	friend class Physics_PlayerChain;
 
 public:
 	idAFBody();

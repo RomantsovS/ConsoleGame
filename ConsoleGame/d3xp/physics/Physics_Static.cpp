@@ -156,16 +156,13 @@ bool idPhysics_Static::IsAtRest() const
 	return true;
 }
 
-void idPhysics_Static::SaveState()
-{
+void idPhysics_Static::SaveState() {
 }
 
-void idPhysics_Static::RestoreState()
-{
+void idPhysics_Static::RestoreState() {
 }
 
-void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id)
-{
+void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id) {
 	/*Vector2 masterOrigin;
 	Vector2 masterAxis;*/
 
@@ -187,8 +184,7 @@ void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id)
 	previous = next;*/
 }
 
-void idPhysics_Static::SetAxis(const Vector2 & newAxis, int id)
-{
+void idPhysics_Static::SetAxis(const Vector2 & newAxis, int id) {
 	/*Vector2 masterOrigin;
 	Vector2 masterAxis;*/
 
@@ -210,8 +206,7 @@ void idPhysics_Static::SetAxis(const Vector2 & newAxis, int id)
 	previous = next;*/
 }
 
-void idPhysics_Static::Translate(const Vector2 & translation, int id)
-{
+void idPhysics_Static::Translate(const Vector2 & translation, int id) {
 	current.localOrigin += translation;
 	current.origin += translation;
 
@@ -220,8 +215,7 @@ void idPhysics_Static::Translate(const Vector2 & translation, int id)
 	}
 }
 
-void idPhysics_Static::Rotate(const Vector2 & rotation, int id)
-{
+void idPhysics_Static::Rotate(const Vector2 & rotation, int id) {
 	/*Vector2 masterOrigin;
 	Vector2 masterAxis;*/
 
@@ -245,18 +239,15 @@ void idPhysics_Static::Rotate(const Vector2 & rotation, int id)
 	}*/
 }
 
-const Vector2 & idPhysics_Static::GetOrigin(int id) const
-{
+const Vector2 & idPhysics_Static::GetOrigin(int id) const {
 	return current.origin;
 }
 
-const Vector2 & idPhysics_Static::GetAxis(int id) const
-{
+const Vector2 & idPhysics_Static::GetAxis(int id) const {
 	return current.axis;
 }
 
-void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
-{
+void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
 }
 
 /*

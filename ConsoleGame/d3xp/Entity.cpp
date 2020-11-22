@@ -6,7 +6,8 @@ ABSTRACT_DECLARATION(idClass, idEntity)
 END_CLASS
 
 idEntity::idEntity() :
-	originDelta(vec2_origin)
+	originDelta(vec2_origin),
+	axisDelta(vec2_origin)
 {
 	entityNumber = ENTITYNUM_NONE;
 	//entityDefNumber = -1;
@@ -171,13 +172,11 @@ void idEntity::Present() {
 	}
 }
 
-renderEntity_t * idEntity::GetRenderEntity()
-{
+renderEntity_t * idEntity::GetRenderEntity() {
 	return &renderEntity;
 }
 
-void idEntity::SetModel(std::string modelname)
-{
+void idEntity::SetModel(std::string modelname) {
 	renderEntity.hModel = renderModelManager->FindModel(modelname);
 }
 
@@ -193,21 +192,18 @@ void idEntity::FreeModelDef() {
 	}
 }
 
-void idEntity::UpdateVisuals()
-{
+void idEntity::UpdateVisuals() {
 	UpdateModel();
 }
 
-void idEntity::UpdateModel()
-{
+void idEntity::UpdateModel() {
 	UpdateModelTransform();
 
 	// ensure that we call Present this frame
 	BecomeActive(TH_UPDATEVISUALS);
 }
 
-void idEntity::UpdateModelTransform()
-{
+void idEntity::UpdateModelTransform() {
 	Vector2 origin;
 	Vector2 axis;
 
@@ -222,8 +218,7 @@ void idEntity::UpdateModelTransform()
 	}
 }
 
-void idEntity::SetColor(const Screen::ConsoleColor & color)
-{
+void idEntity::SetColor(const Screen::ConsoleColor & color) {
 	renderEntity.color = color;
 
 	UpdateVisuals();
@@ -239,8 +234,7 @@ bool idEntity::UpdateAnimationControllers() {
 	return false;
 }
 
-void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys)
-{
+void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys) {
 	// clear any contacts the current physics object has
 	if (physics) {
 		physics->ClearContacts();
@@ -258,18 +252,15 @@ void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys)
 	//physics->SetMaster(bindMaster, fl.bindOrientated);
 }
 
-std::shared_ptr<idPhysics> idEntity::GetPhysics() const
-{
+std::shared_ptr<idPhysics> idEntity::GetPhysics() const {
 	return physics;
 }
 
-void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys)
-{
+void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys) {
 	physics = phys;
 }
 
-bool idEntity::RunPhysics()
-{
+bool idEntity::RunPhysics() {
 	idEntity *part = nullptr;
 	bool moved;
 
@@ -309,15 +300,13 @@ bool idEntity::RunPhysics()
 	return true;
 }
 
-void idEntity::SetOrigin(const Vector2 & org)
-{
+void idEntity::SetOrigin(const Vector2 & org) {
 	GetPhysics()->SetOrigin(org);
 
 	UpdateVisuals();
 }
 
-void idEntity::SetAxis(const Vector2 & axis)
-{
+void idEntity::SetAxis(const Vector2 & axis) {
 	/*if (GetPhysics()->IsType(Physics_Actor::Type)) {
 		static_cast<Actor *>(this)->viewAxis = axis;
 	}
@@ -328,19 +317,16 @@ void idEntity::SetAxis(const Vector2 & axis)
 	UpdateVisuals();
 }
 
-bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis)
-{
+bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis) {
 	return false;
 }
 
-bool idEntity::Collide(const trace_t& collision, const Vector2& velocity)
-{
+bool idEntity::Collide(const trace_t& collision, const Vector2& velocity) {
 	// this entity collides with collision.c.entityNum
 	return false;
 }
 
-void idEntity::ActivatePhysics(std::shared_ptr<idEntity> ent)
-{
+void idEntity::ActivatePhysics(std::shared_ptr<idEntity> ent) {
 	GetPhysics()->Activate();
 }
 
@@ -348,13 +334,11 @@ void idEntity::AddContactEntity(std::shared_ptr<idEntity> ent) {
 	GetPhysics()->AddContactEntity(ent);
 }
 
-void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent)
-{
+void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent) {
 	GetPhysics()->RemoveContactEntity(ent);
 }
 
-void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
-{
+void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) {
 	std::string temp;
 	std::shared_ptr<idClipModel> clipModel;
 
@@ -426,8 +410,7 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis)
 	physics = defaultPhysicsObj;
 }
 
-void idEntity::UpdateFromPhysics(bool moveBack)
-{
+void idEntity::UpdateFromPhysics(bool moveBack) {
 	/*if (IsType(Actor::Type)) {
 		Actor *actor = static_cast<Actor*>(this);
 
@@ -447,7 +430,6 @@ void idEntity::UpdateFromPhysics(bool moveBack)
 	UpdateVisuals();
 }
 
-int idEntity::GetPhysicsTimeStep() const
-{
+int idEntity::GetPhysicsTimeStep() const {
 	return gameLocal.time - gameLocal.previousTime;
 }

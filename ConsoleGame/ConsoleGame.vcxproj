@@ -134,6 +134,7 @@
     <ClInclude Include="d3xp\physics\Physics_AF.h" />
     <ClInclude Include="d3xp\physics\Physics_Base.h" />
     <ClInclude Include="d3xp\physics\Physics_Player.h" />
+    <ClInclude Include="d3xp\physics\Physics_PlayerChain.h" />
     <ClInclude Include="d3xp\physics\Physics_RigidBody.h" />
     <ClInclude Include="d3xp\physics\Physics_Static.h" />
     <ClInclude Include="d3xp\Player.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="d3xp\physics\Physics_AF.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Base.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Player.cpp" />
+    <ClCompile Include="d3xp\physics\Physics_PlayerChain.cpp" />
     <ClCompile Include="d3xp\physics\Physics_RigidBody.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Static.cpp" />
     <ClCompile Include="d3xp\Player.cpp" />
