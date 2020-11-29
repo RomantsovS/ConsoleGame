@@ -177,6 +177,19 @@ std::shared_ptr<idAFBody> Physics_PlayerChain::GetBody(const std::string& bodyNa
 
 /*
 ================
+idPhysics_AF::GetBody
+================
+*/
+std::shared_ptr<idAFBody> Physics_PlayerChain::GetBody(const int id) const {
+	if (id < 0 || id >= static_cast<int>(bodies.size())) {
+		gameLocal.Error("GetBody: no body with id %d exists\n", id);
+		return nullptr;
+	}
+	return bodies[id];
+}
+
+/*
+================
 Physics_PlayerChain::DeleteBody
 ================
 */
@@ -513,6 +526,10 @@ Physics_PlayerChain::SaveState
 */
 void Physics_PlayerChain::SaveState() {
 	saved = current;
+
+	for (size_t i = 0; i < bodies.size(); i++) {
+		memcpy(&bodies[i]->saved, bodies[i]->current, sizeof(AFBodyPState_t));
+	}
 }
 
 /*
@@ -523,7 +540,9 @@ Physics_PlayerChain::RestoreState
 void Physics_PlayerChain::RestoreState() {
 	current = saved;
 
-	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	for (size_t i = 0; i < bodies.size(); i++) {
+		*(bodies[i]->current) = bodies[i]->saved;
+	}
 
 	EvaluateContacts();
 }

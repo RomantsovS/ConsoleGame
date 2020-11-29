@@ -39,7 +39,6 @@ idAFBody::idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipMod
 	current->worldOrigin = clipModel->GetOrigin();
 	//current->worldAxis = clipModel->GetAxis();
 	*next = *current;
-
 }
 
 /*

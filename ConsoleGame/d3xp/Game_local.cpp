@@ -117,8 +117,7 @@ void idGameLocal::Shutdown()
 
 void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
 {
-	if (!mapFileName.empty())
-	{
+	if (!mapFileName.empty()) {
 		MapShutdown();
 	}
 
@@ -195,7 +194,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
 	args.Set("origin", Vector2(10.0f, 10.0f).ToString());
-	args.Set("linearVelocity", Vector2(10.0f, 0.0f).ToString());
+	args.Set("linearVelocity", Vector2(pm_walkspeed.GetFloat(), 0.0f).ToString());
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -730,7 +729,7 @@ void idGameLocal::MapPopulate()
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
 
-	for(int i = 0; i < game_add_point_count.GetInteger(); ++i)
+	for(int i = 0; i < 1; ++i)
 		AddRandomPoint();
 }
 
@@ -750,7 +749,7 @@ void idGameLocal::AddRandomPoint()
 {
 	idDict args;
 
-	size_t ent_type = GetRandomValue(1, 2);
+	size_t ent_type = GetRandomValue(2, 2);
 
 	float searching_radius = 0.0f;
 	float ent_size = 1.0f;
@@ -776,17 +775,15 @@ void idGameLocal::AddRandomPoint()
 	}
 
 	Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
-	//Vector2 origin = { 10.0f, 0.16f };
+	//Vector2 origin = { 11.0f, 10.0f };
 	Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
 	int num_attempts = 0;
 	int finded_ents = 0;
-	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
-	{
-		if (num_attempts++ > 100)
-		{
+	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0) {
+		if (num_attempts++ > 100) {
 			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
 			return;
 		}
@@ -799,8 +796,8 @@ void idGameLocal::AddRandomPoint()
 	args.Set("model", "asterisk");
 	args.Set("clipmodel", "pixel");
 	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
-	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-2.0f, 2.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
-	//args.Set("linearVelocity", (Vector2(0.0f, -10.0f).ToString()));
+	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
+	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {

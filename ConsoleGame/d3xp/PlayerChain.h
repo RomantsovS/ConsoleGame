@@ -31,6 +31,7 @@ private:
 	std::vector<int> modelDefHandles;
 
 	void BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks, const Vector2& dir);
+	void AddModel(const idTraceModel& trm, const Vector2& origin, const int id, const float density);
 
 	void EvaluateControls();
 	void AdjustSpeed();
