@@ -15,7 +15,6 @@ void idCommonLocal::StartMenu(bool playIntro) {
 	if (game) {
 		game->Shell_Show(true);
 	}
-
 }
 
 /*

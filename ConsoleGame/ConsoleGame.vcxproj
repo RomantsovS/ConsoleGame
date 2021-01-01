@@ -127,6 +127,9 @@
     <ClInclude Include="d3xp\gamesys\Event.h" />
     <ClInclude Include="d3xp\gamesys\SysCvar.h" />
     <ClInclude Include="d3xp\Game_local.h" />
+    <ClInclude Include="d3xp\menus\MenuHandler.h" />
+    <ClInclude Include="d3xp\menus\MenuScreen.h" />
+    <ClInclude Include="d3xp\menus\MenuWidget.h" />
     <ClInclude Include="d3xp\Misc.h" />
     <ClInclude Include="d3xp\physics\Clip.h" />
     <ClInclude Include="d3xp\physics\Physics.h" />
@@ -173,8 +176,9 @@
     <ClInclude Include="Renderer\RenderWorld_local.h" />
     <ClInclude Include="Renderer\Screen.h" />
     <ClInclude Include="Renderer\tr_local.h" />
-    <ClInclude Include="Snake.h" />
     <ClInclude Include="sys\sys_public.h" />
+    <ClInclude Include="sys\sys_session.h" />
+    <ClInclude Include="sys\sys_session_local.h" />
     <ClInclude Include="sys\win32\win_local.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +201,10 @@
     <ClCompile Include="d3xp\gamesys\SysCvar.cpp" />
     <ClCompile Include="d3xp\Game_local.cpp" />
     <ClCompile Include="d3xp\Game_network.cpp" />
+    <ClCompile Include="d3xp\menus\MenuHandler.cpp" />
+    <ClCompile Include="d3xp\menus\MenuHandler_Shell.cpp" />
+    <ClCompile Include="d3xp\menus\MenuScreen.cpp" />
+    <ClCompile Include="d3xp\menus\MenuWidget.cpp" />
     <ClCompile Include="d3xp\Misc.cpp" />
     <ClCompile Include="d3xp\physics\Clip.cpp" />
     <ClCompile Include="d3xp\physics\Physics.cpp" />
@@ -245,10 +253,11 @@
     <ClCompile Include="Renderer\tr_backend_render_tools.cpp" />
     <ClCompile Include="Renderer\tr_frontend_addmodels.cpp" />
     <ClCompile Include="Renderer\tr_frontend_main.cpp" />
-    <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="sys\sys_session_local.cpp" />
     <ClCompile Include="Sys\Win32\win_cpu.cpp" />
     <ClCompile Include="sys\win32\win_input.cpp" />
     <ClCompile Include="sys\win32\win_main.cpp" />
+    <ClCompile Include="sys\win32\win_session_local.cpp" />
     <ClCompile Include="Sys\Win32\win_shared.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

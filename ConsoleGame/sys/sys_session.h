@@ -2,7 +2,6 @@
 #define SYS_SYS_SESSION_H_
 
 #include <memory>
-#include "sys_signin.h"
 
 /*
 ================================================
@@ -12,7 +11,7 @@ idSession
 class idSession {
 public:
 
-	enum sessionState_t {
+	enum class sessionState_t {
 		PRESS_START,
 		IDLE,
 		SEARCHING,
@@ -25,23 +24,16 @@ public:
 		MAX_STATES
 	};
 
-	idSession() :
-		signInManager(nullptr) {}
+	idSession() {}
 
-	virtual 		~idSession();
+	virtual ~idSession();
 
-	virtual void			Initialize() = 0;
-	virtual void			Shutdown() = 0;
+	virtual void Initialize() = 0;
+	virtual void Shutdown() = 0;
 
-	//=====================================================================================================
-	//	GamerCard UI
-	//=====================================================================================================
-
-	virtual void				UpdateSignInManager() = 0;
-
-protected:
-	std::shared_ptr<idSignInManagerBase> signInManager; // pointer so we can treat dynamically bind platform-specific impl
-
+	virtual sessionState_t	GetState() const = 0;
 };
+
+extern idSession* session;
 
 #endif

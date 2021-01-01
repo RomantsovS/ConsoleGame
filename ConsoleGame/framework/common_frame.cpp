@@ -16,9 +16,9 @@ void idCommonLocal::Frame()
 {
 	try
 	{
-		const bool pauseGame = !mapSpawned;
-
 		eventLoop->RunEventLoop();
+
+		const bool pauseGame = !mapSpawned || (game && game->Shell_IsActive());
 
 		// How many game frames to run
 		int numGameFrames = 0;
@@ -85,7 +85,7 @@ void idCommonLocal::Frame()
 		}
 
 		if (!mapSpawned)
-			ExecuteMapChange();
+			//ExecuteMapChange();
 
 		usercmdGen->BuildCurrentUsercmd(0);
 
@@ -105,27 +105,40 @@ void idCommonLocal::Frame()
 
 void idCommonLocal::Draw()
 {
-	if (game)
-	{		
-		static auto prev_frame_update_time = Sys_Milliseconds();
-		static auto prev_info_update_time = prev_frame_update_time;
+	if (game && game->Shell_IsActive()) {
+		bool gameDraw = game->Draw(game->GetLocalClientNum());
+		/*if (!gameDraw) {
+			renderSystem->SetColor(colorBlack);
+			renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
+		}*/
+		game->Shell_Render();
+	}
+	else if (mapSpawned) {
+		if (game) {
+			static auto prev_frame_update_time = Sys_Milliseconds();
+			static auto prev_info_update_time = prev_frame_update_time;
 
-		auto t = Sys_Milliseconds();
+			auto t = Sys_Milliseconds();
 
-		if (t - prev_frame_update_time > update_frame_time) {
-			tr.update_frame = true;
-			prev_frame_update_time = t;
+			if (t - prev_frame_update_time > update_frame_time) {
+				tr.update_frame = true;
+				prev_frame_update_time = t;
+			}
+
+			if (t - prev_info_update_time > update_info_time) {
+				tr.update_info = true;
+				prev_info_update_time = t;
+			}
+
+			game->RunFrame();
+
+			game->Draw(0);
+
+			RB_DrawView();
 		}
-
-		if (t - prev_info_update_time > update_info_time) {
-			tr.update_info = true;
-			prev_info_update_time = t;
+		else {
+			//renderSystem->SetColor4(0, 0, 0, 1);
+			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
 		}
-
-		game->RunFrame();
-
-		game->Draw(0);
-
-		RB_DrawView();
 	}
 }

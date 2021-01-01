@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "../framework/UsercmdGen.h"
 #include "gamesys/SysCvar.h"
+#include "../sys/sys_session.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -30,13 +31,11 @@ void AddRandomPoints(const idCmdArgs& args) {
 		gameLocal.AddRandomPoint();
 }
 
-idGameLocal::idGameLocal()
-{
+idGameLocal::idGameLocal() {
 	Clear();
 }
 
-void idGameLocal::Init()
-{
+void idGameLocal::Init() {
 	Printf("--------- Initializing Game ----------\n");
 	Printf("gamename: %s\n", GAME_VERSION.c_str());
 	Printf("gamedate: %s\n", __DATE__);
@@ -51,6 +50,8 @@ void idGameLocal::Init()
 	idClass::Init();
 
 	InitConsoleCommands();
+
+	shellHandler = std::make_shared<idMenuHandler_Shell>();
 
 	//The default config file contains remapped controls that support the XP weapons
 	//We want to run this once after the base doom config file has run so we can
@@ -89,14 +90,15 @@ idGameLocal::Shutdown
   shut down the entire game
 ============
 */
-void idGameLocal::Shutdown()
-{
+void idGameLocal::Shutdown() {
 	if (!common)
 	{
 		return;
 	}
 
 	Printf("------------ Game Shutdown -----------\n");
+
+	Shell_Cleanup();
 
 	MapShutdown();
 
@@ -115,8 +117,7 @@ void idGameLocal::Shutdown()
 	Printf("--------------------------------------\n");
 }
 
-void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed)
-{
+void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) {
 	if (!mapFileName.empty()) {
 		MapShutdown();
 	}
@@ -136,8 +137,7 @@ void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idR
 	gamestate = GAMESTATE_ACTIVE;
 }
 
-void idGameLocal::MapShutdown()
-{
+void idGameLocal::MapShutdown() {
 	Printf("--------- Game Map Shutdown ----------\n");
 
 	gamestate = GAMESTATE_SHUTDOWN;
@@ -247,8 +247,7 @@ void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
 	}
 }
 
-void idGameLocal::RunFrame()
-{
+void idGameLocal::RunFrame() {
 	if (!gameRenderWorld)
 	{
 		return;
@@ -358,6 +357,12 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 bool idGameLocal::Draw(int clientNum)
 {
 	RB_RenderDebugToolsBefore();
+
+	std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities[clientNum]);
+
+	if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
+		return false;
+	}
 
 	gameRenderWorld->RenderScene(nullptr);
 
@@ -562,8 +567,7 @@ void idGameLocal::PrintSpawnedEntities()
 idGameLocal::Printf
 ============
 */
-void idGameLocal::Printf(const char* fmt, ...) const
-{
+void idGameLocal::Printf(const char* fmt, ...) const {
 	va_list		argptr;
 	char		text[MAX_STRING_CHARS];
 
@@ -638,8 +642,7 @@ void idGameLocal::Error(const char* fmt, ...) const {
 	common->Error("%s", text);
 }
 
-void idGameLocal::LoadMap(const std::string mapName, int randseed)
-{
+void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 	mapFileName = mapName;
 
 	// load the collision map
@@ -667,8 +670,7 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed)
 	clip->Init();
 }
 
-void idGameLocal::Clear()
-{
+void idGameLocal::Clear() {
 	entities.clear();
 	entities.resize(MAX_GENTITIES);
 	firstFreeEntityIndex[0] = 0;
@@ -678,8 +680,7 @@ void idGameLocal::Clear()
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
 	
-	if (clip)
-	{
+	if (clip) {
 		clip->Shutdown();
 		clip = nullptr;
 	}
@@ -690,6 +691,8 @@ void idGameLocal::Clear()
 	mapFileName.clear();
 	spawnArgs.Clear();
 	gamestate = GAMESTATE_UNINITIALIZED;
+
+	shellHandler = nullptr;
 
 	ResetSlowTimeVars();
 
@@ -707,19 +710,134 @@ gameState_t	idGameLocal::GameState() const {
 	return gamestate;
 }
 
-void idGameLocal::Shell_Show(bool show)
-{
-	tr.screen.setStdOutputBuffer();
-
-	tr.screen.writeConsoleOutput("enter Q to quit or any key to continue: ");
+/*
+========================
+idGameLocal::Shell_Init
+========================
+*/
+void idGameLocal::Shell_Init() {
+	if (shellHandler) {
+		shellHandler->Initialize();
+	}
 }
 
-void idGameLocal::SpawnMapEntities()
-{
+/*
+========================
+idGameLocal::Shell_Init
+========================
+*/
+void idGameLocal::Shell_Cleanup() {
+	if (shellHandler) {
+		shellHandler = nullptr;
+	}
 }
 
-void idGameLocal::MapPopulate()
-{
+/*
+========================
+idGameLocal::Shell_CreateMenu
+========================
+*/
+void idGameLocal::Shell_CreateMenu(bool inGame) {
+	Shell_ResetMenu();
+
+	if (shellHandler) {
+		if (!inGame) {
+			shellHandler->SetInGame(false);
+			Shell_Init();
+		}
+		else {
+			shellHandler->SetInGame(true);
+			Shell_Init();
+
+		}
+	}
+}
+
+/*
+========================
+idGameLocal::Shell_IsActive
+========================
+*/
+bool idGameLocal::Shell_IsActive() const {
+	if (shellHandler) {
+		return shellHandler->IsActive();
+	}
+	return false;
+}
+
+void idGameLocal::Shell_Show(bool show) {
+	if (shellHandler) {
+		shellHandler->ActivateMenu(show);
+	}
+}
+
+/*
+========================
+idGameLocal::Shell_Render
+========================
+*/
+void idGameLocal::Shell_Render() {
+	if (shellHandler) {
+		shellHandler->Update();
+	}
+}
+
+/*
+========================
+idGameLocal::Shell_ResetMenu
+========================
+*/
+void idGameLocal::Shell_ResetMenu() {
+	if (shellHandler) {
+		shellHandler = nullptr;
+		shellHandler = std::make_shared<idMenuHandler_Shell>();
+	}
+}
+
+/*
+=================
+idGameLocal::Shell_SyncWithSession
+=================
+*/
+void idGameLocal::Shell_SyncWithSession() {
+	if (!shellHandler) {
+		return;
+	}
+	switch (session->GetState()) {
+	case idSession::sessionState_t::PRESS_START:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_PRESS_START);
+		break;
+	case idSession::sessionState_t::INGAME:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_PAUSED);
+		break;
+	case idSession::sessionState_t::IDLE:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_IDLE);
+		break;
+	case idSession::sessionState_t::PARTY_LOBBY:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_PARTY_LOBBY);
+		break;
+	case idSession::sessionState_t::GAME_LOBBY:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_GAME_LOBBY);
+		break;
+	case idSession::sessionState_t::SEARCHING:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_SEARCHING);
+		break;
+	case idSession::sessionState_t::LOADING:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_LOADING);
+		break;
+	case idSession::sessionState_t::CONNECTING:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_CONNECTING);
+		break;
+	case idSession::sessionState_t::BUSY:
+		shellHandler->SetShellState(shellState_t::SHELL_STATE_BUSY);
+		break;
+	}
+}
+
+void idGameLocal::SpawnMapEntities() {
+}
+
+void idGameLocal::MapPopulate() {
 	// parse the key/value pairs and spawn entities
 	SpawnMapEntities();
 
@@ -733,8 +851,7 @@ void idGameLocal::MapPopulate()
 		AddRandomPoint();
 }
 
-void idGameLocal::MapClear(bool clearClients)
-{
+void idGameLocal::MapClear(bool clearClients) {
 	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++) {
 		auto ent = entities[i];
 
@@ -745,8 +862,7 @@ void idGameLocal::MapClear(bool clearClients)
 	}
 }
 
-void idGameLocal::AddRandomPoint()
-{
+void idGameLocal::AddRandomPoint() {
 	idDict args;
 
 	size_t ent_type = GetRandomValue(2, 2);
@@ -816,8 +932,7 @@ void idGameLocal::AddRandomPoint()
 	gameLocal.SpawnEntityDef(args, &ent);*/
 }
 
-Screen::ConsoleColor idGameLocal::GetRandomColor()
-{
+Screen::ConsoleColor idGameLocal::GetRandomColor() {
 	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
 
 	int col(u_c(rand_eng));
@@ -825,8 +940,7 @@ Screen::ConsoleColor idGameLocal::GetRandomColor()
 	return colors[col];
 }
 
-bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>* ent)
-{
+bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>* ent) {
 	std::string classname, spawn, error, name;
 	idTypeInfo *cls;
 	std::shared_ptr<idClass> obj;
@@ -867,16 +981,14 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>*
 	return false;
 }
 
-void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy)
-{
+void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy) {
 	int spawn_entnum;
 
 	if (spawnCount >= (1 << (32 - GENTITYNUM_BITS))) {
 		Error("idGameLocal::RegisterEntity: spawn count overflow");
 	}
 
-	if (!spawnArgsToCopy.GetInt("spawn_entnum", "0", spawn_entnum))
-	{
+	if (!spawnArgsToCopy.GetInt("spawn_entnum", "0", spawn_entnum)) {
 		const int freeListType = 0;
 		const int maxEntityNum = ENTITYNUM_MAX_NORMAL;
 		int freeIndex = firstFreeEntityIndex[freeListType];
@@ -908,8 +1020,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 	}
 }
 
-void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent)
-{
+void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) {
 	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent)) {
 		ent->spawnNode.Remove();
 		entities[ent->entityNumber] = nullptr;

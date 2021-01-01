@@ -7,6 +7,7 @@
 #include "UsercmdGen.h"
 #include "EventLoop.h"
 #include "Console.h"
+#include "../sys/sys_session.h"
 
 idCVar com_allowConsole("com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key");
 
@@ -19,8 +20,7 @@ long long com_engineHz_denominator = 100LL * 60LL;
 idCommonLocal commonLocal;
 idCommon * common = &commonLocal;
 
-idCommonLocal::idCommonLocal()
-{
+idCommonLocal::idCommonLocal() {
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
 
@@ -37,18 +37,26 @@ idCommonLocal::idCommonLocal()
 idCommonLocal::Quit
 ==================
 */
-void idCommonLocal::Quit()
-{
+void idCommonLocal::Quit() {
 	// don't try to shutdown if we are in a recursive error
-	if (!com_errorEntered)
-	{
+	if (!com_errorEntered) {
 		Shutdown();
 	}
 	Sys_Quit();
 }
 
-void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline)
-{
+/*
+=================
+idCommonLocal::UnloadGameDLL
+=================
+*/
+void idCommonLocal::CleanupShell() {
+	if (game != nullptr) {
+		game->Shell_Cleanup();
+	}
+}
+
+void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline) {
 	try {
 		// init console command system
 		cmdSystem->Init();
@@ -94,6 +102,13 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// will be freed
 		renderWorld = renderSystem->AllocRenderWorld();
 
+		// init the session
+		session->Initialize();
+
+		CreateMainMenu();
+
+		StartMenu(true);
+
 		delayMilliseconds = 100;
 		FPSupdateMilliseconds = 1000;
 
@@ -111,8 +126,7 @@ idCommonLocal::Shutdown
 */
 void idCommonLocal::Shutdown() {
 
-	if (com_shuttingDown)
-	{
+	if (com_shuttingDown) {
 		return;
 	}
 	com_shuttingDown = true;
@@ -120,8 +134,16 @@ void idCommonLocal::Shutdown() {
 	Printf("Stop();\n");
 	Stop();
 
+	printf("CleanupShell();\n");
+	CleanupShell();
+
 	Printf("delete renderWorld;\n");
 	renderWorld = nullptr;
+
+	// shut down the session
+	Printf("session->ShutdownSoundRelatedSystems();\n");
+	Printf("session->Shutdown();\n");
+	session->Shutdown();
 
 	// shut down the user command input code
 	printf("usercmdGen->Shutdown();\n");
@@ -138,8 +160,7 @@ void idCommonLocal::Shutdown() {
 	// unload the game dll
 	Printf("UnloadGameDLL();\n");
 	// shut down the game object
-	if (game)
-	{
+	if (game) {
 		game->Shutdown();
 	}
 
@@ -168,8 +189,28 @@ void idCommonLocal::Shutdown() {
 	cmdSystem->Shutdown();
 }
 
-void idCommonLocal::Stop(bool resetSession)
-{
+/*
+========================
+idCommonLocal::CreateMainMenu
+========================
+*/
+void idCommonLocal::CreateMainMenu() {
+	if (game != nullptr) {
+		// note which media we are going to need to load
+		renderSystem->BeginLevelLoad();
+
+		// create main inside an "empty" game level load - so assets get
+		// purged automagically when we transition to a "real" map
+		game->Shell_CreateMenu(false);
+		game->Shell_Show(true);
+		game->Shell_SyncWithSession();
+
+		// load
+		renderSystem->EndLevelLoad();
+	}
+}
+
+void idCommonLocal::Stop(bool resetSession) {
 	// clear mapSpawned and demo playing flags
 	UnloadMap();
 }

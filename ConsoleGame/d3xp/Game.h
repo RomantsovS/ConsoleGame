@@ -33,8 +33,14 @@ public:
 
 
 	// MAIN MENU FUNCTIONS
-	virtual bool Shell_IsActive() const = 0;
+	virtual void Shell_Init() = 0;
+	virtual void Shell_Cleanup() = 0;
+	virtual void Shell_CreateMenu(bool inGame) = 0;
 	virtual void Shell_Show(bool show) = 0;
+	virtual bool Shell_IsActive() const = 0;
+	virtual void Shell_Render() = 0;
+	virtual void Shell_ResetMenu() = 0;
+	virtual void Shell_SyncWithSession() = 0;
 };
 
 extern idGame *game;

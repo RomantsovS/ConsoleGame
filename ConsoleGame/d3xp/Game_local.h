@@ -11,6 +11,7 @@
 #include "../framework/CVarSystem.h"
 #include "../idlib/CmdArgs.h"
 #include "Player.h"
+#include "menus/MenuHandler.h"
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 extern idCVar game_width;
@@ -123,8 +124,14 @@ public:
 	void SyncPlayersWithLobbyUsers(bool initial);
 
 	// MAIN MENU FUNCTIONS
-	virtual bool Shell_IsActive() const override { return menu_active; }
+	virtual void Shell_Init();
+	virtual void Shell_Cleanup() override;
 	virtual void Shell_Show(bool show) override;
+	virtual void Shell_CreateMenu(bool inGame);
+	virtual bool Shell_IsActive() const override;
+	virtual void Shell_Render() override;
+	virtual void Shell_ResetMenu() override;
+	virtual void Shell_SyncWithSession() override;
 
 	template <typename T>
 	T GetRandomValue(T min, T max);
@@ -142,6 +149,8 @@ private:
 
 	int spawnCount;
 	
+	std::shared_ptr<idMenuHandler_Shell> shellHandler;
+
 	idDict spawnArgs;
 
 	gameState_t gamestate; // keeps track of whether we're spawning, shutting down, or normal gameplay

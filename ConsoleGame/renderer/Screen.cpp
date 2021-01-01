@@ -11,8 +11,7 @@ idCVar text_info_max_height("text_info_max_height", "20", CVAR_SYSTEM | CVAR_INI
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), cur_write_coord({0, 0}),
-	window_rect({ 0, 0, 1, 1 })
-{
+	window_rect({ 0, 0, 1, 1 }) {
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
@@ -125,12 +124,10 @@ void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen
 	WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght, coord, &written);
 }
 
-void Screen::writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background)
-{
+void Screen::writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background) {
 	std::string text_full_string = text;
 
-	if (text.size() % width != 0)
-	{
+	if (text.size() % width != 0) {
 		text_full_string.append(width - (text.size() % width), ' ');
 	}
 
@@ -140,8 +137,7 @@ void Screen::writeInColor(const std::string& text, ConsoleColor color_text, Cons
 	cur_write_coord.X = 0;
 }
 
-bool Screen::readInput(unsigned& key)
-{
+bool Screen::readInput(unsigned& key) {
 	/*DWORD events;
 	INPUT_RECORD input_record;
 
@@ -179,8 +175,7 @@ bool Screen::readInput(unsigned& key)
 	return false;
 }
 
-std::string Screen::waitConsoleInput()
-{
+std::string Screen::waitConsoleInput() {
 	/*std::string text_input;
 	DWORD events;
 	INPUT_RECORD input_record;
@@ -210,14 +205,12 @@ std::string Screen::waitConsoleInput()
 	return "";
 }
 
-void Screen::writeConsoleOutput(const std::string& text)
-{
+void Screen::writeConsoleOutput(const std::string& text) {
 	DWORD written;
 	WriteConsole(h_console_std_out, text.c_str(), text.size(), &written, NULL);
 }
 
-void Screen::clearConsoleOutut()
-{
+void Screen::clearConsoleOutut() {
 	DWORD written;
 	COORD coord({ 0, 0 });
 
@@ -225,14 +218,12 @@ void Screen::clearConsoleOutut()
 	SetConsoleCursorPosition(h_console_std_out, coord);
 }
 
-void Screen::setDrawOutputBuffer()
-{
+void Screen::setDrawOutputBuffer() {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
 }
 
-void Screen::setStdOutputBuffer()
-{
+void Screen::setStdOutputBuffer() {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
 }

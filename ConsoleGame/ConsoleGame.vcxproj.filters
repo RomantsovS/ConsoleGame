@@ -61,11 +61,11 @@
     <Filter Include="idlib\Text">
       <UniqueIdentifier>{befe0a83-32a2-42f1-82d8-7f4eb5658a62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="d3xp\Menus">
+      <UniqueIdentifier>{ca99614f-5386-4f32-bfd7-40763b2ecf90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Snake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\Model.h">
       <Filter>Renderer</Filter>
     </ClInclude>
@@ -237,17 +237,29 @@
     <ClInclude Include="d3xp\physics\Physics_AF.h">
       <Filter>Physics</Filter>
     </ClInclude>
-    <ClInclude Include="d3xp\PlayerChain.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="d3xp\menus\MenuHandler.h">
+      <Filter>d3xp\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\menus\MenuScreen.h">
+      <Filter>d3xp\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\menus\MenuWidget.h">
+      <Filter>d3xp\Menus</Filter>
     </ClInclude>
     <ClInclude Include="d3xp\physics\Physics_PlayerChain.h">
-      <Filter>Header Files</Filter>
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\PlayerChain.h">
+      <Filter>d3xp</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sys_session.h">
+      <Filter>Sys</Filter>
+    </ClInclude>
+    <ClInclude Include="sys\sys_session_local.h">
+      <Filter>Sys</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Snake.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Model.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -455,11 +467,29 @@
     <ClCompile Include="d3xp\physics\Physics_AF.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
-    <ClCompile Include="d3xp\PlayerChain.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="d3xp\menus\MenuHandler.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuHandler_Shell.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuScreen.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuWidget.cpp">
+      <Filter>d3xp\Menus</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\physics\Physics_PlayerChain.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\PlayerChain.cpp">
+      <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\sys_session_local.cpp">
+      <Filter>Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="sys\win32\win_session_local.cpp">
+      <Filter>Sys\Win32</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -24,6 +24,7 @@ public:
 
 	virtual void Init(int argc, const char * const * argv, const char *cmdline) override;
 	virtual void Shutdown() override;
+	virtual	void CreateMainMenu() override;
 	virtual void Quit() override;
 
 	virtual void Frame() override;
@@ -62,7 +63,7 @@ private:
 
 private:
 	void CloseLogFile();
-
+	void CleanupShell();
 	bool MenuEvent(const sysEvent_t* event);
 
 	void StartMenu(bool playIntro = false);
