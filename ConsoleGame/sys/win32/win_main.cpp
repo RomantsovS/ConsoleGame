@@ -156,8 +156,42 @@ sysEvent_t Sys_GetEvent() {
 	return ev;
 }
 
-int main(int argc, const char * const * argv, const char * cmdline)
-{
+BOOL WINAPI ConsoleHandler(DWORD CEvent) {
+	switch (CEvent)
+	{
+	case CTRL_C_EVENT:
+		MessageBox(NULL,
+			"CTRL+C received!", "CEvent", MB_OK);
+		break;
+	case CTRL_BREAK_EVENT:
+		MessageBox(NULL,
+			"CTRL+BREAK received!", "CEvent", MB_OK);
+		break;
+	case CTRL_CLOSE_EVENT:
+		common->Quit();
+		break;
+	case CTRL_LOGOFF_EVENT:
+		MessageBox(NULL,
+			"User is logging off!", "CEvent", MB_OK);
+		break;
+	case CTRL_SHUTDOWN_EVENT:
+		MessageBox(NULL,
+			"User is logging off!", "CEvent", MB_OK);
+		break;
+
+	}
+	return TRUE;
+}
+
+int main(int argc, const char * const * argv, const char * cmdline) {
+	if (SetConsoleCtrlHandler(
+		(PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE) {
+		// unable to install handler... 
+		// display message to the user
+		printf("Unable to install handler!\n");
+		return -1;
+	}
+
 	// get the initial time base
 	Sys_Milliseconds();
 

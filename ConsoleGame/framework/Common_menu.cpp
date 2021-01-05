@@ -18,6 +18,17 @@ void idCommonLocal::StartMenu(bool playIntro) {
 }
 
 /*
+===============
+idCommonLocal::ExitMenu
+===============
+*/
+void idCommonLocal::ExitMenu() {
+	if (game) {
+		game->Shell_Show(false);
+	}
+}
+
+/*
 ==============
 idCommonLocal::MenuEvent
 
@@ -25,12 +36,8 @@ Executes any commands returned by the gui
 ==============
 */
 bool idCommonLocal::MenuEvent(const sysEvent_t* event) {
-
 	if (game && game->Shell_IsActive()) {
-		if (event->evType == SE_KEY && event->evValue2 == 1 &&
-			(event->evValue == static_cast<int>(keyNum_t::K_ESCAPE))) {
-
-		}
+		return game->Shell_HandleGuiEvent(event);
 	}
 
 	return false;

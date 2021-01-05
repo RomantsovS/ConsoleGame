@@ -41,10 +41,19 @@ public:
 
 	void InitBaseState();
 
+	// Misc
+	virtual void LoadingFinished() override;
+
 	virtual sessionState_t	GetState() const override;
 
 	virtual void Initialize() = 0;
 	virtual void Shutdown() = 0;
+protected:
+	//=====================================================================================================
+	// Common functions (sys_session_local.cpp)
+	//=====================================================================================================
+
+	void SetState(state_t newState);
 protected:
 	state_t localState;
 };

@@ -13,8 +13,7 @@ class Screen {
 public:
 	using pos_type = SHORT;
 
-	enum ConsoleColor
-	{
+	enum class ConsoleColor {
 		None = -1,
 		Black = 0,
 		Blue = 1,
@@ -34,8 +33,7 @@ public:
 		White = 15
 	};
 
-	struct Pixel
-	{
+	struct Pixel {
 		Pixel() = default;
 
 		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
@@ -52,7 +50,7 @@ public:
 
 	void init();
 
-	inline Screen::Pixel get(pos_type ht, pos_type wd) const; // explicitly inline
+	inline Screen::Pixel get(pos_type r, pos_type c) const; // explicitly inline
 
 	Screen &set(pos_type r, pos_type col, Screen::Pixel ch);
 	Screen &set(Vector2 pos, Screen::Pixel ch);
@@ -95,11 +93,10 @@ private:
 Screen::Pixel Screen::get(pos_type r, pos_type c) const // declared as inline in the class
 {
 	pos_type row = r * width;      // compute row location
-    return contents[row + c]; // return character at the given column
+	return contents[row + c]; // return character at the given column
 }
 
-inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch)
-{
+inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch) {
 	if (r >= height || r < 0)
 		common->Error("Screen height: %d out of range: %d", r, height);
 
@@ -111,8 +108,7 @@ inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch)
 	return *this;                  // return this object as an lvalue
 }
 
-inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch)
-{
+inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
 

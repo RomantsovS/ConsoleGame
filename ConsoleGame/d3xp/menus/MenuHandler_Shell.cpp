@@ -2,6 +2,10 @@
 
 void idMenuHandler_Shell::Update() {
 
+	if (!gui || !gui->IsActive()) {
+		return;
+	}
+
 	if (nextState != state) {
 		if (nextState == shellState_t::SHELL_STATE_PRESS_START) {
 			nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_START);
@@ -50,6 +54,11 @@ void idMenuHandler_Shell::Update() {
 			if (activeScreen > static_cast<int>(shellAreas_t::SHELL_AREA_INVALID) && activeScreen < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS) && menuScreens[activeScreen]) {
 				menuScreens[activeScreen]->HideScreen();
 			}
+
+			if (cmdBar) {
+				cmdBar->ClearAllButtons();
+				cmdBar->Update();
+			}
 		}
 		else {
 
@@ -65,7 +74,20 @@ void idMenuHandler_Shell::Update() {
 		activeScreen = nextScreen;
 	}
 
+	if (cmdBar && cmdBar->GetSprite()) {
+		cmdBar->GetSprite()->SetVisible(true);
+	}
+
 	idMenuHandler::Update();
+}
+
+/*
+========================
+idMenuHandler_Shell::HandleGuiEvent
+========================
+*/
+bool idMenuHandler_Shell::HandleGuiEvent(const sysEvent_t* sev) {
+	return idMenuHandler::HandleGuiEvent(sev);
 }
 
 /*
@@ -73,8 +95,8 @@ void idMenuHandler_Shell::Update() {
 idMenuHandler_Shell::Initialize
 ========================
 */
-void idMenuHandler_Shell::Initialize() {
-	idMenuHandler::Initialize();
+void idMenuHandler_Shell::Initialize(const std::string& filename) {
+	idMenuHandler::Initialize(filename);
 
 	//---------------------
 	// Initialize the menus
@@ -82,7 +104,6 @@ void idMenuHandler_Shell::Initialize() {
 #define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
 	menuScreens[ (screenId) ] = std::make_shared<className>();	\
 	menuScreens[ (screenId) ]->Initialize( menuHandler );
-	//menuScreens[ (screenId) ]->AddRef();
 
 	for (int i = 0; i < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS); ++i) {
 		menuScreens[i] = nullptr;
@@ -91,8 +112,17 @@ void idMenuHandler_Shell::Initialize() {
 	if (inGame) {
 	}
 	else {
+		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_START), idMenuScreen_Shell_PressStart, shared_from_this());
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME), idMenuScreen_Shell_NewGame, shared_from_this());
 	}
+
+	//
+	// command bar
+	//
+	cmdBar = std::make_shared<idMenuWidget_CommandBar>();
+	//cmdBar->SetSpritePath("prompts");
+	cmdBar->Initialize(shared_from_this());
+	AddChild(cmdBar);
 }
 
 /*
@@ -111,13 +141,24 @@ idMenuHandler_Shell::ActivateMenu
 */
 void idMenuHandler_Shell::ActivateMenu(bool show) {
 
-	if (show && IsActive()) {
+	if (show && gui && gui->IsActive()) {
 		return;
 	}
-	else if (!show && !IsActive()) {
+	else if (!show && gui && !gui->IsActive()) {
 		return;
 	}
 
 	idMenuHandler::ActivateMenu(show);
+	if (show) {
+
+		//SetupPCOptions();
+
+	}
+	else {
+		nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_INVALID);
+		activeScreen = static_cast<int>(shellAreas_t::SHELL_AREA_INVALID);
+		nextState = shellState_t::SHELL_STATE_INVALID;
+		state = shellState_t::SHELL_STATE_INVALID;
+	}
 }
 

@@ -3,6 +3,8 @@
 #include "../renderer/RenderSystem.h"
 #include "FileSystem.h"
 #include "Console.h"
+#include "../sys/sys_session.h"
+#include "UsercmdGen.h"
 
 /*
 ===============
@@ -13,8 +15,12 @@ player and multiplayer, but not for renderDemos, which don't create a game at al
 Exits with mapSpawned = true
 ===============
 */
-void idCommonLocal::ExecuteMapChange()
-{
+void idCommonLocal::ExecuteMapChange() {
+	if (session->GetState() != idSession::sessionState_t::LOADING) {
+		Warning("Session state is not LOADING in ExecuteMapChange");
+		return;
+	}
+
 	currentMapName = "test map";
 
 	common->Printf("--------- Execute Map Change ---------\n");
@@ -41,10 +47,13 @@ void idCommonLocal::ExecuteMapChange()
 	com_engineHz_denominator = 100LL * static_cast<long long>(com_engineHz.GetFloat());
 
 	// let the renderSystem load all the geometry
-	if (!renderWorld->InitFromMap(""))
-	{
+	if (!renderWorld->InitFromMap("")) {
 		common->Error("couldn't load %s"/*, fullMapName.c_str()*/);
 	}
+
+	// for the synchronous networking we needed to roll the angles over from
+	// level to level, but now we can just clear everything
+	usercmdGen->InitForNewMap();
 
 	// load and spawn all other entities ( from a savegame possibly )
 	/*if (mapSpawnData.savegameFile) {
@@ -55,8 +64,20 @@ void idCommonLocal::ExecuteMapChange()
 	}
 	else
 	{*/
-		game->InitFromNewMap(currentMapName, renderWorld, Sys_Milliseconds());
+	game->InitFromNewMap(currentMapName, renderWorld, Sys_Milliseconds());
 	//}
+
+	game->Shell_CreateMenu(true);
+
+	// If the session state is not loading here, something went wrong.
+	if (session->GetState() == idSession::sessionState_t::LOADING) {
+		// Notify session we are done loading
+		session->LoadingFinished();
+
+		while (session->GetState() == idSession::sessionState_t::LOADING) {
+			Sys_Sleep(10);
+		}
+	}
 
 	//if (!mapSpawnData.savegameFile)
 	{
@@ -76,7 +97,10 @@ void idCommonLocal::ExecuteMapChange()
 
 	renderSystem->EndLevelLoad();
 
+	usercmdGen->Clear();
+
 	mapSpawned = true;
+	Sys_ClearEvents();
 
 	int	msec = Sys_Milliseconds() - start;
 	common->Printf("%6d msec to load %s\n", msec, currentMapName.c_str());

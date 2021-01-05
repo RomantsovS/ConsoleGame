@@ -20,6 +20,25 @@ public:
 	virtual void HideScreen();
 
 protected:
+	std::shared_ptr<GUI> menuGUI;
+};
+
+//*
+//================================================
+//idMenuScreen_Shell_PressStart
+//================================================
+//*/
+class idMenuScreen_Shell_PressStart : public idMenuScreen {
+public:
+	idMenuScreen_Shell_PressStart() :
+	startButton(nullptr) {
+	}
+	virtual void Initialize(std::shared_ptr<idMenuHandler> data);
+	virtual void Update();
+	virtual void ShowScreen();
+	virtual void HideScreen();
+private:
+	std::shared_ptr<idMenuWidget_Button> startButton;
 };
 
 //*

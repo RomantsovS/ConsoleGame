@@ -1,6 +1,9 @@
 #include "tr_local.h"
 #include "../framework/Console.h"
 
+const size_t update_frame_time = 50;
+const size_t update_info_time = 200;
+
 /*
 ==================
 RB_DrawViewInternal
@@ -31,6 +34,21 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 		RB_RenderDebugTools();
 		tr.update_info = false;
 	}
+
+	static auto prev_frame_update_time = Sys_Milliseconds();
+	static auto prev_info_update_time = prev_frame_update_time;
+
+	auto t = Sys_Milliseconds();
+
+	if (t - prev_frame_update_time > update_frame_time) {
+		tr.update_frame = true;
+		prev_frame_update_time = t;
+	}
+
+	if (t - prev_info_update_time > update_info_time) {
+		tr.update_info = true;
+		prev_info_update_time = t;
+	}
 }
 
 /*
@@ -45,4 +63,16 @@ is 0, so the stereoEye parameter is not always the same as that.
 void RB_DrawView(/*const void *data, const int stereoEye*/) {
 	// render the scene
 	RB_DrawViewInternal(/*cmd->viewDef, stereoEye*/);
+}
+
+/*
+====================
+RB_ExecuteBackEndCommands
+
+This function will be called syncronously if running without
+smp extensions, or asyncronously by another thread.
+====================
+*/
+void RB_ExecuteBackEndCommands() {
+	RB_DrawView();
 }

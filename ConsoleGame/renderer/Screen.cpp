@@ -98,7 +98,7 @@ void Screen::display() {
 	for (pos_type y = 0; y < height; ++y) {
 		for (pos_type x = 0; x < width; ++x) {
 			buffer[y * width + x].Char.AsciiChar = contents[y * width + x].value;
-			buffer[y * width + x].Attributes = contents[y * width + x].color;
+			buffer[y * width + x].Attributes = static_cast<int>(contents[y * width + x].color);
 		}
 	}
 
@@ -117,7 +117,7 @@ void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen
 	if (color_background == ConsoleColor::None)
 		color_background = backgroundPixel.color;
 
-	std::vector<WORD> attribute(lenght, (WORD)((color_background << 4) | color_text | FOREGROUND_INTENSITY));
+	std::vector<WORD> attribute(lenght, (WORD)((static_cast<int>(color_background) << 4) | static_cast<int>(color_text) | FOREGROUND_INTENSITY));
 	DWORD written;
 	
 	WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght, coord, &written);

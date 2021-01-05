@@ -53,7 +53,7 @@ Cmd_EntityList_f
 ===================
 */
 void Cmd_Quit(const idCmdArgs& args) {
-	common->Quit();
+	commonLocal.Quit();
 }
 
 /*

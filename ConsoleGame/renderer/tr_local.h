@@ -168,8 +168,9 @@ class idRenderSystemLocal : public idRenderSystem
 {
 public:
 	idRenderSystemLocal();
-
 	~idRenderSystemLocal();
+
+	void Clear();
 
 	virtual void Init() override;
 	virtual void Shutdown() override;
@@ -179,12 +180,16 @@ public:
 	virtual void BeginLevelLoad() override;
 	virtual void EndLevelLoad() override;
 
-	void SetHeight(Screen::pos_type h) override { height = h; }
-	void SetWidth(Screen::pos_type w) override { width = w; }
+	virtual void DrawString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) override;
+
+	virtual void RenderCommandBuffers();
+
+	void SetHeight(int h) override { height = h; }
+	void SetWidth(int w) override { width = w; }
+	virtual int GetWidth() const override { return width; }
+	virtual int GetHeight() const override { return height; }
 
 	void Display();
-
-	virtual void Clear() override;
 
 	void FillBorder();
 	void ClearScreen();
@@ -205,6 +210,8 @@ public:
 };
 
 extern idRenderSystemLocal tr;
+
+extern idCVar r_skipBackEnd; // don't draw anything
 
 /*
 ============================================================
@@ -249,6 +256,16 @@ TR_FRONTEND_ADDMODELS
 */
 
 void R_AddModels();
+
+/*
+=============================================================
+
+BACKEND
+
+=============================================================
+*/
+
+void RB_ExecuteBackEndCommands();
 
 /*
 ============================================================

@@ -81,4 +81,34 @@ idSessionLocal::sessionState_t idSessionLocal::GetState() const {
 		common->Error("GetState: Unknown state in idSessionLocal");
 	}
 	};
+
+	return sessionState_t::MAX_STATES;
 }
+
+// idSession interface
+
+/*
+========================
+idSessionLocal::LoadingFinished
+
+Only called by idCommonLocal::FinalizeMapChange
+========================
+*/
+void idSessionLocal::LoadingFinished() {
+	//assert(GetState() == idSession::LOADING);
+
+	SetState(state_t::STATE_INGAME);
+}
+
+/*
+========================
+idSessionLocal::SetState
+========================
+*/
+void idSessionLocal::SetState(state_t newState) {
+	//assert(newState < NUM_STATES);
+	//assert(localState < NUM_STATES);
+
+	localState = newState;
+}
+

@@ -12,16 +12,20 @@ idMenuScreen::Update
 ========================
 */
 void idMenuScreen::Update() {
+	if (!menuGUI) {
+		return;
+	}
+
 	//
 	// Display
 	//
-	/*for (int childIndex = 0; childIndex < GetChildren().Num(); ++childIndex) {
-		GetChildByIndex(childIndex).Update();
+	for (size_t childIndex = 0; childIndex < GetChildren().size(); ++childIndex) {
+		GetChildByIndex(childIndex)->Update();
 	}
 
-	if (menuData != NULL) {
+	if (menuData) {
 		menuData->UpdateChildren();
-	}*/
+	}
 }
 
 /*
@@ -30,6 +34,14 @@ idMenuScreen::HideScreen
 ========================
 */
 void idMenuScreen::HideScreen() {
+	if (!menuGUI) {
+		return;
+	}
+
+	if (!BindSprite(menuGUI->GetRootObject())) {
+		return;
+	}
+
 	Update();
 }
 
@@ -39,6 +51,15 @@ idMenuScreen::ShowScreen
 ========================
 */
 void idMenuScreen::ShowScreen() {
+	if (!menuGUI) {
+		return;
+	}
+
+	if (!BindSprite(menuGUI->GetRootObject())) {
+		return;
+	}
+
+	GetSprite()->SetVisible(true);
+
 	Update();
 }
-

@@ -63,17 +63,17 @@ void idGameLocal::Init() {
 	width = game_width.GetInteger();
 
 	//colors.push_back(Screen::Green);
-	colors.push_back(Screen::Cyan);
-	colors.push_back(Screen::Red);
-	colors.push_back(Screen::Magenta);
+	colors.push_back(Screen::ConsoleColor::Cyan);
+	colors.push_back(Screen::ConsoleColor::Red);
+	colors.push_back(Screen::ConsoleColor::Magenta);
 	//colors.push_back(Screen::Brown);
-	colors.push_back(Screen::LightGray);
-	colors.push_back(Screen::LightGreen);
-	colors.push_back(Screen::LightCyan);
-	colors.push_back(Screen::LightRed);
-	colors.push_back(Screen::LightMagenta);
-	colors.push_back(Screen::Yellow);
-	colors.push_back(Screen::White);
+	colors.push_back(Screen::ConsoleColor::LightGray);
+	colors.push_back(Screen::ConsoleColor::LightGreen);
+	colors.push_back(Screen::ConsoleColor::LightCyan);
+	colors.push_back(Screen::ConsoleColor::LightRed);
+	colors.push_back(Screen::ConsoleColor::LightMagenta);
+	colors.push_back(Screen::ConsoleColor::Yellow);
+	colors.push_back(Screen::ConsoleColor::White);
 
 	rand_eng.seed(static_cast<unsigned>(Sys_Time()));
 
@@ -192,7 +192,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("spawnclass", "PlayerChain");
 
 	args.Set("model", "pixel");
-	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
+	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
 	args.Set("origin", Vector2(10.0f, 10.0f).ToString());
 	args.Set("linearVelocity", Vector2(pm_walkspeed.GetFloat(), 0.0f).ToString());
 
@@ -248,8 +248,7 @@ void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
 }
 
 void idGameLocal::RunFrame() {
-	if (!gameRenderWorld)
-	{
+	if (!gameRenderWorld) {
 		return;
 	}
 
@@ -715,9 +714,9 @@ gameState_t	idGameLocal::GameState() const {
 idGameLocal::Shell_Init
 ========================
 */
-void idGameLocal::Shell_Init() {
+void idGameLocal::Shell_Init(const std::string& filename) {
 	if (shellHandler) {
-		shellHandler->Initialize();
+		shellHandler->Initialize(filename);
 	}
 }
 
@@ -743,13 +742,24 @@ void idGameLocal::Shell_CreateMenu(bool inGame) {
 	if (shellHandler) {
 		if (!inGame) {
 			shellHandler->SetInGame(false);
-			Shell_Init();
+			Shell_Init("shell");
 		}
 		else {
 			shellHandler->SetInGame(true);
-			Shell_Init();
+			Shell_Init("pause");
 
 		}
+	}
+}
+
+/*
+========================
+idGameLocal::Shell_Show
+========================
+*/
+void idGameLocal::Shell_Show(bool show) {
+	if (shellHandler != NULL) {
+		shellHandler->ActivateMenu(show);
 	}
 }
 
@@ -765,10 +775,16 @@ bool idGameLocal::Shell_IsActive() const {
 	return false;
 }
 
-void idGameLocal::Shell_Show(bool show) {
-	if (shellHandler) {
-		shellHandler->ActivateMenu(show);
+/*
+========================
+idGameLocal::Shell_HandleGuiEvent
+========================
+*/
+bool idGameLocal::Shell_HandleGuiEvent(const sysEvent_t* sev) {
+	if (shellHandler != NULL) {
+		return shellHandler->HandleGuiEvent(sev);
 	}
+	return false;
 }
 
 /*
@@ -911,7 +927,7 @@ void idGameLocal::AddRandomPoint() {
 	args.Set("axis", axis.ToString());
 	args.Set("model", "asterisk");
 	args.Set("clipmodel", "pixel");
-	args.Set("color", std::to_string(gameLocal.GetRandomColor()));
+	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
 	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
 	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
 

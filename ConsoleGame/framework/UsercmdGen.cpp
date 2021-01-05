@@ -299,6 +299,7 @@ idUsercmdGenLocal::InitForNewMap
 ================
 */
 void idUsercmdGenLocal::InitForNewMap() {
+	impulse = 0;
 	Clear();
 }
 

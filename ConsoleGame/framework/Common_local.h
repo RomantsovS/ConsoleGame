@@ -39,6 +39,7 @@ public:
 
 	virtual bool ProcessEvent(const sysEvent_t* event) override;
 public:
+	void RunGameAndDraw();
 	void Draw();			// called by gameThread
 private:
 	errorParm_t com_errorEntered;
@@ -64,6 +65,8 @@ private:
 private:
 	void CloseLogFile();
 	void CleanupShell();
+	
+	void ExitMenu();
 	bool MenuEvent(const sysEvent_t* event);
 
 	void StartMenu(bool playIntro = false);

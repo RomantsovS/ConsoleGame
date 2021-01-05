@@ -5,6 +5,12 @@
 #include <vector>
 #include <memory>
 
+#include "../../sys/sys_public.h"
+#include "../../gui/GUI.h"
+
+class idMenuWidget;
+class idMenuWidget_CommandBar;
+
 enum class shellAreas_t {
 	SHELL_AREA_INVALID = -1,
 	SHELL_AREA_START,
@@ -66,18 +72,26 @@ class idMenuHandler : public std::enable_shared_from_this<idMenuHandler> {
 public:
 	idMenuHandler();
 	virtual ~idMenuHandler();
-	virtual void Initialize();
+	virtual void Initialize(const std::string& filename);
 	virtual void Cleanup();
 	virtual void Update();
+	virtual void UpdateChildren();
+	virtual bool HandleGuiEvent(const sysEvent_t* sev);
 	virtual bool IsActive();
 	virtual void ActivateMenu(bool show);
+	virtual int ActiveScreen() { return activeScreen; }
+
+	virtual std::shared_ptr<GUI> GetGUI() { return gui; }
+	virtual void AddChild(std::shared_ptr<idMenuWidget> widget);
 
 protected:
 	int activeScreen;
 	int nextScreen;
+	std::shared_ptr<GUI> gui;
 	std::vector<std::shared_ptr<idMenuScreen>> menuScreens;
-private:
-	bool isGUIActive;
+	std::vector<std::shared_ptr<idMenuWidget>> children;
+
+	std::shared_ptr<idMenuWidget_CommandBar> cmdBar;
 };
 
 /*
@@ -95,8 +109,9 @@ public:
 
 	virtual void Update() override;
 	virtual void ActivateMenu(bool show) override;
-	virtual void Initialize() override;
+	virtual void Initialize(const std::string& filename) override;
 	virtual void Cleanup() override;
+	virtual bool HandleGuiEvent(const sysEvent_t* sev) override;
 
 	void SetShellState(shellState_t s) { nextState = s; }
 

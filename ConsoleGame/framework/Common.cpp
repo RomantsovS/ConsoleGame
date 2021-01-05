@@ -134,14 +134,13 @@ void idCommonLocal::Shutdown() {
 	Printf("Stop();\n");
 	Stop();
 
-	printf("CleanupShell();\n");
+	Printf("CleanupShell();\n");
 	CleanupShell();
 
 	Printf("delete renderWorld;\n");
 	renderWorld = nullptr;
 
 	// shut down the session
-	Printf("session->ShutdownSoundRelatedSystems();\n");
 	Printf("session->Shutdown();\n");
 	session->Shutdown();
 
@@ -213,6 +212,9 @@ void idCommonLocal::CreateMainMenu() {
 void idCommonLocal::Stop(bool resetSession) {
 	// clear mapSpawned and demo playing flags
 	UnloadMap();
+
+	// drop all guis
+	ExitMenu();
 }
 
 /*

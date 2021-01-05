@@ -275,13 +275,11 @@ void idRenderWorldLocal::DrawText(const std::string &text, const Vector2 &origin
 	RB_AddDebugText(text, origin, color, lifetime);
 }
 
-void idRenderWorldLocal::DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest)
-{
+void idRenderWorldLocal::DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) {
 	RB_AddDebugLine(color, start, end, lifetime, depthTest);
 }
 
-void idRenderWorldLocal::DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org, const int lifetime)
-{
+void idRenderWorldLocal::DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org, const int lifetime) {
 	int i;
 	Vector2 v[4];
 
@@ -301,7 +299,6 @@ void idRenderWorldLocal::DebugBounds(const Screen::ConsoleColor color, const idB
 	DebugLine(color, v[3], v[2], lifetime);
 }
 
-std::shared_ptr<idRenderWorld> idRenderWorldLocal::getptr()
-{
+std::shared_ptr<idRenderWorld> idRenderWorldLocal::getptr() {
 	return shared_from_this();
 }

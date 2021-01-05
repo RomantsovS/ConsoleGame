@@ -19,6 +19,8 @@ public:
 	virtual int Write(const void* buffer, int len);
 	// Returns the length of the file.
 	virtual int Length() const;
+	// Forces flush on files being writting to.
+	virtual void ForceFlush();
 	// Causes any buffered data to be written to the file.
 	virtual void Flush();
 
@@ -35,6 +37,7 @@ public:
 	virtual int Read(void* buffer, int len) override;
 	virtual int Write(const void* buffer, int len) override;
 	virtual int Length() const override;
+	virtual void ForceFlush() override;
 	virtual void Flush() override;
 
 	// returns file pointer

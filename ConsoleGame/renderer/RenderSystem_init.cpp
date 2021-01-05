@@ -2,8 +2,9 @@
 #include "ModelManager.h"
 #include "../d3xp/Game_local.h"
 
-void idRenderSystemLocal::Init()
-{
+idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
+
+void idRenderSystemLocal::Init() {
 	Sys_InitInput();
 
 	common->Printf("------- Initializing renderSystem ----\n");
@@ -39,8 +40,7 @@ void idRenderSystemLocal::Init()
 idRenderSystemLocal::Shutdown
 ===============
 */
-void idRenderSystemLocal::Shutdown()
-{
+void idRenderSystemLocal::Shutdown() {
 	common->Printf("idRenderSystem::Shutdown()\n");
 
 	if (R_IsInitialized()) {
@@ -57,8 +57,7 @@ void idRenderSystemLocal::Shutdown()
 idRenderSystemLocal::BeginLevelLoad
 ========================
 */
-void idRenderSystemLocal::BeginLevelLoad()
-{
+void idRenderSystemLocal::BeginLevelLoad() {
 	renderModelManager->BeginLevelLoad();
 }
 
@@ -67,8 +66,7 @@ void idRenderSystemLocal::BeginLevelLoad()
 idRenderSystemLocal::EndLevelLoad
 ========================
 */
-void idRenderSystemLocal::EndLevelLoad()
-{
+void idRenderSystemLocal::EndLevelLoad() {
 	renderModelManager->EndLevelLoad();
 }
 

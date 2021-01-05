@@ -6,6 +6,9 @@
 #include "../sys/sys_public.h"
 #include "../idlib/Str.h"
 
+idCVar com_logFile("logFile", "2", CVAR_SYSTEM | CVAR_NOCHEAT, "1 = buffer log, 2 = flush after each print", 0, 2);
+idCVar com_logFileName("logFileName", "qconsole", CVAR_SYSTEM | CVAR_NOCHEAT, "name of log file, if empty, qconsole.log will be used");
+
 void idCommonLocal::Printf(const char* fmt, ...)
 {
 	va_list argptr;
@@ -41,7 +44,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 	}
 
 	// logFile
-	if (fileSystem->IsInitialized()) {
+	if (com_logFile.GetInteger() && !logFileFailed && fileSystem->IsInitialized()) {
 		static bool recursing;
 
 		if (!logFile && !recursing) {
@@ -62,7 +65,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 
 			std::string fileName = cur_local_time;
 #else
-			std::string fileName = "qconsole";
+			std::string fileName = com_logFileName.GetString()[0] ? com_logFileName.GetString() : "qconsole";
 #endif // LOG_FILE_NAME_TIME
 
 			if (log_file_closed)
@@ -77,6 +80,12 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 			}
 
 			recursing = false;
+
+			if (com_logFile.GetInteger() > 1) {
+				// force it to not buffer so we get valid
+				// data even if we are crashing
+				logFile->ForceFlush();
+			}
 
 			time(&aclock);
 			localtime_s(&newtime, &aclock);
@@ -129,6 +138,7 @@ void idCommonLocal::CloseLogFile()
 {
 	if (logFile) {
 		Printf("log file closed\n");
+		com_logFile.SetBool(false); // make sure no further VPrintf attempts to open the log file again
 
 		fileSystem->CloseFile(logFile);
 

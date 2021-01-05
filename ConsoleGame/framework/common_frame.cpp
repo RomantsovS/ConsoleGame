@@ -3,17 +3,14 @@
 #include "../renderer/tr_local.h"
 #include "UsercmdGen.h"
 #include "EventLoop.h"
-
-constexpr size_t update_frame_time = 50;
-constexpr size_t update_info_time = 200;
+#include "../sys/sys_session.h"
 
 idCVar com_deltaTimeClamp("com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame");
 idCVar com_fixedTic("com_fixedTic", "0", CVAR_BOOL, "run a single game frame per render frame");
 idCVar com_noSleep("com_noSleep", "0", CVAR_BOOL, "don't sleep if the game is running too fast");
 idCVar timescale("timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f);
 
-void idCommonLocal::Frame()
-{
+void idCommonLocal::Frame() {
 	try
 	{
 		eventLoop->RunEventLoop();
@@ -84,8 +81,17 @@ void idCommonLocal::Frame()
 			Sys_Sleep(0);
 		}
 
-		if (!mapSpawned)
-			//ExecuteMapChange();
+		if (session->GetState() == idSession::sessionState_t::LOADING) {
+			// If the session reports we should be loading a map, load it!
+			ExecuteMapChange();
+			return;
+		}
+		else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
+			// If the game is running, but the session reports we are not in a game, disconnect
+			// This happens when a server disconnects us or we sign out
+			//LeaveGame();
+			return;
+		}
 
 		usercmdGen->BuildCurrentUsercmd(0);
 
@@ -95,7 +101,9 @@ void idCommonLocal::Frame()
 
 		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
 
-		Draw();
+		RunGameAndDraw();
+
+		renderSystem->RenderCommandBuffers();
 	}
 	catch (std::exception& err)
 	{
@@ -103,8 +111,12 @@ void idCommonLocal::Frame()
 	}
 }
 
-void idCommonLocal::Draw()
-{
+void idCommonLocal::RunGameAndDraw() {
+	game->RunFrame();
+	Draw();
+}
+
+void idCommonLocal::Draw() {
 	if (game && game->Shell_IsActive()) {
 		bool gameDraw = game->Draw(game->GetLocalClientNum());
 		/*if (!gameDraw) {
@@ -115,26 +127,7 @@ void idCommonLocal::Draw()
 	}
 	else if (mapSpawned) {
 		if (game) {
-			static auto prev_frame_update_time = Sys_Milliseconds();
-			static auto prev_info_update_time = prev_frame_update_time;
-
-			auto t = Sys_Milliseconds();
-
-			if (t - prev_frame_update_time > update_frame_time) {
-				tr.update_frame = true;
-				prev_frame_update_time = t;
-			}
-
-			if (t - prev_info_update_time > update_info_time) {
-				tr.update_info = true;
-				prev_info_update_time = t;
-			}
-
-			game->RunFrame();
-
 			game->Draw(0);
-
-			RB_DrawView();
 		}
 		else {
 			//renderSystem->SetColor4(0, 0, 0, 1);

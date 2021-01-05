@@ -20,8 +20,10 @@ public:
 	// only called before quitting
 	virtual void Shutdown() = 0;
 
-	virtual void SetHeight(short h) = 0;
-	virtual void SetWidth(short w) = 0;
+	virtual void SetHeight(int h) = 0;
+	virtual void SetWidth(int w) = 0;
+	virtual int GetWidth() const = 0;
+	virtual int GetHeight() const = 0;
 
 	// allocate a renderWorld to be used for drawing
 	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() = 0;
@@ -34,7 +36,9 @@ public:
 	virtual void BeginLevelLoad() = 0;
 	virtual void EndLevelLoad() = 0;
 
-	virtual void Clear() = 0;
+	virtual void DrawString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) = 0;
+
+	virtual void RenderCommandBuffers() = 0;
 };
 
 extern idRenderSystem *renderSystem;

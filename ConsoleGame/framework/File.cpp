@@ -3,15 +3,13 @@
 #include "Common_local.h"
 #include "FileSystem.h"
 
-idFile::idFile()
-{
+idFile::idFile() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idFile");
 #endif // DEBUG_PRINT_Ctor_Dtor
 }
 
-idFile::~idFile()
-{
+idFile::~idFile() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s dtor\n", "idFile");
 #endif
@@ -27,8 +25,7 @@ int idFile::Read(void* buffer, int len) {
 	return 0;
 }
 
-int idFile::Write(const void* buffer, int len)
-{
+int idFile::Write(const void* buffer, int len) {
 	common->FatalError("idFile::Write: cannot write to idFile");
 	return 0;
 }
@@ -42,12 +39,18 @@ int idFile::Length() const {
 	return 0;
 }
 
-void idFile::Flush()
-{
+/*
+=================
+idFile::ForceFlush
+=================
+*/
+void idFile::ForceFlush() {
 }
 
-int idFile::WriteString(const std::string& str)
-{
+void idFile::Flush() {
+}
+
+int idFile::WriteString(const std::string& str) {
 	return Write(str.c_str(), str.size());
 }
 
@@ -195,6 +198,15 @@ int idFile_Permanent::Write(const void* buffer, int len) {
 	}
 
 	return len;
+}
+
+/*
+=================
+idFile_Permanent::ForceFlush
+=================
+*/
+void idFile_Permanent::ForceFlush() {
+	o.flush();
 }
 
 /*
