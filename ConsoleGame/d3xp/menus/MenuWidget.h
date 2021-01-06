@@ -179,7 +179,7 @@ public:
 	std::shared_ptr<idMenuWidget> GetParent() { return parent.lock(); }
 	const std::shared_ptr<idMenuWidget> GetParent() const { return parent.lock(); }
 	void SetParent(std::shared_ptr<idMenuWidget> parent_) { parent = parent_; }
-
+	void SetSWFObj(std::shared_ptr<GUI> obj) { guiObj = obj; }
 protected:
 	std::shared_ptr<idMenuHandler> menuData;
 	std::shared_ptr<GUI> guiObj;
@@ -241,7 +241,7 @@ public:
 		buttons.resize(MAX_BUTTONS);
 	}
 
-	virtual void Update();
+	virtual void Update() override;
 	//virtual bool ExecuteEvent(const idWidgetEvent& event);
 
 	buttonInfo_t* GetButton(const button_t button) { return &buttons[button]; }

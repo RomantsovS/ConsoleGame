@@ -2,15 +2,20 @@
 #define GUI_GUI_H_
 
 #include <memory>
+
 #include "../renderer/RenderSystem.h"
+#include "GUI_Types.h"
+#include "GUI_ScriptVar.h"
+#include "GUI_ScriptObject.h"
 #include "GUI_SpriteInstance.h"
 #include "GUI_TextInstance.h"
-#include "GUI_ScriptObject.h"
 
-class GUI {
+class GUI : public std::enable_shared_from_this<GUI> {
 public:
 	GUI(const std::string& filename_);
 	~GUI() {}
+
+	void Init();
 
 	bool IsActive() { return isActive; }
 	void Activate(bool b);

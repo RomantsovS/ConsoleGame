@@ -16,25 +16,48 @@ they can contain raw data (int, float), strings, functions, or objects
 */
 class GUIScriptVar {
 public:
-	GUIScriptVar() { }
+	GUIScriptVar() : type(swfScriptVarType::SWF_VAR_UNDEF) { }
 	GUIScriptVar(const GUIScriptVar& other);
-	GUIScriptVar(std::shared_ptr<GUIScriptObject> o) { SetObject(o); }
-	GUIScriptVar(int i) { SetInteger(i); }
+	GUIScriptVar(std::shared_ptr<GUIScriptObject> o) : type(swfScriptVarType::SWF_VAR_UNDEF) { SetObject(o); }
+	GUIScriptVar(const std::string& s) : type(swfScriptVarType::SWF_VAR_UNDEF) { SetString(s); }
+	GUIScriptVar(const char* s) : type(swfScriptVarType::SWF_VAR_UNDEF) { SetString(std::string(s)); }
+	GUIScriptVar(int i) : type(swfScriptVarType::SWF_VAR_UNDEF) { SetInteger(i); }
 	~GUIScriptVar();
 
 	GUIScriptVar& operator=(const GUIScriptVar& other);
 
-	void SetInteger(int i) { Free(); /*value.i = i;*/ }
+	void SetString(const std::string& s) { Free(); type = swfScriptVarType::SWF_VAR_STRINGID; value.string = std::make_shared<std::string>(s); }
+	void SetInteger(int i) { Free(); type = swfScriptVarType::SWF_VAR_INTEGER; value.i = i; }
 
 	void SetObject(std::shared_ptr<GUIScriptObject> o);
+
+	std::string ToString() const;
+	bool ToBool() const;
 
 	std::shared_ptr<GUIScriptObject> GetObjectScript() { return value.object; }
 	std::shared_ptr<GUIScriptObject> GetObjectScript() const { return value.object; }
 	std::shared_ptr<GUISpriteInstance> ToSprite();
 
-	bool IsObject() const { return (true); }
+	bool IsString() const { return (type == swfScriptVarType::SWF_VAR_STRING) || (type == swfScriptVarType::SWF_VAR_STRINGID); }
+	bool IsObject() const { return (type == swfScriptVarType::SWF_VAR_OBJECT); }
+
+	enum class swfScriptVarType {
+		SWF_VAR_STRINGID,
+		SWF_VAR_STRING,
+		SWF_VAR_FLOAT,
+		SWF_VAR_NULL,
+		SWF_VAR_UNDEF,
+		SWF_VAR_BOOL,
+		SWF_VAR_INTEGER,
+		SWF_VAR_FUNCTION,
+		SWF_VAR_OBJECT
+	};
+
+	swfScriptVarType GetType() const { return type; }
+
 private:
 	void Free();
+	swfScriptVarType type;
 
 	struct guiScriptVarValue_t {
 		guiScriptVarValue_t() {}
@@ -42,20 +65,15 @@ private:
 
 		guiScriptVarValue_t& operator=(const guiScriptVarValue_t& other) {
 			if (this != &other) {
+				i = other.i;
 				object = other.object;
+				string = other.string;
 			}return *this;
 		}
 
+		int i;
 		std::shared_ptr<GUIScriptObject> object;
+		std::shared_ptr<std::string> string;
 	} value;
 };
-/*
-inline bool operator==(const GUIScriptVar& l, const GUIScriptVar& r) {
-	return l.value == r.value;
-}
-
-bool operator==(const GUIScriptVar::guiScriptVarValue_t& l, const GUIScriptVar::guiScriptVarValue_t& r) {
-	return l.object == r.object;
-}
-*/
 #endif

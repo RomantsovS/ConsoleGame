@@ -3,15 +3,17 @@
 
 #include <memory>
 #include "../renderer/RenderSystem.h"
-#include "GUI_Types.h"
-#include "GUI_ScriptObject.h"
+
+class GUI;
 
 class GUISpriteInstance : public std::enable_shared_from_this<GUISpriteInstance> {
 public:
-	GUISpriteInstance();
+	GUISpriteInstance(std::shared_ptr<GUI> _gui);
 	~GUISpriteInstance();
 
 	void Init();
+
+	std::shared_ptr<GUI> GetGUI() { if (auto res = gui.lock()) { return res; } else { return nullptr; } }
 
 	std::shared_ptr<GUIScriptObject> GetScriptObject() { return scriptObject; }
 
@@ -19,6 +21,8 @@ public:
 	bool IsVisible() { return isVisible; }
 
 	void SetXPos(float xPos = -1.0f);
+
+	bool isSprite;
 
 	// sprite instances can be nested
 	//std::weak_ptr<GUISpriteInstance> parent;
@@ -32,6 +36,9 @@ public:
 	std::vector<guiDisplayEntry_t> displayList;
 	guiDisplayEntry_t* FindDisplayEntry(int depth);
 
+	// name of this sprite instance
+	std::string name;
+
 	//----------------------------------
 	// SWF_PlaceObject.cpp
 	//----------------------------------
@@ -44,8 +51,9 @@ public:
 	void RunTo(int frameNum);
 
 	//void FreeDisplayList();
-	guiDisplayEntry_t* AddDisplayEntry(int depth);
+	guiDisplayEntry_t* AddDisplayEntry(int depth, bool createText);
 private:
+	std::weak_ptr<GUI> gui;
 	bool isVisible;
 };
 

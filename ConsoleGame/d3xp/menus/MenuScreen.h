@@ -14,7 +14,7 @@ public:
 	idMenuScreen();
 	virtual ~idMenuScreen();
 
-	virtual void Update();
+	virtual void Update() override;
 
 	virtual void ShowScreen();
 	virtual void HideScreen();
@@ -33,10 +33,10 @@ public:
 	idMenuScreen_Shell_PressStart() :
 	startButton(nullptr) {
 	}
-	virtual void Initialize(std::shared_ptr<idMenuHandler> data);
-	virtual void Update();
-	virtual void ShowScreen();
-	virtual void HideScreen();
+	virtual void Initialize(std::shared_ptr<idMenuHandler> data) override;
+	virtual void Update() override;
+	virtual void ShowScreen() override;
+	virtual void HideScreen() override;
 private:
 	std::shared_ptr<idMenuWidget_Button> startButton;
 };

@@ -71,7 +71,7 @@ std::shared_ptr<GUI> idMenuWidget::GetGUIObject() {
 		return parent->GetSWFObject();
 	}*/
 
-	if (menuData != NULL) {
+	if (menuData) {
 		return menuData->GetGUI();
 	}
 

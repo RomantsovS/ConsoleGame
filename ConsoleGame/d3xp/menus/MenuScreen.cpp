@@ -1,6 +1,6 @@
 #include "MenuScreen.h"
 
-idMenuScreen::idMenuScreen() {
+idMenuScreen::idMenuScreen() :menuGUI(nullptr) {
 }
 
 idMenuScreen::~idMenuScreen() {

@@ -84,6 +84,8 @@ public:
 	virtual std::shared_ptr<GUI> GetGUI() { return gui; }
 	virtual void AddChild(std::shared_ptr<idMenuWidget> widget);
 
+	std::shared_ptr<idMenuWidget_CommandBar> GetCmdBar() { return cmdBar; }
+
 protected:
 	int activeScreen;
 	int nextScreen;

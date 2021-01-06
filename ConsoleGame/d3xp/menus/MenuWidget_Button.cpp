@@ -9,7 +9,7 @@ void idMenuWidget_Button::Update() {
 		BindSprite(menuData->GetGUI()->GetRootObject());
 	}
 
-	if (GetSprite() == NULL) {
+	if (!GetSprite()) {
 		return;
 	}
 }

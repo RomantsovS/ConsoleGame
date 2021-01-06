@@ -28,7 +28,7 @@ idMenuWidget_CommandBar::Update
 */
 void idMenuWidget_CommandBar::Update() {
 
-	if (GetGUIObject() == NULL) {
+	if (!GetGUIObject()) {
 		return;
 	}
 
@@ -63,7 +63,7 @@ void idMenuWidget_CommandBar::Update() {
 		if (buttons[i].action.GetType() != widgetAction_t::WIDGET_ACTION_NONE) {
 			std::shared_ptr<GUIScriptObject> const shortcutKeys = GetGUIObject()->GetGlobal("shortcutKeys").GetObjectScript();
 			if (shortcutKeys) {
-				//buttonSprite->GetScriptObject()->Set("onPress", new WrapWidgetSWFEvent(this, widgetEvent_t::WIDGET_EVENT_COMMAND, i));
+				buttonSprite->GetScriptObject()->Set("onPress", /*new WrapWidgetSWFEvent(this, widgetEvent_t::WIDGET_EVENT_COMMAND, i)*/0);
 
 				// bind the main action - need to use all caps here because shortcuts are stored that way
 				shortcutName = buttonName;
@@ -97,7 +97,6 @@ void idMenuWidget_CommandBar::Update() {
 				buttonSprite->SetVisible(true);
 				//buttonSprite->SetXPos(xPos);
 				buttonText->SetText(buttons[i].label);
-
 			}
 		}
 		else {

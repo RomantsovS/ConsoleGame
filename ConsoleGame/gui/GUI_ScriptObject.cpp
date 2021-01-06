@@ -1,4 +1,4 @@
-#include "GUI_ScriptObject.h"
+#include "GUI.h"
 
 /*
 ========================
@@ -19,7 +19,7 @@ GUIScriptObject::guiNamedVar_t& GUIScriptObject::guiNamedVar_t::operator=(const 
 GUIScriptObject::GUIScriptObject
 ========================
 */
-GUIScriptObject::GUIScriptObject() {
+GUIScriptObject::GUIScriptObject() : objectType(swfObjectType_t::SWF_OBJECT_OBJECT) {
 	data.sprite.reset();
 	data.text.reset();
 }

@@ -4,9 +4,10 @@
 #include <string>
 #include <memory>
 
-#include "GUI_TextInstance.h"
-#include "GUI_ScriptVar.h"
+//#include "GUI_TextInstance.h"
+//#include "GUI_ScriptVar.h"
 
+//class GUIScriptVar;
 class GUISpriteInstance;
 
 /*
@@ -19,16 +20,18 @@ public:
 	GUIScriptObject();
 	~GUIScriptObject();
 
-	void SetSprite(std::shared_ptr<GUISpriteInstance> s) { data.sprite = s; }
+	void SetSprite(std::shared_ptr<GUISpriteInstance> s) { objectType = swfObjectType_t::SWF_OBJECT_SPRITE;  data.sprite = s; }
+	std::shared_ptr<GUISpriteInstance> GetSprite() { return (objectType == swfObjectType_t::SWF_OBJECT_SPRITE) ? data.sprite : nullptr; }
 
-	std::shared_ptr<GUITextInstance> GetText() { return data.text.lock(); }
+	void SetText(std::shared_ptr<GUITextInstance> t) { objectType = swfObjectType_t::SWF_OBJECT_TEXT; data.text = t; }
+	std::shared_ptr<GUITextInstance> GetText() { return data.text; }
 
 	GUIScriptVar Get(const std::string& name);
 	std::shared_ptr<GUISpriteInstance> GetSprite(const std::string& name);
 	std::shared_ptr<GUITextInstance> GetText(const std::string& name);
 	void Set(const std::string& name, const GUIScriptVar& value);
 
-	std::shared_ptr<GUISpriteInstance> GetNestedSprite() { return data.sprite.lock(); }
+	std::shared_ptr<GUISpriteInstance> GetNestedSprite() { return data.sprite; }
 private:
 	struct guiNamedVar_t {
 		guiNamedVar_t() : index(-1) { }
@@ -41,17 +44,18 @@ private:
 	};
 	std::vector<guiNamedVar_t> variables;
 
+	enum class swfObjectType_t {
+		SWF_OBJECT_OBJECT,
+		SWF_OBJECT_ARRAY,
+		SWF_OBJECT_SPRITE,
+		SWF_OBJECT_TEXT
+	} objectType;
+
 	struct guiObjectData_t {
-		std::weak_ptr<GUISpriteInstance> sprite;		// only valid if objectType == SWF_OBJECT_SPRITE
-		std::weak_ptr<GUITextInstance> text;			// only valid if objectType == SWF_OBJECT_TEXT
+		std::shared_ptr<GUISpriteInstance> sprite;		// only valid if objectType == SWF_OBJECT_SPRITE
+		std::shared_ptr<GUITextInstance> text;			// only valid if objectType == SWF_OBJECT_TEXT
 	} data;
 
 	guiNamedVar_t* GetVariable(const std::string& name, bool create);
 };
-/*
-inline bool operator==(const GUIScriptObject::guiNamedVar_t& l, const GUIScriptObject::guiNamedVar_t& r)
-{
-	return l.name == r.name && l.value == r.value;
-}*/
-
 #endif

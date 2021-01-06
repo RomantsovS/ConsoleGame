@@ -1,13 +1,15 @@
-#include "GUI_SpriteInstance.h"
+#include "GUI.h"
 
 /*
 ========================
 GUISpriteInstance::GUISpriteInstance
 ========================
 */
-GUISpriteInstance::GUISpriteInstance() :
+GUISpriteInstance::GUISpriteInstance(std::shared_ptr<GUI> _gui) :
+	gui(_gui),
 	isVisible(true),
-	scriptObject(nullptr)
+	scriptObject(nullptr),
+	isSprite(false)
 {
 }
 
@@ -58,7 +60,7 @@ guiDisplayEntry_t* GUISpriteInstance::FindDisplayEntry(int depth) {
 GUISpriteInstance::AddDisplayEntry
 ========================
 */
-guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth) {
+guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth, bool createText) {
 	size_t i = 0;
 	for (; i < displayList.size(); i++) {
 		if (displayList[i].depth == depth) {
@@ -73,8 +75,16 @@ guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth) {
 	guiDisplayEntry_t& display = displayList.back();
 	display.depth = depth;
 
-	display.textInstance = std::make_shared<GUITextInstance>();
-	display.textInstance->Init();
+	if (!createText) {
+		display.spriteInstance = std::make_shared<GUISpriteInstance>(GetGUI());
+		display.spriteInstance->Init();
+		display.spriteInstance->isSprite = true;
+		display.spriteInstance->RunTo(1);
+	}
+	else {
+		display.textInstance = std::make_shared<GUITextInstance>();
+		display.textInstance->Init(GetGUI());
+	}
 
 	return &display;
 }

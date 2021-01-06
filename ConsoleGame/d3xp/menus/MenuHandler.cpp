@@ -32,6 +32,7 @@ idMenuHandler::Initialize
 void idMenuHandler::Initialize(const std::string& filename) {
 	Cleanup();
 	gui = std::make_shared<GUI>(filename);
+	gui->Init();
 }
 
 /*
@@ -40,7 +41,7 @@ idMenuHandler::AddChild
 ================================================
 */
 void idMenuHandler::AddChild(std::shared_ptr<idMenuWidget> widget) {
-	//widget->SetSWFObj(gui);
+	widget->SetSWFObj(gui);
 	//widget->SetHandlerIsParent(true);
 	children.push_back(widget);
 }
