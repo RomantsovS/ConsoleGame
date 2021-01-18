@@ -1,5 +1,5 @@
-#include "EditField.h"
-#include "../sys/sys_public.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 constexpr int MAX_EDIT_LINE = 50;
 

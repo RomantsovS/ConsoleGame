@@ -1,5 +1,7 @@
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
-#include "../../framework/CmdSystem.h"
 
 /*
 ===================
@@ -53,7 +55,7 @@ Cmd_EntityList_f
 ===================
 */
 void Cmd_Quit(const idCmdArgs& args) {
-	commonLocal.Quit();
+	common->Quit();
 }
 
 /*

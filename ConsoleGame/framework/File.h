@@ -1,10 +1,6 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include <fstream>
-#include <string>
-#include "../sys/sys_public.h"
-
 class idFileSystemLocal;
 
 class idFile {

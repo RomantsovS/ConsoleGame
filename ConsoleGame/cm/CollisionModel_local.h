@@ -1,14 +1,9 @@
-#include <vector>
-#include <memory>
-
 #include "CollisionModel.h"
-#include "../idlib/bv/Bounds.h"
-#include "../../framework/Common_local.h"
 
-extern const int MAX_SUBMODELS;
-extern const size_t TRACE_MODEL_HANDLE;
+#define	MAX_SUBMODELS						2048
+#define	TRACE_MODEL_HANDLE					MAX_SUBMODELS
 
-extern const size_t NODE_BLOCK_SIZE_SMALL;
+#define NODE_BLOCK_SIZE_SMALL				1//8
 
 /*
 ===============================================================================

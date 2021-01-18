@@ -1,7 +1,7 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "ModelManager.h"
-#include "RenderWorld_local.h"
-#include "../idlib/sys/sys_assert.h"
 
 /*
 ===================

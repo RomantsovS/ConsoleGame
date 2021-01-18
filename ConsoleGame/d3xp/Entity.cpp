@@ -1,6 +1,7 @@
-#include "Entity.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game_local.h"
-#include "../renderer/ModelManager.h"
 
 ABSTRACT_DECLARATION(idClass, idEntity)
 END_CLASS

@@ -1,11 +1,6 @@
 #ifndef IDLIB_TEXT_CMDARGS_H_
 #define IDLIB_TEXT_CMDARGS_H_
 
-#include <string>
-#include <vector>
-
-#include "sys/sys_types.h"
-
 class idCmdArgs {
 public:
 	idCmdArgs() { }
@@ -32,8 +27,8 @@ public:
 
 private:
 	std::string CutQuotes(const std::string& str);
-	static const int		MAX_COMMAND_ARGS = 64;
-	static const int		MAX_COMMAND_STRING = 2 * MAX_STRING_CHARS;
+	static const int MAX_COMMAND_ARGS = 64;
+	static const int MAX_COMMAND_STRING = 2 * max_string_chars;
 
 	//int argc; // number of arguments
 	std::vector<std::string> argv;			// points into tokenized

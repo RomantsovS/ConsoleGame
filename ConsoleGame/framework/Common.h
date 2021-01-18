@@ -1,10 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <string>
-#include "../sys/sys_public.h"
-#include "CVarSystem.h"
-
 extern idCVar com_engineHz;
 extern long long com_engineHz_numerator;
 extern long long com_engineHz_denominator;

@@ -1,8 +1,7 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "../d3xp/Game_local.h"
-#include "RenderWorld_local.h"
-#include "ModelManager.h"
-#include "../Sys/sys_public.h"
 
 idRenderSystemLocal tr;
 idRenderSystem * renderSystem = &tr;
@@ -39,10 +38,16 @@ idRenderSystemLocal::idRenderSystemLocal() {
 idRenderSystemLocal::~idRenderSystemLocal() {
 }
 
-void idRenderSystemLocal::DrawString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) {
+void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) {
 	for (const auto& ch : str) {
 		screen.set(pos, Screen::Pixel(ch, color));
 		++pos.y;
+	}
+}
+
+void idRenderSystemLocal::DrawString(const std::string& text, const Screen::ConsoleColor& color) {
+	if (!text.empty()) {
+		tr.screen.writeInColor(text, color);
 	}
 }
 

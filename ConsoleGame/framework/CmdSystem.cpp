@@ -1,13 +1,5 @@
-#include <memory>
-#include <vector>
-#include <list>
-#include <algorithm>
-#include <iterator>
-
-#include "../idlib/Str.h"
-#include "CmdSystem.h"
-#include "Common_local.h"
-#include "FileSystem.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 idCVar net_allowCheats("net_allowCheats", "1", CVAR_BOOL | CVAR_NOCHEAT, "Allow cheats in multiplayer");
 

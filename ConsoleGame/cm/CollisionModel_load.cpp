@@ -1,8 +1,7 @@
-#include <stdexcept>
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 #include "CollisionModel_local.h"
-#include "../framework/Common.h"
-#include "../idlib/sys/sys_assert.h"
 #include "../d3xp/Game_local.h"
 
 idCollisionModelManagerLocal collisionModelManagerLocal;

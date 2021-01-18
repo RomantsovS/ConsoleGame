@@ -1,10 +1,5 @@
-#include <map>
-#include <memory>
-#include "CVarSystem.h"
-#include "../idlib/CmdArgs.h"
-#include "CmdSystem.h"
-#include "../idlib/Str.h"
-#include "Common_local.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 idCVar * idCVar::staticVars = NULL;
 

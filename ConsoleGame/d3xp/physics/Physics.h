@@ -1,10 +1,6 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "../gamesys/Class.h"
-#include "../../idlib/math/Vector2.h"
-#include "Clip.h"
-
 extern const float CONTACT_EPSILON;
 
 class idEntity;

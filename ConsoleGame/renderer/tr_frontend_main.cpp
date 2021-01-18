@@ -1,5 +1,7 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "RenderWorld_local.h"
 
 void R_RenderView(std::shared_ptr<viewDef_t> parms)
 {

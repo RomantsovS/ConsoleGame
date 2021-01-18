@@ -1,33 +1,32 @@
-#include "GUI.h"
-
-#include "../framework/KeyInput.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 /*
 ===================
 idSWF::HandleEvent
 ===================
 */
-bool GUI::HandleEvent(const sysEvent_t* event) {
+bool idSWF::HandleEvent(const sysEvent_t* event) {
 	if (!IsActive()) {
 		return false;
 	}
 
 	if (event->evType == SE_KEY) {
 		const std::string& keyName = idKeyInput::KeyNumToString((keyNum_t)event->evValue);
-		GUIScriptVar var = shortcutKeys->Get(keyName);
+		idSWFScriptVar var = shortcutKeys->Get(keyName);
 		// anything more than 32 levels of indirection we can be pretty sure is an infinite loop
 		for (int runaway = 0; runaway < 32; runaway++) {
-			/*idSWFParmList eventParms;
-			eventParms.Clear();
+			idSWFParmList eventParms;
+			eventParms.clear();
 			eventParms.Append(event->inputDevice);
 			if (var.IsString()) {
 				// alias to another key
 				var = shortcutKeys->Get(var.ToString());
 				continue;
 			}
-			else*/ if (var.IsObject()) {
+			else if (var.IsObject()) {
 				// if this object is a sprite, send fake mouse events to it
-				std::shared_ptr<GUIScriptObject> object = var.GetObjectScript();
+				std::shared_ptr<idSWFScriptObject> object = var.GetObjectScript();
 				// make sure we don't send an onRelease event unless we have already sent that object an onPress
 				bool wasPressed = object->Get("_pressed").ToBool();
 				object->Set("_pressed", event->evValue2);
@@ -37,21 +36,21 @@ bool GUI::HandleEvent(const sysEvent_t* event) {
 				else if (wasPressed) {
 					var = object->Get("onRelease");
 				}
-				/*if (var.IsFunction()) {
+				if (var.IsFunction()) {
 					var.GetFunction()->Call(object, eventParms);
 					return true;
-				}*/
+				}
 			}
-			/*else if (var.IsFunction()) {
+			else if (var.IsFunction()) {
 				if (event->evValue2) {
 					// anonymous functions only respond to key down events
-					var.GetFunction()->Call(NULL, eventParms);
+					var.GetFunction()->Call(nullptr, eventParms);
 					return true;
 				}
 				return false;
-			}*/
+			}
 
-			/*GUIScriptVar useFunction = globals->Get("useFunction");
+			/*idSWFScriptVar useFunction = globals->Get("useFunction");
 			if (useFunction.IsFunction() && event->evValue2) {
 				const char* action = idKeyInput::GetBinding(event->evValue);
 				if (idStr::Cmp("_use", action) == 0) {

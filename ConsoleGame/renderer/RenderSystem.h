@@ -1,9 +1,6 @@
 #ifndef RENDER_SYSTEM_H
 #define RENDER_SYSTEM_H
 
-#include "../Sys/sys_public.h"
-#include "RenderWorld.h"
-
 bool R_IsInitialized();
 
 class idRenderWorld;
@@ -36,7 +33,8 @@ public:
 	virtual void BeginLevelLoad() = 0;
 	virtual void EndLevelLoad() = 0;
 
-	virtual void DrawString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) = 0;
+	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) = 0;
+	virtual void DrawString(const std::string& text, const Screen::ConsoleColor& color) = 0;
 
 	virtual void RenderCommandBuffers() = 0;
 };

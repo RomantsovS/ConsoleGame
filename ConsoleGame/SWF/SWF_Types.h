@@ -1,22 +1,19 @@
 #ifndef GUI_GUI_TYPES_H_
 #define GUI_GUI_TYPES_H_
 
-#include <memory>
-#include "../idlib/math/Vector2.h"
+class idSWFSpriteInstance;
+class idSWFTextInstance;
 
-class GUISpriteInstance;
-class GUITextInstance;
-
-struct guiDisplayEntry_t {
+struct swfDisplayEntry_t {
 	unsigned short int depth;
 	Vector2 pos;
 	// if this entry is a sprite, then this will point to the specific instance of that sprite
-	std::shared_ptr<GUISpriteInstance> spriteInstance;
+	std::shared_ptr<idSWFSpriteInstance> spriteInstance;
 	// if this entry is text, then this will point to the specific instance of the text
-	std::shared_ptr<GUITextInstance> textInstance;
+	std::shared_ptr<idSWFTextInstance> textInstance;
 };
 
-struct guiRenderState_t {
+struct swfRenderState_t {
 	Vector2 pos;
 };
 

@@ -1,14 +1,6 @@
 #ifndef CLASS_H
 #define CLASS_H
 
-#include <string>
-#include <vector>
-#include <memory>
-
-#include "Event.h"
-#include "../../idlib/math/Vector2.h"
-#include "../../idlib/containers/Hierarchy.h"
-
 class idClass;
 class idTypeInfo;
 

@@ -1,4 +1,6 @@
-#include "Actor.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game_local.h"
 
 CLASS_DECLARATION(idEntity, idActor)
@@ -33,6 +35,10 @@ void idActor::Spawn() {
 		kv = spawnArgs.MatchPrefix("def_attach", kv->first);
 	}
 }
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
+#include "Game_local.h"
 
 /*
 ================

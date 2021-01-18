@@ -1,10 +1,6 @@
-#include "Console.h"
-#include "Common.h"
-#include "EditField.h"
-#include "KeyInput.h"
-#include "CmdSystem.h"
-#include "../renderer/tr_local.h"
-#include "../d3xp/Game_local.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+#include "Common_local.h"
 
 // the console will query the cvar and command systems for
 // command completion information
@@ -218,10 +214,10 @@ void idConsoleLocal::Draw(bool forceFullScreen) {
 		keyCatching = true;
 	}
 
-	if (keyCatching && tr.update_info) {
+	if (keyCatching /*&& tr.update_info*/) {
 		std::string console_text = std::string(":").append(consoleField.GetBuffer());
 		console_text.append("_");
 
-		RB_DrawText(console_text, vec2_origin, Screen::ConsoleColor::White);
+		renderSystem->DrawString(console_text, Screen::ConsoleColor::White);
 	}
 }

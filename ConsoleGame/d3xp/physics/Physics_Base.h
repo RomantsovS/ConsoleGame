@@ -1,11 +1,6 @@
 #ifndef PHYSICS_BASE_H
 #define PHYSICS_BASE_H
 
-#include <vector>
-
-#include "Physics.h"
-#include "../../cm/CollisionModel.h"
-
 #define contactEntity_t std::shared_ptr<idEntity>
 
 class idPhysics_Base : public idPhysics

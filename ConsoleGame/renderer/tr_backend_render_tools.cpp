@@ -1,5 +1,7 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "../framework/CVarSystem.h"
 #include "../d3xp/Game_local.h"
 
 const int FPS_FRAMES = 8;
@@ -215,7 +217,7 @@ void RB_ShowDebugLines() {
 	}
 
 	// all lines are expressed in world coordinates
-	char debug_symbol = '^';
+	constexpr char debug_symbol = '^';
 
 	line = rb_debugLines;
 	for (i = 0; i < rb_numDebugLines; i++, line++) {

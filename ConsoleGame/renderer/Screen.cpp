@@ -1,9 +1,7 @@
-#include <random>
-#include <cwchar>
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
-#include "Screen.h"
-#include "../sys/sys_public.h"
-#include "../framework/CVarSystem.h"
+#include "tr_local.h"
 
 idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, "");

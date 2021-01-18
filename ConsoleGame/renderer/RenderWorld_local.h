@@ -1,14 +1,6 @@
 #ifndef RENDER_WORLD_LOCAL_H
 #define RENDER_WORLD_LOCAL_H
 
-#include <list>
-#include <string>
-
-#include "../idlib/math/Vector2.h"
-#include "Screen.h"
-#include "Model.h"
-#include "tr_local.h"
-
 // assume any lightDef or entityDef index above this is an internal error
 const int LUDICROUS_INDEX = 10000;
 

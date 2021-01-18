@@ -1,14 +1,6 @@
 #ifndef CLIP_H
 #define CLIP_H
 
-#include <memory>
-#include <vector>
-
-#include "../../idlib/math/Vector2.h"
-#include "../../idlib/bv/Bounds.h"
-#include "../../idlib/geometry/TraceModel.h"
-#include "../../cm/CollisionModel.h"
-
 #define JOINT_HANDLE_TO_CLIPMODEL_ID( id )	( -1 - id )
 
 class idCilp;

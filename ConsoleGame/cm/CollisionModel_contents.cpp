@@ -1,3 +1,6 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "CollisionModel_local.h"
 
 /*

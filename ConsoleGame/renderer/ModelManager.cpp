@@ -1,9 +1,8 @@
-#include <list>
-#include <map>
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 #include "Model_local.h"
-#include "tr_local.h"
-#include "ModelManager.h"
+#include "tr_local.h"	// just for R_FreeWorldInteractions and R_CreateWorldInteractions
 
 class idRenderModelManagerLocal : public idRenderModelManager {
 public:

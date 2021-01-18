@@ -1,8 +1,6 @@
 #ifndef SYS_SYS_SESSION_LOCAL_H_
 #define SYS_SYS_SESSION_LOCAL_H_
 
-#include "sys_session.h"
-
 /*
 ================================================
 idSessionLocal
@@ -41,10 +39,17 @@ public:
 
 	void InitBaseState();
 
+	// Lobby management
+	virtual void MoveToPressStart() override;
+	virtual void FinishDisconnect();
+
 	// Misc
 	virtual void LoadingFinished() override;
 
 	virtual sessionState_t	GetState() const override;
+
+	virtual void UpdateSignInManager();
+	virtual void RegisterLocalUser() { localUserRegistered = true; }
 
 	virtual void Initialize() = 0;
 	virtual void Shutdown() = 0;
@@ -56,6 +61,10 @@ protected:
 	void SetState(state_t newState);
 protected:
 	state_t localState;
+
+	void MoveToMainMenu(); // End all session (async), and return to IDLE state
+private:
+	bool localUserRegistered;
 };
 
 #endif

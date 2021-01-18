@@ -1,10 +1,6 @@
 #ifndef D3XP_AFENTITY_H_
 #define D3XP_AFENTITY_H_
 
-#include <vector>
-
-#include "Entity.h"
-
 /*
 ===============================================================================
 

@@ -1,11 +1,6 @@
 #ifndef D3XP_GAMESYS_EVENT_H_
 #define D3XP_GAMESYS_EVENT_H_
 
-#include <string>
-#include <list>
-
-#include "../../idlib/containers/LinkList.h"
-
 constexpr auto D_EVENT_MAXARGS = 8;
 
 constexpr auto D_EVENT_VOID = ((char)0);

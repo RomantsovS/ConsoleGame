@@ -1,12 +1,10 @@
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
 
-#include <algorithm>
-
-#include "RenderWorld.h"
-#include "RenderSystem.h"
+#include "../idlib/precompiled.h"
 
 class idRenderWorldLocal;
+class idRenderEntityLocal;
 struct viewEntity_t;
 struct portalArea_t;
 
@@ -180,8 +178,8 @@ public:
 	virtual void BeginLevelLoad() override;
 	virtual void EndLevelLoad() override;
 
-	virtual void DrawString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) override;
-
+	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) override;
+	virtual void DrawString(const std::string& text, const Screen::ConsoleColor& color) override;
 	virtual void RenderCommandBuffers();
 
 	void SetHeight(int h) override { height = h; }
@@ -295,5 +293,7 @@ void RB_ClearDebugLines(int time);
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
 void RB_DrawText(const std::string& text, const Vector2& origin, const Screen::ConsoleColor& color);
+
+#include "RenderWorld_local.h"
 
 #endif

@@ -1,4 +1,6 @@
-#include "Physics_Actor.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_Actor)

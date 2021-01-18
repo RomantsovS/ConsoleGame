@@ -1,10 +1,7 @@
-#include "Clip.h"
-#include "../../idlib/sys/sys_types.h"
-#include "../../idlib/sys/sys_assert.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
-#include "../../cm/CollisionModel.h"
-#include "../../idlib/math/Math.h"
-#include "../../idlib/math/Vector2.h"
 
 idCVar cm_max_sector_depth("cm_max_sector_depth", "5", CVAR_SYSTEM | CVAR_INIT, "");
 size_t MAX_SECTORS;

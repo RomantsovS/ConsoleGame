@@ -64,7 +64,7 @@
     <Filter Include="d3xp\Menus">
       <UniqueIdentifier>{ca99614f-5386-4f32-bfd7-40763b2ecf90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GUI">
+    <Filter Include="SWF">
       <UniqueIdentifier>{de44eb55-0bbd-4ddb-8c9c-28a6b1c5554f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -261,23 +261,35 @@
     <ClInclude Include="sys\sys_session_local.h">
       <Filter>Sys</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="idlib\precompiled.h">
+      <Filter>idlib</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI_SpriteInstance.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="idlib\sys\sys_includes.h">
+      <Filter>idlib\Sys</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI_Types.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="SWF\SWF.h">
+      <Filter>SWF</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI_TextInstance.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="SWF\SWF_ParmList.h">
+      <Filter>SWF</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI_ScriptObject.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="SWF\SWF_ScriptFunction.h">
+      <Filter>SWF</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUI_ScriptVar.h">
-      <Filter>GUI</Filter>
+    <ClInclude Include="SWF\SWF_ScriptObject.h">
+      <Filter>SWF</Filter>
+    </ClInclude>
+    <ClInclude Include="SWF\SWF_ScriptVar.h">
+      <Filter>SWF</Filter>
+    </ClInclude>
+    <ClInclude Include="SWF\SWF_SpriteInstance.h">
+      <Filter>SWF</Filter>
+    </ClInclude>
+    <ClInclude Include="SWF\SWF_TextInstance.h">
+      <Filter>SWF</Filter>
+    </ClInclude>
+    <ClInclude Include="SWF\SWF_Types.h">
+      <Filter>SWF</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -509,41 +521,68 @@
     <ClCompile Include="sys\win32\win_session_local.cpp">
       <Filter>Sys\Win32</Filter>
     </ClCompile>
-    <ClCompile Include="idlib\sys\sys_assert.cpp">
-      <Filter>Sys</Filter>
-    </ClCompile>
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_PressStart.cpp">
       <Filter>d3xp\Menus</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\menus\MenuWidget_Button.cpp">
       <Filter>d3xp\Menus</Filter>
     </ClCompile>
-    <ClCompile Include="gui\GUI_SpriteInstance.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_Main.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_Render.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_Events.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_PlaceObject.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_TextInstance.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUI_ScriptObject.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="d3xp\menus\MenuWidget_CommandBar.cpp">
       <Filter>d3xp\Menus</Filter>
     </ClCompile>
-    <ClCompile Include="gui\GUI_ScriptVar.cpp">
-      <Filter>GUI</Filter>
+    <ClCompile Include="idlib\precompiled.cpp">
+      <Filter>idlib</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\sys\sys_assert.cpp">
+      <Filter>idlib\Sys</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Lib.cpp">
+      <Filter>idlib</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_Root.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuWidget_NavButton.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuWidget_List.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuWidget_DynamicList.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_Events.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_Main.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_ParmList.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_PlaceObject.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_Render.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_ScriptObject.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_ScriptVar.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_SpriteInstance.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="SWF\SWF_TextInstance.cpp">
+      <Filter>SWF</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuWidget_MenuBar.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_Singleplayer.cpp">
+      <Filter>d3xp\Menus</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

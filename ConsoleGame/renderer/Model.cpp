@@ -1,5 +1,8 @@
-#include "Model_local.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
+#include "tr_local.h"
+#include "Model_local.h"
 
 idRenderModelStatic::idRenderModelStatic() {
 #ifdef DEBUG_PRINT_Ctor_Dtor

@@ -1,34 +1,27 @@
-#include <sstream>
+#include "precompiled.h"
+#pragma hdrstop
 
-#include "Dict.h"
-
-idDict::idDict()
-{
+idDict::idDict() {
 }
 
-idDict::idDict(const idDict & other)
-{
+idDict::idDict(const idDict & other) {
 	args.clear();
 
 	args = other.args;
 }
 
-idDict::~idDict()
-{
+idDict::~idDict() {
 }
 
-void idDict::Clear()
-{
+void idDict::Clear() {
 	args.clear();
 }
 
-void idDict::Set(std::string key, std::string value)
-{
+void idDict::Set(std::string key, std::string value) {
 	args.insert_or_assign(key, value);
 }
 
-std::string idDict::GetString(const char * key, std::string defaultString) const
-{
+std::string idDict::GetString(const char * key, std::string defaultString) const {
 	auto iter = args.find(key);
 
 	if (iter != args.end())
@@ -39,8 +32,7 @@ std::string idDict::GetString(const char * key, std::string defaultString) const
 	return defaultString;
 }
 
-bool idDict::GetString(const std::string key, std::string defaultString, std::string *out) const
-{
+bool idDict::GetString(const std::string key, std::string defaultString, std::string *out) const {
 	auto iter = args.find(key);
 	
 	if(iter != args.end())
@@ -54,8 +46,7 @@ bool idDict::GetString(const std::string key, std::string defaultString, std::st
 	return false;
 }
 
-bool idDict::GetInt(const std::string key, const std::string defaultString, int & out) const
-{
+bool idDict::GetInt(const std::string key, const std::string defaultString, int & out) const {
 	std::string s;
 	bool found;
 
@@ -64,8 +55,7 @@ bool idDict::GetInt(const std::string key, const std::string defaultString, int 
 	return found;
 }
 
-int idDict::GetInt(const std::string key, const int defaultInt) const
-{
+int idDict::GetInt(const std::string key, const int defaultInt) const {
 	auto iter = args.find(key);
 
 	if (iter != args.end())
@@ -76,15 +66,13 @@ int idDict::GetInt(const std::string key, const int defaultInt) const
 	return defaultInt;
 }
 
-Vector2 idDict::GetVector(const std::string key, const std::string defaultString) const
-{
+Vector2 idDict::GetVector(const std::string key, const std::string defaultString) const {
 	Vector2 out;
 	GetVector(key, defaultString, out);
 	return out;
 }
 
-bool idDict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const
-{
+bool idDict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const {
 	bool found;
 	std::string s;
 
@@ -106,8 +94,7 @@ bool idDict::GetVector(const std::string key, std::string defaultString, Vector2
 	return found;
 }
 
-const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const
-{
+const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const {
 	map_type::const_iterator iter;
 
 	if (!lastMatch.empty())

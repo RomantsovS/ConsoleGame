@@ -1,10 +1,6 @@
 #ifndef FRAMEWORK_CVAR_SYSTEM_H_
 #define FRAMEWORK_CVAR_SYSTEM_H_
 
-#include <string>
-#include "../idlib/sys/sys_types.h"
-#include "../idlib/CmdArgs.h"
-
 enum cvarFlags_t {
 	CVAR_ALL = -1,		// all flags
 	CVAR_BOOL = BIT(0),	// variable is a boolean

@@ -1,6 +1,11 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "ModelManager.h"
 #include "../d3xp/Game_local.h"
+
+// Vista OpenGL wrapper check
+#include "../sys/win32/win_local.h"
 
 idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
 

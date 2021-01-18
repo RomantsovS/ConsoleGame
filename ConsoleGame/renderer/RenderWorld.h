@@ -1,17 +1,6 @@
 #ifndef RENDER_WORLD_H
 #define RENDER_WORLD_H
 
-#include <list>
-
-#include "../idlib/math/Vector2.h"
-#include "Screen.h"
-#include "Model.h"
-#include "../idlib/bv/Bounds.h"
-
-class idRenderEntityLocal;
-class idRenderModel;
-class Screen;
-
 struct renderEntity_t
 {
 	std::shared_ptr<idRenderModel> hModel;

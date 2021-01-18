@@ -1,8 +1,6 @@
 #ifndef FILE_SYSTEM_H
 #define FILE_SYSTEM_H
 
-#include <string>
-
 static const int MAX_OSPATH = 256;
 
 // modes for OpenFileByMode

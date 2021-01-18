@@ -1,7 +1,5 @@
-#include "EventLoop.h"
-#include "KeyInput.h"
-#include "CmdSystem.h"
-#include "Common_local.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 constexpr int MAX_PUSHED_EVENTS = 64;
 

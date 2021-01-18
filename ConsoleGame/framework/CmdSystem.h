@@ -1,11 +1,6 @@
 #ifndef FRAMEWORK_CMDSYSTEM_H_
 #define FRAMEWORK_CMDSYSTEM_H_
 
-#include <functional>
-#include <string>
-#include "../idlib/sys/sys_types.h"
-#include "../idlib/CmdArgs.h"
-
 // command flags
 enum cmdFlags_t  {
 	CMD_FL_ALL = -1,

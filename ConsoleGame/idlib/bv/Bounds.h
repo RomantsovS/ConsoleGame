@@ -1,8 +1,6 @@
 #ifndef  BOUNDS_H
 #define BOUNDS_H
 
-#include "../math/Vector2.h"
-
 class idBounds {
 public:
 	idBounds();

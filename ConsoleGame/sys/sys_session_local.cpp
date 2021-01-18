@@ -1,5 +1,6 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 #include "sys_session_local.h"
-#include "../framework/Common.h"
 
 /*
 ========================
@@ -25,6 +26,36 @@ idSessionLocal::InitBaseState
 */
 void idSessionLocal::InitBaseState() {
 	localState = state_t::STATE_PRESS_START;
+}
+
+/*
+========================
+idSessionLocal::FinishDisconnect
+========================
+*/
+void idSessionLocal::FinishDisconnect() {
+}
+
+/*
+========================
+idSessionLocal::MoveToPressStart
+========================
+*/
+void idSessionLocal::MoveToPressStart() {
+	if (localState != state_t::STATE_PRESS_START) {
+		MoveToMainMenu();
+		session->FinishDisconnect();
+		SetState(state_t::STATE_PRESS_START);
+	}
+}
+
+/*
+========================
+idSessionLocal::MoveToMainMenu
+========================
+*/
+void idSessionLocal::MoveToMainMenu() {
+	SetState(state_t::STATE_IDLE);
 }
 
 /*
@@ -85,6 +116,23 @@ idSessionLocal::sessionState_t idSessionLocal::GetState() const {
 	return sessionState_t::MAX_STATES;
 }
 
+/*
+========================
+idSessionLocal::UpdateSignInManager
+========================
+*/
+void idSessionLocal::UpdateSignInManager() {
+	if (!localUserRegistered) {
+		// If we don't have a master user at all, then we need to be at "Press Start"
+		MoveToPressStart();
+		return;
+	}
+	else if (localState == state_t::STATE_PRESS_START) {
+		// If we have a master user, and we are at press start, move to the menu area
+		SetState(state_t::STATE_IDLE);
+	}
+}
+
 // idSession interface
 
 /*
@@ -111,4 +159,3 @@ void idSessionLocal::SetState(state_t newState) {
 
 	localState = newState;
 }
-

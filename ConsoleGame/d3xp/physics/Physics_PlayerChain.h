@@ -1,10 +1,6 @@
 #ifndef PHYSICS_PHYSICS_PLAYER_CHAIN_H_
 #define PHYSICS_PHYSICS_PLAYER_CHAIN_H_
 
-#include "Physics_Player.h"
-#include "../../framework/UsercmdGen.h"
-#include "Physics_AF.h"
-
 /*
 ===================================================================================
 

@@ -1,4 +1,6 @@
-#include "Event.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
 
 constexpr auto MAX_EVENTSPERFRAME = 4096;

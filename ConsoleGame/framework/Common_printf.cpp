@@ -1,10 +1,7 @@
-#include <time.h>
-#include <cstdarg>
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 #include "Common_local.h"
-#include "FileSystem.h"
-#include "../sys/sys_public.h"
-#include "../idlib/Str.h"
 
 idCVar com_logFile("logFile", "2", CVAR_SYSTEM | CVAR_NOCHEAT, "1 = buffer log, 2 = flush after each print", 0, 2);
 idCVar com_logFileName("logFileName", "qconsole", CVAR_SYSTEM | CVAR_NOCHEAT, "name of log file, if empty, qconsole.log will be used");

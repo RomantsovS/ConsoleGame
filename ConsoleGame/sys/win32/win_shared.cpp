@@ -1,9 +1,7 @@
-#include <cassert>
-#include <ctime>
-#include <strsafe.h>
-#include <Windows.h>
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
 
-#include "../sys_public.h"
+#include "win_local.h"
 
 /*
 ================

@@ -1,9 +1,5 @@
-#include <vector>
-
-#include "UsercmdGen.h"
-#include "../sys/sys_public.h"
-#include "KeyInput.h"
-#include "../idlib/math/Math.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 const int KEY_MOVESPEED = 127;
 

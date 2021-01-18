@@ -1,8 +1,6 @@
 #ifndef IDLIB_TEXT_STR_H_
 #define IDLIB_TEXT_STR_H_
 
-#include <string>
-
 class idStr {
 public:
 	template<typename T>

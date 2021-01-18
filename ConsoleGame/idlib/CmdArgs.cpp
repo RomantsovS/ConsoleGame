@@ -1,4 +1,5 @@
-#include "CmdArgs.h"
+#include "precompiled.h"
+#pragma hdrstop
 
 /*
 ============

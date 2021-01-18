@@ -1,9 +1,7 @@
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Common_local.h"
-#include "..//d3xp/Game.h"
-#include "../renderer/tr_local.h"
-#include "UsercmdGen.h"
-#include "EventLoop.h"
-#include "../sys/sys_session.h"
 
 idCVar com_deltaTimeClamp("com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame");
 idCVar com_fixedTic("com_fixedTic", "0", CVAR_BOOL, "run a single game frame per render frame");
@@ -81,6 +79,9 @@ void idCommonLocal::Frame() {
 			Sys_Sleep(0);
 		}
 
+		// Update session and syncronize to the new session state after sleeping
+		session->UpdateSignInManager();
+
 		if (session->GetState() == idSession::sessionState_t::LOADING) {
 			// If the session reports we should be loading a map, load it!
 			ExecuteMapChange();
@@ -92,6 +93,9 @@ void idCommonLocal::Frame() {
 			//LeaveGame();
 			return;
 		}
+
+		// send frame and mouse events to active guis
+		GuiFrameEvents();
 
 		usercmdGen->BuildCurrentUsercmd(0);
 

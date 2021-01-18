@@ -1,11 +1,6 @@
 #ifndef RENDER_MODEL_H
 #define RENDER_MODEL_H
 
-#include <list>
-
-#include "Screen.h"
-#include "../idlib/math/Vector2.h"
-
 class ModelPixel
 {
 public:

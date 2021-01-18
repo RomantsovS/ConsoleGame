@@ -1,4 +1,7 @@
-#include <Windows.h>
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
+#include "win_local.h"
 
 /*
 ================

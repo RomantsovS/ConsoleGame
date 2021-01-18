@@ -1,9 +1,8 @@
-#include "PlayerChain.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game_local.h"
-#include "gamesys/SysCvar.h"
-#include "Misc.h"
-#include "AFEntity.h"
-#include "../renderer/ModelManager.h"
+#include "../framework/Common_local.h"
 
 CLASS_DECLARATION(idPlayer, PlayerChain)
 END_CLASS

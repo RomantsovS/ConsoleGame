@@ -1,5 +1,7 @@
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
 #include "tr_local.h"
-#include "../framework/Console.h"
 
 const size_t update_frame_time = 50;
 const size_t update_info_time = 200;

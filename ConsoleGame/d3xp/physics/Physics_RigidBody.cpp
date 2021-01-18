@@ -1,6 +1,7 @@
-#include "Physics_RigidBody.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
-#include "../../idlib/math/Math.h"
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_RigidBody)
 END_CLASS

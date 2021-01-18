@@ -1,4 +1,6 @@
-#include "MenuWidget.h"
+#pragma hdrstop
+#include "../../idLib/precompiled.h"
+#include "../Game_local.h"
 
 static const std::string BUTTON_NAMES[] = {
 	"joy1",
@@ -28,11 +30,11 @@ idMenuWidget_CommandBar::Update
 */
 void idMenuWidget_CommandBar::Update() {
 
-	if (!GetGUIObject()) {
+	if (!GetSWFObject()) {
 		return;
 	}
 
-	std::shared_ptr<GUIScriptObject> root = GetGUIObject()->GetRootObject();
+	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
 
 	if (!BindSprite(root)) {
 		return;
@@ -51,19 +53,20 @@ void idMenuWidget_CommandBar::Update() {
 	for (size_t i = 0; i < buttonOrder.size(); ++i) {
 		const std::string& buttonName = BUTTON_NAMES[buttonOrder[i]];
 
-		std::shared_ptr<GUISpriteInstance> const buttonSprite = GetSprite()->GetScriptObject()->GetSprite(buttonName);
+		std::shared_ptr<idSWFSpriteInstance> const buttonSprite = GetSprite()->GetScriptObject()->GetSprite(buttonName);
 		if (!buttonSprite) {
 			continue;
 		}
-		std::shared_ptr<GUITextInstance> const buttonText = buttonSprite->GetScriptObject()->GetText("txt_info");
+		std::shared_ptr<idSWFTextInstance> const buttonText = buttonSprite->GetScriptObject()->GetText("txt_info");
 		if (!buttonText) {
 			continue;
 		}
 
 		if (buttons[i].action.GetType() != widgetAction_t::WIDGET_ACTION_NONE) {
-			std::shared_ptr<GUIScriptObject> const shortcutKeys = GetGUIObject()->GetGlobal("shortcutKeys").GetObjectScript();
+			std::shared_ptr<idSWFScriptObject> shortcutKeys = GetSWFObject()->GetGlobal("shortcutKeys").GetObjectScript();
 			if (shortcutKeys) {
-				buttonSprite->GetScriptObject()->Set("onPress", /*new WrapWidgetSWFEvent(this, widgetEvent_t::WIDGET_EVENT_COMMAND, i)*/0);
+				buttonSprite->GetScriptObject()->Set("onPress",
+					idSWFScriptVar(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_COMMAND, i)));
 
 				// bind the main action - need to use all caps here because shortcuts are stored that way
 				shortcutName = buttonName;
@@ -101,7 +104,7 @@ void idMenuWidget_CommandBar::Update() {
 		}
 		else {
 			buttonSprite->SetVisible(false);
-			std::shared_ptr<GUIScriptObject> const shortcutKeys = GetGUIObject()->GetGlobal("shortcutKeys").GetObjectScript();
+			std::shared_ptr<idSWFScriptObject> const shortcutKeys = GetSWFObject()->GetGlobal("shortcutKeys").GetObjectScript();
 			if (shortcutKeys) {
 				buttonSprite->GetScriptObject()->Set("onPress", NULL);
 				// bind the main action - need to use all caps here because shortcuts are stored that way
@@ -110,5 +113,22 @@ void idMenuWidget_CommandBar::Update() {
 				shortcutKeys->Set(shortcutName, buttonSprite->GetScriptObject());
 			}
 		}
+	}
+}
+
+/*
+========================
+idMenuWidget_CommandBar::ReceiveEvent
+========================
+*/
+bool idMenuWidget_CommandBar::ExecuteEvent(const idWidgetEvent& event) {
+	if (event.type == widgetEvent_t::WIDGET_EVENT_COMMAND) {
+		if (event.arg >= 0 && event.arg < buttons.size()) {
+			HandleAction(buttons[event.arg].action, event, shared_from_this());
+		}
+		return true;
+	}
+	else {
+		return idMenuWidget::ExecuteEvent(event);
 	}
 }

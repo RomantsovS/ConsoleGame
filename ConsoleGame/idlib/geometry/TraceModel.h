@@ -1,9 +1,6 @@
 #ifndef TRACEMODEL_H
 #define TRACEMODEL_H
 
-#include "../bv/Bounds.h"
-#include "../../framework/Common_local.h"
-
 // trace model type
 enum traceModel_t {
 	TRM_INVALID,		// invalid trm

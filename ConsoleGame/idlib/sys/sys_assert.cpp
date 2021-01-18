@@ -1,5 +1,5 @@
-#include "sys_assert.h"
-#include "../../framework/Common_local.h"
+#pragma hdrstop
+#include "../precompiled.h"
 
 bool AssertFailed(const std::string& file, int line, const std::string& expression)
 {

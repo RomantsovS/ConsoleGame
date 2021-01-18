@@ -1,8 +1,6 @@
 #ifndef MODEL_LOCAL_H
 #define MODEL_LOCAL_H
 
-#include "Model.h"
-
 class idRenderModelStatic : public idRenderModel
 {
 public:

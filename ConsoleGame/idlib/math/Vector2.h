@@ -1,12 +1,6 @@
 #ifndef VECTOR2_H
 #define VECTOR2_H
 
-#include <initializer_list>
-#include <string>
-#include <stdexcept>
-
-#include "Math.h"
-
 struct Vector2
 {
 	Vector2() = default;

@@ -1,4 +1,6 @@
-#include "MenuScreen.h"
+#pragma hdrstop
+#include "../../idLib/precompiled.h"
+#include "../Game_local.h"
 
 idMenuScreen::idMenuScreen() :menuGUI(nullptr) {
 }
@@ -21,10 +23,49 @@ void idMenuScreen::Update() {
 	//
 	for (size_t childIndex = 0; childIndex < GetChildren().size(); ++childIndex) {
 		GetChildByIndex(childIndex)->Update();
+		if (GetChildByIndex(childIndex)->GetSprite())
+			GetChildByIndex(childIndex)->GetSprite()->SetVisible(true);
 	}
 
 	if (menuData) {
 		menuData->UpdateChildren();
+	}
+}
+
+/*
+========================
+idMenuScreen::UpdateCmds
+========================
+*/
+void idMenuScreen::UpdateCmds() {
+	const std::shared_ptr<idSWF> gui = menuGUI;
+
+	std::shared_ptr<idSWFScriptObject> const shortcutKeys = gui->GetGlobal("shortcutKeys").GetObjectScript();
+	/*if (!verify(shortcutKeys != NULL)) {
+		return;
+	}*/
+
+	idSWFScriptVar clearFunc = shortcutKeys->Get("clear");
+	if (clearFunc.IsFunction()) {
+		clearFunc.GetFunction()->Call(nullptr, idSWFParmList());
+	}
+
+	// NAVIGATION: UP/DOWN, etc.
+	const std::shared_ptr<idSWFScriptObject> buttons = gui->GetRootObject()->GetObjectScript("buttons");
+	if (buttons) {
+		std::shared_ptr<idSWFScriptObject> const btnLeft = buttons->GetObjectScript("btnLeft");
+		if (btnLeft) {
+			btnLeft->Set("onPress", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_LEFT, 0)));
+			btnLeft->Set("onRelease", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_LEFT_RELEASE, 0)));
+			shortcutKeys->Set("LEFT", btnLeft);
+		}
+
+		std::shared_ptr<idSWFScriptObject> const btnRight = buttons->GetObjectScript("btnRight");
+		if (btnRight) {
+			btnRight->Set("onPress", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_RIGHT, 0)));
+			btnRight->Set("onRelease", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_RIGHT_RELEASE, 0)));
+			shortcutKeys->Set("RIGHT", btnRight);
+		}
 	}
 }
 
@@ -41,6 +82,8 @@ void idMenuScreen::HideScreen() {
 	if (!BindSprite(menuGUI->GetRootObject())) {
 		return;
 	}
+
+	GetSprite()->SetVisible(false);
 
 	Update();
 }
@@ -62,4 +105,6 @@ void idMenuScreen::ShowScreen() {
 	GetSprite()->SetVisible(true);
 
 	Update();
+
+	SetFocusIndex(GetFocusIndex(), true);
 }

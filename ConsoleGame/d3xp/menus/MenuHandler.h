@@ -1,16 +1,6 @@
 #ifndef D3XP_MENUS_MENUHANDLER_H__
 #define D3XP_MENUS_MENUHANDLER_H__
 
-#include <string>
-#include <vector>
-#include <memory>
-
-#include "../../sys/sys_public.h"
-#include "../../gui/GUI.h"
-
-class idMenuWidget;
-class idMenuWidget_CommandBar;
-
 enum class shellAreas_t {
 	SHELL_AREA_INVALID = -1,
 	SHELL_AREA_START,
@@ -59,7 +49,28 @@ enum class shellState_t {
 	SHELL_STATE_IN_GAME
 };
 
-static const int MAX_SCREEN_AREAS = 32;
+static constexpr int MAX_SCREEN_AREAS = 32;
+static constexpr int DEFAULT_REPEAT_TIME = 150;
+
+struct actionRepeater_t {
+	actionRepeater_t() :
+		widget(nullptr),
+		numRepetitions(0),
+		nextRepeatTime(0),
+		screenIndex(-1),
+		repeatDelay(DEFAULT_REPEAT_TIME),
+		isActive(false) {
+	}
+
+	std::shared_ptr<idMenuWidget> widget;
+	idWidgetEvent		event;
+	idWidgetAction		action;
+	int					numRepetitions;
+	int					nextRepeatTime;
+	int					repeatDelay;
+	int					screenIndex;
+	bool				isActive;
+};
 
 class idMenuScreen;
 
@@ -79,9 +90,14 @@ public:
 	virtual bool HandleGuiEvent(const sysEvent_t* sev);
 	virtual bool IsActive();
 	virtual void ActivateMenu(bool show);
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
 	virtual int ActiveScreen() { return activeScreen; }
+	virtual void SetNextScreen(shellAreas_t screen) { nextScreen = static_cast<int>(screen); }
 
-	virtual std::shared_ptr<GUI> GetGUI() { return gui; }
+	virtual void StartWidgetActionRepeater(std::shared_ptr<idMenuWidget> widget, const idWidgetAction& action, const idWidgetEvent& event);
+	virtual void PumpWidgetActionRepeater();
+	virtual void ClearWidgetActionRepeater();
+	virtual std::shared_ptr<idSWF> GetGUI() { return gui; }
 	virtual void AddChild(std::shared_ptr<idMenuWidget> widget);
 
 	std::shared_ptr<idMenuWidget_CommandBar> GetCmdBar() { return cmdBar; }
@@ -89,7 +105,8 @@ public:
 protected:
 	int activeScreen;
 	int nextScreen;
-	std::shared_ptr<GUI> gui;
+	std::shared_ptr<idSWF> gui;
+	actionRepeater_t actionRepeater;
 	std::vector<std::shared_ptr<idMenuScreen>> menuScreens;
 	std::vector<std::shared_ptr<idMenuWidget>> children;
 
@@ -106,24 +123,32 @@ public:
 	idMenuHandler_Shell() :
 		state(shellState_t::SHELL_STATE_INVALID),
 		nextState(shellState_t::SHELL_STATE_INVALID),
-		inGame(false) 
+		inGame(false),
+		menuBar(nullptr)
 	{ }
 
 	virtual void Update() override;
 	virtual void ActivateMenu(bool show) override;
 	virtual void Initialize(const std::string& filename) override;
 	virtual void Cleanup() override;
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false) override;
 	virtual bool HandleGuiEvent(const sysEvent_t* sev) override;
 
 	void SetShellState(shellState_t s) { nextState = s; }
 
+	std::shared_ptr<idMenuWidget_MenuBar> GetMenuBar() { return menuBar; }
+
 	void SetInGame(bool val) { inGame = val; }
 	bool GetInGame() { return inGame; }
+	void HandleExitGameBtn();
+	void SetupPCOptions();
 private:
 	shellState_t state;
 	shellState_t nextState;
 
+	std::shared_ptr<idMenuWidget_MenuBar> menuBar;
 	bool inGame;
+	std::vector<std::string> navOptions;
 };
 
 #endif

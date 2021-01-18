@@ -1,8 +1,7 @@
 #ifndef FRAMEWORK_USERCMDGEN_H_
 #define FRAMEWORK_USERCMDGEN_H_
 
-#include <string>
-#include "../idlib/sys/sys_types.h"
+#include "../sys/sys_session.h"
 
 /*
 ===============================================================================

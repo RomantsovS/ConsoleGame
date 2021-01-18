@@ -1,9 +1,6 @@
 #ifndef FRAMEWORK_EVENTLOOP_H__
 #define FRAMEWORK_EVENTLOOP_H__
 
-#include<vector>
-#include "../sys/sys_public.h"
-
 class idEventLoop {
 public:
 	idEventLoop();

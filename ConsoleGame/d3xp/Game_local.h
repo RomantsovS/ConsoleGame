@@ -1,24 +1,20 @@
 #ifndef GAME_LOCAL_H
 #define GAME_LOCAL_H
 
-#include <random>
-#include <array>
-
-#include "Game.h"
-#include "../renderer/RenderWorld.h"
-#include "physics/Clip.h"
-#include "../idlib/containers/LinkList.h"
-#include "../framework/CVarSystem.h"
-#include "../idlib/CmdArgs.h"
-#include "Player.h"
-#include "menus/MenuHandler.h"
-
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
 extern idCVar game_width;
 extern idCVar game_height;
 
 // the "gameversion" client command will print this plus compile date
 const std::string GAME_VERSION = "baseDOOM-1";
+
+// classes used by idGameLocal
+class idEntity;
+class idActor;
+class idPlayer;
+class idAI;
+class idTypeInfo;
+class idMenuHandler_Shell;
 
 const int MAX_CLIENTS = 8;
 const int GENTITYNUM_BITS = 12;
@@ -27,6 +23,12 @@ const int ENTITYNUM_NONE = MAX_GENTITIES - 1;
 const int ENTITYNUM_WORLD = MAX_GENTITIES - 2;
 const int ENTITYNUM_MAX_NORMAL = MAX_GENTITIES - 2;
 const int ENTITYNUM_FIRST_NON_REPLICATED = ENTITYNUM_MAX_NORMAL - 256;
+
+#include "gamesys/Event.h"
+#include "gamesys/Class.h"
+#include "gamesys/SysCvar.h"
+
+#include "physics/Clip.h"
 
 enum gameState_t {
 	GAMESTATE_UNINITIALIZED,		// prior to Init being called
@@ -211,5 +213,28 @@ extern idGameLocal gameLocal;
 
 // content masks
 const int MASK_SOLID = 1;
+
+#include "physics/Physics.h"
+#include "physics/Physics_Static.h"
+#include "physics/Physics_Base.h"
+#include "physics/Physics_Actor.h"
+#include "physics/Physics_Player.h"
+#include "physics/Physics_RigidBody.h"
+#include "physics/Physics_AF.h"
+#include "physics/Physics_PlayerChain.h"
+
+#include "Entity.h"
+#include "AFEntity.h"
+#include "Misc.h"
+#include "Actor.h"
+#include "Player.h"
+#include "PlayerChain.h"
+
+#include "ai/AI.h"
+
+// menus
+#include "menus/MenuWidget.h"
+#include "menus/MenuScreen.h"
+#include "menus/MenuHandler.h"
 
 #endif

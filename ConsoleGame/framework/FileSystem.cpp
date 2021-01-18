@@ -1,14 +1,5 @@
-#include <fstream>
-#include <vector>
-#include "FileSystem.h"
-#include "File.h"
-#include "Common_local.h"
-#include "../idlib/Lib.h"
-#include "../idlib/Str.h"
-#include "../idlib/sys/sys_defines.h"
-#include "../sys/sys_public.h"
-#include "../idlib/sys/sys_filesystem.h"
-#include "CVarSystem.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 // search flags when opening a file
 const int FSFLAG_SEARCH_DIRS = (1 << 0);
@@ -208,7 +199,7 @@ idFileSystemLocal::BuildOSPath
 */
 std::string idFileSystemLocal::BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath) {
 	static std::string OSPath;
-	OSPath.resize(MAX_STRING_CHARS);
+	OSPath.resize(max_string_chars);
 
 	std::string newPath;
 

@@ -1,8 +1,8 @@
-#include "Player.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game_local.h"
-#include "gamesys/SysCvar.h"
-#include "Misc.h"
-#include "AFEntity.h"
+#include "../framework/Common_local.h"
 
 CLASS_DECLARATION(idActor, idPlayer)
 END_CLASS

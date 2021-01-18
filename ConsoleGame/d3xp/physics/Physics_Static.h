@@ -1,9 +1,6 @@
 #ifndef PHYSICS_STATIC_H
 #define PHYSICS_STATIC_H
 
-#include "Physics.h"
-#include "Clip.h"
-
 class idEntity;
 
 struct staticPState_s

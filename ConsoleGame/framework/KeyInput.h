@@ -1,9 +1,6 @@
 #ifndef FRAMEWORK_KEYINPUT_H_
 #define FRAMEWORK_KEYINPUT_H_
 
-#include <string>
-#include "../sys/sys_public.h"
-
 class idKeyInput {
 public:
 	static void Init();

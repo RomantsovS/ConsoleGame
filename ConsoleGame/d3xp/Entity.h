@@ -1,13 +1,6 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include "../d3xp/gamesys/Class.h"
-#include "../renderer/RenderWorld.h"
-#include "../idlib/Dict.h"
-#include "physics/Physics_Static.h"
-#include "../idlib/containers/LinkList.h"
-#include "../cm/CollisionModel.h"
-
 // Think flags
 enum {
 	TH_ALL = -1,

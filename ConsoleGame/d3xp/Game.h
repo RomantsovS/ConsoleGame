@@ -1,9 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../d3xp/Entity.h"
-#include "../idlib/Dict.h"
-
 class idGame
 {
 public:

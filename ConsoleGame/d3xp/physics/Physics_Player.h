@@ -1,9 +1,6 @@
 #ifndef PHYSICS_PHYSICS_PLAYER_H_
 #define PHYSICS_PHYSICS_PLAYER_H_
 
-#include "Physics_Actor.h"
-#include "../../framework/UsercmdGen.h"
-
 /*
 ===================================================================================
 

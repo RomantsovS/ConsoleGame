@@ -1,7 +1,7 @@
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game.h"
-#include "../idlib/math/Vector2.h"
-#include "../renderer/Model_local.h"
-#include "../renderer/ModelManager.h"
 
 void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict * args, renderEntity_t * renderEntity)
 {

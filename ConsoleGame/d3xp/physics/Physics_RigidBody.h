@@ -1,13 +1,6 @@
 #ifndef PHYSICS_RIDIGBODY_H
 #define PHYSICS_RIDIGBODY_H
 
-#include <memory>
-
-#include "Physics_Base.h"
-#include "Clip.h"
-#include "../../cm/CollisionModel.h"
-#include "../../idlib/math/Ode.h"
-
 struct rigidBodyIState_t {
 	Vector2 position; // position of trace model
 	//idMat3 orientation; // orientation of trace model

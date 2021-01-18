@@ -1,11 +1,12 @@
-#include "GUI.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 /*
 ========================
-GUIScriptVar::GUIScriptVar
+idSWFScriptVar::idSWFScriptVar
 ========================
 */
-GUIScriptVar::GUIScriptVar(const GUIScriptVar& other) {
+idSWFScriptVar::idSWFScriptVar(const idSWFScriptVar& other) {
 	type = other.type;
 	value = other.value;
 }
@@ -15,7 +16,7 @@ GUIScriptVar::GUIScriptVar(const GUIScriptVar& other) {
 idSWFScriptVar::operator=
 ========================
 */
-GUIScriptVar& GUIScriptVar::operator=(const GUIScriptVar& other) {
+idSWFScriptVar& idSWFScriptVar::operator=(const idSWFScriptVar& other) {
 	if (this != &other) {
 		Free();
 		type = other.type;
@@ -26,10 +27,10 @@ GUIScriptVar& GUIScriptVar::operator=(const GUIScriptVar& other) {
 
 /*
 ========================
-GUIScriptVar::~GUIScriptVar
+idSWFScriptVar::~idSWFScriptVar
 ========================
 */
-GUIScriptVar::~GUIScriptVar() {
+idSWFScriptVar::~idSWFScriptVar() {
 	Free();
 }
 
@@ -38,8 +39,11 @@ GUIScriptVar::~GUIScriptVar() {
 idSWFScriptVar::Free
 ========================
 */
-void GUIScriptVar::Free() {
+void idSWFScriptVar::Free() {
+	value.string = nullptr;
+	value.function = nullptr;
 	value.object = nullptr;
+	type = swfScriptVarType::SWF_VAR_UNDEF;
 }
 
 /*
@@ -47,7 +51,7 @@ void GUIScriptVar::Free() {
 idSWFScriptVar::SetObject
 ========================
 */
-void GUIScriptVar::SetObject(std::shared_ptr<GUIScriptObject> o) {
+void idSWFScriptVar::SetObject(std::shared_ptr<idSWFScriptObject> o) {
 	Free();
 	if (!o) {
 		type = swfScriptVarType::SWF_VAR_NULL;
@@ -60,10 +64,26 @@ void GUIScriptVar::SetObject(std::shared_ptr<GUIScriptObject> o) {
 
 /*
 ========================
-GUIScriptVar::ToString
+idSWFScriptVar::SetFunction
 ========================
 */
-std::string GUIScriptVar::ToString() const {
+void idSWFScriptVar::SetFunction(std::shared_ptr<idSWFScriptFunction> f) {
+	Free();
+	if (!f) {
+		type = swfScriptVarType::SWF_VAR_NULL;
+	}
+	else {
+		type = swfScriptVarType::SWF_VAR_FUNCTION;
+		value.function = f;
+	}
+}
+
+/*
+========================
+idSWFScriptVar::ToString
+========================
+*/
+std::string idSWFScriptVar::ToString() const {
 	switch (type) {
 	//case swfScriptVarType::SWF_VAR_STRINGID:	return std::string(value.i).GetLocalizedString();
 	case swfScriptVarType::SWF_VAR_STRING:	return *value.string;
@@ -82,21 +102,21 @@ std::string GUIScriptVar::ToString() const {
 		else {*/
 			return "[function]";
 		//}
-	default: common->Error("default case in GUIScriptVar::ToString()"); return "";
+	default: common->Error("default case in idSWFScriptVar::ToString()"); return "";
 	}
 }
 
 /*
 ========================
-GUIScriptVar::ToBool
+idSWFScriptVar::ToBool
 ========================
 */
-bool GUIScriptVar::ToBool() const {
+bool idSWFScriptVar::ToBool() const {
 	switch (type) {
 	case swfScriptVarType::SWF_VAR_STRING:	return (value.string->compare("true") == 0 || value.string->compare("1") == 0);
 
 	//case swfScriptVarType::SWF_VAR_FLOAT:		return (value.f != 0.0f);
-	//case swfScriptVarType::SWF_VAR_BOOL:		return value.b;
+	case swfScriptVarType::SWF_VAR_BOOL:		return value.b;
 	case swfScriptVarType::SWF_VAR_INTEGER:	return value.i != 0;
 
 	//case swfScriptVarType::SWF_VAR_OBJECT:	return value.object->DefaultValue(false).ToBool();
@@ -104,16 +124,39 @@ bool GUIScriptVar::ToBool() const {
 	case swfScriptVarType::SWF_VAR_FUNCTION:
 	case swfScriptVarType::SWF_VAR_NULL:
 	case swfScriptVarType::SWF_VAR_UNDEF:		return false;
-	default: common->Error("default case in GUIScriptVar::ToBool()"); return false;
+	default: common->Error("default case in idSWFScriptVar::ToBool()"); return false;
 	}
 }
 
 /*
 ========================
-GUIScriptVar::ToSprite
+idSWFScriptVar::ToInteger
 ========================
 */
-std::shared_ptr<GUISpriteInstance> GUIScriptVar::ToSprite() {
+int idSWFScriptVar::ToInteger() const {
+	switch (type) {
+	case swfScriptVarType::SWF_VAR_STRING:	return atoi(value.string->c_str());
+
+	//case swfScriptVarType::SWF_VAR_FLOAT:		return idMath::Ftoi(value.f);
+
+	case swfScriptVarType::SWF_VAR_BOOL:		return value.b ? 1 : 0;
+	case swfScriptVarType::SWF_VAR_INTEGER:	return value.i;
+
+	//case swfScriptVarType::SWF_VAR_OBJECT:	return value.object->DefaultValue(false).ToInteger();
+
+	case swfScriptVarType::SWF_VAR_FUNCTION:
+	case swfScriptVarType::SWF_VAR_NULL:
+	case swfScriptVarType::SWF_VAR_UNDEF:		return 0;
+	default: common->Error("default case in idSWFScriptVar::ToInteger()"); return 0;
+	}
+}
+
+/*
+========================
+idSWFScriptVar::ToSprite
+========================
+*/
+std::shared_ptr<idSWFSpriteInstance> idSWFScriptVar::ToSprite() {
 	if (IsObject() && value.object) {
 		return value.object->GetSprite();
 	}
@@ -121,3 +164,15 @@ std::shared_ptr<GUISpriteInstance> GUIScriptVar::ToSprite() {
 	return nullptr;
 }
 
+/*
+========================
+idSWFScriptVar::ToText
+========================
+*/
+std::shared_ptr<idSWFTextInstance> idSWFScriptVar::ToText() {
+	if (IsObject() && value.object) {
+		return value.object->GetText();
+	}
+
+	return nullptr;
+}

@@ -1,10 +1,7 @@
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Common_local.h"
-#include "../d3xp/Game.h"
-#include "../renderer/RenderSystem.h"
-#include "FileSystem.h"
-#include "Console.h"
-#include "../sys/sys_session.h"
-#include "UsercmdGen.h"
 
 /*
 ===============
@@ -75,6 +72,7 @@ void idCommonLocal::ExecuteMapChange() {
 		session->LoadingFinished();
 
 		while (session->GetState() == idSession::sessionState_t::LOADING) {
+			session->UpdateSignInManager();
 			Sys_Sleep(10);
 		}
 	}

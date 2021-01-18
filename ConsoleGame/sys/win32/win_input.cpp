@@ -1,7 +1,8 @@
-#include <Windows.h>
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+#include "../sys_session_local.h"
 
 #include "win_local.h"
-#include "../../framework/Common_local.h"
 
 bool IN_StartupKeyboard() {
     win32.h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);

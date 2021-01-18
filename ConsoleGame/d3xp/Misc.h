@@ -1,9 +1,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include "Entity.h"
-#include "physics/Physics_RigidBody.h"
-
 class idStaticEntity : public idEntity
 {
 public:

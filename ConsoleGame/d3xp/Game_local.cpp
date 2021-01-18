@@ -1,16 +1,7 @@
-#include <exception>
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 #include "Game_local.h"
-#include "../d3xp/gamesys/Class.h"
-#include "../renderer/RenderWorld_local.h"
-#include "../framework/Common.h"
-#include "../idlib/Lib.h"
-#include "../idlib/Str.h"
-#include "../framework/CmdSystem.h"
-#include "Player.h"
-#include "../framework/UsercmdGen.h"
-#include "gamesys/SysCvar.h"
-#include "../sys/sys_session.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
 
@@ -567,8 +558,8 @@ idGameLocal::Printf
 ============
 */
 void idGameLocal::Printf(const char* fmt, ...) const {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char text[max_string_chars];
 
 	va_start(argptr, fmt);
 	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
@@ -583,8 +574,8 @@ idGameLocal::DPrintf
 ============
 */
 void idGameLocal::DPrintf(const char* fmt, ...) const {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char text[max_string_chars];
 
 	va_start(argptr, fmt);
 	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
@@ -599,8 +590,8 @@ idGameLocal::Warning
 ============
 */
 void idGameLocal::Warning(const char* fmt, ...) const {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char text[max_string_chars];
 
 	va_start(argptr, fmt);
 	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
@@ -616,7 +607,7 @@ idGameLocal::DWarning
 */
 void idGameLocal::DWarning(const char* fmt, ...) const {
 	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	char text[max_string_chars];
 
 	va_start(argptr, fmt);
 	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
@@ -631,8 +622,8 @@ idGameLocal::Error
 ============
 */
 void idGameLocal::Error(const char* fmt, ...) const {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char text[max_string_chars];
 
 	va_start(argptr, fmt);
 	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
@@ -758,7 +749,7 @@ idGameLocal::Shell_Show
 ========================
 */
 void idGameLocal::Shell_Show(bool show) {
-	if (shellHandler != NULL) {
+	if (shellHandler) {
 		shellHandler->ActivateMenu(show);
 	}
 }

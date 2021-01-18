@@ -1,8 +1,6 @@
 #ifndef IDLIB_SYS_SYS_ASSERT_H_
 #define IDLIB_SYS_SYS_ASSERT_H_
 
-#include <string>
-
 /*
 ================================================================================================
 

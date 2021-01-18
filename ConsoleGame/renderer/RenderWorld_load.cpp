@@ -1,5 +1,7 @@
-#include "RenderWorld_local.h"
-#include "../framework/Common_local.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
+
+#include "tr_local.h"
 
 /*
 ================

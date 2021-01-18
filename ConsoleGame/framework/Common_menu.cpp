@@ -1,6 +1,7 @@
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Common_local.h"
-#include "../renderer/tr_local.h"
-#include "../d3xp/Game_local.h"
 
 /*
 ==============
@@ -14,6 +15,7 @@ void idCommonLocal::StartMenu(bool playIntro) {
 
 	if (game) {
 		game->Shell_Show(true);
+		game->Shell_SyncWithSession();
 	}
 }
 
@@ -41,4 +43,15 @@ bool idCommonLocal::MenuEvent(const sysEvent_t* event) {
 	}
 
 	return false;
+}
+
+/*
+=================
+idCommonLocal::GuiFrameEvents
+=================
+*/
+void idCommonLocal::GuiFrameEvents() {
+	if (game) {
+		game->Shell_SyncWithSession();
+	}
 }

@@ -1,4 +1,6 @@
-#include "Class.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
 #include "../Game_local.h"
 
 static idTypeInfo *typelist = NULL;

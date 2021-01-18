@@ -1,8 +1,8 @@
 #ifndef SYS_WIN32_WIN_LOCAL_H_
 #define SYS_WIN32_WIN_LOCAL_H_
 
-#include <Windows.h>
-#include "../sys_public.h"
+#include <windows.h>
+#include <strsafe.h>
 
 void Sys_QueEvent(sysEventType_t type, int value, int value2, int ptrLength, void* ptr, int inputDeviceNum);
 

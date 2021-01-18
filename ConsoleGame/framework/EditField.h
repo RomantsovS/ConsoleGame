@@ -1,8 +1,6 @@
 #ifndef FRAMEWORK_EDIT_FIELD_H_
 #define FRAMEWORK_EDIT_FIELD_H_
 
-#include <string>
-
 class idEditField {
 public:
 	idEditField();

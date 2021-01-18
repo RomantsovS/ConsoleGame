@@ -1,17 +1,9 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include <Windows.h>
-
-#include "../idlib/math/Vector2.h"
-#include "../framework/Common_local.h"
-
 class Screen {
 public:
-	using pos_type = SHORT;
+	using pos_type = int;
 
 	enum class ConsoleColor {
 		None = -1,

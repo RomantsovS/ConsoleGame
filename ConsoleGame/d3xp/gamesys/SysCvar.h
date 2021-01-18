@@ -1,8 +1,6 @@
 #ifndef D3XP_GAMESYS_SYSCVAR_H_
 #define D3XP_GAMESYS_SYSCVAR_H_
 
-#include "../../framework/CVarSystem.h"
-
 extern idCVar g_showCollisionTraces;
 
 extern idCVar pm_walkspeed;

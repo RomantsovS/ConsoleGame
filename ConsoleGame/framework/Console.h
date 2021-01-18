@@ -1,8 +1,6 @@
 #ifndef FRAMEWORK_CONSOLE_H_
 #define FRAMEWORK_CONSOLE_H_
 
-#include "../sys/sys_public.h"
-
 /*
 ===============================================================================
 

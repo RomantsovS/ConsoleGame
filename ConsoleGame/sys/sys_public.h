@@ -1,8 +1,7 @@
 #ifndef SYS_PUBLIC_H_
 #define SYS_PUBLIC_H_
 
-#include <string>
-#include <fstream>
+#include "../idlib/CmdArgs.h"
 
 enum sysEventType_t {
 	SE_NONE,				// evTime is still valid

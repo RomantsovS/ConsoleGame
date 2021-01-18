@@ -1,9 +1,6 @@
 #ifndef PLAYER_CHAIN_ENTITY_H
 #define PLAYER_CHAIN_ENTITY_H
 
-#include "Player.h"
-#include "physics/Physics_PlayerChain.h"
-
 class PlayerChain : public idPlayer
 {
 public:

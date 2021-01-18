@@ -1,14 +1,13 @@
-#include "GUI.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 /*
 ========================
-GUISpriteInstance::PlaceObject
+idSWFSpriteInstance::PlaceObject
 ========================
 */
-void GUISpriteInstance::PlaceObject() {
-	size_t depth = 0;
-
-	guiDisplayEntry_t* display;
+swfDisplayEntry_t* idSWFSpriteInstance::PlaceObject(size_t depth, bool isSprite, const std::string& name, const Vector2& pos) {
+	swfDisplayEntry_t* display;
 	/*display = FindDisplayEntry(depth);
 	if (display != nullptr) {
 		return;
@@ -17,27 +16,29 @@ void GUISpriteInstance::PlaceObject() {
 	// create a new entry
 	display = AddDisplayEntry(depth, isSprite);
 	if (display == nullptr) {
-		common->Warning("PlaceObject: trying to create a new entry at %d, but an item already exists there", depth);
-		return;
+		common->Error("PlaceObject: trying to create a new entry \"%s\" at %d, but an item already exists there", name.c_str(), depth);
+		return nullptr;
 	}
 
+	display->pos = pos;
+
 	if (display->spriteInstance) {
-		std::string name = "joy1";
 		display->spriteInstance->name = name;
 		scriptObject->Set(name, display->spriteInstance->GetScriptObject());
 	}
 	else if (display->textInstance) {
-		std::string name = "txt_info";
 		scriptObject->Set(name, display->textInstance->GetScriptObject());
 	}
+
+	return display;
 }
 
 /*
 ========================
-GUISpriteInstance::RemoveObject
+idSWFSpriteInstance::RemoveObject
 ========================
 */
-void GUISpriteInstance::RemoveObject() {
+void idSWFSpriteInstance::RemoveObject() {
 	//RemoveDisplayEntry();
 }
 

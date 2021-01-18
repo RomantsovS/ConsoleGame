@@ -1,13 +1,7 @@
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Common_local.h"
-#include "../d3xp/Game_local.h"
-#include "../renderer/tr_local.h"
-#include "FileSystem.h"
-#include "KeyInput.h"
-#include "CmdSystem.h"
-#include "UsercmdGen.h"
-#include "EventLoop.h"
-#include "Console.h"
-#include "../sys/sys_session.h"
 
 idCVar com_allowConsole("com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key");
 

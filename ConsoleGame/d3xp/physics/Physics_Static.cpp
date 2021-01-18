@@ -1,5 +1,7 @@
-#include "Physics_Static.h"
-#include "../../d3xp/Game_local.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
+#include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics, idPhysics_Static)
 END_CLASS

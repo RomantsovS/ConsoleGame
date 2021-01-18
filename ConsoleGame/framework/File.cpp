@@ -1,7 +1,5 @@
-#include <windows.h>
-#include "File.h"
-#include "Common_local.h"
-#include "FileSystem.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 idFile::idFile() {
 #ifdef DEBUG_PRINT_Ctor_Dtor

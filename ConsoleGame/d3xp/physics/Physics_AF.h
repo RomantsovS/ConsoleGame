@@ -1,10 +1,8 @@
 #ifndef PHYSICS_PHYSICS_AF_H_
 #define PHYSICS_PHYSICS_AF_H_
 
-#include <vector>
-#include <memory>
-
-#include "Physics_Base.h"
+class idAFBody;
+class idPhysics_AF;
 
 //===============================================================
 //

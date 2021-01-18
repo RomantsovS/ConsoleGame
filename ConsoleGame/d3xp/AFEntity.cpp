@@ -1,6 +1,7 @@
-#include "AFEntity.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
+
 #include "Game_local.h"
-#include "../renderer/ModelManager.h"
 
 /*
 ===============================================================================

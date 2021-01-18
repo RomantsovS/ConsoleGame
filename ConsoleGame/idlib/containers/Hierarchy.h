@@ -29,8 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __HIERARCHY_H__
 #define __HIERARCHY_H__
 
-#include "../../framework/Common.h"
-
 /*
 ==============================================================================
 
@@ -279,7 +277,7 @@ idHierarchy<type>* idHierarchy<type>::GetPriorSiblingNode() const {
 	}
 
 	if (node != this) {
-		common->Error("idHierarchy::GetPriorSibling: could not find node in parent's list of children");
+		throw std::logic_error("idHierarchy::GetPriorSibling: could not find node in parent's list of children");
 	}
 
 	return prev;

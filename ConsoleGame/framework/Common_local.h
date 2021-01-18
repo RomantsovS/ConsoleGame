@@ -1,11 +1,6 @@
 #ifndef COMMON_LOCAL_H
 #define COMMON_LOCAL_H
 
-#include <memory>
-
-#include "Common.h"
-#include "File.h"
-
 enum errorParm_t {
 	ERP_NONE,
 	ERP_FATAL,						// exit the entire game with a popup window
@@ -70,6 +65,7 @@ private:
 	bool MenuEvent(const sysEvent_t* event);
 
 	void StartMenu(bool playIntro = false);
+	void GuiFrameEvents();
 
 	void ExecuteMapChange();
 	void UnloadMap();

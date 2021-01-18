@@ -1,10 +1,6 @@
 #ifndef PLAYER_ENTITY_H
 #define PLAYER_ENTITY_H
 
-#include "Actor.h"
-#include "../framework/UsercmdGen.h"
-#include "physics/Physics_Player.h"
-
 class idPlayer : public idActor
 {
 public:

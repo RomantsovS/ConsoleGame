@@ -1,8 +1,5 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cctype>
-
-#include "Str.h"
+#include "precompiled.h"
+#pragma hdrstop
 
 template<>
 std::string idStr::GetFromValue<int>(const int i)

@@ -1,15 +1,15 @@
-#include "GUI.h"
+#pragma hdrstop
+#include "../idlib/precompiled.h"
 
 /*
 ========================
-GUISpriteInstance::GUISpriteInstance
+idSWFSpriteInstance::idSWFSpriteInstance
 ========================
 */
-GUISpriteInstance::GUISpriteInstance(std::shared_ptr<GUI> _gui) :
-	gui(_gui),
-	isVisible(true),
-	scriptObject(nullptr),
-	isSprite(false)
+idSWFSpriteInstance::idSWFSpriteInstance(std::shared_ptr<idSWF> _swf) :
+	swf(_swf),
+	isVisible(false),
+	scriptObject(nullptr)
 {
 }
 
@@ -18,27 +18,27 @@ GUISpriteInstance::GUISpriteInstance(std::shared_ptr<GUI> _gui) :
 idSWFSpriteInstance::Init
 ========================
 */
-void GUISpriteInstance::Init() {
-	scriptObject = std::make_shared<GUIScriptObject>();
+void idSWFSpriteInstance::Init() {
+	scriptObject = std::make_shared<idSWFScriptObject>();
 	scriptObject->SetSprite(shared_from_this());
 }
 
 /*
 ========================
-GUISpriteInstance::~GUISpriteInstance
+idSWFSpriteInstance::~idSWFSpriteInstance
 ========================
 */
-GUISpriteInstance::~GUISpriteInstance() {
+idSWFSpriteInstance::~idSWFSpriteInstance() {
 	//FreeDisplayList();
 	displayList.clear();
 }
 
 /*
 ========================
-GUISpriteInstance::FindDisplayEntry
+idSWFSpriteInstance::FindDisplayEntry
 ========================
 */
-guiDisplayEntry_t* GUISpriteInstance::FindDisplayEntry(int depth) {
+swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry(int depth) {
 	int len = displayList.size();
 	int mid = len;
 	int offset = 0;
@@ -57,10 +57,10 @@ guiDisplayEntry_t* GUISpriteInstance::FindDisplayEntry(int depth) {
 
 /*
 ========================
-GUISpriteInstance::AddDisplayEntry
+idSWFSpriteInstance::AddDisplayEntry
 ========================
 */
-guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth, bool createText) {
+swfDisplayEntry_t* idSWFSpriteInstance::AddDisplayEntry(int depth, bool isSprite) {
 	size_t i = 0;
 	for (; i < displayList.size(); i++) {
 		if (displayList[i].depth == depth) {
@@ -72,18 +72,16 @@ guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth, bool createText
 	}
 
 	displayList.emplace_back();
-	guiDisplayEntry_t& display = displayList.back();
+	swfDisplayEntry_t& display = displayList.back();
 	display.depth = depth;
 
-	if (!createText) {
-		display.spriteInstance = std::make_shared<GUISpriteInstance>(GetGUI());
+	if (isSprite) {
+		display.spriteInstance = std::make_shared<idSWFSpriteInstance>(GetSWF());
 		display.spriteInstance->Init();
-		display.spriteInstance->isSprite = true;
-		display.spriteInstance->RunTo(1);
 	}
 	else {
-		display.textInstance = std::make_shared<GUITextInstance>();
-		display.textInstance->Init(GetGUI());
+		display.textInstance = std::make_shared<idSWFTextInstance>();
+		display.textInstance->Init(GetSWF());
 	}
 
 	return &display;
@@ -91,11 +89,10 @@ guiDisplayEntry_t* GUISpriteInstance::AddDisplayEntry(int depth, bool createText
 
 /*
 ===================
-GUISpriteInstance::RunTo
+idSWFSpriteInstance::RunTo
 ===================
 */
-void GUISpriteInstance::RunTo(int targetFrame) {
-	PlaceObject();
+void idSWFSpriteInstance::RunTo(int targetFrame) {
 }
 
 /*
@@ -103,8 +100,21 @@ void GUISpriteInstance::RunTo(int targetFrame) {
 idSWFSpriteInstance::SetVisible
 ========================
 */
-void GUISpriteInstance::SetVisible(bool visible) {
+void idSWFSpriteInstance::SetVisible(bool visible) {
 	isVisible = visible;
+}
+
+/*
+========================
+idSWFSpriteInstance::SetColor
+========================
+*/
+void idSWFSpriteInstance::SetColor(const Screen::ConsoleColor color) {
+	for (auto& display : displayList) {
+		if (display.textInstance) {
+			display.textInstance->color = color;
+		}
+	}
 }
 
 /*
@@ -112,7 +122,7 @@ void GUISpriteInstance::SetVisible(bool visible) {
 idSWFSpriteInstance::SetXPos
 ========================
 */
-void GUISpriteInstance::SetXPos(float xPos) {
+void idSWFSpriteInstance::SetXPos(float xPos) {
 	/*if (parent == NULL) {
 		return;
 	}

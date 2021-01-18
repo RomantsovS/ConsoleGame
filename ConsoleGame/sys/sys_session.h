@@ -1,8 +1,6 @@
 #ifndef SYS_SYS_SESSION_H_ 
 #define SYS_SYS_SESSION_H_
 
-#include <memory>
-
 /*
 ================================================
 idSession
@@ -34,9 +32,15 @@ public:
 	//=====================================================================================================
 	// Lobby management 
 	//=====================================================================================================
+	virtual void MoveToPressStart() = 0;
+	virtual void FinishDisconnect() = 0;
 	virtual void LoadingFinished() = 0;
 
 	virtual sessionState_t	GetState() const = 0;
+
+	virtual void UpdateSignInManager() = 0;
+
+	virtual void RegisterLocalUser() = 0;
 };
 
 extern idSession* session;

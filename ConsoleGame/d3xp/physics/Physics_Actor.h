@@ -1,11 +1,6 @@
 #ifndef PHYSICS_PHYSICS_ACTOR_H_
 #define PHYSICS_PHYSICS_ACTOR_H_
 
-#include <memory>
-
-#include "Physics_Base.h"
-#include "Clip.h"
-
 /*
 ===================================================================================
 

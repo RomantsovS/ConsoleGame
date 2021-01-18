@@ -1,16 +1,10 @@
-#include <iostream>
-#include <conio.h>
-#include <Windows.h>
-#include <direct.h>
-#include <vector>
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
 
-#include "../sys_public.h"
-#include "../../framework/Common_local.h"
 #include "win_local.h"
-#include "../../framework/FileSystem.h"
-#include "../../idlib/Str.h"
+#include "../../renderer/tr_local.h"
 
-Win32Vars_t	win32;
+Win32Vars_t win32;
 
 /*
 =============

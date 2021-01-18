@@ -1,11 +1,5 @@
-#include <vector>
-
-#include "KeyInput.h"
-#include "../sys/sys_public.h"
-#include "CmdSystem.h"
-#include "Common_local.h"
-#include "UsercmdGen.h"
-#include "../idlib/Lib.h"
+#include "../idlib/precompiled.h"
+#pragma hdrstop
 
 struct keyname_t {
 	keyNum_t keynum;
@@ -20,6 +14,7 @@ struct keyname_t {
 
 // names not in this list can either be lowercase ascii, or '0xnn' hex sequences
 std::vector<keyname_t> keynames = {
+	keyname_t({keyNum_t::K_ESCAPE, "ESCAPE", "ESCAPE"}),
 	keyname_t({keyNum_t::K_SPACE, "SPACE", "#str_07021"}),
 	keyname_t({keyNum_t::K_TAB, "TAB", "#str_07018"}),
 	keyname_t({keyNum_t::K_F1, "F1", "#str_07018"}),
@@ -108,7 +103,7 @@ Key_Bind_f
 void Key_Bind_f(const idCmdArgs& args) {
 	int			i, c, b;
 	std::string cmd;
-	cmd.reserve(MAX_STRING_CHARS);
+	cmd.reserve(max_string_chars);
 
 	c = args.Argc();
 

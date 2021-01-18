@@ -1,4 +1,7 @@
-#include "SysCvar.h"
+#pragma hdrstop
+#include "../../idlib/precompiled.h"
+
+#include "../Game_local.h"
 
 idCVar g_showCollisionTraces("g_showCollisionTraces", "0", CVAR_GAME | CVAR_BOOL, "");
 
