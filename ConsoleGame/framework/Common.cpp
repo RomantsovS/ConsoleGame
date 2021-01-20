@@ -73,6 +73,8 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// init journalling, etc
 		eventLoop->Init();
 
+		InitCommands();
+
 		// exec the startup scripts
 		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec default.cfg\n");
 
@@ -209,6 +211,51 @@ void idCommonLocal::Stop(bool resetSession) {
 
 	// drop all guis
 	ExitMenu();
+
+	if (resetSession) {
+		session->QuitMatchToTitle();
+	}
+}
+
+/*
+===============
+idCommonLocal::BusyWait
+===============
+*/
+void idCommonLocal::BusyWait() {
+	const bool captureToImage = false;
+	UpdateScreen(captureToImage);
+
+	session->UpdateSignInManager();
+}
+
+/*
+===============
+idCommonLocal::WaitForSessionState
+===============
+*/
+bool idCommonLocal::WaitForSessionState(idSession::sessionState_t desiredState) {
+	if (session->GetState() == desiredState) {
+		return true;
+	}
+
+	while (true) {
+		BusyWait();
+
+		idSession::sessionState_t sessionState = session->GetState();
+		if (sessionState == desiredState) {
+			return true;
+		}
+		if (sessionState != idSession::sessionState_t::LOADING &&
+			sessionState != idSession::sessionState_t::SEARCHING &&
+			sessionState != idSession::sessionState_t::CONNECTING &&
+			sessionState != idSession::sessionState_t::BUSY &&
+			sessionState != desiredState) {
+			return false;
+		}
+
+		Sys_Sleep(10);
+	}
 }
 
 /*

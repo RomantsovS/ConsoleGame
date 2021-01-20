@@ -49,6 +49,31 @@ private:
 };
 
 //*
+//================================================	
+//idMenuScreen_Shell_Pause
+//================================================
+//*/
+class idMenuScreen_Shell_Pause : public idMenuScreen {
+public:
+	idMenuScreen_Shell_Pause() :
+		options(nullptr),
+		isMpPause(false) {
+	}
+	virtual void Initialize(std::shared_ptr<idMenuHandler> data);
+	virtual void Update();
+	virtual void ShowScreen();
+	virtual void HideScreen();
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
+
+	void HandleExitGameBtn();
+	void HandleRestartBtn();
+
+private:
+	std::shared_ptr<idMenuWidget_DynamicList> options;
+	bool						isMpPause;
+};
+
+//*
 //================================================
 //idMenuScreen_Shell_PressStart
 //================================================
@@ -65,17 +90,6 @@ public:
 	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false) override;
 private:
 	std::shared_ptr<idMenuWidget_Button> startButton;
-};
-
-//*
-//================================================
-//idMenuScreen_Shell_NewGame
-//================================================
-//*/
-class idMenuScreen_Shell_NewGame : public idMenuScreen {
-public:
-	idMenuScreen_Shell_NewGame() { }
-private:
 };
 
 //*
@@ -100,6 +114,27 @@ public:
 	void						ContinueGame();
 private:
 	bool						canContinue;
+	std::shared_ptr<idMenuWidget_DynamicList> options;
+	std::shared_ptr<idMenuWidget_Button> btnBack;
+};
+
+//*
+//================================================	
+//idMenuScreen_Shell_NewGame
+//================================================
+//*/
+class idMenuScreen_Shell_NewGame : public idMenuScreen {
+public:
+	idMenuScreen_Shell_NewGame() :
+		options(nullptr),
+		btnBack(nullptr) {
+	}
+	virtual void				Initialize(std::shared_ptr<idMenuHandler> data);
+	virtual void				Update();
+	virtual void				ShowScreen();
+	virtual void				HideScreen();
+	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
+private:
 	std::shared_ptr<idMenuWidget_DynamicList> options;
 	std::shared_ptr<idMenuWidget_Button> btnBack;
 };

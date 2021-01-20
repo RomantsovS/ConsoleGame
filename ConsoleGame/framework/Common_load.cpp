@@ -5,6 +5,25 @@
 
 /*
 ===============
+idCommonLocal::StartNewGame
+===============
+*/
+void idCommonLocal::StartNewGame(const std::string& mapName, bool devmap, int gameMode) {
+	if (!session->IsLocalUserRegistered()) {
+		// For development make sure a controller is registered
+		// Can't just register the local user because it will be removed because of it's persistent state
+	}
+
+	std::string mapNameClean = mapName;
+
+	session->QuitMatchToTitle();
+	if (WaitForSessionState(idSession::sessionState_t::IDLE)) {
+		session->StartMatch();
+	}
+}
+
+/*
+===============
 idCommonLocal::ExecuteMapChange
 
 Performs the initialization of a game based on session match parameters, used for both single
@@ -112,4 +131,17 @@ void idCommonLocal::UnloadMap()
 	}
 
 	mapSpawned = false;
+}
+
+void map_f(const idCmdArgs& args) {
+	commonLocal.StartNewGame(args.Argv(1), false, -2);
+}
+
+/*
+==================
+idCommonLocal::InitCommands
+==================
+*/
+void idCommonLocal::InitCommands() {
+	cmdSystem->AddCommand("map", map_f, CMD_FL_GAME, "loads a map");
 }

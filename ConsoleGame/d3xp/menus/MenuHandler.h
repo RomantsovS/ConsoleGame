@@ -123,6 +123,7 @@ public:
 	idMenuHandler_Shell() :
 		state(shellState_t::SHELL_STATE_INVALID),
 		nextState(shellState_t::SHELL_STATE_INVALID),
+		newGameType(0),
 		inGame(false),
 		menuBar(nullptr)
 	{ }
@@ -138,15 +139,19 @@ public:
 
 	std::shared_ptr<idMenuWidget_MenuBar> GetMenuBar() { return menuBar; }
 
+	void SetNewGameType(int type) { newGameType = type; }
+	int GetNewGameType() { return newGameType; }
 	void SetInGame(bool val) { inGame = val; }
 	bool GetInGame() { return inGame; }
 	void HandleExitGameBtn();
 	void SetupPCOptions();
+	void StartGame(int index);
 private:
 	shellState_t state;
 	shellState_t nextState;
 
 	std::shared_ptr<idMenuWidget_MenuBar> menuBar;
+	int newGameType;
 	bool inGame;
 	std::vector<std::string> navOptions;
 };

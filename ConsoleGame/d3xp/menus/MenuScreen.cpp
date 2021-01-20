@@ -53,6 +53,20 @@ void idMenuScreen::UpdateCmds() {
 	// NAVIGATION: UP/DOWN, etc.
 	const std::shared_ptr<idSWFScriptObject> buttons = gui->GetRootObject()->GetObjectScript("buttons");
 	if (buttons) {
+		std::shared_ptr<idSWFScriptObject> const btnUp = buttons->GetObjectScript("btnUp");
+		if (btnUp) {
+			btnUp->Set("onPress", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_UP, 0)));
+			btnUp->Set("onRelease", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_UP_RELEASE, 0)));
+			shortcutKeys->Set("UP", btnUp);
+		}
+
+		std::shared_ptr<idSWFScriptObject> const btnDown = buttons->GetObjectScript("btnDown");
+		if (btnDown) {
+			btnDown->Set("onPress", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN, 0)));
+			btnDown->Set("onRelease", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN_RELEASE, 0)));
+			shortcutKeys->Set("DOWN", btnDown);
+		}
+
 		std::shared_ptr<idSWFScriptObject> const btnLeft = buttons->GetObjectScript("btnLeft");
 		if (btnLeft) {
 			btnLeft->Set("onPress", static_cast<idSWFScriptVar>(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_SCROLL_LEFT, 0)));
@@ -75,6 +89,10 @@ idMenuScreen::HideScreen
 ========================
 */
 void idMenuScreen::HideScreen() {
+	if (GetSprite()) {
+		GetSprite()->SetVisible(false);
+	}
+
 	if (!menuGUI) {
 		return;
 	}
@@ -107,4 +125,8 @@ void idMenuScreen::ShowScreen() {
 	Update();
 
 	SetFocusIndex(GetFocusIndex(), true);
+
+	if (GetSprite()) {
+		GetSprite()->SetVisible(true);
+	}
 }

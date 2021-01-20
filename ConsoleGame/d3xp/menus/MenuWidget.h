@@ -56,6 +56,14 @@ enum class widgetEvent_t {
 	MAX_WIDGET_EVENT
 };
 
+enum class scrollType_t {
+	SCROLL_SINGLE,		// scroll a single unit
+	SCROLL_PAGE,		// scroll a page
+	SCROLL_FULL,		// scroll all the way to the end
+	SCROLL_TOP,			// scroll to the first selection
+	SCROLL_END,			// scroll to the last selection
+};
+
 enum class widgetAction_t{
 	WIDGET_ACTION_NONE,
 	WIDGET_ACTION_COMMAND,
@@ -324,8 +332,8 @@ public:
 	int									GetDataSourceFieldIndex() const { return dataSourceFieldIndex; }
 	*/
 	std::shared_ptr<idMenuWidget> GetFocus() { return (focusIndex >= 0 && focusIndex < children.size()) ? children[focusIndex] : nullptr; }
-	int GetFocusIndex() const { return focusIndex; }
-	void SetFocusIndex(const int index, bool skipSound = false);
+	size_t GetFocusIndex() const { return focusIndex; }
+	void SetFocusIndex(const size_t index, bool skipSound = false);
 
 
 	//------------------------
@@ -427,8 +435,8 @@ public:
 	virtual void				Update();
 	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
 	//virtual void				ObserveEvent(const idMenuWidget& widget, const idWidgetEvent& event);
-	//virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
-	//virtual void				ScrollOffset(const int scrollIndexAmount);
+	virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
+	virtual void				ScrollOffset(const int scrollIndexAmount);
 	virtual size_t				GetTotalNumberOfOptions() const { return GetChildren().size(); }
 	//virtual bool				PrepareListElement(idMenuWidget& widget, const int childIndex) { return true; }
 

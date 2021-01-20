@@ -38,6 +38,25 @@ void idSessionLocal::FinishDisconnect() {
 
 /*
 ========================
+idSessionLocal::StartLoading
+========================
+*/
+void idSessionLocal::StartLoading() {
+	SetState(state_t::STATE_LOADING);
+}
+
+/*
+========================
+idSessionLocal::StartMatch
+========================
+*/
+void idSessionLocal::StartMatch() {
+	// Start loading
+	StartLoading();
+}
+
+/*
+========================
 idSessionLocal::MoveToPressStart
 ========================
 */
@@ -80,6 +99,16 @@ idSessionLocal::Shutdown
 ========================
 */
 void idSessionLocal::Shutdown() {
+}
+
+/*
+========================
+idSessionLocal::QuitMatchToTitle
+QuitMatchToTitle will forcefully quit the match and return to the title screen.
+========================
+*/
+void idSessionLocal::QuitMatchToTitle() {
+	MoveToMainMenu();
 }
 
 /*

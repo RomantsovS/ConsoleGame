@@ -23,7 +23,7 @@ public:
 	virtual void Quit() override;
 
 	virtual void Frame() override;
-
+	virtual void UpdateScreen(bool captureToImage) override;
 	virtual void Printf(const char* fmt, ...) override;
 	virtual void VPrintf(const char* fmt, va_list arg) override;
 	virtual void DPrintf(const char* fmt, ...) override;
@@ -34,8 +34,12 @@ public:
 
 	virtual bool ProcessEvent(const sysEvent_t* event) override;
 public:
-	void RunGameAndDraw();
-	void Draw();			// called by gameThread
+	void RunGameAndDraw(size_t numGameFrames_);
+	void Draw(); // called by gameThread
+
+	// loads a map and starts a new game on it
+	void StartNewGame(const std::string& mapName, bool devmap, int gameMode);
+	void LeaveGame();
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;
@@ -51,6 +55,8 @@ private:
 	std::string currentMapName;			// for checking reload on same level
 	bool mapSpawned; // cleared on Stop()
 
+	bool insideUpdateScreen;		// true while inside ::UpdateScreen()
+
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
 
@@ -58,6 +64,7 @@ private:
 	int delayMilliseconds;
 
 private:
+	void InitCommands();
 	void CloseLogFile();
 	void CleanupShell();
 	
@@ -66,6 +73,11 @@ private:
 
 	void StartMenu(bool playIntro = false);
 	void GuiFrameEvents();
+
+	// Meant to be used like:
+	// while ( waiting ) { BusyWait(); }
+	void BusyWait();
+	bool WaitForSessionState(idSession::sessionState_t desiredState);
 
 	void ExecuteMapChange();
 	void UnloadMap();

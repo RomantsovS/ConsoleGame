@@ -228,6 +228,8 @@
     <ClCompile Include="d3xp\menus\MenuHandler.cpp" />
     <ClCompile Include="d3xp\menus\MenuHandler_Shell.cpp" />
     <ClCompile Include="d3xp\menus\MenuScreen.cpp" />
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_NewGame.cpp" />
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_Pause.cpp" />
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_PressStart.cpp" />
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_Root.cpp" />
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_Singleplayer.cpp" />

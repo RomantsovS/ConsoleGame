@@ -40,16 +40,19 @@ public:
 	void InitBaseState();
 
 	// Lobby management
+	virtual void StartMatch();
 	virtual void MoveToPressStart() override;
 	virtual void FinishDisconnect();
 
 	// Misc
+	virtual void QuitMatchToTitle(); // Will forcefully quit the match and return to the title screen.
 	virtual void LoadingFinished() override;
 
 	virtual sessionState_t	GetState() const override;
 
 	virtual void UpdateSignInManager();
-	virtual void RegisterLocalUser() { localUserRegistered = true; }
+	virtual void RegisterLocalUser() override { localUserRegistered = true; }
+	virtual bool IsLocalUserRegistered() override { return localUserRegistered; }
 
 	virtual void Initialize() = 0;
 	virtual void Shutdown() = 0;
@@ -65,6 +68,8 @@ protected:
 	void MoveToMainMenu(); // End all session (async), and return to IDLE state
 private:
 	bool localUserRegistered;
+
+	void StartLoading();
 };
 
 #endif

@@ -584,5 +584,11 @@
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_Singleplayer.cpp">
       <Filter>d3xp\Menus</Filter>
     </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_NewGame.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\menus\MenuScreen_Shell_Pause.cpp">
+      <Filter>d3xp\Menus</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

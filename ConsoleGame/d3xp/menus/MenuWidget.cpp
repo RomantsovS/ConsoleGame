@@ -238,7 +238,7 @@ bool idMenuWidget::BindSprite(std::shared_ptr<idSWFScriptObject> root) {
 idMenuWidget::SetFocusIndex
 ========================
 */
-void idMenuWidget::SetFocusIndex(const int index, bool skipSound) {
+void idMenuWidget::SetFocusIndex(const size_t index, bool skipSound) {
 
 	if (GetChildren().size() == 0) {
 		return;

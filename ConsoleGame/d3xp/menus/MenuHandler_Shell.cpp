@@ -75,10 +75,13 @@ void idMenuHandler_Shell::Update() {
 		else {
 
 			if (activeScreen > static_cast<int>(shellAreas_t::SHELL_AREA_INVALID) && activeScreen < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS)) {
-				if (menuScreens[activeScreen])
+				if (menuScreens[activeScreen] && menuScreens[nextScreen])
 					menuScreens[activeScreen]->HideScreen();
-				else
+				else {
+					nextScreen = activeScreen;
 					common->Error("menu screen %d is not implemented", activeScreen);
+					return;
+				}
 			}
 
 			if (nextScreen > static_cast<int>(shellAreas_t::SHELL_AREA_INVALID) && nextScreen < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS)) {
@@ -130,6 +133,7 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 	}
 
 	if (inGame) {
+		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_ROOT), idMenuScreen_Shell_Pause, shared_from_this());
 	}
 	else {
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_START), idMenuScreen_Shell_PressStart, shared_from_this());
@@ -350,4 +354,15 @@ bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEve
 	}
 
 	return idMenuHandler::HandleAction(action, event, widget, forceHandled);
+}
+
+/*
+========================
+idMenuHandler_Shell::StartGame
+========================
+*/
+void idMenuHandler_Shell::StartGame(int index) {
+	if (index == 0) {
+		cmdSystem->AppendCommandText(va("map %s %d\n", "map_name", 0));
+	}
 }

@@ -54,8 +54,10 @@ void idSWF::Init() {
 	spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
 
 	auto spr_inst_buttons = mainspriteInstance->PlaceObject(4, true, "buttons");
-	spr_inst_buttons->spriteInstance->PlaceObject(0, true, "btnLeft");
-	spr_inst_buttons->spriteInstance->PlaceObject(1, true, "btnRight");
+	spr_inst_buttons->spriteInstance->PlaceObject(0, true, "btnUp");
+	spr_inst_buttons->spriteInstance->PlaceObject(1, true, "btnDown");
+	spr_inst_buttons->spriteInstance->PlaceObject(2, true, "btnLeft");
+	spr_inst_buttons->spriteInstance->PlaceObject(3, true, "btnRight");
 
 	auto spr_inst_menuCampaing = mainspriteInstance->PlaceObject(5, true, "menuCampaign");
 	auto spr_inst_menuCampaing_info = spr_inst_menuCampaing->spriteInstance->PlaceObject(0, true, "info");
@@ -66,6 +68,25 @@ void idSWF::Init() {
 	for (size_t i = 0; i < 8; ++i) {
 		auto spr_inst_menuCampaing_info_options_item = spr_inst_menuCampaing_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
 		spr_inst_menuCampaing_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(3.0f * i - 15.0f, -20.0f));
+	}
+
+	auto spr_inst_menuNewGame = mainspriteInstance->PlaceObject(6, true, "menuNewGame");
+	auto spr_inst_menuNewGame_info = spr_inst_menuNewGame->spriteInstance->PlaceObject(0, true, "info");
+	spr_inst_menuNewGame_info->spriteInstance->SetVisible(true);
+	spr_inst_menuNewGame_info->spriteInstance->PlaceObject(0, true, "btnBack");
+	auto spr_inst_menuNewGame_info_options = spr_inst_menuNewGame_info->spriteInstance->PlaceObject(1, true, "options");
+	for (size_t i = 0; i < 8; ++i) {
+		auto spr_inst_menuNewGame_info_options_item = spr_inst_menuNewGame_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
+		spr_inst_menuNewGame_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(3.0f * i - 15.0f, -20.0f));
+	}
+
+	auto spr_inst_menuPause = mainspriteInstance->PlaceObject(7, true, "menuPause");
+	auto spr_inst_menuPause_info = spr_inst_menuPause->spriteInstance->PlaceObject(0, true, "info");
+	spr_inst_menuPause_info->spriteInstance->SetVisible(true);
+	auto spr_inst_menuPause_info_options = spr_inst_menuPause_info->spriteInstance->PlaceObject(1, true, "options");
+	for (size_t i = 0; i < 8; ++i) {
+		auto spr_inst_menuPause_info_options_item = spr_inst_menuPause_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
+		spr_inst_menuPause_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(3.0f * i - 15.0f, -20.0f));
 	}
 
 	shortcutKeys = std::make_shared<idSWFScriptObject>();

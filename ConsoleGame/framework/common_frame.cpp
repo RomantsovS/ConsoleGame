@@ -105,7 +105,7 @@ void idCommonLocal::Frame() {
 
 		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
 
-		RunGameAndDraw();
+		RunGameAndDraw(numGameFrames);
 
 		renderSystem->RenderCommandBuffers();
 	}
@@ -115,8 +115,10 @@ void idCommonLocal::Frame() {
 	}
 }
 
-void idCommonLocal::RunGameAndDraw() {
-	game->RunFrame();
+void idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
+	for(size_t i = 0; i < numGameFrames_; ++i)
+		game->RunFrame();
+
 	Draw();
 }
 
@@ -138,4 +140,26 @@ void idCommonLocal::Draw() {
 			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
 		}
 	}
+}
+
+/*
+===============
+idCommonLocal::UpdateScreen
+
+This is an out-of-sequence screen update, not the normal game rendering
+===============
+*/
+void idCommonLocal::UpdateScreen(bool captureToImage) {
+	if (insideUpdateScreen) {
+		return;
+	}
+	insideUpdateScreen = true;
+
+	// build all the draw commands without running a new game tic
+	Draw();
+
+	// get the GPU busy with new commands
+	renderSystem->RenderCommandBuffers();
+
+	insideUpdateScreen = false;
 }

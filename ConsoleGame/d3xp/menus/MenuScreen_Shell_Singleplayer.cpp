@@ -152,10 +152,6 @@ void idMenuScreen_Shell_Singleplayer::ShowScreen() {
 	}
 
 	idMenuScreen::ShowScreen();
-
-	if (GetSprite()) {
-		GetSprite()->SetVisible(true);
-	}
 }
 
 /*
@@ -164,10 +160,6 @@ idMenuScreen_Shell_Singleplayer::HideScreen
 ========================
 */
 void idMenuScreen_Shell_Singleplayer::HideScreen() {
-	if (GetSprite()) {
-		GetSprite()->SetVisible(false);
-	}
-
 	idMenuScreen::HideScreen();
 }
 

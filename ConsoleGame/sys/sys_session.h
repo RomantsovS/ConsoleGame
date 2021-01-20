@@ -32,6 +32,8 @@ public:
 	//=====================================================================================================
 	// Lobby management 
 	//=====================================================================================================
+	virtual void StartMatch() = 0;
+	virtual void QuitMatchToTitle() = 0; // Will forcefully quit the match and return to the title screen.
 	virtual void MoveToPressStart() = 0;
 	virtual void FinishDisconnect() = 0;
 	virtual void LoadingFinished() = 0;
@@ -41,6 +43,7 @@ public:
 	virtual void UpdateSignInManager() = 0;
 
 	virtual void RegisterLocalUser() = 0;
+	virtual bool IsLocalUserRegistered() = 0;
 };
 
 extern idSession* session;

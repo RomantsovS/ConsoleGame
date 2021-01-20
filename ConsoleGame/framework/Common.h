@@ -34,6 +34,10 @@ public:
 	// Called repeatedly as the foreground thread for rendering and game logic.
 	virtual void				Frame() = 0;
 
+	// Redraws the screen, handling games, guis, console, etc
+	// in a modal manner outside the normal frame loop
+	virtual void				UpdateScreen(bool captureToImage) = 0;
+
 	// Prints message to the console, which may cause a screen update if com_refreshOnPrint is set.
 	virtual void				Printf(const char* fmt, ...) = 0;
 	// Same as Printf, with a more usable API - Printf pipes to this.
