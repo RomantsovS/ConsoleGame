@@ -73,7 +73,8 @@ idMenuWidget_MenuBar::GetTotalNumberOfOptions
 ========================
 */
 size_t idMenuWidget_MenuBar::GetTotalNumberOfOptions() const {
-	return GetChildren().size();
+	//return GetChildren().size();
+	return headings.size();
 }
 
 /*

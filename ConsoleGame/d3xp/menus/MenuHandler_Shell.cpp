@@ -229,33 +229,33 @@ void idMenuHandler_Shell::SetupPCOptions() {
 	navOptions.clear();
 
 	if (menuBar) {
-		navOptions.push_back("DEV");	// DEV
+		//navOptions.push_back("DEV");	// DEV
 		navOptions.push_back("campaign");	// singleplayer
-		navOptions.push_back("settings");	// settings
+		//navOptions.push_back("settings");	// settings
 		navOptions.push_back("quit");	// quit
 
 
 		std::shared_ptr<idMenuWidget_MenuButton> buttonWidget = nullptr;
 		int index = 0;
 
-		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
+		/*buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
 			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_DEV), index);
 		}
-		index++;
+		index++;*/
 		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
 			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_CAMPAIGN), index);
 		}
 		index++;
-		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
+		/*buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
 			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_SETTINGS), index);
 		}
-		index++;
+		index++;*/
 		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
