@@ -12,6 +12,7 @@ const std::string GAME_VERSION = "baseDOOM-1";
 class idEntity;
 class idActor;
 class idPlayer;
+class idWorldspawn;
 class idAI;
 class idTypeInfo;
 class idMenuHandler_Shell;
@@ -59,6 +60,7 @@ public:
 	idLinkList<idEntity> activeEntities; // all thinking entities (idEntity::thinkFlags != 0)
 	int numEntitiesToDeactivate; // number of entities that became inactive in current frame
 	int num_entities; // current number <= MAX_GENTITIES
+	std::shared_ptr<idWorldspawn> world; // world entity
 
 	std::shared_ptr<idClip> clip; // collision detection
 
@@ -109,6 +111,8 @@ public:
 	gameState_t GameState() const;
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
+	const std::shared_ptr<idDeclEntityDef> FindEntityDef(const std::string& name, bool makeDefault = true) const;
+
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
 	const idDict &GetSpawnArgs() const { return spawnArgs; }
@@ -148,7 +152,7 @@ public:
 	void AddRandomPoint();
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
-	//idMapFile* mapFile;				// will be NULL during the game unless in-game editing is used
+	std::shared_ptr<idMapFile> mapFile; // will be NULL during the game unless in-game editing is used
 
 	int spawnCount;
 	
@@ -227,6 +231,7 @@ const int MASK_SOLID = 1;
 #include "AFEntity.h"
 #include "Misc.h"
 #include "Actor.h"
+#include "WorldSpawn.h"
 #include "Player.h"
 #include "PlayerChain.h"
 

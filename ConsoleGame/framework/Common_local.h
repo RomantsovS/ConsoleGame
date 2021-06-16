@@ -17,13 +17,13 @@ class idCommonLocal : public idCommon
 public:
 	idCommonLocal();
 
-	virtual void Init(int argc, const char * const * argv, const char *cmdline) override;
-	virtual void Shutdown() override;
+	void Init(int argc, const char * const * argv, const char *cmdline) override;
+	void Shutdown() override;
 	virtual	void CreateMainMenu() override;
 	virtual void Quit() override;
 
-	virtual void Frame() override;
-	virtual void UpdateScreen(bool captureToImage) override;
+	void Frame() override;
+	void UpdateScreen(bool captureToImage) override;
 	virtual void Printf(const char* fmt, ...) override;
 	virtual void VPrintf(const char* fmt, va_list arg) override;
 	virtual void DPrintf(const char* fmt, ...) override;

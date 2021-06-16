@@ -13,6 +13,21 @@ idDict::idDict(const idDict & other) {
 idDict::~idDict() {
 }
 
+/*
+================
+idDict::SetDefaults
+================
+*/
+void idDict::SetDefaults(const idDict* dict) {
+	for (const auto& def : dict->args) {
+		auto iter = args.find(def.first);
+
+		if (iter == args.end()) {
+			args.insert_or_assign(def.first, def.second);
+		}
+	}
+}
+
 void idDict::Clear() {
 	args.clear();
 }
@@ -24,8 +39,7 @@ void idDict::Set(std::string key, std::string value) {
 std::string idDict::GetString(const char * key, std::string defaultString) const {
 	auto iter = args.find(key);
 
-	if (iter != args.end())
-	{
+	if (iter != args.end()) {
 		return iter->second;
 	}
 
@@ -35,8 +49,7 @@ std::string idDict::GetString(const char * key, std::string defaultString) const
 bool idDict::GetString(const std::string key, std::string defaultString, std::string *out) const {
 	auto iter = args.find(key);
 	
-	if(iter != args.end())
-	{
+	if(iter != args.end()) {
 		*out = iter->second;
 		return true;
 	}
@@ -92,6 +105,24 @@ bool idDict::GetVector(const std::string key, std::string defaultString, Vector2
 	is >> out.x >> out.y;
 
 	return found;
+}
+
+/*
+================
+idDict::FindKey
+================
+*/
+const std::string& idDict::FindKey(const std::string& key) const {
+	if (key.empty()) {
+		common->DWarning("idDict::FindKey: empty key");
+		return "";
+	}
+
+	auto iter = args.find(key);
+	if (iter != args.end())
+		return iter->first;
+
+	return "";
 }
 
 const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const {

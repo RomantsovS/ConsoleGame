@@ -176,7 +176,7 @@ struct cm_traceWork_t {
 class idCollisionModelManagerLocal : public idCollisionModelManager {
 public:
 	// load collision models from a map file
-	void LoadMap(/*const idMapFile* mapFile*/);
+	void LoadMap(const std::shared_ptr<idMapFile> mapFile) override;
 	// frees all the collision models
 	void FreeMap();
 
@@ -230,16 +230,20 @@ private:			// CollisionMap_load.cpp
 	void SetupTrmModelStructure();
 	
 	// creation of raw polygons
-	void ConvertBrush(std::shared_ptr<cm_model_t> model, /*const idMapBrush* mapBrush,*/ int primitiveNum);
+	void ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum);
+	void ConvertBrush(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush>& mapBrush, int primitiveNum);
+	void			PrintModelInfo(const cm_model_t* model);
+	void			AccumulateModelInfo(cm_model_t* model);
 	void FinishModel(std::shared_ptr<cm_model_t> model);
-	void BuildModels(/*const idMapFile* mapFile*/);
+	void BuildModels(const std::shared_ptr<idMapFile> mapFile);
 	int FindModel(const std::string& name);
-	std::shared_ptr<cm_model_t> CollisionModelForMapEntity(/*const idMapEntity* mapEnt*/);	// brush/patch model from .map
+	std::shared_ptr<cm_model_t> CollisionModelForMapEntity(const std::shared_ptr<idMapEntity> mapEnt);	// brush/patch model from .map
 	std::shared_ptr<cm_model_t> LoadBinaryModel(const std::string& fileName);
 	std::shared_ptr<cm_model_t> LoadBinaryModelFromFile();
 	bool TrmFromModel(const std::shared_ptr<cm_model_t> model, idTraceModel& trm);
 private:			// collision map data
 	std::string mapName;
+	long long mapFileTime;
 	int loaded;
 	// models
 	int maxModels;

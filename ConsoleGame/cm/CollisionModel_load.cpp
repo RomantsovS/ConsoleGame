@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include "../idlib/precompiled.h"
+#pragma hdrstop
 
 #include "CollisionModel_local.h"
 #include "../d3xp/Game_local.h"
@@ -22,7 +22,7 @@ idCollisionModelManagerLocal::Clear
 */
 void idCollisionModelManagerLocal::Clear() {
 	mapName.clear();
-	//mapFileTime = 0;
+	mapFileTime = 0;
 	loaded = 0;
 	//checkCount = 0;
 	maxModels = 0;
@@ -105,22 +105,22 @@ void idCollisionModelManagerLocal::FreeModel(std::shared_ptr<cm_model_t> model)
 	model = nullptr;
 }
 
-void idCollisionModelManagerLocal::LoadMap(/*const idMapFile* mapFile*/)
+void idCollisionModelManagerLocal::LoadMap(const std::shared_ptr<idMapFile> mapFile)
 {
-	/*if (mapFile == NULL) {
+	if (!mapFile) {
 		common->Error("idCollisionModelManagerLocal::LoadMap: NULL mapFile");
 		return;
-	}*/
+	}
 
 	// check whether we can keep the current collision map based on the mapName and mapFileTime
 	if (loaded) {
-		/*if (mapName.Icmp(mapFile->GetName()) == 0) {
+		if (mapName == mapFile->GetName()) {
 			if (mapFile->GetFileTime() == mapFileTime) {
 				common->DPrintf("Using loaded version\n");
 				return;
 			}
 			common->DPrintf("Reloading modified map\n");
-		}*/
+		}
 		FreeMap();
 	}
 
@@ -143,13 +143,13 @@ void idCollisionModelManagerLocal::LoadMap(/*const idMapFile* mapFile*/)
 	//common->UpdateLevelLoadPacifier();
 
 	// build collision models
-	BuildModels(/*mapFile*/);
+	BuildModels(mapFile);
 
 	//common->UpdateLevelLoadPacifier();
 
 	// save name and time stamp
-	//mapName = mapFile->GetName();
-	//mapFileTime = mapFile->GetFileTime();
+	mapName = mapFile->GetName();
+	mapFileTime = mapFile->GetFileTime();
 	loaded = true;
 
 	// shutdown the hash
@@ -438,16 +438,68 @@ void idCollisionModelManagerLocal::SetupTrmModelStructure()
 	//trmBrushes[0]->b->numPlanes = 0;
 }
 
-void idCollisionModelManagerLocal::ConvertBrush(std::shared_ptr<cm_model_t> model, int primitiveNum)
+/*
+================
+idCollisionModelManagerLocal::ConvertBrushSides
+================
+*/
+void idCollisionModelManagerLocal::ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum) {
+	/*int i, j;
+	idMapBrushSide* mapSide;
+	idFixedWinding w;
+	idPlane* planes;
+	const idMaterial* material;
+
+	// fix degenerate planes
+	planes = (idPlane*)_alloca16(mapBrush->GetNumSides() * sizeof(planes[0]));
+	for (i = 0; i < mapBrush->GetNumSides(); i++) {
+		planes[i] = mapBrush->GetSide(i)->GetPlane();
+		planes[i].FixDegeneracies(DEGENERATE_DIST_EPSILON);
+	}
+
+	// create a collision polygon for each brush side
+	for (i = 0; i < mapBrush->GetNumSides(); i++) {
+		mapSide = mapBrush->GetSide(i);
+		material = declManager->FindMaterial(mapSide->GetMaterial());
+		if (!(material->GetContentFlags() & CONTENTS_REMOVE_UTIL)) {
+			continue;
+		}
+		w.BaseForPlane(-planes[i]);
+		for (j = 0; j < mapBrush->GetNumSides() && w.GetNumPoints(); j++) {
+			if (i == j) {
+				continue;
+			}
+			w.ClipInPlace(-planes[j], 0);
+		}
+
+		if (w.GetNumPoints()) {
+			PolygonFromWinding(model, &w, planes[i], material, primitiveNum);
+		}
+	}*/
+}
+
+void idCollisionModelManagerLocal::ConvertBrush(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush>& mapBrush, int primitiveNum)
 {
-	int contents;
+	int i, contents;
 	idBounds bounds;
 
 	contents = 1;
 	bounds.Clear();
 
-	bounds.AddPoint(vec2_origin);
-	bounds.AddPoint(Vector2(gameLocal.GetHeight(), gameLocal.GetWidth()));
+	/*bounds.AddPoint(vec2_origin);
+	bounds.AddPoint(Vector2(gameLocal.GetHeight(), gameLocal.GetWidth()));*/
+
+	// we are only getting the bounds for the brush so there's no need
+	// to create a winding for the last brush side
+	for (i = 0; i < mapBrush->GetNumSides(); i++) {
+		std::shared_ptr<idMapBrushSide> mapSide = mapBrush->GetSide(i);
+		for (const auto& point : mapSide->GetPoints()) {
+			bounds.AddPoint(point);
+		}
+	}
+	if (!contents) {
+		return;
+	}
 
 	// create brush for position test
 	auto brush = AllocBrush(model);
@@ -549,36 +601,35 @@ void idCollisionModelManagerLocal::FinishModel(std::shared_ptr<cm_model_t> model
 	model->usedMemory = model->numVertices * sizeof(cm_vertex_t);
 }
 
-void idCollisionModelManagerLocal::BuildModels()
+void idCollisionModelManagerLocal::BuildModels(const std::shared_ptr<idMapFile> mapFile)
 {
-	//int i;
-	//const idMapEntity* mapEnt;
+	int i;
 
 	/*idTimer timer;
 	timer.Start();*/
 
-	/*if (!LoadCollisionModelFile(mapFile->GetName(), mapFile->GetGeometryCRC())) {
+	//if (!LoadCollisionModelFile(mapFile->GetName(), mapFile->GetGeometryCRC())) {
 
 		if (!mapFile->GetNumEntities()) {
 			return;
-		}*/
+		}
 
 		// load the .proc file bsp for data optimisation
 		//LoadProcBSP(mapFile->GetName());
 
 		// convert brushes and patches to collision data
-		//for (i = 0; i < mapFile->GetNumEntities(); i++) {
-			//mapEnt = mapFile->GetEntity(i);
+		for (i = 0; i < mapFile->GetNumEntities(); i++) {
+			const std::shared_ptr<idMapEntity> mapEnt = mapFile->GetEntity(i);
 
 			if (numModels >= MAX_SUBMODELS) {
 				common->Error("idCollisionModelManagerLocal::BuildModels: more than %d collision models", MAX_SUBMODELS);
-				//break;
+				break;
 			}
-			models[numModels] = CollisionModelForMapEntity(/*mapEnt*/);
+			models[numModels] = CollisionModelForMapEntity(mapEnt);
 			if (models[numModels]) {
 				numModels++;
 			}
-		//}
+		}
 
 		// free the proc bsp which is only used for data optimization
 		/*Mem_Free(procNodes);
@@ -591,12 +642,12 @@ void idCollisionModelManagerLocal::BuildModels()
 	//timer.Stop();
 
 	// print statistics on collision data
-	/*cm_model_t model;
+	cm_model_t model;
 	AccumulateModelInfo(&model);
 	common->Printf("collision data:\n");
 	common->Printf("%6i models\n", numModels);
 	PrintModelInfo(&model);
-	common->Printf("%.0f msec to load collision data.\n", timer.Milliseconds());*/
+	//common->Printf("%.0f msec to load collision data.\n", timer.Milliseconds());
 }
 
 int idCollisionModelManagerLocal::FindModel(const std::string& name)
@@ -617,52 +668,99 @@ int idCollisionModelManagerLocal::FindModel(const std::string& name)
 }
 
 /*
+==================
+idCollisionModelManagerLocal::PrintModelInfo
+==================
+*/
+void idCollisionModelManagerLocal::PrintModelInfo(const cm_model_t* model) {
+	common->Printf("%6i vertices (%i KB)\n", model->numVertices, (model->numVertices * sizeof(cm_vertex_t)) >> 10);
+	//common->Printf("%6i edges (%i KB)\n", model->numEdges, (model->numEdges * sizeof(cm_edge_t)) >> 10);
+	//common->Printf("%6i polygons (%i KB)\n", model->numPolygons, model->polygonMemory >> 10);
+	common->Printf("%6i brushes (%i KB)\n", model->numBrushes, model->brushMemory >> 10);
+	common->Printf("%6i nodes (%i KB)\n", model->numNodes, (model->numNodes * sizeof(cm_node_t)) >> 10);
+	//common->Printf("%6i polygon refs (%i KB)\n", model->numPolygonRefs, (model->numPolygonRefs * sizeof(cm_polygonRef_t)) >> 10);
+	common->Printf("%6i brush refs (%i KB)\n", model->numBrushRefs, (model->numBrushRefs * sizeof(cm_brushRef_t)) >> 10);
+	//common->Printf("%6i internal edges\n", model->numInternalEdges);
+	//common->Printf("%6i sharp edges\n", model->numSharpEdges);
+	//common->Printf("%6i contained polygons removed\n", model->numRemovedPolys);
+	//common->Printf("%6i polygons merged\n", model->numMergedPolys);
+	common->Printf("%6i KB total memory used\n", model->usedMemory >> 10);
+}
+
+/*
+================
+idCollisionModelManagerLocal::AccumulateModelInfo
+================
+*/
+void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t* model) {
+	int i;
+
+	memset(model, 0, sizeof(*model));
+	// accumulate statistics of all loaded models
+	for (i = 0; i < numModels; i++) {
+		model->numVertices += models[i]->numVertices;
+		//model->numEdges += models[i]->numEdges;
+		//model->numPolygons += models[i]->numPolygons;
+		//model->polygonMemory += models[i]->polygonMemory;
+		model->numBrushes += models[i]->numBrushes;
+		model->brushMemory += models[i]->brushMemory;
+		model->numNodes += models[i]->numNodes;
+		model->numBrushRefs += models[i]->numBrushRefs;
+		//model->numPolygonRefs += models[i]->numPolygonRefs;
+		//model->numInternalEdges += models[i]->numInternalEdges;
+		//model->numSharpEdges += models[i]->numSharpEdges;
+		//model->numRemovedPolys += models[i]->numRemovedPolys;
+		//model->numMergedPolys += models[i]->numMergedPolys;
+		model->usedMemory += models[i]->usedMemory;
+	}
+}
+
+/*
 =================
 CM_EstimateVertsAndEdges
 =================
 */
-static void CM_EstimateVertsAndEdges(/*const idMapEntity* mapEnt,*/ int* numVerts/*, int* numEdges*/) {
-	//int j, width, height;
+static void CM_EstimateVertsAndEdges(const std::shared_ptr<idMapEntity> mapEnt, int* numVerts/*, int* numEdges*/) {
+	int j;
 
 	*numVerts = /**numEdges =*/ 0;
-	/*for (j = 0; j < mapEnt->GetNumPrimitives(); j++) {
-		const idMapPrimitive* mapPrim;
-		mapPrim = mapEnt->GetPrimitive(j);
-		if (mapPrim->GetType() == idMapPrimitive::TYPE_PATCH) {
+	for (j = 0; j < mapEnt->GetNumPrimitives(); j++) {
+		const std::shared_ptr<idMapPrimitive> mapPrim = mapEnt->GetPrimitive(j);
+		/*if (mapPrim->GetType() == idMapPrimitive::TYPE_PATCH) {
 			// assume maximum tesselation without adding verts
 			width = static_cast<const idMapPatch*>(mapPrim)->GetWidth();
 			height = static_cast<const idMapPatch*>(mapPrim)->GetHeight();
 			*numVerts += width * height;
 			*numEdges += (width - 1) * height + width * (height - 1) + (width - 1) * (height - 1);
 			continue;
-		}
+		}*/
 		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {
 			// assume cylinder with a polygon with (numSides - 2) edges ontop and on the bottom
-			*numVerts += (static_cast<const idMapBrush*>(mapPrim)->GetNumSides() - 2) * 2;
-			*numEdges += (static_cast<const idMapBrush*>(mapPrim)->GetNumSides() - 2) * 3;
+			*numVerts += (std::dynamic_pointer_cast<idMapBrush>(mapPrim)->GetNumSides() - 2) * 2;
+			//*numEdges += (static_cast<const idMapBrush*>(mapPrim)->GetNumSides() - 2) * 3;
 			continue;
 		}
-	}*/
+	}
 	* numVerts = 4;
 }
 
-std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEntity()
+std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEntity(const std::shared_ptr<idMapEntity> mapEnt)
 {
 	std::shared_ptr<cm_model_t> model;
 	idBounds bounds;
 	std::string name;
-	int brushCount;
+	int i, brushCount;
 
 	// if the entity has no primitives
-	/*if (mapEnt->GetNumPrimitives() < 1) {
-		return NULL;
+	if (mapEnt->GetNumPrimitives() < 1) {
+		return nullptr;
 	}
 
 	// get a name for the collision model
-	/*mapEnt->epairs.GetString("model", "", &name);
-	if (!name[0]) {
+	mapEnt->epairs.GetString("model", "", &name);
+	if (name.empty()) {
 		mapEnt->epairs.GetString("name", "", &name);
-		if (!name[0]) {*/
+		if (name.empty()) {
 			if (!numModels) {
 				// first model is always the world
 				name = "worldMap";
@@ -670,13 +768,13 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 			else {
 				name = "unnamed inline model";
 			}
-		//}
-	//}
+		}
+	}
 
 	model = AllocModel();
 	model->node = AllocNode(model, NODE_BLOCK_SIZE_SMALL);
 
-	CM_EstimateVertsAndEdges(/*mapEnt,*/ &model->maxVertices/*, &model->maxEdges*/);
+	CM_EstimateVertsAndEdges(mapEnt, &model->maxVertices/*, &model->maxEdges*/);
 	model->numVertices = 0;
 	//model->numEdges = 0;
 	model->vertices.resize(model->maxVertices);
@@ -689,15 +787,13 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	model->isConvex = false;
 
 	// convert brushes
-	/*for (i = 0; i < mapEnt->GetNumPrimitives(); i++) {
-		idMapPrimitive* mapPrim;
-
-		mapPrim = mapEnt->GetPrimitive(i);
-		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {*/
-			ConvertBrush(model, 1);
-			/*continue;
+	for (i = 0; i < mapEnt->GetNumPrimitives(); i++) {
+		std::shared_ptr<idMapPrimitive> mapPrim = mapEnt->GetPrimitive(i);
+		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {
+			ConvertBrush(model, std::dynamic_pointer_cast<idMapBrush>(mapPrim), 1);
+			continue;
 		}
-	}*/
+	}
 
 	// create an axial bsp tree for the model if it has more than just a bunch brushes
 	brushCount = CM_CountNodeBrushes(model->node);
@@ -711,7 +807,6 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	// get bounds for hash
 	if (brushCount) {
 		CM_GetNodeBounds(&bounds, model->node);
-
 	}
 	else {
 		bounds[0].Set(0, 0);
@@ -722,19 +817,17 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	//ClearHash(bounds);
 
 	// create polygons from patches and brushes
-	/*for (i = 0; i < mapEnt->GetNumPrimitives(); i++) {
-		idMapPrimitive* mapPrim;
-
-		mapPrim = mapEnt->GetPrimitive(i);
-		if (mapPrim->GetType() == idMapPrimitive::TYPE_PATCH) {
+	for (i = 0; i < mapEnt->GetNumPrimitives(); i++) {
+		std::shared_ptr<idMapPrimitive> mapPrim = mapEnt->GetPrimitive(i);
+		/*if (mapPrim->GetType() == idMapPrimitive::TYPE_PATCH) {
 			ConvertPatch(model, static_cast<idMapPatch*>(mapPrim), i);
 			continue;
-		}
+		}*/
 		if (mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH) {
-			ConvertBrushSides(model, static_cast<idMapBrush*>(mapPrim), i);
+			ConvertBrushSides(model, std::dynamic_pointer_cast<idMapBrush>(mapPrim), i);
 			continue;
 		}
-	}*/
+	}
 
 	FinishModel(model);
 

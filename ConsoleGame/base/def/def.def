@@ -1,0 +1,49 @@
+/***********************************************************************
+
+ miscellaneous
+
+***********************************************************************/
+
+entityDef worldspawn {
+	"editor_color"			"0 0 0"
+	"editor_mins"			"?"
+	"editor_maxs"			"?"
+
+	"editor_usage"			"Every map should have exactly one worldspawn."
+	"editor_var music"		"music wav file."
+	"editor_var gravity"	"gravity value for the level."
+	"editor_var no_stamina" "disables stamina so the player can always run"
+	"editor_var no_Weapons" "only fists and no melee attacks"
+	"editor_var def_player"	"player def to use when spawning this world"
+
+	"spawnclass"			"idWorldspawn"
+	"gravity"				"1066"
+	"name"					"world"
+}
+
+entityDef staticentity {
+	"spawnclass"			"idStaticEntity"
+	"name"					"idStaticEntity"
+	"model"					"asterisk"
+	"clipmodel"				"pixel"
+}
+
+entityDef simpleobject {
+	"spawnclass"			"idSimpleObject"
+	"name"					"idSimpleObject"
+	"model"					"asterisk"
+	"clipmodel"				"pixel"
+}
+
+entityDef chain {
+	"spawnclass"			"idChain"
+	"name"					"idChain"
+	"model"					"asterisk"
+	"clipmodel"				"pixel"
+	"links"					"3"
+}
+
+entityDef player_doommarine {
+	"spawnclass"			"PlayerChain"
+	"name"					"PlayerChain"
+}

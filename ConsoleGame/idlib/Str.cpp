@@ -22,6 +22,20 @@ std::string idStr::GetFromValue<float>(const float i)
 }
 
 /*
+============
+idStr::StripTrailingWhitespace
+============
+*/
+void idStr::StripTrailingWhitespace(std::string& str) {
+	int i;
+
+	// cast to unsigned char to prevent stripping off high-ASCII characters
+	for (i = str.size(); i > 0 && (unsigned char)(str[i - 1]) <= ' '; i--) {
+		str.resize(str.size() - 1);
+	}
+}
+
+/*
 =============
 idStr::Copynz
 
@@ -150,4 +164,33 @@ bool idStr::caseInSensStringCompareCpp11(const std::string& str1, const std::str
 	return ((str1.size() == str2.size()) && std::equal(str1.begin(), str1.end(), str2.begin(),
 		[](auto& c1, auto& c2) { return (c1 == c2 || std::toupper(c1) == std::toupper(c2)); }
 	));
+}
+
+/*
+============
+idStr::SetFileExtension
+============
+*/
+void idStr::SetFileExtension(std::string& str, const std::string extension) {
+	StripFileExtension(str);
+	if (!extension.empty() && extension[0] != '.') {
+		str.append(".");
+	}
+	str.append(extension);
+}
+
+/*
+============
+idStr::StripFileExtension
+============
+*/
+void idStr::StripFileExtension(std::string& str) {
+	int i;
+
+	for (i = str.size() - 1; i >= 0; i--) {
+		if (str[i] == '.') {
+			str.resize(i);
+			break;
+		}
+	}
 }

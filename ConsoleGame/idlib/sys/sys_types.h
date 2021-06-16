@@ -1,6 +1,8 @@
 #ifndef IDLIB_SYS_SYS_TYPES_H_
 #define IDLIB_SYS_SYS_TYPES_H_
 
+typedef long long			int64;
+
 #ifndef BIT
 #define BIT( num )				( 1ULL << ( num ) )
 #endif

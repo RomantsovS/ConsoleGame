@@ -15,6 +15,15 @@ idFile::~idFile() {
 
 /*
 =================
+idFile::GetFullPath
+=================
+*/
+const std::string idFile::GetFullPath() const {
+	return "";
+}
+
+/*
+=================
 idFile::Read
 =================
 */
@@ -34,6 +43,15 @@ idFile::Length
 =================
 */
 int idFile::Length() const {
+	return 0;
+}
+
+/*
+=================
+idFile::Timestamp
+=================
+*/
+ID_TIME_T idFile::Timestamp() const {
 	return 0;
 }
 

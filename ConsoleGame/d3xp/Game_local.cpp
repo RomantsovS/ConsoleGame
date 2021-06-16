@@ -31,6 +31,13 @@ void idGameLocal::Init() {
 	Printf("gamename: %s\n", GAME_VERSION.c_str());
 	Printf("gamedate: %s\n", __DATE__);
 
+	// register game specific decl types
+	//declManager->RegisterDeclType("model", DECL_MODELDEF, idDeclAllocator<idDeclModelDef>);
+	//declManager->RegisterDeclType("export", DECL_MODELEXPORT, idDeclAllocator<idDecl>);
+
+	// register game specific decl folders
+	declManager->RegisterDeclFolder("def", ".def", declType_t::DECL_ENTITYDEF);
+
 	cmdSystem->AddCommand("addrandompoints", AddRandomPoints, CMD_FL_GAME, "addes random point(s)");
 
 	Clear();
@@ -96,6 +103,8 @@ void idGameLocal::Shutdown() {
 	idEvent::Shutdown();
 
 	idClass::Shutdown();
+
+	mapFile = nullptr;
 
 	// free the collision map
 	collisionModelManager->FreeMap();
@@ -179,8 +188,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("name", va("player%d", clientNum + 1));
 
 	// precache the player
-	args.Set("classname", "PlayerChain");
-	args.Set("spawnclass", "PlayerChain");
+	args.Set("classname", gameLocal.world->spawnArgs.GetString("def_player", "player_doommarine"));
 
 	args.Set("model", "pixel");
 	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
@@ -633,10 +641,23 @@ void idGameLocal::Error(const char* fmt, ...) const {
 }
 
 void idGameLocal::LoadMap(const std::string mapName, int randseed) {
-	mapFileName = mapName;
+	bool sameMap = mapFile && mapFileName == mapName;
+
+	if (!sameMap || (mapFile && mapFile->NeedsReload())) {
+		// load the .map file
+		if (mapFile) {
+			mapFile = nullptr;
+		}
+		mapFile = std::make_shared<idMapFile>();
+		if (!mapFile->Parse(mapName + ".map")) {
+			mapFile = nullptr;
+			Error("Couldn't load %s", mapName);
+		}
+	}
+	mapFileName = mapFile->GetName();
 
 	// load the collision map
-	collisionModelManager->LoadMap(/*mapFile*/);
+	collisionModelManager->LoadMap(mapFile);
 	//collisionModelManager->Preload(mapName);
 
 	entities.clear();
@@ -651,6 +672,8 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 	num_entities = MAX_CLIENTS;
 	firstFreeEntityIndex[0] = MAX_CLIENTS;
 
+	world = nullptr;
+
 	previousTime = 0;
 	time = 0;
 	framenum = 0;
@@ -658,6 +681,10 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 	spawnArgs.Clear();
 
 	clip->Init();
+
+	if (!sameMap) {
+		mapFile->RemovePrimitiveData();
+	}
 }
 
 void idGameLocal::Clear() {
@@ -669,6 +696,7 @@ void idGameLocal::Clear() {
 	spawnedEntities.Clear();
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
+	world = nullptr;
 	
 	if (clip) {
 		clip->Shutdown();
@@ -679,6 +707,7 @@ void idGameLocal::Clear() {
 	previousTime = 0;
 	time = 0;
 	mapFileName.clear();
+	mapFile = nullptr;
 	spawnArgs.Clear();
 	gamestate = GAMESTATE_UNINITIALIZED;
 
@@ -842,6 +871,43 @@ void idGameLocal::Shell_SyncWithSession() {
 }
 
 void idGameLocal::SpawnMapEntities() {
+	int			i;
+	int			num;
+	int			numEntities;
+	idDict		args;
+
+	Printf("Spawning entities\n");
+
+	if (!mapFile) {
+		Printf("No mapfile present\n");
+		return;
+	}
+
+	numEntities = mapFile->GetNumEntities();
+	if (numEntities == 0) {
+		Error("...no entities");
+	}
+
+	// the worldspawn is a special that performs any global setup
+	// needed by a level
+	std::shared_ptr<idMapEntity> mapEnt = mapFile->GetEntity(0);
+	args = mapEnt->epairs;
+	args.SetInt("spawn_entnum", ENTITYNUM_WORLD);
+	if (!SpawnEntityDef(args) || !entities[ENTITYNUM_WORLD] /*|| !entities[ENTITYNUM_WORLD]->IsType(idWorldspawn::Type)*/) {
+		Error("Problem spawning world entity");
+	}
+
+	num = 1;
+
+	for (i = 1; i < numEntities; i++) {
+		mapEnt = mapFile->GetEntity(i);
+		args = mapEnt->epairs;
+
+		SpawnEntityDef(args);
+			num++;
+	}
+
+	Printf("...%i entities spawned\n\n", num);
 }
 
 void idGameLocal::MapPopulate() {
@@ -854,8 +920,8 @@ void idGameLocal::MapPopulate() {
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
 
-	for(int i = 0; i < 1; ++i)
-		AddRandomPoint();
+	/*for(int i = 0; i < 1; ++i)
+		AddRandomPoint();*/
 }
 
 void idGameLocal::MapClear(bool clearClients) {
@@ -879,12 +945,10 @@ void idGameLocal::AddRandomPoint() {
 	float start_pos = 0.0f;
 
 	if (ent_type == 0) {
-		args.Set("classname", "idStaticEntity");
-		args.Set("spawnclass", "idStaticEntity");
+		args.Set("classname", "staticentity");
 	}
 	else if (ent_type == 1) {
-		args.Set("classname", "idChain");
-		args.Set("spawnclass", "idChain");
+		args.Set("classname", "chain");
 
 		size_t links = GetRandomValue(3, 15);
 		args.Set("links", std::to_string(links));
@@ -893,8 +957,7 @@ void idGameLocal::AddRandomPoint() {
 		start_pos = searching_radius;
 	}
 	else {
-		args.Set("classname", "idSimpleObject");
-		args.Set("spawnclass", "idSimpleObject");
+		args.Set("classname", "simpleobject");
 	}
 
 	Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
@@ -952,6 +1015,10 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>*
 	idTypeInfo *cls;
 	std::shared_ptr<idClass> obj;
 
+	if (ent) {
+		*ent = nullptr;
+	}
+
 	spawnArgs = args;
 
 	if (spawnArgs.GetString("name", "", &name)) {
@@ -959,6 +1026,15 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>*
 	}
 
 	spawnArgs.GetString("classname", "", &classname);
+
+	const std::shared_ptr<idDeclEntityDef> def = FindEntityDef(classname, false);
+
+	if (!def) {
+		Warning("Unknown classname '%s'%s.", classname.c_str(), error.c_str());
+		return false;
+	}
+
+	spawnArgs.SetDefaults(&def->dict);
 
 	// check if we should spawn a class object
 	spawnArgs.GetString("spawnclass", "", &spawn);
@@ -986,6 +1062,16 @@ bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>*
 	}
 
 	return false;
+}
+
+/*
+================
+idGameLocal::FindEntityDef
+================
+*/
+const std::shared_ptr<idDeclEntityDef> idGameLocal::FindEntityDef(const std::string& name, bool makeDefault) const {
+	const std::shared_ptr<idDecl> decl = declManager->FindType(declType_t::DECL_ENTITYDEF, name, makeDefault);
+	return std::dynamic_pointer_cast<idDeclEntityDef>(decl);
 }
 
 void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy) {

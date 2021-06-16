@@ -149,7 +149,7 @@ ProcessEvent
 ==============
 */
 bool idConsoleLocal::ProcessEvent(const sysEvent_t* proc_event, bool forceAccept) {
-	const bool consoleKey = proc_event->evType == SE_KEY && proc_event->evValue == static_cast<int>(keyNum_t::K_GRAVE) && com_allowConsole.GetBool();
+	const bool consoleKey = proc_event->evType == SE_CHAR && proc_event->evValue == static_cast<int>(keyNum_t::K_GRAVE) && com_allowConsole.GetBool();
 
 	// we always catch the console key event
 	if (!forceAccept && consoleKey) {

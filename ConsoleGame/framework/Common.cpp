@@ -70,6 +70,9 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// initialize the file system
 		fileSystem->Init();
 
+		// initialize the declaration manager
+		declManager->Init();
+
 		// init journalling, etc
 		eventLoop->Init();
 
@@ -147,6 +150,10 @@ void idCommonLocal::Shutdown() {
 	// shut down the event loop
 	printf("eventLoop->Shutdown();\n");
 	eventLoop->Shutdown();
+
+	// shutdown the decl manager
+	printf("declManager->Shutdown();\n");
+	declManager->Shutdown();
 
 	// shut down the renderSystem
 	Printf("renderSystem->Shutdown();\n");

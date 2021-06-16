@@ -75,40 +75,70 @@ will point into this temporary buffer.
 ============
 */
 void idCmdArgs::TokenizeString(const std::string &text, bool keepAsStrings) {
+	idLexer		lex;
+	idToken		token, number;
+	int			len, totalLen;
+
 	// clear previous args
 	argv.clear();
 
-	if (text.empty() || text.substr(0, 2) == "//") {
+	if (text.empty()) {
 		return;
 	}
 
-	size_t found = 0, cur_found = 0;
+	lex.LoadMemory(text.c_str(), text.size(), "idCmdSystemLocal::TokenizeString");
+	/*lex.SetFlags(LEXFL_NOERRORS
+		| LEXFL_NOWARNINGS
+		| LEXFL_NOSTRINGCONCAT
+		| LEXFL_ALLOWPATHNAMES
+		| LEXFL_NOSTRINGESCAPECHARS
+		| LEXFL_ALLOWIPADDRESSES | (keepAsStrings ? LEXFL_ONLYSTRINGS : 0));
+		*/
+	totalLen = 0;
 
 	while (1) {
 		if (argv.size() == MAX_COMMAND_ARGS) {
 			return;			// this is usually something malicious
 		}
 
-		cur_found = text.find(' ', found);
-
-		if (cur_found == std::string::npos) {
-			argv.emplace_back(CutQuotes(text.substr(found)));
-
+		if (!lex.ReadToken(&token)) {
 			return;
 		}
-		else if (cur_found == found) {
-			++found;
-		}
-		else {
-			auto str = text.substr(found, cur_found - found);
 
-			if (str.substr(0, 2) == "//")
+		// check for negative numbers
+		if (!keepAsStrings && (token == "-")) {
+			if (lex.CheckTokenType(TT_NUMBER, 0, &number)) {
+				token.assign("-" + number);
+			}
+		}
+
+		// check for cvar expansion
+		if (token == "$") {
+			if (!lex.ReadToken(&token)) {
 				return;
-
-			argv.emplace_back(CutQuotes(str));
-
-			found = cur_found + 1;
+			}
+			/*if (idLib::cvarSystem) {
+				token = idLib::cvarSystem->GetCVarString(token.c_str());
+			}*/
+			else {
+				token.assign("<unknown>");
+			}
 		}
+
+		len = token.size();
+
+		/*if (totalLen + len + 1 > sizeof(tokenized)) {
+			return;			// this is usually something malicious
+		}
+
+		// regular token
+		argv[argc] = tokenized + totalLen;
+		argc++;*/
+		argv.push_back(token);
+
+		//idStr::Copynz(tokenized + totalLen, token.c_str(), sizeof(tokenized) - totalLen);
+
+		totalLen += len + 1;
 	}
 }
 

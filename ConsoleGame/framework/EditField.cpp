@@ -62,6 +62,9 @@ void idEditField::KeyDownEvent(int key) {
 		}
 		return;
 	}
+	else if (key == static_cast<int>(keyNum_t::K_SPACE)) {
+		buffer.append(1, ' ');
+	}
 }
 
 /*

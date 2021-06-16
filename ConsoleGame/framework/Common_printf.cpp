@@ -37,8 +37,14 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 	if (idStr::vsnPrintf(msg + timeLength, MAX_PRINT_MSG_SIZE - timeLength - 1, fmt, args) < 0)
 	{
 		msg[sizeof(msg) - 2] = '\n'; msg[sizeof(msg) - 1] = '\0'; // avoid output garbling
-		//Sys_Printf("idCommon::VPrintf: truncated to %d characters\n", strlen(msg) - 1);
+		Sys_Printf("idCommon::VPrintf: truncated to %d characters\n", strlen(msg) - 1);
 	}
+
+	// echo to console buffer
+	//console->Print(msg);
+
+	// echo to dedicated console and early console
+	Sys_Printf("%s", msg);
 
 	// logFile
 	if (com_logFile.GetInteger() && !logFileFailed && fileSystem->IsInitialized()) {
@@ -218,10 +224,14 @@ void idCommonLocal::FatalError(const char* fmt, ...)
 		// full screen rendering window covering the
 		// error dialog
 
+		Sys_Printf("FATAL: recursed fatal error:\n%s\n", errorMessage);
+
 		va_start(argptr, fmt);
 		idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
 		va_end(argptr);
 		errorMessage[sizeof(errorMessage) - 1] = '\0';
+
+		Sys_Printf("%s\n", errorMessage);
 
 		// write the console to a log file?
 		Sys_Quit();

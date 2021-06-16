@@ -109,7 +109,7 @@ void idCommonLocal::Frame() {
 
 		renderSystem->RenderCommandBuffers();
 	}
-	catch (std::exception& err)
+	catch (const std::exception& err)
 	{
 		common->Error(err.what());
 	}
@@ -124,7 +124,7 @@ void idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
 
 void idCommonLocal::Draw() {
 	if (game && game->Shell_IsActive()) {
-		bool gameDraw = game->Draw(game->GetLocalClientNum());
+		const bool gameDraw = game->Draw(game->GetLocalClientNum());
 		/*if (!gameDraw) {
 			renderSystem->SetColor(colorBlack);
 			renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);

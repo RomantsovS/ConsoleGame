@@ -12,12 +12,17 @@ void idCommonLocal::StartNewGame(const std::string& mapName, bool devmap, int ga
 	if (!session->IsLocalUserRegistered()) {
 		// For development make sure a controller is registered
 		// Can't just register the local user because it will be removed because of it's persistent state
+		session->RegisterLocalUser();
 	}
 
 	std::string mapNameClean = mapName;
 
+	idMatchParameters matchParameters;
+	matchParameters.mapName = mapNameClean;
+
 	session->QuitMatchToTitle();
 	if (WaitForSessionState(idSession::sessionState_t::IDLE)) {
+		session->CreateMatch(matchParameters);
 		session->StartMatch();
 	}
 }
@@ -37,15 +42,23 @@ void idCommonLocal::ExecuteMapChange() {
 		return;
 	}
 
-	currentMapName = "test map";
+	const idMatchParameters& matchParameters = session->GetMatchParms();
 
 	common->Printf("--------- Execute Map Change ---------\n");
-	common->Printf("Map: %s\n", currentMapName.c_str());
+	common->Printf("Map: %s\n", matchParameters.mapName.c_str());
 
 	int start = Sys_Milliseconds();
 
 	// close console and remove any prints from the notify lines
 	console->Close();
+
+	// extract the map name from serverinfo
+	currentMapName = matchParameters.mapName;
+	idStr::StripFileExtension(currentMapName);
+
+	std::string fullMapName = "maps/";
+	fullMapName += currentMapName;
+	idStr::SetFileExtension(fullMapName, "map");
 
 	int sm = Sys_Milliseconds();
 	// shut down the existing game if it is running
@@ -63,8 +76,8 @@ void idCommonLocal::ExecuteMapChange() {
 	com_engineHz_denominator = 100LL * static_cast<long long>(com_engineHz.GetFloat());
 
 	// let the renderSystem load all the geometry
-	if (!renderWorld->InitFromMap("")) {
-		common->Error("couldn't load %s"/*, fullMapName.c_str()*/);
+	if (!renderWorld->InitFromMap(fullMapName)) {
+		common->Error("couldn't load %s", fullMapName.c_str());
 	}
 
 	// for the synchronous networking we needed to roll the angles over from
@@ -80,7 +93,7 @@ void idCommonLocal::ExecuteMapChange() {
 	}
 	else
 	{*/
-	game->InitFromNewMap(currentMapName, renderWorld, Sys_Milliseconds());
+	game->InitFromNewMap(fullMapName, renderWorld, Sys_Milliseconds());
 	//}
 
 	game->Shell_CreateMenu(true);

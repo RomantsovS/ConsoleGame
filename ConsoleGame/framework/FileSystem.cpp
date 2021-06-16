@@ -25,12 +25,14 @@ public:
 	virtual void Init() override;
 	virtual void Shutdown(bool reloading) override;
 	virtual bool IsInitialized() const override;
+	virtual std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
+	virtual void FreeFileList(std::shared_ptr<idFileList> fileList) override;
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
 	virtual void CreateOSPath(const std::string &OSPath);
-	virtual int ReadFile(const std::string& relativePath, void** buffer) override;
-	virtual void FreeFile(void* buffer);
+	int ReadFile(const std::string& relativePath, void** buffer, ID_TIME_T* timestamp) override;
+	virtual void FreeFile(void* buffer) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
-	virtual std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
+	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
 	virtual std::shared_ptr<idFile> OpenFileWrite(const std::string &relativePath, const std::string &basePath) override;
 
 	virtual void CloseFile(std::shared_ptr<idFile> f) override;
@@ -40,13 +42,18 @@ private:
 
 	static idCVar fs_game_base;
 private:
+	void ReplaceSeparators(std::string& path, char sep = PATHSEPARATOR_CHAR);
+	int ListOSFiles(const std::string& directory, const std::string& extension, std::vector<std::string>& list);
+	std::shared_ptr<idFile> OpenOSFile(const std::string& name, fsMode_t mode);
+
+	void GetExtensionList(const std::string& extension, std::vector<std::string>& extensionList) const;
+	int GetFileList(const std::string& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir = "");
+
 	void AddGameDirectory(const std::string &path, const std::string &dir);
 
 	void SetupGameDirectories(const std::string &gameName);
 	void Startup();
-private:
-	void ReplaceSeparators(std::string& path, char sep = PATHSEPARATOR_CHAR);
-	std::shared_ptr<idFile> OpenOSFile(const std::string &name, fsMode_t mode);
+
 	int DirectFileLength(idFileHandle &o);
 };
 
@@ -140,7 +147,7 @@ void idFileSystemLocal::Init()
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	// Dedicated servers can run with no outside files at all
-	if (ReadFile("default.cfg", nullptr) <= 0) {
+	if (ReadFile("default.cfg", nullptr, nullptr) <= 0) {
 		common->FatalError("Couldn't load default.cfg");
 	}
 }
@@ -313,7 +320,7 @@ a null buffer will just return the file length and time without loading
 timestamp can be NULL if not required
 ============
 */
-int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer)
+int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer, ID_TIME_T* timestamp)
 {
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
@@ -323,6 +330,10 @@ int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer)
 	if (relativePath.empty() || !relativePath[0]) {
 		common->FatalError("idFileSystemLocal::ReadFile with empty name\n");
 		return 0;
+	}
+
+	if (timestamp) {
+		*timestamp = FILE_NOT_FOUND_TIMESTAMP;
 	}
 
 	if (buffer) {
@@ -338,6 +349,10 @@ int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer)
 		return -1;
 	}
 	auto len = f->Length();
+
+	if (timestamp) {
+		*timestamp = f->Timestamp();
+	}
 
 	if (!buffer) {
 		CloseFile(f);
@@ -370,6 +385,143 @@ void idFileSystemLocal::FreeFile(void* buffer) {
 	}
 
 	delete[] buffer;
+}
+
+/*
+===============
+idFileSystemLocal::GetExtensionList
+===============
+*/
+void idFileSystemLocal::GetExtensionList(const std::string& extension, std::vector<std::string>& extensionList) const {
+	int s, e, l;
+
+	l = extension.size();
+	s = 0;
+	while (1) {
+		e = extension.find('|');
+		if (e != std::string::npos) {
+			extensionList.push_back(extension.substr(s, e));
+			s = e + 1;
+		}
+		else {
+			extensionList.push_back(extension.substr(s, l));
+			break;
+		}
+	}
+}
+
+/*
+===============
+idFileSystemLocal::GetFileList
+
+Does not clear the list first so this can be used to progressively build a file list.
+When 'sort' is true only the new files added to the list are sorted.
+===============
+*/
+int idFileSystemLocal::GetFileList(const std::string& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir) {
+	if (!IsInitialized()) {
+		common->FatalError("Filesystem call made without initialization\n");
+	}
+
+	if (extensions.empty()) {
+		return 0;
+	}
+
+	if (relativePath.empty()) {
+		return 0;
+	}
+
+	int pathLength = relativePath.size();
+	if (pathLength) {
+		pathLength++;	// for the trailing '/'
+	}
+
+	// search through the path, one element at a time, adding to list
+	for (int sp = searchPaths.size() - 1; sp >= 0; sp--) {
+		if (!gamedir.empty() && gamedir[0] != 0) {
+			if (searchPaths[sp].gamedir != gamedir) {
+				continue;
+			}
+		}
+
+		std::string netpath = BuildOSPath(searchPaths[sp].path, searchPaths[sp].gamedir, relativePath);
+
+		for (size_t i = 0; i < extensions.size(); i++) {
+
+			// scan for files in the filesystem
+			std::vector<std::string> sysFiles;
+			ListOSFiles(netpath, extensions[i], sysFiles);
+
+			// if we are searching for directories, remove . and ..
+			if (extensions[i][0] == '/' && extensions[i][1] == 0) {
+				sysFiles.erase(std::remove(sysFiles.begin(), sysFiles.end(), "."), sysFiles.end());
+				sysFiles.erase(std::remove(sysFiles.begin(), sysFiles.end(), ".."), sysFiles.end());
+			}
+
+			for (size_t j = 0; j < sysFiles.size(); j++) {
+				// unique the match
+				if (fullRelativePath) {
+					std::string work = relativePath;
+					work += "/";
+					work += sysFiles[j];
+					if(std::find(list.begin(), list.end(), work) == list.end())
+						list.push_back(work);
+				}
+				else {
+					if (std::find(list.begin(), list.end(), sysFiles[j]) == list.end())
+						list.push_back(sysFiles[j]);
+				}
+			}
+		}
+	}
+
+	return list.size();
+}
+
+/*
+===============
+idFileSystemLocal::ListFiles
+===============
+*/
+std::shared_ptr<idFileList> idFileSystemLocal::ListFiles(const std::string& relativePath, const std::string& extension, bool sort, bool fullRelativePath, const std::string& gamedir) {
+	std::vector<std::string> extensionList;
+
+	std::shared_ptr<idFileList> fileList = std::make_shared<idFileList>();
+	fileList->basePath = relativePath;
+
+	GetExtensionList(extension, extensionList);
+
+	GetFileList(relativePath, extensionList, fileList->list, fullRelativePath, gamedir);
+
+	if (sort) {
+		std::sort(fileList->list.begin(), fileList->list.end());
+	}
+
+	return fileList;
+}
+
+/*
+===============
+idFileSystemLocal::FreeFileList
+===============
+*/
+void idFileSystemLocal::FreeFileList(std::shared_ptr<idFileList> fileList) {
+	fileList = nullptr;
+}
+
+/*
+===============
+idFileSystemLocal::ListOSFiles
+
+ call to the OS for a listing of files in an OS directory
+===============
+*/
+int	idFileSystemLocal::ListOSFiles(const std::string& directory, const std::string& extension, std::vector<std::string>& list) {
+	/*if (extension.empty()) {
+		extension = "";
+	}*/
+
+	return Sys_ListFiles(directory, extension, list);
 }
 
 std::shared_ptr<idFile> idFileSystemLocal::OpenFileWrite(const std::string& relativePath, const std::string& basePath)

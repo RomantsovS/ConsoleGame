@@ -1,6 +1,8 @@
 #pragma hdrstop
 #include "../../idlib/precompiled.h"
 
+#include <io.h>
+
 #include "win_local.h"
 #include "../../renderer/tr_local.h"
 
@@ -33,6 +35,24 @@ Sys_Quit
 void Sys_Quit() {
 	//exit(EXIT_SUCCESS);
 	ExitProcess(0);
+}
+
+/*
+==============
+Sys_Printf
+==============
+*/
+#define MAXPRINTMSG 4096
+void Sys_Printf(const char* fmt, ...) {
+	char		msg[MAXPRINTMSG];
+
+	va_list argptr;
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(msg, MAXPRINTMSG - 1, fmt, argptr);
+	va_end(argptr);
+	msg[sizeof(msg) - 1] = '\0';
+
+	OutputDebugString(msg);
 }
 
 /*
@@ -74,6 +94,51 @@ Sys_DefaultBasePath
 */
 const char* Sys_DefaultBasePath() {
 	return Sys_Cwd();
+}
+
+/*
+==============
+Sys_ListFiles
+==============
+*/
+int Sys_ListFiles(const std::string& directory, std::string extension, std::vector<std::string>& list) {
+	std::string search;
+	struct _finddata_t findinfo;
+	int			findhandle;
+	int			flag;
+
+	if (extension.empty()) {
+		extension = "";
+	}
+
+	// passing a slash as extension will find directories
+	if (extension[0] == '/' && extension[1] == 0) {
+		extension = "";
+		flag = 0;
+	}
+	else {
+		flag = _A_SUBDIR;
+	}
+
+	sprintf(search, "%s\\*%s", directory.c_str(), extension.c_str());
+
+	// search
+	list.clear();
+
+	findhandle = _findfirst(search.c_str(), &findinfo);
+	if (findhandle == -1) {
+		return -1;
+	}
+
+	do {
+		if (flag ^ (findinfo.attrib & _A_SUBDIR)) {
+			list.push_back(findinfo.name);
+		}
+	} while (_findnext(findhandle, &findinfo) != -1);
+
+	_findclose(findhandle);
+
+	return list.size();
 }
 
 /*

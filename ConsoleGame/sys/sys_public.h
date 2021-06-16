@@ -78,7 +78,7 @@ enum class keyNum_t {
 	K_F8,
 	K_F9,
 	K_F10,
-	K_GRAVE = 192,
+	K_GRAVE = 96,
 	K_LSHIFT,
 	K_BACKSLASH,
 	K_Z,
@@ -186,6 +186,10 @@ struct sysEvent_t {
 
 void Sys_Error(const char* error, ...);
 void Sys_Quit();
+
+// will go to the various text consoles
+// NOT thread safe - never use in the async paths
+void Sys_Printf(const char* msg, ...);
 
 // allow game to yield CPU time
 // NOTE: due to SYS_MINSLEEP this is very bad portability karma, and should be completely removed

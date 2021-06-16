@@ -40,9 +40,13 @@ public:
 	void InitBaseState();
 
 	// Lobby management
-	virtual void StartMatch();
+	virtual void CreateMatch(const idMatchParameters& parms_) override;
+
+	virtual void StartMatch() override;
 	virtual void MoveToPressStart() override;
 	virtual void FinishDisconnect();
+
+	virtual const idMatchParameters& GetMatchParms() const { return parms; }
 
 	// Misc
 	virtual void QuitMatchToTitle(); // Will forcefully quit the match and return to the title screen.
@@ -68,6 +72,7 @@ protected:
 	void MoveToMainMenu(); // End all session (async), and return to IDLE state
 private:
 	bool localUserRegistered;
+	idMatchParameters parms;
 
 	void StartLoading();
 };

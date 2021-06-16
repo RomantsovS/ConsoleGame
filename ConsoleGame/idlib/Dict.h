@@ -17,6 +17,8 @@ public:
 	idDict(const idDict &other);
 	~idDict();
 
+	// copy key/value pairs from other dict not present in this dict
+	void SetDefaults(const idDict* dict);
 	// clear dict freeing up memory
 	void Clear();
 
@@ -32,6 +34,9 @@ public:
 	bool GetInt(const std::string key, const std::string defaultString, int &out) const;
 	bool GetVector(const std::string key, std::string defaultString, Vector2 &out) const;
 
+	// returns the key/value pair with the given key
+	// returns NULL if the key/value pair does not exist
+	const std::string& FindKey(const std::string& key) const;
 	// finds the next key/value pair with the given key prefix.
 	// lastMatch can be used to do additional searches past the first match.
 	const idDict::args_pair* MatchPrefix(const std::string &prefix, const std::string lastMatch = "") const;

@@ -3,6 +3,19 @@
 
 /*
 ================================================
+idMatchParameters
+================================================
+*/
+class idMatchParameters {
+public:
+	idMatchParameters() {}
+
+	std::string mapName; // This is only used for SP (gameMap == GAME_MAP_SINGLEPLAYER)
+	idDict	serverInfo;
+};
+
+/*
+================================================
 idSession
 ================================================
 */
@@ -32,11 +45,14 @@ public:
 	//=====================================================================================================
 	// Lobby management 
 	//=====================================================================================================
+	virtual void CreateMatch(const idMatchParameters& parms_) = 0;
 	virtual void StartMatch() = 0;
 	virtual void QuitMatchToTitle() = 0; // Will forcefully quit the match and return to the title screen.
 	virtual void MoveToPressStart() = 0;
 	virtual void FinishDisconnect() = 0;
 	virtual void LoadingFinished() = 0;
+
+	virtual const idMatchParameters& GetMatchParms() const = 0;
 
 	virtual sessionState_t	GetState() const = 0;
 

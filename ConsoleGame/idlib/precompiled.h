@@ -17,6 +17,8 @@
 #include "sys/sys_assert.h"
 #include "sys/sys_types.h"
 
+#define ID_TIME_T int64 // Signed because -1 means "File not found" and we don't want that to compare > than any other time
+
 // non-portable system services
 #include "../sys/sys_public.h"
 
@@ -32,6 +34,10 @@
 #include "../framework/File.h"
 #include "../framework/FileSystem.h"
 #include "../framework/UsercmdGen.h"
+
+// decls
+#include "../framework/DeclManager.h"
+#include "../framework/DeclEntityDef.h"
 
 // renderer
 #include "../renderer/Screen.h"

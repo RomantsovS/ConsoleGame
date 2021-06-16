@@ -67,6 +67,9 @@
     <Filter Include="SWF">
       <UniqueIdentifier>{de44eb55-0bbd-4ddb-8c9c-28a6b1c5554f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Framework\Decls">
+      <UniqueIdentifier>{1463e988-2492-4ec3-8be8-28e97ae9dc2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer\Model.h">
@@ -174,9 +177,6 @@
     <ClInclude Include="idlib\Lib.h">
       <Filter>idlib</Filter>
     </ClInclude>
-    <ClInclude Include="idlib\Str.h">
-      <Filter>idlib\Text</Filter>
-    </ClInclude>
     <ClInclude Include="idlib\math\Ode.h">
       <Filter>idlib\Math</Filter>
     </ClInclude>
@@ -191,9 +191,6 @@
     </ClInclude>
     <ClInclude Include="framework\CmdSystem.h">
       <Filter>Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="idlib\CmdArgs.h">
-      <Filter>idlib\Text</Filter>
     </ClInclude>
     <ClInclude Include="idlib\sys\sys_defines.h">
       <Filter>idlib\Sys</Filter>
@@ -290,6 +287,30 @@
     </ClInclude>
     <ClInclude Include="SWF\SWF_Types.h">
       <Filter>SWF</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\CmdArgs.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Lexer.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Str.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\Token.h">
+      <Filter>idlib\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="idlib\MapFile.h">
+      <Filter>idlib</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\DeclEntityDef.h">
+      <Filter>Framework\Decls</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\DeclManager.h">
+      <Filter>Framework\Decls</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\WorldSpawn.h">
+      <Filter>d3xp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -422,9 +443,6 @@
     <ClCompile Include="cm\CollisionModel_translate.cpp">
       <Filter>CM</Filter>
     </ClCompile>
-    <ClCompile Include="idlib\Str.cpp">
-      <Filter>idlib\Text</Filter>
-    </ClCompile>
     <ClCompile Include="idlib\math\Ode.cpp">
       <Filter>idlib\Math</Filter>
     </ClCompile>
@@ -457,9 +475,6 @@
     </ClCompile>
     <ClCompile Include="framework\CmdSystem.cpp">
       <Filter>Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="idlib\CmdArgs.cpp">
-      <Filter>idlib\Text</Filter>
     </ClCompile>
     <ClCompile Include="framework\CVarSystem.cpp">
       <Filter>Framework</Filter>
@@ -589,6 +604,30 @@
     </ClCompile>
     <ClCompile Include="d3xp\menus\MenuScreen_Shell_Pause.cpp">
       <Filter>d3xp\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Str.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\CmdArgs.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Lexer.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\MapFile.cpp">
+      <Filter>idlib</Filter>
+    </ClCompile>
+    <ClCompile Include="idlib\Token.cpp">
+      <Filter>idlib\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\DeclManager.cpp">
+      <Filter>Framework\Decls</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\DeclEntityDef.cpp">
+      <Filter>Framework\Decls</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\WorldSpawn.cpp">
+      <Filter>d3xp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

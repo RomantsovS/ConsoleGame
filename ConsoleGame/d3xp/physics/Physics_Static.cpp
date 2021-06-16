@@ -19,10 +19,10 @@ idPhysics_Static::~idPhysics_Static()
 	common->DPrintf("%s dtor\n", "idPhysics_Static");
 #endif // DEBUG_PRINT_Ctor_Dtor
 
-	if (!self.expired() && self.lock()->GetPhysics().get() == this)
+	/*if (!self.expired() && self.lock()->GetPhysics().get() == this)
 	{
 		self.reset();
-	}
+	}*/
 }
 
 void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e)

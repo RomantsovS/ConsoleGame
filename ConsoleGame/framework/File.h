@@ -8,13 +8,16 @@ class idFile {
 public:
 	idFile();
 	virtual ~idFile();
-
+	// Get the full file path.
+	virtual const std::string GetFullPath() const;
 	// Read data from the file to the buffer.
 	virtual int Read(void* buffer, int len);
 	// Write data from the buffer to the file.
 	virtual int Write(const void* buffer, int len);
 	// Returns the length of the file.
 	virtual int Length() const;
+	// Return a time value for reload operations.
+	virtual ID_TIME_T Timestamp() const;
 	// Forces flush on files being writting to.
 	virtual void ForceFlush();
 	// Causes any buffered data to be written to the file.

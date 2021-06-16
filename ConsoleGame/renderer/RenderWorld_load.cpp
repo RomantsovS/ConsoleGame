@@ -60,16 +60,14 @@ is still useful for displaying a bare model
 bool idRenderWorldLocal::InitFromMap(const std::string &name)
 {
 	// if this is an empty world, initialize manually
-	if (name.empty())
-	{
+	if (name.empty()) {
 		FreeWorld();
 		mapName.clear();
 		ClearWorld();
 		return true;
 	}
 
-	if (name == mapName)
-	{
+	if (name == mapName) {
 		//if (fileSystem->InProductionMode() || (currentTimeStamp != FILE_NOT_FOUND_TIMESTAMP && currentTimeStamp == mapTimeStamp)) {
 			//common->Printf("idRenderWorldLocal::InitFromMap: retaining existing map\n");
 			FreeDefs();

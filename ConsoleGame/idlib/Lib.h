@@ -1,7 +1,7 @@
 #ifndef IDLIB_LIB_H_
 #define IDLIB_LIB_H_
 
-#define	max_string_chars		1024		// max length of a static string
+#define MAX_STRING_CHARS		1024		// max length of a string
 #define MAX_PRINT_MSG			16384		// buffer size for our various printf routines
 
 /*
@@ -32,6 +32,8 @@
 #include <cwchar>
 #include "Str.h"
 #include "CmdArgs.h"
+#include "Token.h"
+#include "Lexer.h"
 
 // containers
 #include "containers/LinkList.h"
@@ -39,5 +41,6 @@
 
 // misc
 #include "Dict.h"
+#include "MapFile.h"
 
 #endif // !IDLIB_LIB_H_

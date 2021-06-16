@@ -38,6 +38,16 @@ void idSessionLocal::FinishDisconnect() {
 
 /*
 ========================
+idSessionLocal::CreateMatch
+========================
+*/
+void idSessionLocal::CreateMatch(const idMatchParameters& p) {
+
+	parms = p;
+}
+
+/*
+========================
 idSessionLocal::StartLoading
 ========================
 */

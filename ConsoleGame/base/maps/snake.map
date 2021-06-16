@@ -1,0 +1,35 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+"call" "map_marscity1::main"
+"no_Weapons" "1"
+// primitive 2
+{
+ brushDef3
+ {
+  ( 0 0 36 80 )
+ }
+}
+}
+// entity 1
+{
+"classname" "simpleobject"
+"name" "simpleobject1"
+"origin" "10 20"
+"color" "5"
+}
+// entity 2
+{
+"classname" "staticentity"
+"name" "staticentity1"
+"origin" "30 40"
+"color" "6"
+}
+// entity 3
+{
+"classname" "chain"
+"name" "chain1"
+"origin" "20 30"
+"color" "7"
+}
