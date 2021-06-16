@@ -4,6 +4,8 @@ Version 2
 "classname" "worldspawn"
 "call" "map_marscity1::main"
 "no_Weapons" "1"
+"def_player" "player_snake"
+"player_origin" "10 20"
 // primitive 2
 {
  brushDef3

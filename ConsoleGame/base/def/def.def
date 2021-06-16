@@ -43,7 +43,8 @@ entityDef chain {
 	"links"					"3"
 }
 
-entityDef player_doommarine {
+entityDef player_snake {
 	"spawnclass"			"PlayerChain"
 	"name"					"PlayerChain"
+	"model"					"pixel"
 }

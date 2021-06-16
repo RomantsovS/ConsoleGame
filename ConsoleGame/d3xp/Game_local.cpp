@@ -190,7 +190,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	// precache the player
 	args.Set("classname", gameLocal.world->spawnArgs.GetString("def_player", "player_doommarine"));
 
-	args.Set("model", "pixel");
+	//args.Set("model", "pixel");
 	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
 	args.Set("origin", Vector2(10.0f, 10.0f).ToString());
 	args.Set("linearVelocity", Vector2(pm_walkspeed.GetFloat(), 0.0f).ToString());
