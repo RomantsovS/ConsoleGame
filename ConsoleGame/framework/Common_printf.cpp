@@ -47,7 +47,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 	Sys_Printf("%s", msg);
 
 	// logFile
-	if (com_logFile.GetInteger() && !logFileFailed && isFileSystemExists && fileSystem->IsInitialized()) {
+	if (com_logFile.GetInteger() > 0 && !logFileFailed && isFileSystemExists && fileSystem->IsInitialized()) {
 		static bool recursing;
 
 		if (!logFile && !recursing) {
@@ -68,7 +68,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 
 			std::string fileName = cur_local_time;
 #else
-			std::string fileName = com_logFileName.GetString()[0] ? com_logFileName.GetString() : "qconsole";
+			std::string fileName = !com_logFileName.GetString().empty() ? com_logFileName.GetString() : "qconsole";
 #endif // LOG_FILE_NAME_TIME
 
 			fileName += ".log";

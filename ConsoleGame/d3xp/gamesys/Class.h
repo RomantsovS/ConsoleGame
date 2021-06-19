@@ -66,17 +66,31 @@ proper superclass is indicated or the run-time type information will be
 incorrect.  Use this on concrete classes only.
 ================
 */
+#ifdef DEBUG
 #define CLASS_DECLARATION( nameofsuperclass, nameofclass )											\
 	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
-		( idEventFunc<idClass> * )nameofclass::eventCallbacks, nameofclass::CreateInstance, ( void ( idClass::* )() )&nameofclass::Spawn);	                \
+		( idEventFunc<idClass> * )nameofclass::eventCallbacks, nameofclass::CreateInstance, ( void ( idClass::* )() )&nameofclass::Spawn); \
 	std::shared_ptr<idClass> nameofclass::CreateInstance() {										\
-        std::shared_ptr<nameofclass> ptr = std::make_shared<nameofclass>();						\
+	std::shared_ptr<nameofclass> ptr = std::shared_ptr<nameofclass>(DBG_NEW nameofclass());		\
 			return ptr;																				\
 	}																								\
 	idTypeInfo *nameofclass::GetType() const {														\
 		return &( nameofclass::Type );																\
 	}																								\
 idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
+#else
+#define CLASS_DECLARATION( nameofsuperclass, nameofclass )											\
+	idTypeInfo nameofclass::Type( #nameofclass, #nameofsuperclass,									\
+		( idEventFunc<idClass> * )nameofclass::eventCallbacks, nameofclass::CreateInstance, ( void ( idClass::* )() )&nameofclass::Spawn); \
+	std::shared_ptr<idClass> nameofclass::CreateInstance() {										\
+	std::shared_ptr<nameofclass> ptr = std::make_shared<nameofclass>();						\
+			return ptr;																				\
+	}																								\
+	idTypeInfo *nameofclass::GetType() const {														\
+		return &( nameofclass::Type );																\
+	}																								\
+idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
+#endif
 
 /*
 ================

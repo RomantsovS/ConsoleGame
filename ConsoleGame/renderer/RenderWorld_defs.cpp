@@ -11,11 +11,9 @@ Used by both FreeEntityDef and UpdateEntityDef
 Does not actually free the entityDef.
 ===================
 */
-void R_FreeEntityDefDerivedData(std::shared_ptr<idRenderEntityLocal> def, bool keepDecals, bool keepCachedDynamicModel)
-{
+void R_FreeEntityDefDerivedData(std::shared_ptr<idRenderEntityLocal> def, bool keepDecals, bool keepCachedDynamicModel) {
 	// free the entityRefs from the areas
-	for (auto ref = def->entityRefs; ref;)
-	{
+	for (auto ref = def->entityRefs; ref;) {
 		auto next = ref->ownerNext;
 
 		// unlink from the area
@@ -60,7 +58,7 @@ void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> entity)
 	tr.viewCount++;
 
 	// push the model frustum down the BSP tree into areas
-	entity->world->PushFrustumIntoTree(entity);
+	entity->world.lock()->PushFrustumIntoTree(entity);
 }
 
 /*
@@ -71,12 +69,9 @@ ReloadModels and RegenerateWorld call this
 ===================
 */
 void R_FreeDerivedData() {
-	for(auto &rw : tr.worlds)
-	{
-		for (auto &def : rw->entityDefs)
-		{
-			if (!def)
-			{
+	for(auto &rw : tr.worlds) {
+		for (auto &def : rw->entityDefs) {
+			if (!def) {
 				continue;
 			}
 			R_FreeEntityDefDerivedData(def, false, false);

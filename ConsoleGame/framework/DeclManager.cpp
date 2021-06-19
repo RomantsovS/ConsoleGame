@@ -1041,9 +1041,13 @@ void idDeclLocal::ParseLocal() {
 	declState = declState_t::DS_PARSED;
 
 	// parse
-	char* declText = new char[GetTextLength() + 1];
-	GetText(declText);
-	self->Parse(declText, GetTextLength(), true);
+#ifdef DEBUG
+	std::unique_ptr<char[]> declText = std::unique_ptr<char[]>(DBG_NEW char[GetTextLength() + 1]);
+#else
+	std::unique_ptr<char[]> declText = std::make_unique<char[]>(GetTextLength() + 1);
+#endif
+	GetText(declText.get());
+	self->Parse(declText.get(), GetTextLength(), true);
 
 	// free generated text
 	if (generatedDefaultText) {

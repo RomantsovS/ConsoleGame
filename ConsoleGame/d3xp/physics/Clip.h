@@ -45,7 +45,7 @@ public:
 	static void ClearTraceModelCache();
 private:
 	bool enabled; // true if this clip model is used for clipping
-	std::shared_ptr<idEntity> entity; // entity using this clip model
+	std::weak_ptr<idEntity> entity; // entity using this clip model
 	int id; // id for entities that use multiple clip models
 	std::weak_ptr<idEntity> owner; // owner of the entity that owns this clip model
 	Vector2 origin; // origin of clip model
@@ -75,7 +75,7 @@ inline void idClipModel::SetEntity(std::shared_ptr<idEntity> newEntity) {
 }
 
 inline std::shared_ptr<idEntity> idClipModel::GetEntity() const {
-	return entity;
+	return entity.lock();
 }
 
 inline std::weak_ptr<idEntity> idClipModel::GetOwner() const

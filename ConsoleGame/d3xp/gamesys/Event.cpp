@@ -145,7 +145,7 @@ idEvent::idEvent()
 */
 idEvent::idEvent() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	//common->DPrintf("%s ctor\n", "idEvent");
+	common->DPrintf("%s ctor\n", "idEvent");
 #endif // DEBUG_PRINT_Ctor_Dtor
 }
 
@@ -156,7 +156,8 @@ idEvent::~idEvent()
 */
 idEvent::~idEvent() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	//common->DPrintf("%s dtor\n", "idEvent");
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idEvent");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	Free(false);
 }
@@ -349,7 +350,7 @@ void idEvent::ClearEventList() {
 	for (size_t i = 0; i < EventPool.size(); i++) {
 		if (EventPool[i]) {
 			EventPool[i]->Free();
-			//EventPool[i] = nullptr;
+			EventPool[i] = nullptr;
 		}
 	}
 }
@@ -487,6 +488,8 @@ void idEvent::Shutdown() {
 	}
 
 	ClearEventList();
+	EventPool.clear();
+
 
 	//eventDataAllocator.Shutdown();
 

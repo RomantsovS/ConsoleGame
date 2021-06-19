@@ -13,7 +13,6 @@ idRenderEntityLocal::idRenderEntityLocal() {
 
 	parms.hModel = nullptr;
 
-	world = nullptr;
 	index = 0;
 	viewEntity = nullptr;
 	entityRefs = nullptr;

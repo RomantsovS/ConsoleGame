@@ -62,17 +62,16 @@ struct cm_nodeBlock_t {
 };
 
 struct cm_model_t {
-	cm_model_t()
-	{
+	cm_model_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "cm_model_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	~cm_model_t()
-	{
+	~cm_model_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s dtor\n", "cm_model_t");
+		if(isCommonExists)
+			common->DPrintf("%s dtor\n", "cm_model_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
@@ -128,13 +127,26 @@ struct cm_trmVertex_t {
 };
 
 struct cm_traceWork_t {
+	cm_traceWork_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "cm_traceWork_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
+	~cm_traceWork_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		if(isCommonExists)
+			common->DPrintf("%s ctor\n", "cm_traceWork_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
 	int numVerts;
 	cm_trmVertex_t vertices[MAX_TRACEMODEL_VERTS];	// trm vertices
 	//int numEdges;
 	//cm_trmEdge_t edges[MAX_TRACEMODEL_EDGES + 1];		// trm edges
 	//int numPolys;
 	//cm_trmPolygon_t polys[MAX_TRACEMODEL_POLYS];	// trm polygons
-	std::shared_ptr<cm_model_t> model;								// model colliding with
+	std::weak_ptr<cm_model_t> model;				// model colliding with
 	Vector2 start;									// start of trace
 	Vector2 end;									// end of trace
 	Vector2 dir;									// trace direction

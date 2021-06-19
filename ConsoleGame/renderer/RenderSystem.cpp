@@ -52,7 +52,11 @@ void idRenderSystemLocal::DrawString(const std::string& text, const Screen::Cons
 }
 
 std::shared_ptr<idRenderWorld> idRenderSystemLocal::AllocRenderWorld() {
+#ifdef DEBUG
+	auto rw = std::shared_ptr<idRenderWorldLocal>(DBG_NEW idRenderWorldLocal());
+#else
 	auto rw = std::make_shared<idRenderWorldLocal>();
+#endif
 	worlds.push_back(rw);
 	return std::dynamic_pointer_cast<idRenderWorld>(rw);
 }
@@ -73,6 +77,11 @@ void idRenderSystemLocal::Clear() {
 	viewCount = 0;
 
 	screen.clear();
+	
+	// free all the entityDefs, lightDefs, portals, etc
+	for(auto &world : worlds)
+		world->FreeWorld();
+
 	worlds.clear();
 
 	if (viewDef) {

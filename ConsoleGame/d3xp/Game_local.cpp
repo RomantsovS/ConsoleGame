@@ -828,7 +828,11 @@ idGameLocal::Shell_ResetMenu
 void idGameLocal::Shell_ResetMenu() {
 	if (shellHandler) {
 		shellHandler = nullptr;
+#ifdef DEBUG
+		shellHandler = std::shared_ptr<idMenuHandler_Shell>(DBG_NEW idMenuHandler_Shell());
+#else
 		shellHandler = std::make_shared<idMenuHandler_Shell>();
+#endif
 	}
 }
 

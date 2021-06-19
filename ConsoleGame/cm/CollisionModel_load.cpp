@@ -306,9 +306,12 @@ bool idCollisionModelManagerLocal::GetModelContents(int model, int& contents) co
 	return true;
 }
 
-std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::AllocModel()
-{
+std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::AllocModel() {
+#ifdef DEBUG
+	auto model = std::shared_ptr<cm_model_t>(DBG_NEW cm_model_t());
+#else
 	auto model = std::make_shared<cm_model_t>();
+#endif
 	model->contents = 0;
 	model->isConvex = false;
 	model->maxVertices = 0;

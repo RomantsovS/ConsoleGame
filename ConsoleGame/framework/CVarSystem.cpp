@@ -442,6 +442,7 @@ void idCVarSystemLocal::Shutdown() {
 		delete iter->second;
 		iter->second = nullptr;
 	}
+	cvars.clear();
 
 	initialized = false;
 }

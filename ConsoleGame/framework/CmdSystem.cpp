@@ -4,6 +4,19 @@
 idCVar net_allowCheats("net_allowCheats", "1", CVAR_BOOL | CVAR_NOCHEAT, "Allow cheats in multiplayer");
 
 struct commandDef_t {
+	commandDef_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "commandDef_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
+	~commandDef_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		if(isCommonExists)
+			common->DPrintf("%s dtor\n", "commandDef_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
 	std::shared_ptr<commandDef_t> next;
 	std::string name;
 	cmdFunction_t function;
@@ -212,7 +225,11 @@ void idCmdSystemLocal::AddCommand(const std::string& cmdName, cmdFunction_t func
 		return;
 	}
 
+#ifdef DEBUG
+	auto cmd = std::shared_ptr<commandDef_t>(DBG_NEW commandDef_t());
+#else
 	auto cmd = std::make_shared<commandDef_t>();
+#endif
 	cmd->name = cmdName;
 	cmd->function = function;
 	//cmd->argCompletion = argCompletion;

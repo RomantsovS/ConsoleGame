@@ -3,8 +3,7 @@
 
 #include "tr_local.h"
 
-idRenderWorldLocal::idRenderWorldLocal()
-{
+idRenderWorldLocal::idRenderWorldLocal() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idRenderWorldLocal");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -18,12 +17,10 @@ idRenderWorldLocal::idRenderWorldLocal()
 	numPortalAreas = 0;
 }
 
-idRenderWorldLocal::~idRenderWorldLocal()
-{
+idRenderWorldLocal::~idRenderWorldLocal() {
+#ifdef DEBUG_PRINT_Ctor_Dtor	
 	common->DPrintf("%s dtor\n", "idRenderWorldLocal");
-
-	// free all the entityDefs, lightDefs, portals, etc
-	FreeWorld();
+#endif // DEBUG_PRINT_Ctor_Dtor
 
 	// free up the debug lines, polys, and text
 	RB_ClearDebugLines(0);
@@ -37,8 +34,7 @@ int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re)
 
 	auto iter = std::find(entityDefs.begin(), entityDefs.end(), nullptr);
 
-	if (iter == entityDefs.end())
-	{
+	if (iter == entityDefs.end()) {
 		entityHandle = entityDefs.size();
 		entityDefs.resize(entityDefs.size() + 4);
 	}
@@ -60,15 +56,13 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	if (entityHandle < 0 || entityHandle > LUDICROUS_INDEX) {
 		common->Error("idRenderWorld::UpdateEntityDef: index = %i", entityHandle);
 	}
-	while (entityHandle >= static_cast<int>(entityDefs.size()))
-	{
+	while (entityHandle >= static_cast<int>(entityDefs.size())) {
 		entityDefs.resize(entityDefs.size() + 4);
 	}
 
 	std::shared_ptr<idRenderEntityLocal> def = entityDefs[entityHandle];
 
-	if (def)
-	{
+	if (def) {
 		// save any decals if the model is the same, allowing marks to move with entities
 		if (def->parms.hModel == re->hModel)
 		{
@@ -80,7 +74,11 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	}
 	else {
 		// creating a new one
+#ifdef DEBUG
+		def = std::shared_ptr<idRenderEntityLocal>(DBG_NEW idRenderEntityLocal());
+#else
 		def = std::make_shared<idRenderEntityLocal>();
+#endif
 		entityDefs[entityHandle] = def;
 
 		def->world = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());
@@ -93,8 +91,7 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	// that may contain the updated surface
 	R_CreateEntityRefs(def);
 	
-	if (!tr.update_frame)
-	{
+	if (!tr.update_frame){
 		//tr.update_frame = true;
 	}
 }
@@ -107,10 +104,8 @@ Frees all references and lit surfaces from the model, and
 NULL's out it's entry in the world list
 ===================
 */
-void idRenderWorldLocal::FreeEntityDef(int entityHandle)
-{
-	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size()))
-	{
+void idRenderWorldLocal::FreeEntityDef(int entityHandle) {
+	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
 		common->Printf("idRenderWorld::FreeEntityDef: handle %i > %i\n", entityHandle, entityDefs.size());
 		return;
 	}
@@ -185,8 +180,8 @@ bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const
 
 void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t* area)
 {
-	if (!def)
-	{
+	if (!def) {
+		common->Error("idRenderWorldLocal::AddEntityRefToArea: NULL def");
 		return;
 	}
 

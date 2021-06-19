@@ -7,22 +7,32 @@ idCVar cm_max_sector_depth("cm_max_sector_depth", "5", CVAR_SYSTEM | CVAR_INIT, 
 size_t MAX_SECTORS;
 
 struct clipSector_t {
+	clipSector_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "clipSector_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
+	~clipSector_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "clipSector_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+
 	int axis;		// -1 = leaf node
 	float dist;
 	std::shared_ptr<clipSector_t> children[2];
-	clipLink_t* clipLinks;
+	clipLink_t* clipLinks = nullptr;
 };
 
 struct clipLink_t {
-	clipLink_t()
-	{
+	clipLink_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "clipLink_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	~clipLink_t()
-	{
+	~clipLink_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "clipLink_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -146,7 +156,7 @@ void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
 void idClipModel::Link(std::shared_ptr<idClip>& clp)
 {
 	//assert(idClipModel::entity);
-	if (!idClipModel::entity) {
+	if (idClipModel::entity.expired()) {
 		return;
 	}
 
@@ -215,14 +225,14 @@ void idClipModel::Unlink()
 		if (link->nextInSector) {
 			link->nextInSector->prevInSector = link->prevInSector;
 		}
-		//clipLinkAllocator.Free(link);
+		//link = nullptr;
 	}
 }
 
 void idClipModel::Init()
 {
 	enabled = true;
-	entity = nullptr;
+	entity.reset();
 	id = 0;
 	owner.reset();
 	origin.Zero();
@@ -362,7 +372,7 @@ int idClipModel::Handle() const {
 	}
 	else {
 		// this happens in multiplayer on the combat models
-		gameLocal.Warning("idClipModel::Handle: clip model %d on '%s' (%x) is not a collision or trace model", id, entity->name.c_str(), entity->entityNumber);
+		gameLocal.Warning("idClipModel::Handle: clip model %d on '%s' (%x) is not a collision or trace model", id, entity.lock()->name.c_str(), entity.lock()->entityNumber);
 		return 0;
 	}
 }
@@ -553,7 +563,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 
 		if (trace.fraction < results.fraction) {
 			results = trace;
-			results.c.entityNum = touch->entity->entityNumber;
+			results.c.entityNum = touch->entity.lock()->entityNumber;
 			results.c.id = touch->id;
 			if (results.fraction == 0.0f) {
 				break;
@@ -662,7 +672,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 			start, dir, depth, trm, contentMask, touch->Handle(), touch->origin);
 
 		for (j = 0; j < n; j++) {
-			contacts[numContacts].entityNum = touch->entity->entityNumber;
+			contacts[numContacts].entityNum = touch->entity.lock()->entityNumber;
 			contacts[numContacts].id = touch->id;
 			numContacts++;
 		}
@@ -705,15 +715,16 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const idBounds& bounds, Vector2& maxSector)
 {
 	int				i;
-	std::shared_ptr<clipSector_t> anode;
 	Vector2			size;
 	idBounds		front, back;
 
 #ifdef DEBUG
-	anode = clipSectors[idClip::numClipSectors] = std::shared_ptr<clipSector_t>(DBG_NEW clipSector_t);
+	clipSectors[idClip::numClipSectors] = std::shared_ptr<clipSector_t>(DBG_NEW clipSector_t());
 #else
-	anode = clipSectors[idClip::numClipSectors] = std::make_shared<clipSector_t>();
+	clipSectors[idClip::numClipSectors] = std::make_shared<clipSector_t>();
 #endif
+	std::shared_ptr<clipSector_t> anode = clipSectors[idClip::numClipSectors];
+
 	idClip::numClipSectors++;
 
 	if (depth == cm_max_sector_depth.GetInteger()) {
@@ -856,10 +867,10 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 		cm = clipModelList[i];
 
 		// check if we should ignore this entity
-		if (cm->entity == passEntity) {
+		if (cm->entity.lock() == passEntity) {
 			clipModelList[i] = nullptr;			// don't clip against the pass entity
 		}
-		else if (cm->entity == passOwner) {
+		else if (cm->entity.lock() == passOwner) {
 			clipModelList[i] = NULL;			// missiles don't clip with their owner
 		}
 		else if (!cm->owner.expired()) {

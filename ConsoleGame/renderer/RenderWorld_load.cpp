@@ -19,8 +19,7 @@ void idRenderWorldLocal::FreeWorld() {
 		area = &portalAreas[i];
 
 		// there shouldn't be any remaining lightRefs or entityRefs
-		if (area->entityRefs->areaNext != area->entityRefs)
-		{
+		if (area->entityRefs->areaNext != area->entityRefs) {
 			common->Error("FreeWorld: unexpected remaining entityRefs");
 		}
 		area->entityRefs->areaNext = nullptr;
@@ -188,7 +187,7 @@ void idRenderWorldLocal::FreeDefs()
 	// free all entityDefs
 	for (size_t i = 0; i < entityDefs.size(); i++) {
 		auto mod = entityDefs[i];
-		if (mod && mod->world.get() == this)
+		if (mod && mod->world.lock().get() == this)
 		{
 			FreeEntityDef(i);
 			entityDefs[i] = nullptr;

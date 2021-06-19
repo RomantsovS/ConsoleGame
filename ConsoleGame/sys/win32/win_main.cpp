@@ -10,6 +10,141 @@ Win32Vars_t win32;
 
 #pragma optimize( "", on)
 
+#ifdef DEBUG
+
+static unsigned int debug_total_alloc = 0;
+static unsigned int debug_total_alloc_count = 0;
+static unsigned int debug_current_alloc = 0;
+static unsigned int debug_current_alloc_count = 0;
+static unsigned int debug_frame_alloc = 0;
+static unsigned int debug_frame_alloc_count = 0;
+
+idCVar sys_showMallocs("sys_showMallocs", "0", CVAR_SYSTEM, "");
+
+#define  TIME_STR_LENGTH      10
+#define  DATE_STR_LENGTH      10
+
+FILE* logFile;                // Used to log allocation information
+const char lineStr[] = { "---------------------------------------\
+--------------------------------------\n" };
+
+#define  FILE_IO_ERROR        0
+#define  OUT_OF_MEMORY        1
+
+// _HOOK_ALLOC, _HOOK_REALLOC, _HOOK_FREE
+
+typedef struct CrtMemBlockHeader
+{
+	struct _CrtMemBlockHeader* pBlockHeaderNext;	// Pointer to the block allocated just before this one:
+	struct _CrtMemBlockHeader* pBlockHeaderPrev;	// Pointer to the block allocated just after this one
+	char* szFileName;    // File name
+	int nLine;           // Line number
+	size_t nDataSize;    // Size of user block
+	int nBlockUse;       // Type of block
+	long lRequest;       // Allocation number
+	byte		gap[4];								// Buffer just before (lower than) the user's memory:
+} CrtMemBlockHeader;
+
+/*
+==================
+Sys_AllocHook
+
+	called for every malloc/new/free/delete
+==================
+*/
+int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char* szFileName, int nLine)
+{
+	CrtMemBlockHeader* pHead;
+	byte* temp;
+
+	if (nBlockUse == _CRT_BLOCK)
+	{
+		return(TRUE);
+	}
+
+	// get a pointer to memory block header
+	temp = (byte*)pvData;
+	temp -= 32;
+	pHead = (CrtMemBlockHeader*)temp;
+
+	switch (nAllocType) {
+	case	_HOOK_ALLOC:
+		debug_total_alloc += nSize;
+		debug_current_alloc += nSize;
+		debug_frame_alloc += nSize;
+		debug_total_alloc_count++;
+		debug_current_alloc_count++;
+		debug_frame_alloc_count++;
+		break;
+
+	case	_HOOK_FREE:
+		assert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
+
+		debug_current_alloc -= pHead->nDataSize;
+		debug_current_alloc_count--;
+		debug_total_alloc_count++;
+		debug_frame_alloc_count++;
+		break;
+
+	case	_HOOK_REALLOC:
+		assert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
+
+		debug_current_alloc -= pHead->nDataSize;
+		debug_total_alloc += nSize;
+		debug_current_alloc += nSize;
+		debug_frame_alloc += nSize;
+		debug_total_alloc_count++;
+		debug_current_alloc_count--;
+		debug_frame_alloc_count++;
+		break;
+	}
+	
+	const char* operation[] = { "", "allocating", "re-allocating", "freeing" };
+	const char* blockType[] = { "Free", "Normal", "CRT", "Ignore", "Client" };
+
+	if (nBlockUse == _CRT_BLOCK)   // Ignore internal C runtime library allocations
+		return(1);
+
+	_ASSERT((nAllocType > 0) && (nAllocType < 4));
+	_ASSERT((nBlockUse >= 0) && (nBlockUse < 5));
+
+	fprintf(logFile,
+		"Memory operation in %s, line %d: %s a %d-byte '%s' block (#%ld)\n",
+		szFileName, nLine, operation[nAllocType], nSize,
+		blockType[nBlockUse], lRequest);
+	if (pvData != NULL)
+		fprintf(logFile, " at %p\n", pvData);
+
+	return(TRUE);
+}
+
+/*
+==================
+Sys_DebugMemory_f
+==================
+*/
+void Sys_DebugMemory_f() {
+	common->Printf("Total allocation %8dk in %d blocks\n", debug_total_alloc / 1024, debug_total_alloc_count);
+	common->Printf("Current allocation %8dk in %d blocks\n", debug_current_alloc / 1024, debug_current_alloc_count);
+}
+
+/*
+==================
+Sys_MemFrame
+==================
+*/
+void Sys_MemFrame() {
+	if (sys_showMallocs.GetInteger() > 0) {
+		if(isCommonExists)
+			common->Printf("Frame: %8dk in %5d blocks\n", debug_frame_alloc / 1024, debug_frame_alloc_count);
+	}
+
+	debug_frame_alloc = 0;
+	debug_frame_alloc_count = 0;
+}
+
+#endif
+
 /*
 =============
 Sys_Error
@@ -247,7 +382,22 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent) {
 int main(int argc, const char * const * argv) {
 #ifdef DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(13910);
+	_CrtSetAllocHook(Sys_AllocHook);
+
+	char timeStr[TIME_STR_LENGTH], dateStr[DATE_STR_LENGTH];         // Used to set up log file
+
+	// Open a log file for the hook functions to use 
+	fopen_s(&logFile, "MEM-LOG.TXT", "w");
+	if (logFile == nullptr)
+		exit(FILE_IO_ERROR);
+	_strtime_s(timeStr, TIME_STR_LENGTH);
+	_strdate_s(dateStr, DATE_STR_LENGTH);
+	fprintf(logFile,
+		"Memory Allocation Log File for Example Program, run at %s on %s.\n",
+		timeStr, dateStr);
+	fputs(lineStr, logFile);
+
+	_CrtSetBreakAlloc(11985);
 #endif
 
 	if (SetConsoleCtrlHandler(
@@ -261,14 +411,18 @@ int main(int argc, const char * const * argv) {
 	// get the initial time base
 	Sys_Milliseconds();
 
-	//common->Init(argc, argv, nullptr);
+	common->Init(argc, argv, nullptr);
+	
+	Sys_DebugMemory_f();
 
 	// main game loop
-	while (1)
-	{
+	//while (1) {
+	for(size_t i = 0; i < 1; ++i) {
+#ifdef DEBUG
+		Sys_MemFrame();
+#endif
 		// run the game
-		//common->Frame();
-		Sys_Sleep(1000);
+		common->Frame();
 	}
 
 	common->Shutdown();

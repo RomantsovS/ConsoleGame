@@ -8,9 +8,15 @@ CLASS_DECLARATION(idPlayer, PlayerChain)
 END_CLASS
 
 PlayerChain::PlayerChain() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "PlayerChain");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 PlayerChain::~PlayerChain() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "PlayerChain");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 /*

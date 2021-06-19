@@ -100,7 +100,7 @@ void idCollisionModelManagerLocal::TraceThroughModel(cm_traceWork_t* tw) {
 
 	//if (!tw->rotation) {
 		// trace through spatial subdivision and then through leafs
-		idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, tw->model->node, 0, 1, tw->start, tw->end);
+		idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, tw->model.lock()->node, 0, 1, tw->start, tw->end);
 	/*}
 	else {
 		// approximate the rotation with a series of straight line movements

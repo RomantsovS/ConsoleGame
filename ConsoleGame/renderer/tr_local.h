@@ -58,7 +58,7 @@ public:
 
 	renderEntity_t parms;
 
-	std::shared_ptr<idRenderWorldLocal> world;
+	std::weak_ptr<idRenderWorldLocal> world;
 	int index; // in world entityDefs
 
 	// a viewEntity_t is created whenever a idRenderEntityLocal is considered for inclusion
@@ -175,8 +175,8 @@ public:
 
 	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() override;
 	virtual void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) override;
-	virtual void BeginLevelLoad() override;
-	virtual void EndLevelLoad() override;
+	void BeginLevelLoad() override;
+	void EndLevelLoad() override;
 
 	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) override;
 	virtual void DrawString(const std::string& text, const Screen::ConsoleColor& color) override;

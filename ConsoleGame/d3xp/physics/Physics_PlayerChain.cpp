@@ -69,6 +69,9 @@ Physics_PlayerChain::Physics_PlayerChain
 ================
 */
 Physics_PlayerChain::Physics_PlayerChain() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "Physics_PlayerChain");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	clipModel = nullptr;
 	clipMask = 0;
 	memset(&current, 0, sizeof(current));
@@ -88,6 +91,9 @@ Physics_PlayerChain::~Physics_PlayerChain
 ================
 */
 Physics_PlayerChain::~Physics_PlayerChain() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "Physics_PlayerChain");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	size_t i;
 
 	for (i = 0; i < bodies.size(); i++) {
