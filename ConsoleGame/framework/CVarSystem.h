@@ -91,7 +91,7 @@ private:
 
 	virtual const std::string& InternalGetResetString() const { return value; }
 
-	static idCVar *			staticVars;
+	static idCVar* staticVars;
 };
 
 inline idCVar::idCVar(const std::string& name, const std::string& value, int flags, const std::string& description) {
@@ -173,7 +173,7 @@ inline void idCVar::Init(const std::string&  name, const std::string& value, int
 
 inline void idCVar::RegisterStaticVars() {
 	if (staticVars != (idCVar*)0xFFFFFFFF) {
-		for (idCVar* cvar = staticVars; cvar; cvar = cvar->next) {
+		for (auto cvar = staticVars; cvar; cvar = cvar->next) {
 			cvarSystem->Register(cvar);
 		}
 		staticVars = (idCVar*)0xFFFFFFFF;

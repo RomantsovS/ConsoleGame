@@ -36,7 +36,7 @@ public:
 
 	// returns the key/value pair with the given key
 	// returns NULL if the key/value pair does not exist
-	const std::string& FindKey(const std::string& key) const;
+	std::string FindKey(const std::string& key) const;
 	// finds the next key/value pair with the given key prefix.
 	// lastMatch can be used to do additional searches past the first match.
 	const idDict::args_pair* MatchPrefix(const std::string &prefix, const std::string lastMatch = "") const;

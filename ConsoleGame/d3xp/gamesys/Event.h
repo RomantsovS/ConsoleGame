@@ -43,8 +43,8 @@ public:
 
 class idEvent : public std::enable_shared_from_this<idEvent>  {
 private:
-	const idEventDef* eventdef;
-	unsigned char* data;
+	const idEventDef* eventdef = nullptr;
+	unsigned char* data = nullptr;
 	int time;
 	idClass* object;
 	const idTypeInfo* typeinfo;
@@ -54,13 +54,14 @@ private:
 	static std::allocator<unsigned char> eventDataAllocator;
 public:
 	static bool initialized;
-
+	
+	idEvent();
 	~idEvent();
 
 	static std::shared_ptr<idEvent> Alloc(const idEventDef* evdef, int numargs, va_list args);
 	//static void CopyArgs(const idEventDef* evdef, int numargs, va_list args, int data[D_EVENT_MAXARGS]);
 
-	void Free();
+	void Free(bool setOwner = true);
 	void Schedule(idClass* object, const idTypeInfo* cls, int time);
 	unsigned char* GetData();
 

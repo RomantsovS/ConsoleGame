@@ -64,5 +64,6 @@ public:
 };
 
 extern idFileSystem* fileSystem;
+extern bool isFileSystemExists;
 
 #endif // !FILE_SYSTEM_H

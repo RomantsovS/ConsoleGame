@@ -26,6 +26,9 @@ idGameLocal::idGameLocal() {
 	Clear();
 }
 
+idGameLocal::~idGameLocal() {
+}
+
 void idGameLocal::Init() {
 	Printf("--------- Initializing Game ----------\n");
 	Printf("gamename: %s\n", GAME_VERSION.c_str());
@@ -89,8 +92,7 @@ idGameLocal::Shutdown
 ============
 */
 void idGameLocal::Shutdown() {
-	if (!common)
-	{
+	if (!common) {
 		return;
 	}
 

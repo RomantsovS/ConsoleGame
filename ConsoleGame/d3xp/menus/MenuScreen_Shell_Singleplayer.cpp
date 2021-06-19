@@ -57,8 +57,8 @@ idMenuScreen_Shell_Singleplayer::Update
 */
 void idMenuScreen_Shell_Singleplayer::Update() {
 
-	if (menuData) {
-		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = menuData->GetCmdBar();
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
@@ -202,11 +202,12 @@ idMenuScreen_Shell_Singleplayer::HandleAction
 */
 bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
 
-	if (!menuData) {
+	auto spMenuData = menuData.lock();
+	if (!spMenuData) {
 		return true;
 	}
 
-	if (menuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_CAMPAIGN)) {
+	if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_CAMPAIGN)) {
 		return false;
 	}
 
@@ -215,7 +216,7 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const
 
 	switch (actionType) {
 	case widgetAction_t::WIDGET_ACTION_GO_BACK: {
-		menuData->SetNextScreen(shellAreas_t::SHELL_AREA_ROOT);
+		spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_ROOT);
 		return true;
 	}
 	case widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED: {
@@ -262,10 +263,10 @@ bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const
 		}
 		else {*/
 			if (selectionIndex == 0) {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_NEW_GAME);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_NEW_GAME);
 			}
 			else if (selectionIndex == 1) {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_LOAD);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_LOAD);
 			}
 		//}
 

@@ -12,6 +12,9 @@ idMenuHandler::idMenuHandler() :
 	nextScreen(-1),
 	gui(nullptr),
 	cmdBar(nullptr) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idMenuHandler");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	menuScreens.resize(MAX_SCREEN_AREAS);
 }
 
@@ -21,6 +24,10 @@ idMenuHandler::~idMenuHandler
 ================================================
 */
 idMenuHandler::~idMenuHandler() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idMenuHandler");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	Cleanup();
 }
 
@@ -31,7 +38,11 @@ idMenuHandler::Initialize
 */
 void idMenuHandler::Initialize(const std::string& filename) {
 	Cleanup();
+#ifdef DEBUG
+	gui = std::shared_ptr<idSWF>(DBG_NEW idSWF(filename));
+#else
 	gui = std::make_shared<idSWF>(filename);
+#endif
 	gui->Init();
 }
 
@@ -85,6 +96,9 @@ idMenuHandler::ActivateMenu
 ================================================
 */
 void idMenuHandler::ActivateMenu(bool show) {
+
+	if (!gui)
+		return;
 
 	if (!show) {
 		gui->Activate(show);

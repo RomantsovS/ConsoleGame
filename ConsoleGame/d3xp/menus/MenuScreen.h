@@ -21,7 +21,7 @@ public:
 	virtual void HideScreen();
 
 protected:
-	std::shared_ptr<idSWF> menuGUI;
+	std::weak_ptr<idSWF> menuGUI;
 };
 
 //*

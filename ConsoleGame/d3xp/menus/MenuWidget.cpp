@@ -10,9 +10,12 @@ idMenuWidget::idMenuWidget
 idMenuWidget::idMenuWidget() :
 	boundSprite(nullptr),
 	focusIndex(0),
-	widgetState(widgetState_t::WIDGET_STATE_NORMAL),
-	menuData(nullptr),
-	swfObj(nullptr) {
+	widgetState(widgetState_t::WIDGET_STATE_NORMAL) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idMenuWidget");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	swfObj.reset();
+	menuData.reset();
 	parent.reset();
 
 	eventActionLookup.resize(static_cast<int>(widgetEvent_t::MAX_WIDGET_EVENT));
@@ -27,6 +30,10 @@ idMenuWidget::~idMenuWidget
 ========================
 */
 idMenuWidget::~idMenuWidget() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idMenuWidget");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	Cleanup();
 }
 
@@ -181,16 +188,16 @@ idMenuWidget::GetSWFObject
 */
 std::shared_ptr<idSWF> idMenuWidget::GetSWFObject() {
 
-	if (swfObj) {
-		return swfObj;
+	if (auto spswfObj = swfObj.lock()) {
+		return spswfObj;
 	}
 
 	if (parent.lock()) {
 		return parent.lock()->GetSWFObject();
 	}
 
-	if (menuData) {
-		return menuData->GetGUI();
+	if (auto spMenuData = menuData.lock()) {
+		return spMenuData->GetGUI();
 	}
 
 	return nullptr;
@@ -206,7 +213,7 @@ std::shared_ptr<idMenuHandler> idMenuWidget::GetMenuData() {
 		return parent.lock()->GetMenuData();
 	}
 
-	return menuData;
+	return menuData.lock();
 }
 
 /*

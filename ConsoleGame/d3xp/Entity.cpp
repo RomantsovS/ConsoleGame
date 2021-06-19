@@ -402,7 +402,11 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) 
 		}
 	}*/
 
+/*#ifdef DEBUG
+	defaultPhysicsObj = std::shared_ptr<idPhysics_Static>(DBG_NEW idPhysics_Static);
+#else*/
 	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
+//#endif
 	defaultPhysicsObj->SetSelf(shared_from_this());
 	defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);

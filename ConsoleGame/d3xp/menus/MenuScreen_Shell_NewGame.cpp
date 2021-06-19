@@ -65,8 +65,8 @@ idMenuScreen_Shell_NewGame::Update
 */
 void idMenuScreen_Shell_NewGame::Update() {
 
-	if (menuData) {
-		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = menuData->GetCmdBar();
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
@@ -118,8 +118,8 @@ idMenuScreen_Shell_NewGame::HandleAction h
 */
 bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
 
-	if (menuData) {
-		if (menuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME)) {
+	if (auto spMenuData = menuData.lock()) {
+		if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME)) {
 			return false;
 		}
 	}
@@ -129,8 +129,8 @@ bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWi
 
 	switch (actionType) {
 	case widgetAction_t::WIDGET_ACTION_GO_BACK: {
-		if (menuData) {
-			menuData->SetNextScreen(shellAreas_t::SHELL_AREA_CAMPAIGN);
+		if (auto spMenuData = menuData.lock()) {
+			spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_CAMPAIGN);
 		}
 		return true;
 	}
@@ -149,10 +149,12 @@ bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWi
 			options->SetFocusIndex(selectionIndex);
 		}
 
-		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(menuData);
-		if (shell) {
-			shell->SetNewGameType(selectionIndex);
-			shell->StartGame(0);
+		if (auto spMenuData = menuData.lock()) {
+			std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
+			if (shell) {
+				shell->SetNewGameType(selectionIndex);
+				shell->StartGame(0);
+			}
 		}
 
 		return true;

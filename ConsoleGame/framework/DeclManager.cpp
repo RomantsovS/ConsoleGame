@@ -785,7 +785,11 @@ std::shared_ptr<idDeclLocal> idDeclManagerLocal::FindTypeWithoutParsing(declType
 		return nullptr;
 	}
 
+#ifdef DEBUG
+	std::shared_ptr<idDeclLocal> decl = std::shared_ptr<idDeclLocal>(DBG_NEW idDeclLocal());
+#else
 	std::shared_ptr<idDeclLocal> decl = std::make_shared<idDeclLocal>();
+#endif
 	decl->self = NULL;
 	decl->name = canonicalName;
 	decl->type = type;

@@ -47,7 +47,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 	Sys_Printf("%s", msg);
 
 	// logFile
-	if (com_logFile.GetInteger() && !logFileFailed && fileSystem->IsInitialized()) {
+	if (com_logFile.GetInteger() && !logFileFailed && isFileSystemExists && fileSystem->IsInitialized()) {
 		static bool recursing;
 
 		if (!logFile && !recursing) {
@@ -70,9 +70,6 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 #else
 			std::string fileName = com_logFileName.GetString()[0] ? com_logFileName.GetString() : "qconsole";
 #endif // LOG_FILE_NAME_TIME
-
-			if (log_file_closed)
-				fileName += "_additional";
 
 			fileName += ".log";
 
@@ -140,12 +137,9 @@ void idCommonLocal::DWarning(const char* fmt, ...) {
 void idCommonLocal::CloseLogFile()
 {
 	if (logFile) {
-		Printf("log file closed\n");
 		com_logFile.SetBool(false); // make sure no further VPrintf attempts to open the log file again
 
 		fileSystem->CloseFile(logFile);
-
-		log_file_closed = true;
 
 		logFile = nullptr;
 

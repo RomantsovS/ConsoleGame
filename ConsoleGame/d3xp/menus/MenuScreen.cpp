@@ -2,10 +2,18 @@
 #include "../../idLib/precompiled.h"
 #include "../Game_local.h"
 
-idMenuScreen::idMenuScreen() :menuGUI(nullptr) {
+idMenuScreen::idMenuScreen() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idMenuScreen");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	menuGUI.reset();
 }
 
 idMenuScreen::~idMenuScreen() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idMenuScreen");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 /*
@@ -14,7 +22,8 @@ idMenuScreen::Update
 ========================
 */
 void idMenuScreen::Update() {
-	if (!menuGUI) {
+	auto spmenuGUI = menuGUI.lock();
+	if (!spmenuGUI) {
 		return;
 	}
 
@@ -27,8 +36,8 @@ void idMenuScreen::Update() {
 			GetChildByIndex(childIndex)->GetSprite()->SetVisible(true);
 	}
 
-	if (menuData) {
-		menuData->UpdateChildren();
+	if (auto spMenuData = menuData.lock()) {
+		spMenuData->UpdateChildren();
 	}
 }
 
@@ -38,7 +47,7 @@ idMenuScreen::UpdateCmds
 ========================
 */
 void idMenuScreen::UpdateCmds() {
-	const std::shared_ptr<idSWF> gui = menuGUI;
+	const std::shared_ptr<idSWF> gui = menuGUI.lock();
 
 	std::shared_ptr<idSWFScriptObject> const shortcutKeys = gui->GetGlobal("shortcutKeys").GetObjectScript();
 	/*if (!verify(shortcutKeys != NULL)) {
@@ -93,11 +102,12 @@ void idMenuScreen::HideScreen() {
 		GetSprite()->SetVisible(false);
 	}
 
-	if (!menuGUI) {
+	auto spmenuGUI = menuGUI.lock();
+	if (!spmenuGUI) {
 		return;
 	}
 
-	if (!BindSprite(menuGUI->GetRootObject())) {
+	if (!BindSprite(spmenuGUI->GetRootObject())) {
 		return;
 	}
 
@@ -112,11 +122,12 @@ idMenuScreen::ShowScreen
 ========================
 */
 void idMenuScreen::ShowScreen() {
-	if (!menuGUI) {
+	auto spmenuGUI = menuGUI.lock();
+	if (!spmenuGUI) {
 		return;
 	}
 
-	if (!BindSprite(menuGUI->GetRootObject())) {
+	if (!BindSprite(spmenuGUI->GetRootObject())) {
 		return;
 	}
 

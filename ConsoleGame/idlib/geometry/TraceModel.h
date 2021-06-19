@@ -48,22 +48,13 @@ private:
 	void InitBox();
 };
 
-inline idTraceModel::idTraceModel()
-{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s ctor\n", "idTraceModel");
-#endif // DEBUG_PRINT_Ctor_Dtor
-
+inline idTraceModel::idTraceModel() {
 	type = TRM_INVALID;
 	numVerts = 0;
 	bounds.Zero();
 }
 
-inline idTraceModel::idTraceModel(const idBounds& boxBounds)
-{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s ctor\n", "idTraceModel");
-#endif // DEBUG_PRINT_Ctor_Dtor
+inline idTraceModel::idTraceModel(const idBounds& boxBounds) {
 
 	InitBox();
 	SetupBox(boxBounds);
@@ -71,9 +62,6 @@ inline idTraceModel::idTraceModel(const idBounds& boxBounds)
 
 inline idTraceModel::~idTraceModel()
 {
-#ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s dtor\n", "idTraceModel");
-#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 inline void idTraceModel::SetupBox(const idBounds& boxBounds)

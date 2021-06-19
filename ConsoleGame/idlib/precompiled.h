@@ -1,6 +1,16 @@
 #ifndef IDLIB_PRECOMPILED_H_
 #define IDLIB_PRECOMPILED_H_
 
+#ifdef DEBUG
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+#endif
+
 #include <string>
 #include <memory>
 #include <vector>

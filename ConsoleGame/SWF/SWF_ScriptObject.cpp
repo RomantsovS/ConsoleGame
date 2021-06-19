@@ -21,6 +21,9 @@ idSWFScriptObject::idSWFScriptObject
 ========================
 */
 idSWFScriptObject::idSWFScriptObject() : objectType(swfObjectType_t::SWF_OBJECT_OBJECT) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idSWFScriptObject");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	data.sprite.reset();
 	data.text.reset();
 }
@@ -31,6 +34,10 @@ idSWFScriptObject::~idSWFScriptObject
 ========================
 */
 idSWFScriptObject::~idSWFScriptObject() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idSWFScriptObject");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 /*

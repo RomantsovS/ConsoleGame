@@ -30,7 +30,7 @@ public:
 
 	virtual void Remove() override;
 
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 };

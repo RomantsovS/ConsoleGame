@@ -1,7 +1,7 @@
 #include "../idlib/precompiled.h"
 #pragma hdrstop
 
-idCVar * idCVar::staticVars = NULL;
+idCVar* idCVar::staticVars = nullptr;
 
 /*
 ===============================================================================
@@ -34,11 +34,11 @@ private:
 
 	//virtual const std::string& InternalGetResetString() const;
 
-	virtual void InternalSetString(const std::string& newValue) override;
-	/*virtual void			InternalServerSetString(const std::string& newValue) override;
-	virtual void			InternalSetBool(const bool newValue) override;
-	virtual void			InternalSetInteger(const int newValue) override;
-	virtual void			InternalSetFloat(const float newValue) override;*/
+	void InternalSetString(const std::string& newValue) override;
+	virtual void InternalServerSetString(const std::string& newValue);
+	virtual void InternalSetBool(const bool newValue) override;
+	virtual void InternalSetInteger(const int newValue) override;
+	virtual void InternalSetFloat(const float newValue) override;
 };
 
 /*
@@ -256,7 +256,7 @@ void idInternalCVar::Set(std::string newValue, bool force, bool fromServer) {
 	}
 
 	if (newValue.empty()) {
-		newValue = resetString;
+		newValue = resetString.c_str();
 	}
 
 	if (!force) {
@@ -289,7 +289,43 @@ idInternalCVar::InternalSetString
 ============
 */
 void idInternalCVar::InternalSetString(const std::string& newValue) {
-	Set(newValue, true, false);
+	Set(newValue.c_str(), true, false);
+}
+
+/*
+===============
+idInternalCVar::InternalServerSetString
+===============
+*/
+void idInternalCVar::InternalServerSetString(const std::string& newValue) {
+	Set(newValue.c_str(), true, true);
+}
+
+/*
+============
+idInternalCVar::InternalSetBool
+============
+*/
+void idInternalCVar::InternalSetBool(const bool newValue) {
+	Set(std::to_string(newValue), true, false);
+}
+
+/*
+============
+idInternalCVar::InternalSetInteger
+============
+*/
+void idInternalCVar::InternalSetInteger(const int newValue) {
+	Set(std::to_string(newValue).c_str(), true, false);
+}
+
+/*
+============
+idInternalCVar::InternalSetFloat
+============
+*/
+void idInternalCVar::InternalSetFloat(const float newValue) {
+	Set(std::to_string(newValue).c_str(), true, false);
 }
 
 /*
@@ -306,11 +342,11 @@ public:
 
 	virtual ~idCVarSystemLocal() {}
 
-	virtual void Init() override;
-	virtual void Shutdown() override;
-	virtual bool IsInitialized() const override;
+	void Init() override;
+	void Shutdown() override;
+	bool IsInitialized() const override;
 
-	virtual void Register(idCVar* cvar) override;
+	void Register(idCVar* cvar) override;
 
 	virtual void SetCVarString(const std::string& name, const std::string& value, int flags = 0) override;
 
@@ -360,7 +396,11 @@ void idCVarSystemLocal::SetInternal(const std::string& name, const std::string& 
 		//internal->UpdateCheat();
 	}
 	else {
+#ifdef DEBUG
+		internal = DBG_NEW idInternalCVar(name, value, flags);
+#else
 		internal = new idInternalCVar(name, value, flags);
+#endif
 		cvars.insert(cvars_map_type::value_type(internal->GetName(), internal));
 	}
 }
@@ -400,6 +440,7 @@ void idCVarSystemLocal::Shutdown() {
 	
 	for (auto iter = cvars.begin(); iter != cvars.end(); ++iter) {
 		delete iter->second;
+		iter->second = nullptr;
 	}
 
 	initialized = false;
@@ -428,7 +469,11 @@ void idCVarSystemLocal::Register(idCVar* cvar) {
 		internal->Update(cvar);
 	}
 	else {
+#ifdef DEBUG
+		internal = DBG_NEW idInternalCVar(cvar);
+#else
 		internal = new idInternalCVar(cvar);
+#endif
 		cvars.insert({ internal->nameString, internal });
 	}
 
@@ -450,11 +495,9 @@ idCVarSystemLocal::Command
 ============
 */
 bool idCVarSystemLocal::Command(const idCmdArgs& args) {
-	idInternalCVar* internal;
+	idInternalCVar* internal  = FindInternal(args.Argv(0));
 
-	internal = FindInternal(args.Argv(0));
-
-	if (internal == NULL) {
+	if (internal == nullptr) {
 		return false;
 	}
 
@@ -468,7 +511,7 @@ bool idCVarSystemLocal::Command(const idCmdArgs& args) {
 	}
 	else {
 		// set the value
-		internal->Set(args.Args(), false, false);
+		internal->Set(args.Args().c_str(), false, false);
 	}
 	return true;
 }

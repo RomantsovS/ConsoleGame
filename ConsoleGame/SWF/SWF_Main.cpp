@@ -9,6 +9,23 @@ idSWF::idSWF
 idSWF::idSWF(const std::string& filename_) :
 	filename(filename_),
 	isActive(false) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idSWF");
+#endif // DEBUG_PRINT_Ctor_Dtor
+}
+
+/*
+===================
+idSWF::~idSWF
+===================
+*/
+idSWF::~idSWF() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idSWF");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	globals = nullptr;
+	shortcutKeys = nullptr;
 }
 
 /*
@@ -17,9 +34,17 @@ idSWF::Init
 ===================
 */
 void idSWF::Init() {
+#ifdef DEBUG
+	globals = std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject);
+#else
 	globals = std::make_shared<idSWFScriptObject>();
+#endif
 
+#ifdef DEBUG
+	mainspriteInstance = std::shared_ptr<idSWFSpriteInstance>(DBG_NEW idSWFSpriteInstance(shared_from_this()));
+#else
 	mainspriteInstance = std::make_shared<idSWFSpriteInstance>(shared_from_this());
+#endif
 	mainspriteInstance->Init();
 	
 	mainspriteInstance->name = "mainspriteInstance";
@@ -93,6 +118,8 @@ void idSWF::Init() {
 	scriptFunction_shortcutKeys_clear.Bind(this);
 	scriptFunction_shortcutKeys_clear.Call(shortcutKeys.get(), idSWFParmList());
 	globals->Set("shortcutKeys", shortcutKeys);
+
+	//mainspriteInstance->RunTo(0);
 }
 
 /*
@@ -101,6 +128,9 @@ idSWF::Activate
 ===================
 */
 void idSWF::Activate(bool b) {
+	if (!isActive && b) {
+		//mainspriteInstance->FreeDisplayList();
+	}
 	isActive = b;
 }
 

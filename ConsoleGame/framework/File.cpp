@@ -84,6 +84,9 @@ idFile_Permanent::idFile_Permanent
 =================
 */
 idFile_Permanent::idFile_Permanent(const std::string& file_name, std::ios_base::openmode ios_mode) : fullPath(file_name), o(file_name, ios_mode) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idFile_Permanent");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 /*
@@ -92,6 +95,9 @@ idFile_Permanent::~idFile_Permanent
 =================
 */
 idFile_Permanent::~idFile_Permanent() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s dtor\n", "idFile_Permanent");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	if (o) {
 		o.close();
 	}

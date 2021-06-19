@@ -9,8 +9,10 @@ idSWFSpriteInstance::idSWFSpriteInstance
 idSWFSpriteInstance::idSWFSpriteInstance(std::shared_ptr<idSWF> _swf) :
 	swf(_swf),
 	isVisible(false),
-	scriptObject(nullptr)
-{
+	scriptObject(nullptr) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idSWFSpriteInstance");
+#endif // DEBUG_PRINT_Ctor_Dtor
 }
 
 /*
@@ -19,7 +21,12 @@ idSWFSpriteInstance::Init
 ========================
 */
 void idSWFSpriteInstance::Init() {
+#ifdef DEBUG
+	scriptObject = std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject);
+#else
 	scriptObject = std::make_shared<idSWFScriptObject>();
+#endif
+
 	scriptObject->SetSprite(shared_from_this());
 }
 
@@ -29,8 +36,33 @@ idSWFSpriteInstance::~idSWFSpriteInstance
 ========================
 */
 idSWFSpriteInstance::~idSWFSpriteInstance() {
-	//FreeDisplayList();
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	if(isCommonExists)
+		common->DPrintf("%s dtor\n", "idSWFSpriteInstance");
+#endif // DEBUG_PRINT_Ctor_Dtor
+}
+
+/*
+========================
+idSWFSpriteInstance::FreeDisplayList
+========================
+*/
+void idSWFSpriteInstance::FreeDisplayList() {
+	for (size_t i = 0; i < displayList.size(); i++) {
+		if (displayList[i].spriteInstance)
+			displayList[i].spriteInstance->Clear();
+		if (displayList[i].textInstance)
+			displayList[i].textInstance->Clear();
+	}
+	displayList.clear();	// not calling Clear() so we don't continuously re-allocate memory
+}
+
+void idSWFSpriteInstance::Clear() {
+	FreeDisplayList();
 	displayList.clear();
+	scriptObject->SetSprite(nullptr);
+	scriptObject->Clear();
+	scriptObject = nullptr;
 }
 
 /*
@@ -76,11 +108,19 @@ swfDisplayEntry_t* idSWFSpriteInstance::AddDisplayEntry(int depth, bool isSprite
 	display.depth = depth;
 
 	if (isSprite) {
+#ifdef DEBUG
+		display.spriteInstance = std::shared_ptr<idSWFSpriteInstance>(DBG_NEW idSWFSpriteInstance(GetSWF()));
+#else
 		display.spriteInstance = std::make_shared<idSWFSpriteInstance>(GetSWF());
+#endif
 		display.spriteInstance->Init();
 	}
 	else {
+#ifdef DEBUG
+		display.textInstance = std::shared_ptr<idSWFTextInstance>(DBG_NEW idSWFTextInstance());
+#else
 		display.textInstance = std::make_shared<idSWFTextInstance>();
+#endif
 		display.textInstance->Init(GetSWF());
 	}
 
@@ -93,6 +133,7 @@ idSWFSpriteInstance::RunTo
 ===================
 */
 void idSWFSpriteInstance::RunTo(int targetFrame) {
+	FreeDisplayList();
 }
 
 /*

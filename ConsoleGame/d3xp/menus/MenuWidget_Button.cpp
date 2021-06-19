@@ -8,8 +8,9 @@ idMenuWidget_Button::Update
 ========================
 */
 void idMenuWidget_Button::Update() {
-	if (menuData && menuData->GetGUI()) {
-		BindSprite(menuData->GetGUI()->GetRootObject());
+	if (auto spMenuData = menuData.lock()) {
+		if(spMenuData->GetGUI())
+			BindSprite(spMenuData->GetGUI()->GetRootObject());
 	}
 
 	if (!GetSprite()) {

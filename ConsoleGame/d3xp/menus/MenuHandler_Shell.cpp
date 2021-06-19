@@ -142,14 +142,22 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME), idMenuScreen_Shell_NewGame, shared_from_this());
 	}
 
+#ifdef DEBUG
+	menuBar = std::shared_ptr<idMenuWidget_MenuBar>(DBG_NEW idMenuWidget_MenuBar());
+#else
 	menuBar = std::make_shared<idMenuWidget_MenuBar>();
+#endif
 	menuBar->SetSpritePath("pcBar");
 	menuBar->Initialize(shared_from_this());
 	menuBar->SetNumVisibleOptions(MAX_MENU_OPTIONS);
 	menuBar->SetWrappingAllowed(true);
 	menuBar->SetButtonSpacing(45.0f);
 	while (menuBar->GetChildren().size() < MAX_MENU_OPTIONS) {
+#ifdef DEBUG
+		std::shared_ptr<idMenuWidget_MenuButton> const navButton = std::shared_ptr<idMenuWidget_MenuButton>(DBG_NEW idMenuWidget_MenuButton());
+#else
 		std::shared_ptr<idMenuWidget_MenuButton> const navButton = std::make_shared<idMenuWidget_MenuButton>();
+#endif
 		std::shared_ptr<idMenuScreen_Shell_Root> rootScreen = std::dynamic_pointer_cast<idMenuScreen_Shell_Root>(menuScreens[static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)]);
 		if (rootScreen) {
 			//navButton->RegisterEventObserver(rootScreen->GetHelpWidget());

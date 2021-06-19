@@ -254,15 +254,23 @@ public:
 			targetWidget(widget),
 			targetEvent(event),
 			targetEventArg(eventArg) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+			common->DPrintf("%s ctor\n", "WrapWidgetSWFEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
+		}
+		~WrapWidgetSWFEvent() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+			common->DPrintf("%s dtor\n", "WrapWidgetSWFEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
 		}
 
 		idSWFScriptVar Call(std::shared_ptr<idSWFScriptObject> thisObject, const idSWFParmList& parms) override {
-			targetWidget->ReceiveEvent(idWidgetEvent(targetEvent, targetEventArg, thisObject, parms));
+			targetWidget.lock()->ReceiveEvent(idWidgetEvent(targetEvent, targetEventArg, thisObject, parms));
 			return idSWFScriptVar();
 		}
 
 	private:
-		std::shared_ptr<idMenuWidget> targetWidget;
+		std::weak_ptr<idMenuWidget> targetWidget;
 		widgetEvent_t	targetEvent;
 		int				targetEventArg;
 	};
@@ -351,8 +359,8 @@ public:
 	void SetParent(std::shared_ptr<idMenuWidget> parent_) { parent = parent_; }
 	void SetSWFObj(std::shared_ptr<idSWF> obj) { swfObj = obj; }
 protected:
-	std::shared_ptr<idMenuHandler> menuData;
-	std::shared_ptr<idSWF> swfObj;
+	std::weak_ptr<idMenuHandler> menuData;
+	std::weak_ptr<idSWF> swfObj;
 	std::shared_ptr<idSWFSpriteInstance> boundSprite;
 	std::weak_ptr<idMenuWidget> parent;
 	std::vector<std::string> spritePath;

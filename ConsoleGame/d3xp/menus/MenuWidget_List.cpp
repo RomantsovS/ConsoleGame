@@ -190,7 +190,7 @@ void idMenuWidget_List::Scroll(const int scrollAmount, const bool wrapAround) {
 	CalculatePositionFromIndexDelta(newIndex, newOffset, GetViewIndex(), GetViewOffset(), GetNumVisibleOptions(), GetTotalNumberOfOptions(), scrollAmount, IsWrappingAllowed(), wrapAround);
 	if (newOffset != GetViewOffset()) {
 		SetViewOffset(newOffset);
-		if (menuData != NULL) {
+		if (auto spMenuData = menuData.lock()) {
 			//menuData->PlaySound(GUI_SOUND_FOCUS);
 		}
 		Update();

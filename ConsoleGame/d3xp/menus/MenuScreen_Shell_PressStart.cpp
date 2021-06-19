@@ -28,8 +28,8 @@ idMenuScreen_Shell_Root::Update
 ========================
 */
 void idMenuScreen_Shell_PressStart::Update() {
-	if (menuData) {
-		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = menuData->GetCmdBar();
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
@@ -72,11 +72,13 @@ idMenuScreen_Shell_PressStart::HandleAction
 */
 bool idMenuScreen_Shell_PressStart::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
 
-	if (!menuData) {
+	auto spMenuData = menuData.lock();
+
+	if (!spMenuData) {
 		return true;
 	}
 
-	if (menuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_START)) {
+	if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_START)) {
 		return false;
 	}
 

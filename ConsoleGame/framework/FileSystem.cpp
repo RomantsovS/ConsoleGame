@@ -21,6 +21,10 @@ struct searchpath_t {
 class idFileSystemLocal : public idFileSystem {
 public:
 	idFileSystemLocal() {}
+	~idFileSystemLocal()
+	{
+		isFileSystemExists = false;
+	}
 
 	virtual void Init() override;
 	virtual void Shutdown(bool reloading) override;
@@ -63,6 +67,8 @@ idCVar fs_basepath("fs_basepath", "", CVAR_SYSTEM | CVAR_INIT, "");
 idFileSystemLocal fileSystemLocal;
 idFileSystem* fileSystem = &fileSystemLocal;
 
+bool isFileSystemExists = true;
+
 /*
 ================
 idFileSystemLocal::OpenOSFile
@@ -81,7 +87,11 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenOSFile(const std::string &fileNam
 		ios_mode = std::ios_base::out | std::ios_base::app;
 	}
 
+#ifdef DEBUG
+	auto file = std::shared_ptr<idFile_Permanent>(DBG_NEW idFile_Permanent(fileName, ios_mode));
+#else
 	auto file = std::make_shared<idFile_Permanent>(fileName, ios_mode);
+#endif
 
 	return file;
 }

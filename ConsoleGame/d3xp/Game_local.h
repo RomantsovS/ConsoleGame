@@ -80,12 +80,12 @@ public:
 	// ---------------------- Public idGame Interface -------------------
 
 	idGameLocal();
+	~idGameLocal();
 
 	virtual void Init() override;
-	virtual void Shutdown() override;
+	void Shutdown() override;
 
-	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld,
-		int randseed) override;
+	void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
 	virtual void MapShutdown() override;
 	virtual void RunFrame() override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);

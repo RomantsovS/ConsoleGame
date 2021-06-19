@@ -1,9 +1,5 @@
-#ifndef  COLLISION_MODEL_H
+#ifndef COLLISION_MODEL_H
 #define COLLISION_MODEL_H
-
-#include "../idlib/math/Vector2.h"
-#include "../idlib/bv/Bounds.h"
-#include "../idlib/geometry/TraceModel.h"
 
 // contact type
 typedef enum {

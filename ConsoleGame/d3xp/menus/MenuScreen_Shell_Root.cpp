@@ -62,8 +62,8 @@ idMenuScreen_Shell_Root::Update
 */
 void idMenuScreen_Shell_Root::Update() {
 
-	if (menuData) {
-		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = menuData->GetCmdBar();
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
@@ -107,8 +107,8 @@ void idMenuScreen_Shell_Root::ShowScreen() {
 
 	idMenuScreen::ShowScreen();
 
-	if (menuData) {
-		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(menuData);
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 		if (shell) {
 			std::shared_ptr<idMenuWidget_MenuBar> menuBar = shell->GetMenuBar();
 			if (menuBar) {
@@ -167,11 +167,12 @@ idMenuScreen_Shell_Root::HandleAction
 */
 bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
 
-	if (!menuData) {
+	auto spMenuData = menuData.lock();
+	if (!spMenuData) {
 		return true;
 	}
 
-	if (menuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)) {
+	if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)) {
 		return false;
 	}
 
@@ -186,7 +187,7 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 	case widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED: {
 		if (true) {
 
-			std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(menuData);
+			std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 			if (!shell) {
 				return true;
 			}
@@ -210,7 +211,7 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 	}
 	case widgetAction_t::WIDGET_ACTION_SCROLL_HORIZONTAL: {
 
-		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(menuData);
+		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 		if (!shell) {
 			return true;
 		}
@@ -243,7 +244,7 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 	case widgetAction_t::WIDGET_ACTION_COMMAND: {
 		switch (parms[0]->ToInteger()) {
 		case ROOT_CMD_SETTINGS: {
-			menuData->SetNextScreen(shellAreas_t::SHELL_AREA_SETTINGS);
+			spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_SETTINGS);
 			break;
 		}
 		case ROOT_CMD_QUIT: {
@@ -251,11 +252,11 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 			break;
 		}
 		case ROOT_CMD_DEV: {
-			menuData->SetNextScreen(shellAreas_t::SHELL_AREA_DEV);
+			spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_DEV);
 			break;
 		}
 		case ROOT_CMD_CAMPAIGN: {
-			menuData->SetNextScreen(shellAreas_t::SHELL_AREA_CAMPAIGN);
+			spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_CAMPAIGN);
 			break;
 		}
 		}

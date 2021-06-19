@@ -14,6 +14,8 @@ long long com_engineHz_denominator = 100LL * 60LL;
 idCommonLocal commonLocal;
 idCommon * common = &commonLocal;
 
+bool isCommonExists = true;
+
 idCommonLocal::idCommonLocal() {
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
@@ -24,6 +26,10 @@ idCommonLocal::idCommonLocal() {
 
 	gameFrame = 0;
 	gameTimeResidual = 0;
+}
+
+idCommonLocal::~idCommonLocal() {
+	isCommonExists = false;
 }
 
 /*
@@ -52,6 +58,8 @@ void idCommonLocal::CleanupShell() {
 
 void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline) {
 	try {
+		Printf(va("Command line: %s\n", cmdline).c_str());
+
 		// init console command system
 		cmdSystem->Init();
 
@@ -73,7 +81,7 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// initialize the declaration manager
 		declManager->Init();
 
-		// init journalling, etc
+		// init journaling, etc
 		eventLoop->Init();
 
 		InitCommands();
@@ -113,7 +121,7 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 
 		Printf("--- Common Initialization Complete ---\n");
 	}
-	catch (std::exception& msg) {
+	catch (const std::exception& msg) {
 		Sys_Error("Error during initialization %s", msg.what());
 	}
 }
@@ -130,7 +138,7 @@ void idCommonLocal::Shutdown() {
 	}
 	com_shuttingDown = true;
 
-	Printf("Stop();\n");
+	/*Printf("Stop();\n");
 	Stop();
 
 	Printf("CleanupShell();\n");
@@ -184,7 +192,7 @@ void idCommonLocal::Shutdown() {
 
 	// shut down the cvar system
 	printf("cvarSystem->Shutdown();\n");
-	cvarSystem->Shutdown();
+	cvarSystem->Shutdown();*/
 
 	// shut down the console command system
 	printf("cmdSystem->Shutdown();\n");
@@ -202,7 +210,7 @@ void idCommonLocal::CreateMainMenu() {
 		renderSystem->BeginLevelLoad();
 
 		// create main inside an "empty" game level load - so assets get
-		// purged automagically when we transition to a "real" map
+		// purged automatically when we transition to a "real" map
 		game->Shell_CreateMenu(false);
 		game->Shell_Show(true);
 		game->Shell_SyncWithSession();

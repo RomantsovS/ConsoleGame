@@ -67,7 +67,7 @@ void idConsoleLocal::Init() {
 idConsoleLocal::Shutdown
 ==============
 */
-void idConsoleLocal::Shutdown() {;
+void idConsoleLocal::Shutdown() {
 }
 
 /*

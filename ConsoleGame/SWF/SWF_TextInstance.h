@@ -8,12 +8,17 @@
 class idSWFTextInstance :public std::enable_shared_from_this<idSWFTextInstance> {
 public:
 	idSWFTextInstance() :
-		swf(nullptr),
+#ifdef DEBUG
+		scriptObject(std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject)),
+#else
 		scriptObject(std::make_shared<idSWFScriptObject>()),
+#endif
 		text(""),
 		color(Screen::ConsoleColor::None),
 		visible(false)
-	{}
+	{
+		swf.reset();
+	}
 	~idSWFTextInstance() {}
 
 	void Init(std::shared_ptr<idSWF> _gui);
@@ -23,7 +28,9 @@ public:
 
 	void SetText(const std::string& val) { text = val; }
 
-	std::shared_ptr<idSWF> swf;
+	void Clear();
+
+	std::weak_ptr<idSWF> swf;
 
 	// this text instance's script object
 	std::shared_ptr<idSWFScriptObject> scriptObject;

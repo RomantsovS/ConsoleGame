@@ -16,10 +16,10 @@ public:
 	void Clear();
 
 	void SetSprite(std::shared_ptr<idSWFSpriteInstance> s) { objectType = swfObjectType_t::SWF_OBJECT_SPRITE;  data.sprite = s; }
-	std::shared_ptr<idSWFSpriteInstance> GetSprite() { return (objectType == swfObjectType_t::SWF_OBJECT_SPRITE) ? data.sprite : nullptr; }
+	std::shared_ptr<idSWFSpriteInstance> GetSprite() { return (objectType == swfObjectType_t::SWF_OBJECT_SPRITE) ? data.sprite.lock() : nullptr; }
 
 	void SetText(std::shared_ptr<idSWFTextInstance> t) { objectType = swfObjectType_t::SWF_OBJECT_TEXT; data.text = t; }
-	std::shared_ptr<idSWFTextInstance> GetText() { return data.text; }
+	std::shared_ptr<idSWFTextInstance> GetText() { return data.text.lock(); }
 
 	idSWFScriptVar Get(const std::string& name);
 	std::shared_ptr<idSWFSpriteInstance> GetSprite(const std::string& name);
@@ -51,8 +51,8 @@ private:
 	} objectType;
 
 	struct guiObjectData_t {
-		std::shared_ptr<idSWFSpriteInstance> sprite;		// only valid if objectType == SWF_OBJECT_SPRITE
-		std::shared_ptr<idSWFTextInstance> text;			// only valid if objectType == SWF_OBJECT_TEXT
+		std::weak_ptr<idSWFSpriteInstance> sprite;		// only valid if objectType == SWF_OBJECT_SPRITE
+		std::weak_ptr<idSWFTextInstance> text;			// only valid if objectType == SWF_OBJECT_TEXT
 	} data;
 
 	guiNamedVar_t* GetVariable(const std::string& name, bool create);

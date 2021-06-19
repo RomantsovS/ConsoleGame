@@ -12,7 +12,7 @@
 class idSWF : public std::enable_shared_from_this<idSWF> {
 public:
 	idSWF(const std::string& filename_);
-	~idSWF() {}
+	~idSWF();
 
 	void Init();
 

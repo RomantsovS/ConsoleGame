@@ -8,6 +8,8 @@
 
 Win32Vars_t win32;
 
+#pragma optimize( "", on)
+
 /*
 =============
 Sys_Error
@@ -242,7 +244,12 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent) {
 	return TRUE;
 }
 
-int main(int argc, const char * const * argv, const char * cmdline) {
+int main(int argc, const char * const * argv) {
+#ifdef DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetBreakAlloc(13910);
+#endif
+
 	if (SetConsoleCtrlHandler(
 		(PHANDLER_ROUTINE)ConsoleHandler, TRUE) == FALSE) {
 		// unable to install handler... 
@@ -254,14 +261,17 @@ int main(int argc, const char * const * argv, const char * cmdline) {
 	// get the initial time base
 	Sys_Milliseconds();
 
-	common->Init(argc, argv, cmdline);
+	//common->Init(argc, argv, nullptr);
 
 	// main game loop
 	while (1)
 	{
 		// run the game
-		common->Frame();
+		//common->Frame();
+		Sys_Sleep(1000);
 	}
+
+	common->Shutdown();
 
 	return 0;
 }

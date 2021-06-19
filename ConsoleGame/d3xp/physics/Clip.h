@@ -8,56 +8,7 @@ class idClipModel;
 class idEntity;
 
 struct clipLink_t;
-
-struct clipSector_t {
-	int axis;		// -1 = leaf node
-	float dist;
-	std::shared_ptr<clipSector_t> children[2];
-	clipLink_t* clipLinks;
-};
-
-struct clipLink_t {
-	clipLink_t()
-	{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s ctor\n", "clipLink_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
-	}
-
-	~clipLink_t()
-	{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s dtor\n", "clipLink_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
-	}
-
-	idClipModel* clipModel;
-	std::weak_ptr<clipSector_t> sector;
-	clipLink_t* prevInSector;
-	clipLink_t* nextInSector;
-	std::shared_ptr<clipLink_t> nextLink;
-};
-
-struct trmCache_t {
-	trmCache_t() : trm(std::make_shared<idTraceModel>())
-	{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s ctor\n", "trmCache_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
-	}
-
-	~trmCache_t()
-	{
-#ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s dtor\n", "trmCache_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
-	}
-
-	std::shared_ptr<idTraceModel> trm;
-	int						refCount;
-	//float					volume;
-	//Vector2					centerOfMass;
-};
+struct clipSector_t;
 
 class idClipModel : public std::enable_shared_from_this<idClipModel>{
 	friend class idClip;

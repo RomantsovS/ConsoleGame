@@ -24,3 +24,9 @@ idSWFTextInstance::GetTextLength
 size_t idSWFTextInstance::GetTextLength() {
 	return text.size();
 }
+
+void idSWFTextInstance::Clear() {
+	scriptObject->SetText(NULL);
+	scriptObject->Clear();
+	scriptObject = nullptr;
+}

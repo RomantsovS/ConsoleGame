@@ -112,7 +112,7 @@ bool idDict::GetVector(const std::string key, std::string defaultString, Vector2
 idDict::FindKey
 ================
 */
-const std::string& idDict::FindKey(const std::string& key) const {
+std::string idDict::FindKey(const std::string& key) const {
 	if (key.empty()) {
 		common->DWarning("idDict::FindKey: empty key");
 		return "";

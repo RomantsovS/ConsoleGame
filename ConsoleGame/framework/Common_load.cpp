@@ -101,12 +101,12 @@ void idCommonLocal::ExecuteMapChange() {
 	// If the session state is not loading here, something went wrong.
 	if (session->GetState() == idSession::sessionState_t::LOADING) {
 		// Notify session we are done loading
-		session->LoadingFinished();
+		/*session->LoadingFinished();
 
 		while (session->GetState() == idSession::sessionState_t::LOADING) {
 			session->UpdateSignInManager();
 			Sys_Sleep(10);
-		}
+		}*/
 	}
 
 	//if (!mapSpawnData.savegameFile)

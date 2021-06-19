@@ -16,10 +16,11 @@ class idCommonLocal : public idCommon
 {
 public:
 	idCommonLocal();
+	~idCommonLocal();
 
 	void Init(int argc, const char * const * argv, const char *cmdline) override;
 	void Shutdown() override;
-	virtual	void CreateMainMenu() override;
+	void CreateMainMenu() override;
 	virtual void Quit() override;
 
 	void Frame() override;
@@ -45,7 +46,6 @@ private:
 	bool com_shuttingDown;
 
 	std::shared_ptr<idFile> logFile;
-	bool log_file_closed;
 
 	char errorMessage[MAX_PRINT_MSG_SIZE];
 

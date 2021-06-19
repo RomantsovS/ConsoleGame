@@ -66,5 +66,6 @@ public:
 };
 
 extern idCommon * common;
+extern bool isCommonExists;
 
 #endif

@@ -46,7 +46,8 @@ public:
 	//----------------------------------
 	void RunTo(int frameNum);
 
-	//void FreeDisplayList();
+	void FreeDisplayList();
+	void Clear();
 	swfDisplayEntry_t* AddDisplayEntry(int depth, bool isSprite);
 private:
 	std::weak_ptr<idSWF> swf;

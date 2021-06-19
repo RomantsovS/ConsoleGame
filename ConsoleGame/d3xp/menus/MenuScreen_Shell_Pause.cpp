@@ -62,8 +62,8 @@ idMenuScreen_Shell_Pause::Update
 */
 void idMenuScreen_Shell_Pause::Update() {
 
-	if (menuData) {
-		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = menuData->GetCmdBar();
+	if (auto spMenuData = menuData.lock()) {
+		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
@@ -169,11 +169,13 @@ idMenuScreen_Shell_Pause::HandleAction
 */
 bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
 
-	if (!menuData) {
+	auto spMenuData = menuData.lock();
+
+	if (!spMenuData) {
 		return true;
 	}
 
-	if (menuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)) {
+	if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)) {
 		return false;
 	}
 
@@ -192,7 +194,7 @@ bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidg
 				break;
 			}
 			case static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_SETTINGS) : {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_SETTINGS);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_SETTINGS);
 				break;
 			}
 			case static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_LEAVE) :
@@ -201,16 +203,16 @@ bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidg
 				break;
 			}
 			case static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN) : {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_INVALID);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_INVALID);
 				game->Shell_Show(false);
 				break;
 			}
 			case static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_LOAD) : {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_LOAD);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_LOAD);
 				break;
 			}
 			case static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_SAVE) : {
-				menuData->SetNextScreen(shellAreas_t::SHELL_AREA_SAVE);
+				spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_SAVE);
 				break;
 			}
 		}

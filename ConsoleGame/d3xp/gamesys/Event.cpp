@@ -140,11 +140,25 @@ std::allocator<byte> idEvent::eventDataAllocator;
 
 /*
 ================
+idEvent::idEvent()
+================
+*/
+idEvent::idEvent() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	//common->DPrintf("%s ctor\n", "idEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
+}
+
+/*
+================
 idEvent::~idEvent()
 ================
 */
 idEvent::~idEvent() {
-	Free();
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	//common->DPrintf("%s dtor\n", "idEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	Free(false);
 }
 
 /*
@@ -245,7 +259,7 @@ std::shared_ptr<idEvent> idEvent::Alloc(const idEventDef* evdef, int numargs, va
 idEvent::Free
 ================
 */
-void idEvent::Free() {
+void idEvent::Free(bool setOwner) {
 	if (data) {
 		eventDataAllocator.deallocate(data, sizeof(data));
 		data = nullptr;
@@ -256,7 +270,8 @@ void idEvent::Free() {
 	object = nullptr;
 	typeinfo = nullptr;
 
-	eventNode.SetOwner(shared_from_this());
+	if(setOwner)
+		eventNode.SetOwner(shared_from_this());
 	eventNode.AddToEnd(FreeEvents);
 }
 
@@ -332,7 +347,10 @@ void idEvent::ClearEventList() {
 	// add the events to the free list
 	//
 	for (size_t i = 0; i < EventPool.size(); i++) {
-		EventPool[i]->Free();
+		if (EventPool[i]) {
+			EventPool[i]->Free();
+			//EventPool[i] = nullptr;
+		}
 	}
 }
 
@@ -438,7 +456,11 @@ void idEvent::Init() {
 
 	EventPool.resize(MAX_EVENTS);
 	for (size_t i = 0; i < MAX_EVENTS; ++i) {
+#ifdef DEBUG
+		EventPool[i] = std::shared_ptr<idEvent>(DBG_NEW idEvent());
+#else
 		EventPool[i] = std::make_shared<idEvent>();
+#endif
 	}
 
 	ClearEventList();

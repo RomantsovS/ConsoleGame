@@ -84,7 +84,7 @@ void idCommonLocal::Frame() {
 
 		if (session->GetState() == idSession::sessionState_t::LOADING) {
 			// If the session reports we should be loading a map, load it!
-			ExecuteMapChange();
+			//ExecuteMapChange();
 			return;
 		}
 		else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
