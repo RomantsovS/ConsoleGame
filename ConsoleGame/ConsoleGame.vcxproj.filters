@@ -312,6 +312,9 @@
     <ClInclude Include="d3xp\WorldSpawn.h">
       <Filter>d3xp</Filter>
     </ClInclude>
+    <ClInclude Include="idlib\Heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer\Model.cpp">

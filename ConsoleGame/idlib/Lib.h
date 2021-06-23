@@ -1,6 +1,15 @@
 #ifndef IDLIB_LIB_H_
 #define IDLIB_LIB_H_
 
+class idLib {
+private:
+public:
+	static class idCommon* common;
+
+	// wrapper to idCommon functions 
+	static void Printf(const char* fmt, ...);
+};
+
 #define MAX_STRING_CHARS		1024		// max length of a string
 #define MAX_PRINT_MSG			16384		// buffer size for our various printf routines
 
@@ -16,6 +25,7 @@
 #include "sys/sys_assert.h"
 
 // memory management and arrays
+#include "Heap.h"
 
 // math
 #include "math/Math.h"

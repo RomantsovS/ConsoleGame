@@ -57,8 +57,7 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 	CrtMemBlockHeader* pHead;
 	byte* temp;
 
-	if (nBlockUse == _CRT_BLOCK)
-	{
+	if (nBlockUse == _CRT_BLOCK) {
 		return(TRUE);
 	}
 
@@ -101,10 +100,7 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 	
 	const char* operation[] = { "", "allocating", "re-allocating", "freeing" };
 	const char* blockType[] = { "Free", "Normal", "CRT", "Ignore", "Client" };
-
-	if (nBlockUse == _CRT_BLOCK)   // Ignore internal C runtime library allocations
-		return(1);
-
+	
 	_ASSERT((nAllocType > 0) && (nAllocType < 4));
 	_ASSERT((nBlockUse >= 0) && (nBlockUse < 5));
 
@@ -387,7 +383,7 @@ int main(int argc, const char * const * argv) {
 	char timeStr[TIME_STR_LENGTH], dateStr[DATE_STR_LENGTH];         // Used to set up log file
 
 	// Open a log file for the hook functions to use 
-	fopen_s(&logFile, "MEM-LOG.TXT", "w");
+	fopen_s(&logFile, "mem.log", "w");
 	if (logFile == nullptr)
 		exit(FILE_IO_ERROR);
 	_strtime_s(timeStr, TIME_STR_LENGTH);
@@ -397,7 +393,7 @@ int main(int argc, const char * const * argv) {
 		timeStr, dateStr);
 	fputs(lineStr, logFile);
 
-	_CrtSetBreakAlloc(11985);
+	_CrtSetBreakAlloc(11883);
 #endif
 
 	if (SetConsoleCtrlHandler(

@@ -124,13 +124,14 @@ idSWFScriptObject::guiNamedVar_t* idSWFScriptObject::GetVariable(const std::stri
 
 	if (create) {
 		variables.emplace_back();
-		guiNamedVar_t* variable = &variables.back();
-		variable->index = atoi(name.c_str());
-		if (variable->index == 0 && name == "0") {
-			variable->index = -1;
+		guiNamedVar_t& variable = variables.back();
+
+		variable.index = atoi(name.c_str());
+		if (variable.index == 0 && name == "0") {
+			variable.index = -1;
 		}
-		variable->name = name;
-		return variable;
+		variable.name = name;
+		return &variable;
 	}
 	return nullptr;
 }

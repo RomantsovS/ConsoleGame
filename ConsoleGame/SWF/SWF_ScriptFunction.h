@@ -8,7 +8,16 @@ Interface for calling functions from script
 */
 class idSWFScriptFunction {
 public:
-	virtual ~idSWFScriptFunction() {};
+	idSWFScriptFunction() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "idSWFScriptFunction");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+	virtual ~idSWFScriptFunction() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "idSWFScriptFunction");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	};
 
 	virtual idSWFScriptVar Call(std::shared_ptr<idSWFScriptObject> thisObject, const idSWFParmList& parm) { return idSWFScriptVar(); }; // this should never be hit
 };

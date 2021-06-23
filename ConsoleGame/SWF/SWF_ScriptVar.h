@@ -24,7 +24,15 @@ public:
 
 	idSWFScriptVar& operator=(const idSWFScriptVar& other);
 
-	void SetString(const std::string& s) { Free(); type = swfScriptVarType::SWF_VAR_STRING; value.string = std::make_shared<std::string>(s); }
+	void SetString(const std::string& s) {
+		Free();
+		type = swfScriptVarType::SWF_VAR_STRING;
+#ifdef DEBUG
+		value.string = std::shared_ptr<std::string>(DBG_NEW std::string());
+#else
+		value.string = std::make_shared<std::string>(s);
+#endif
+	}
 	void SetFloat(float f) { Free(); type = swfScriptVarType::SWF_VAR_FLOAT; value.f = f; }
 	void SetBool(bool b) { Free(); type = swfScriptVarType::SWF_VAR_BOOL; value.b = b; }
 	void SetInteger(int i) { Free(); type = swfScriptVarType::SWF_VAR_INTEGER; value.i = i; }
@@ -36,9 +44,9 @@ public:
 	bool ToBool() const;
 	int ToInteger() const;
 
-	std::shared_ptr<idSWFScriptObject> GetObjectScript() { return value.object; }
-	std::shared_ptr<idSWFScriptObject> GetObjectScript() const { return value.object; }
-	std::shared_ptr<idSWFScriptFunction> GetFunction() { return value.function; }
+	std::shared_ptr<idSWFScriptObject> GetObjectScript() { return value.object.lock(); }
+	std::shared_ptr<idSWFScriptObject> GetObjectScript() const { return value.object.lock(); }
+	std::shared_ptr<idSWFScriptFunction> GetFunction() { return value.function.lock(); }
 	std::shared_ptr<idSWFSpriteInstance> ToSprite();
 	std::shared_ptr<idSWFTextInstance> ToText();
 
@@ -82,9 +90,9 @@ private:
 		float f;
 		int i;
 		bool b;
-		std::shared_ptr<idSWFScriptObject> object;
+		std::weak_ptr<idSWFScriptObject> object;
 		std::shared_ptr<std::string> string;
-		std::shared_ptr<idSWFScriptFunction> function;
+		std::weak_ptr<idSWFScriptFunction> function;
 	} value;
 };
 #endif

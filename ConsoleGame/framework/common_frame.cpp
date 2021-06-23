@@ -93,6 +93,17 @@ void idCommonLocal::Frame() {
 			//LeaveGame();
 			return;
 		}
+		if(session->GetState() == idSession::sessionState_t::INGAME) {
+			if(gameFrame == 50)
+				StartMenu();
+			if (gameFrame == 51) {
+				sysEvent_t ev;
+				ev.evType = SE_KEY;
+				ev.evValue = 27;
+				ev.evValue2 = 1;
+				ProcessEvent(&ev);
+			}
+		}
 
 		// send frame and mouse events to active guis
 		GuiFrameEvents();

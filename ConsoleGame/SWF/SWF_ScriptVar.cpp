@@ -41,8 +41,8 @@ idSWFScriptVar::Free
 */
 void idSWFScriptVar::Free() {
 	value.string = nullptr;
-	value.function = nullptr;
-	value.object = nullptr;
+	value.function.reset();
+	value.object.reset();
 	type = swfScriptVarType::SWF_VAR_UNDEF;
 }
 
@@ -157,8 +157,8 @@ idSWFScriptVar::ToSprite
 ========================
 */
 std::shared_ptr<idSWFSpriteInstance> idSWFScriptVar::ToSprite() {
-	if (IsObject() && value.object) {
-		return value.object->GetSprite();
+	if (IsObject() && !value.object.expired()) {
+		return value.object.lock()->GetSprite();
 	}
 
 	return nullptr;
@@ -170,8 +170,8 @@ idSWFScriptVar::ToText
 ========================
 */
 std::shared_ptr<idSWFTextInstance> idSWFScriptVar::ToText() {
-	if (IsObject() && value.object) {
-		return value.object->GetText();
+	if (IsObject() && !value.object.expired()) {
+		return value.object.lock()->GetText();
 	}
 
 	return nullptr;

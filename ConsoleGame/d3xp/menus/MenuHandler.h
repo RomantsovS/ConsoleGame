@@ -53,23 +53,25 @@ static constexpr int MAX_SCREEN_AREAS = 32;
 static constexpr int DEFAULT_REPEAT_TIME = 150;
 
 struct actionRepeater_t {
-	actionRepeater_t() :
-		widget(nullptr),
-		numRepetitions(0),
-		nextRepeatTime(0),
-		screenIndex(-1),
-		repeatDelay(DEFAULT_REPEAT_TIME),
-		isActive(false) {
+	actionRepeater_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "actionRepeater_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+	~actionRepeater_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "actionRepeater_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	std::shared_ptr<idMenuWidget> widget;
+	std::shared_ptr<idMenuWidget> widget{};
 	idWidgetEvent		event;
 	idWidgetAction		action;
-	int					numRepetitions;
-	int					nextRepeatTime;
-	int					repeatDelay;
-	int					screenIndex;
-	bool				isActive;
+	int					numRepetitions{};
+	int					nextRepeatTime{};
+	int					repeatDelay{DEFAULT_REPEAT_TIME};
+	int					screenIndex{ -1 };
+	bool				isActive{};
 };
 
 class idMenuScreen;

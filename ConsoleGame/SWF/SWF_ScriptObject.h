@@ -33,15 +33,24 @@ public:
 	std::shared_ptr<idSWFTextInstance> GetNestedText(const char* arg1, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL, const char* arg6 = NULL);
 private:
 	struct guiNamedVar_t {
-		guiNamedVar_t() : index(-1) { }
-		~guiNamedVar_t() {}
+		guiNamedVar_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+			common->DPrintf("%s ctor\n", "guiNamedVar_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+		}
+		~guiNamedVar_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+			if(isCommonExists)
+				common->DPrintf("%s dtor\n", "guiNamedVar_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+		}
 		//guiNamedVar_t& operator=(const guiNamedVar_t& other);
 
-		int index;
+		int index{ -1 };
 		std::string name;
 		idSWFScriptVar value;
 	};
-	std::vector<guiNamedVar_t> variables;
+	std::vector<guiNamedVar_t, MyAlloc<guiNamedVar_t>> variables;
 
 	enum class swfObjectType_t {
 		SWF_OBJECT_OBJECT,

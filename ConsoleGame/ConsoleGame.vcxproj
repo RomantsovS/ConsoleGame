@@ -177,6 +177,7 @@
     <ClInclude Include="idlib\containers\LinkList.h" />
     <ClInclude Include="idlib\Dict.h" />
     <ClInclude Include="idlib\geometry\TraceModel.h" />
+    <ClInclude Include="idlib\Heap.h" />
     <ClInclude Include="idlib\Lexer.h" />
     <ClInclude Include="idlib\Lib.h" />
     <ClInclude Include="idlib\MapFile.h" />

@@ -39,6 +39,56 @@ void idCollisionModelManagerLocal::Clear() {
 	numContacts = 0;
 }
 
+/*
+================
+idCollisionModelManagerLocal::RemoveBrushReferences_r
+================
+*/
+void idCollisionModelManagerLocal::RemoveBrushReferences_r(std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b) {
+	while (node) {
+		for (std::shared_ptr<cm_brushRef_t> bref = node->brushes; bref; bref = bref->next) {
+			if (bref->b == b) {
+				bref->b = nullptr;
+				return;
+			}
+		}
+		// if leaf node
+		if (node->planeType == -1) {
+			break;
+		}
+		/*if (b->bounds[0][node->planeType] > node->planeDist) {
+			node = node->children[0];
+		}
+		else if (b->bounds[1][node->planeType] < node->planeDist) {
+			node = node->children[1];
+		}
+		else {
+			RemoveBrushReferences_r(node->children[1], b);
+			node = node->children[0];
+		}*/
+	}
+}
+
+/*
+================
+idCollisionModelManagerLocal::FreeNode
+================
+*/
+void idCollisionModelManagerLocal::FreeNode(std::shared_ptr<cm_node_t> node) {
+	// don't free the node here
+	// the nodes are allocated in blocks which are freed when the model is freed
+}
+
+/*
+================
+idCollisionModelManagerLocal::FreeBrushReference
+================
+*/
+void idCollisionModelManagerLocal::FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref) {
+	// don't free the brush reference here
+	// the brush references are allocated in blocks which are freed when the model is freed
+}
+
 void idCollisionModelManagerLocal::FreeTrmModelStructure()
 {
 	//int i;
@@ -68,18 +118,45 @@ void idCollisionModelManagerLocal::FreeBrush(std::shared_ptr<cm_model_t> model, 
 	}*/
 }
 
+/*
+================
+idCollisionModelManagerLocal::FreeTree_r
+================
+*/
+void idCollisionModelManagerLocal::FreeTree_r(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> headNode, std::shared_ptr<cm_node_t> node) {
+	// free all brushes at this node
+	for (std::shared_ptr<cm_brushRef_t> bref = node->brushes; bref; bref = node->brushes) {
+		std::shared_ptr<cm_brush_t> b = bref->b;
+		if (b) {
+			// remove all other references to this brush
+			RemoveBrushReferences_r(headNode, b);
+			FreeBrush(model, b);
+		}
+		node->brushes = bref->next;
+		FreeBrushReference(bref);
+	}
+	// recurse down the tree
+	if (node->planeType != -1) {
+		FreeTree_r(model, headNode, node->children[0]);
+		node->children[0] = NULL;
+		FreeTree_r(model, headNode, node->children[1]);
+		node->children[1] = NULL;
+	}
+	FreeNode(node);
+}
+
 void idCollisionModelManagerLocal::FreeModel(std::shared_ptr<cm_model_t> model)
 {
 	/*cm_polygonRefBlock_t* polygonRefBlock, * nextPolygonRefBlock;
 	cm_brushRefBlock_t* brushRefBlock, * nextBrushRefBlock;
-	cm_nodeBlock_t* nodeBlock, * nextNodeBlock;
+	cm_nodeBlock_t* nodeBlock, * nextNodeBlock;*/
 
 	// free the tree structure
 	if (model->node) {
 		FreeTree_r(model, model->node, model->node);
 	}
 	// free blocks with polygon references
-	for (polygonRefBlock = model->polygonRefBlocks; polygonRefBlock; polygonRefBlock = nextPolygonRefBlock) {
+	/*for (polygonRefBlock = model->polygonRefBlocks; polygonRefBlock; polygonRefBlock = nextPolygonRefBlock) {
 		nextPolygonRefBlock = polygonRefBlock->next;
 		Mem_Free(polygonRefBlock);
 	}
@@ -698,7 +775,6 @@ idCollisionModelManagerLocal::AccumulateModelInfo
 void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t* model) {
 	int i;
 
-	memset(model, 0, sizeof(*model));
 	// accumulate statistics of all loaded models
 	for (i = 0; i < numModels; i++) {
 		model->numVertices += models[i]->numVertices;
@@ -752,7 +828,7 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::CollisionModelForMapEn
 	std::shared_ptr<cm_model_t> model;
 	idBounds bounds;
 	std::string name;
-	int i, brushCount;
+	int i{}, brushCount{};
 
 	// if the entity has no primitives
 	if (mapEnt->GetNumPrimitives() < 1) {
@@ -878,6 +954,7 @@ std::shared_ptr<cm_model_t> idCollisionModelManagerLocal::LoadBinaryModelFromFil
 
 	struct local {
 		static void ReadNodeTree(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> node, std::vector<std::shared_ptr<cm_brush_t>>& brushes) {
+			node->planeType = -1;
 			int i = 0;
 			
 			std::shared_ptr<cm_brushRef_t> bref = collisionModelManagerLocal.AllocBrushReference(model, model->numBrushRefs);

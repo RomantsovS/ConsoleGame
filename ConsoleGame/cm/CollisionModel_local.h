@@ -75,37 +75,37 @@ struct cm_model_t {
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	std::string					name;				// model name
-	idBounds				bounds;				// model bounds
-	int						contents;			// all contents of the model ored together
-	bool					isConvex;			// set if model is convex
+	std::string					name{};				// model name
+	idBounds				bounds{};				// model bounds
+	int						contents{};			// all contents of the model ored together
+	bool					isConvex{};			// set if model is convex
 	// model geometry
-	int						maxVertices;		// size of vertex array
-	int						numVertices;		// number of vertices
-	std::vector<cm_vertex_t> vertices;			// array with all vertices used by the model
+	int						maxVertices{};		// size of vertex array
+	int						numVertices{};		// number of vertices
+	std::vector<cm_vertex_t> vertices{};			// array with all vertices used by the model
 	//int						maxEdges;			// size of edge array
 	//int						numEdges;			// number of edges
 	//cm_edge_t* edges;				// array with all edges used by the model
-	std::shared_ptr<cm_node_t> node;				// first node of spatial subdivision
+	std::shared_ptr<cm_node_t> node{};				// first node of spatial subdivision
 	// blocks with allocated memory
-	std::shared_ptr<cm_nodeBlock_t> nodeBlocks;			// list with blocks of nodes
+	std::shared_ptr<cm_nodeBlock_t> nodeBlocks{};			// list with blocks of nodes
 	//cm_polygonRefBlock_t* polygonRefBlocks;	// list with blocks of polygon references
-	std::shared_ptr<cm_brushRefBlock_t> brushRefBlocks;		// list with blocks of brush references
+	std::shared_ptr<cm_brushRefBlock_t> brushRefBlocks{};		// list with blocks of brush references
 	//cm_polygonBlock_t* polygonBlock;		// memory block with all polygons
 	//std::shared_ptr<cm_brushBlock_t> brushBlock;			// memory block with all brushes
 	// statistics
 	/*int						numPolygons;
 	int						polygonMemory;*/
-	int						numBrushes;
-	int						brushMemory;
-	int						numNodes;
-	int						numBrushRefs;
+	int						numBrushes{};
+	int						brushMemory{};
+	int						numNodes{};
+	int						numBrushRefs{};
 	/*int						numPolygonRefs;
 	int						numInternalEdges;
 	int						numSharpEdges;
 	int						numRemovedPolys;
 	int						numMergedPolys;*/
-	int						usedMemory;
+	int						usedMemory{};
 };
 
 /*
@@ -228,9 +228,14 @@ private:			// CollisionMap_trace.cpp
 private:			// CollisionMap_load.cpp
 	void Clear();
 	void FreeTrmModelStructure();
+	// model deallocation
+	void RemoveBrushReferences_r(std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b);
+	void FreeNode(std::shared_ptr<cm_node_t> node);
+	void FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref);
 
 	// model deallocation
 	void FreeBrush(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_brush_t> brush);
+	void FreeTree_r(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> headNode, std::shared_ptr<cm_node_t> node);
 	void FreeModel(std::shared_ptr<cm_model_t> model);
 
 	// creation of axial BSP tree

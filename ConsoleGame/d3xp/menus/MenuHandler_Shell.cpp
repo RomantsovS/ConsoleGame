@@ -124,9 +124,15 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 	//---------------------
 	// Initialize the menus
 	//---------------------
-#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
+#ifdef DEBUG
+	#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
+	menuScreens[ (screenId) ] = std::shared_ptr<className>(DBG_NEW className());	\
+	menuScreens[ (screenId) ]->Initialize( menuHandler );
+#else
+	#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
 	menuScreens[ (screenId) ] = std::make_shared<className>();	\
 	menuScreens[ (screenId) ]->Initialize( menuHandler );
+#endif
 
 	for (int i = 0; i < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS); ++i) {
 		menuScreens[i] = nullptr;

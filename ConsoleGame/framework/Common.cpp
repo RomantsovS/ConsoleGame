@@ -58,6 +58,9 @@ void idCommonLocal::CleanupShell() {
 
 void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdline) {
 	try {
+		// set interface pointers used by idLib
+		idLib::common = common;
+
 		Printf(va("Command line: %s\n", cmdline).c_str());
 
 		// init console command system

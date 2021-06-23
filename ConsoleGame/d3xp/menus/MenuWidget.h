@@ -130,7 +130,9 @@ public:
 		type(widgetEvent_t::WIDGET_EVENT_PRESS),
 		arg(0),
 		thisObject(nullptr) {
-
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "idWidgetEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	idWidgetEvent(const widgetEvent_t type_, const int arg_, std::shared_ptr<idSWFScriptObject> thisObject_, const idSWFParmList& parms_) :
@@ -138,6 +140,9 @@ public:
 		arg(arg_),
 		thisObject(thisObject_),
 		parms(parms_) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "idWidgetEvent");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	widgetEvent_t type;
@@ -579,6 +584,14 @@ public:
 		targetWidget(widget),
 		type(actionEventType),
 		targetEvent(_event) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "idWidgetActionHandler");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+	virtual ~idWidgetActionHandler() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s dtor\n", "idWidgetActionHandler");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	idSWFScriptVar Call(std::shared_ptr<idSWFScriptObject> thisObject, const idSWFParmList& parms) {
