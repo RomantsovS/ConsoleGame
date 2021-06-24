@@ -63,6 +63,8 @@ public:
 
 	// Processes the given event.
 	virtual	bool				ProcessEvent(const sysEvent_t* event) = 0;
+
+	virtual void QuitRequest() = 0;
 };
 
 extern idCommon * common;

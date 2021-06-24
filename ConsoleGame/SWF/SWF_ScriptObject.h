@@ -50,7 +50,7 @@ private:
 		std::string name;
 		idSWFScriptVar value;
 	};
-	std::vector<guiNamedVar_t, MyAlloc<guiNamedVar_t>> variables;
+	std::vector<guiNamedVar_t/*, MyAlloc<guiNamedVar_t>*/> variables;
 
 	enum class swfObjectType_t {
 		SWF_OBJECT_OBJECT,

@@ -166,8 +166,7 @@ Sys_Quit
 ==============
 */
 void Sys_Quit() {
-	//exit(EXIT_SUCCESS);
-	ExitProcess(0);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -393,7 +392,7 @@ int main(int argc, const char * const * argv) {
 		timeStr, dateStr);
 	fputs(lineStr, logFile);
 
-	_CrtSetBreakAlloc(11883);
+	//_CrtSetBreakAlloc(1143);
 #endif
 
 	if (SetConsoleCtrlHandler(
@@ -407,13 +406,15 @@ int main(int argc, const char * const * argv) {
 	// get the initial time base
 	Sys_Milliseconds();
 
+	//auto j = DBG_NEW int;
+
 	common->Init(argc, argv, nullptr);
 	
 	Sys_DebugMemory_f();
 
 	// main game loop
-	//while (1) {
-	for(size_t i = 0; i < 1; ++i) {
+	while (1) {
+	//for(size_t i = 0; i < 100000; ++i) {
 #ifdef DEBUG
 		Sys_MemFrame();
 #endif
@@ -421,7 +422,7 @@ int main(int argc, const char * const * argv) {
 		common->Frame();
 	}
 
-	common->Shutdown();
+	common->Quit();
 
 	return 0;
 }

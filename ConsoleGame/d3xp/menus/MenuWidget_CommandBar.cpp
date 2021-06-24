@@ -124,7 +124,8 @@ idMenuWidget_CommandBar::ReceiveEvent
 bool idMenuWidget_CommandBar::ExecuteEvent(const idWidgetEvent& event) {
 	if (event.type == widgetEvent_t::WIDGET_EVENT_COMMAND) {
 		if (event.arg >= 0 && event.arg < buttons.size()) {
-			HandleAction(buttons[event.arg].action, event, shared_from_this());
+			auto this_sp = shared_from_this();
+			HandleAction(buttons[event.arg].action, event, this_sp);
 		}
 		return true;
 	}

@@ -8,10 +8,15 @@ const int FSFLAG_RETURN_FILE_MEM = (1 << 1);
 const std::string BASE_GAMEDIR = "base";
 
 struct searchpath_t {
-	searchpath_t(const std::string& path, const std::string& gamedir)
-	{
-		this->path = path;
-		this->gamedir = gamedir;
+	searchpath_t(const std::string& _path, const std::string& _gamedir) : path(_path), gamedir(_gamedir) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		common->DPrintf("%s ctor\n", "searchpath_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
+	}
+	~searchpath_t() {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+		idLib::Printf("%s dtor\n", "searchpath_t");
+#endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
 	std::string	path;		// c:\doom
@@ -21,14 +26,13 @@ struct searchpath_t {
 class idFileSystemLocal : public idFileSystem {
 public:
 	idFileSystemLocal() {}
-	~idFileSystemLocal()
-	{
+	~idFileSystemLocal() {
 		isFileSystemExists = false;
 	}
 
 	virtual void Init() override;
-	virtual void Shutdown(bool reloading) override;
-	virtual bool IsInitialized() const override;
+	void Shutdown(bool reloading) override;
+	bool IsInitialized() const override;
 	virtual std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
 	virtual void FreeFileList(std::shared_ptr<idFileList> fileList) override;
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
@@ -162,12 +166,10 @@ void idFileSystemLocal::Init()
 	}
 }
 
-void idFileSystemLocal::Shutdown(bool reloading)
-{
+void idFileSystemLocal::Shutdown(bool reloading) {
 }
 
-bool idFileSystemLocal::IsInitialized() const
-{
+bool idFileSystemLocal::IsInitialized() const {
 	return !searchPaths.empty();
 }
 

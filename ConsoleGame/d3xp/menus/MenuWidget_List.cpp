@@ -49,7 +49,7 @@ void idMenuWidget_List::Update() {
 idMenuWidget_List::HandleAction
 ========================
 */
-bool idMenuWidget_List::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuWidget_List::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	const idSWFParmList& parms = action.GetParms();
 

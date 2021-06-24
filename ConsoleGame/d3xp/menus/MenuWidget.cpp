@@ -125,7 +125,8 @@ bool idMenuWidget::ExecuteEvent(const idWidgetEvent& event) {
 
 	if (actions != nullptr) {
 		for (size_t actionIndex = 0; actionIndex < actions->size(); ++actionIndex) {
-			HandleAction((*actions)[actionIndex], event, shared_from_this());
+			auto this_sp = shared_from_this();
+			HandleAction((*actions)[actionIndex], event, this_sp);
 		}
 	}
 
@@ -208,12 +209,12 @@ std::shared_ptr<idSWF> idMenuWidget::GetSWFObject() {
 idMenuWidget::GetMenuData
 ========================
 */
-std::shared_ptr<idMenuHandler> idMenuWidget::GetMenuData() {
-	if (parent.lock()) {
-		return parent.lock()->GetMenuData();
+std::weak_ptr<idMenuHandler> idMenuWidget::GetMenuData() {
+	if (auto parent_sp = parent.lock()) {
+		return parent_sp->GetMenuData();
 	}
 
-	return menuData.lock();
+	return menuData;
 }
 
 /*
@@ -325,7 +326,7 @@ void idMenuWidget::SetState(const widgetState_t state) {
 idMenuWidget::HandleAction
 ========================
 */
-bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	bool handled = false;
 	if (GetParent()) {
@@ -337,9 +338,9 @@ bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& eve
 			return false;
 		}
 
-		std::shared_ptr<idMenuHandler> data = GetMenuData();
-		if (data) {
-			return data->HandleAction(action, event, widget, false);
+		std::weak_ptr<idMenuHandler> data = GetMenuData();
+		if (auto data_sp = data.lock()) {
+			return data_sp->HandleAction(action, event, widget, false);
 		}
 	}
 

@@ -350,7 +350,6 @@ void idEvent::ClearEventList() {
 	for (size_t i = 0; i < EventPool.size(); i++) {
 		if (EventPool[i]) {
 			EventPool[i]->Free();
-			EventPool[i] = nullptr;
 		}
 	}
 }

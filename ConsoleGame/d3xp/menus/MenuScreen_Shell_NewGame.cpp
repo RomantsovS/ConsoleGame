@@ -116,7 +116,7 @@ void idMenuScreen_Shell_NewGame::HideScreen() {
 idMenuScreen_Shell_NewGame::HandleAction h
 ========================
 */
-bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	if (auto spMenuData = menuData.lock()) {
 		if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME)) {

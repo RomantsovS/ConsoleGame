@@ -28,7 +28,7 @@ public:
 		Free();
 		type = swfScriptVarType::SWF_VAR_STRING;
 #ifdef DEBUG
-		value.string = std::shared_ptr<std::string>(DBG_NEW std::string());
+		value.string = std::shared_ptr<std::string>(DBG_NEW std::string(s));
 #else
 		value.string = std::make_shared<std::string>(s);
 #endif
@@ -46,7 +46,7 @@ public:
 
 	std::shared_ptr<idSWFScriptObject> GetObjectScript() { return value.object.lock(); }
 	std::shared_ptr<idSWFScriptObject> GetObjectScript() const { return value.object.lock(); }
-	std::shared_ptr<idSWFScriptFunction> GetFunction() { return value.function.lock(); }
+	std::shared_ptr<idSWFScriptFunction> GetFunction() { return value.function; }
 	std::shared_ptr<idSWFSpriteInstance> ToSprite();
 	std::shared_ptr<idSWFTextInstance> ToText();
 
@@ -92,7 +92,7 @@ private:
 		bool b;
 		std::weak_ptr<idSWFScriptObject> object;
 		std::shared_ptr<std::string> string;
-		std::weak_ptr<idSWFScriptFunction> function;
+		std::shared_ptr<idSWFScriptFunction> function;
 	} value;
 };
 #endif

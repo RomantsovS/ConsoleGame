@@ -21,7 +21,7 @@ public:
 	void Init(int argc, const char * const * argv, const char *cmdline) override;
 	void Shutdown() override;
 	void CreateMainMenu() override;
-	virtual void Quit() override;
+	void Quit() override;
 
 	void Frame() override;
 	void UpdateScreen(bool captureToImage) override;
@@ -40,10 +40,13 @@ public:
 
 	// loads a map and starts a new game on it
 	void StartNewGame(const std::string& mapName, bool devmap, int gameMode);
-	void LeaveGame();
+	//void LeaveGame();
+
+	void QuitRequest() override { quit_requested = true; }
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;
+	bool quit_requested = false;
 
 	std::shared_ptr<idFile> logFile;
 

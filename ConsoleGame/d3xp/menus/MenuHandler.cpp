@@ -153,9 +153,9 @@ bool idMenuHandler::HandleGuiEvent(const sysEvent_t* sev) {
 idMenuHandler::Update
 ================================================
 */
-bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
-	widgetAction_t actionType = action.GetType();
+	const widgetAction_t actionType = action.GetType();
 	const idSWFParmList& parms = action.GetParms();
 
 	switch (actionType) {

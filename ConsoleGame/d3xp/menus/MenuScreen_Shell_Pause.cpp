@@ -150,7 +150,7 @@ idMenuScreen_Shell_Pause::HandleExitGameBtn
 ========================
 */
 void idMenuScreen_Shell_Pause::HandleExitGameBtn() {
-	common->Quit();
+	common->QuitRequest();
 }
 
 /*
@@ -167,7 +167,7 @@ void idMenuScreen_Shell_Pause::HandleRestartBtn() {
 idMenuScreen_Shell_Pause::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 
@@ -179,7 +179,7 @@ bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidg
 		return false;
 	}
 
-	widgetAction_t actionType = action.GetType();
+	const widgetAction_t actionType = action.GetType();
 	const idSWFParmList& parms = action.GetParms();
 
 	switch (actionType) {

@@ -300,7 +300,7 @@ idMenuHandler_Shell::HandleExitGameBtn
 ========================
 */
 void idMenuHandler_Shell::HandleExitGameBtn() {
-	common->Quit();
+	common->QuitRequest();
 }
 
 /*
@@ -308,7 +308,7 @@ void idMenuHandler_Shell::HandleExitGameBtn() {
 idMenuHandler_Shell::HandleAction
 ========================
 */
-bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	if (activeScreen == static_cast<int>(shellAreas_t::SHELL_AREA_INVALID)) {
 		return true;
@@ -333,6 +333,10 @@ bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEve
 
 	switch (actionType) {
 	case widgetAction_t::WIDGET_ACTION_COMMAND: {
+		if (parms.size() < 2) {
+			return true;
+		}
+
 		int cmd = parms[0]->ToInteger();
 
 		const int index = parms[1]->ToInteger();
@@ -377,6 +381,6 @@ idMenuHandler_Shell::StartGame
 */
 void idMenuHandler_Shell::StartGame(int index) {
 	if (index == 0) {
-		cmdSystem->AppendCommandText(va("map %s %d\n", "map_name", 0));
+		cmdSystem->AppendCommandText(va("map %s %d\n", "snake", 0));
 	}
 }

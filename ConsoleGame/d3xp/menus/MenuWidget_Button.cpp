@@ -58,9 +58,9 @@ bool idMenuWidget_Button::ExecuteEvent(const idWidgetEvent& event) {
 	if (GetState() != widgetState_t::WIDGET_STATE_DISABLED) {
 		switch (event.type) {
 		case widgetEvent_t::WIDGET_EVENT_PRESS: {
-			if (GetMenuData()) {
-				//GetMenuData()->PlaySound(GUI_SOUND_ADVANCE);
-			}
+			/*if (GetMenuData()) {
+				GetMenuData()->PlaySound(GUI_SOUND_ADVANCE);
+			}*/
 			//AnimateToState(ANIM_STATE_DOWN);
 			handled = true;
 			break;
@@ -72,9 +72,9 @@ bool idMenuWidget_Button::ExecuteEvent(const idWidgetEvent& event) {
 			break;
 		}
 		case widgetEvent_t::WIDGET_EVENT_ROLL_OVER: {
-			if (GetMenuData()) {
-				//GetMenuData()->PlaySound(GUI_SOUND_ROLL_OVER);
-			}
+			/*if (GetMenuData()) {
+				GetMenuData()->PlaySound(GUI_SOUND_ROLL_OVER);
+			}*/
 			//AnimateToState(ANIM_STATE_OVER);
 			handled = true;
 			break;
@@ -96,11 +96,13 @@ bool idMenuWidget_Button::ExecuteEvent(const idWidgetEvent& event) {
 			break;
 		}
 		case widgetEvent_t::WIDGET_EVENT_SCROLL_LEFT_RELEASE: {
-			GetMenuData()->ClearWidgetActionRepeater();
+			if(auto menuData_sp = GetMenuData().lock())
+				menuData_sp->ClearWidgetActionRepeater();
 			break;
 		}
 		case widgetEvent_t::WIDGET_EVENT_SCROLL_RIGHT_RELEASE: {
-			GetMenuData()->ClearWidgetActionRepeater();
+			if (auto menuData_sp = GetMenuData().lock())
+				menuData_sp->ClearWidgetActionRepeater();
 			break;
 		}
 		}

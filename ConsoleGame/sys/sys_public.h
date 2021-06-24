@@ -229,4 +229,6 @@ using idFileHandle = std::fstream;
 
 char* getLastErrorMsg();
 
+void Sys_DebugMemory_f();
+
 #endif

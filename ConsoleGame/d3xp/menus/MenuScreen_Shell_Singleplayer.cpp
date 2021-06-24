@@ -200,7 +200,7 @@ void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 idMenuScreen_Shell_Singleplayer::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 	if (!spMenuData) {

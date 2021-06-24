@@ -70,7 +70,7 @@ void idMenuScreen_Shell_PressStart::HideScreen() {
 idMenuScreen_Shell_PressStart::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_PressStart::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuScreen_Shell_PressStart::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 

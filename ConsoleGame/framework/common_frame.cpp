@@ -11,6 +11,9 @@ idCVar timescale("timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game fra
 void idCommonLocal::Frame() {
 	try
 	{
+		if (quit_requested)
+			Quit();
+
 		eventLoop->RunEventLoop();
 
 		const bool pauseGame = !mapSpawned || (game && game->Shell_IsActive());
@@ -93,8 +96,8 @@ void idCommonLocal::Frame() {
 			//LeaveGame();
 			return;
 		}
-		if(session->GetState() == idSession::sessionState_t::INGAME) {
-			if(gameFrame == 50)
+		if (session->GetState() == idSession::sessionState_t::INGAME) {
+			if (gameFrame == 50)
 				StartMenu();
 			if (gameFrame == 51) {
 				sysEvent_t ev;

@@ -92,7 +92,7 @@ public:
 	virtual bool HandleGuiEvent(const sysEvent_t* sev);
 	virtual bool IsActive();
 	virtual void ActivateMenu(bool show);
-	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false);
 	virtual int ActiveScreen() { return activeScreen; }
 	virtual void SetNextScreen(shellAreas_t screen) { nextScreen = static_cast<int>(screen); }
 
@@ -134,7 +134,7 @@ public:
 	virtual void ActivateMenu(bool show) override;
 	virtual void Initialize(const std::string& filename) override;
 	virtual void Cleanup() override;
-	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false) override;
+	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false) override;
 	virtual bool HandleGuiEvent(const sysEvent_t* sev) override;
 
 	void SetShellState(shellState_t s) { nextState = s; }

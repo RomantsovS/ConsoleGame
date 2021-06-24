@@ -305,7 +305,7 @@ public:
 	void SetState(const widgetState_t state);
 
 	std::shared_ptr<idSWF> GetSWFObject();
-	std::shared_ptr<idMenuHandler> GetMenuData();
+	std::weak_ptr<idMenuHandler> GetMenuData();
 
 	// actually binds the sprite. this must be called after setting sprite path!
 	std::shared_ptr<idSWFSpriteInstance> GetSprite() { return boundSprite; }
@@ -319,7 +319,7 @@ public:
 	//------------------------
 	// Event Handling
 	//------------------------
-	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false);
 	void ReceiveEvent(const idWidgetEvent& event);
 
 	// Executes an event in the context of this widget.  Only rarely should this be called
@@ -446,7 +446,7 @@ public:
 	}
 
 	virtual void				Update();
-	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled = false);
+	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false) override;
 	//virtual void				ObserveEvent(const idMenuWidget& widget, const idWidgetEvent& event);
 	virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
 	virtual void				ScrollOffset(const int scrollIndexAmount);
@@ -667,7 +667,10 @@ public:
 		}
 
 		if (handled) {
-			targetWidget.lock()->HandleAction(action, idWidgetEvent(targetEvent, 0, thisObject, parms), targetWidget.lock());
+			if (auto tw = targetWidget.lock())
+				tw->HandleAction(action, idWidgetEvent(targetEvent, 0, thisObject, parms), tw);
+			else
+				common->Error("Expired target widget");
 		}
 
 		return idSWFScriptVar();

@@ -52,7 +52,7 @@ void idSWF::Init() {
 
 	mainspriteInstance->PlaceObject(0, true, "menuStart");
 	
-	/*auto spr_inst_prompts = mainspriteInstance->PlaceObject(1, true, "prompts");
+	auto spr_inst_prompts = mainspriteInstance->PlaceObject(1, true, "prompts");
 	auto spr_inst_prompts_joy1 = spr_inst_prompts->spriteInstance->PlaceObject(0, true, "joy1", Vector2(0, -10));
 	spr_inst_prompts_joy1->spriteInstance->PlaceObject(0, false, "txt_info");
 	auto spr_inst_prompts_joy2 = spr_inst_prompts->spriteInstance->PlaceObject(1, true, "joy2", Vector2(0, -20));
@@ -122,7 +122,7 @@ void idSWF::Init() {
 	scriptFunction_shortcutKeys_clear.Bind(this);
 	scriptFunction_shortcutKeys_clear.Call(shortcutKeys.get(), idSWFParmList());
 	globals->Set("shortcutKeys", shortcutKeys);
-	*/
+	
 	//mainspriteInstance->RunTo(0);
 }
 

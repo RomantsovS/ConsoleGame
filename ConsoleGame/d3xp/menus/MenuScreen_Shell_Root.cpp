@@ -133,7 +133,7 @@ idMenuScreen_Shell_Root::HandleExitGameBtn
 ========================
 */
 void idMenuScreen_Shell_Root::HandleExitGameBtn() {
-	common->Quit();
+	common->QuitRequest();
 }
 
 /*
@@ -165,7 +165,7 @@ void idMenuScreen_Shell_Root::SetRootIndex(int index) {
 idMenuScreen_Shell_Root::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget> widget, bool forceHandled) {
+bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 	if (!spMenuData) {
@@ -187,7 +187,7 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 	case widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED: {
 		if (true) {
 
-			std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
+			auto shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 			if (!shell) {
 				return true;
 			}
@@ -211,7 +211,7 @@ bool idMenuScreen_Shell_Root::HandleAction(idWidgetAction& action, const idWidge
 	}
 	case widgetAction_t::WIDGET_ACTION_SCROLL_HORIZONTAL: {
 
-		std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
+		auto shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 		if (!shell) {
 			return true;
 		}

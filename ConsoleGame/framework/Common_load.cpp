@@ -93,7 +93,7 @@ void idCommonLocal::ExecuteMapChange() {
 	}
 	else
 	{*/
-	//game->InitFromNewMap(fullMapName, renderWorld, Sys_Milliseconds());
+	game->InitFromNewMap(fullMapName, renderWorld, Sys_Milliseconds());
 	//}
 
 	game->Shell_CreateMenu(true);

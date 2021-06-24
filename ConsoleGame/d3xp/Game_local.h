@@ -130,15 +130,15 @@ public:
 	void SyncPlayersWithLobbyUsers(bool initial);
 
 	// MAIN MENU FUNCTIONS
-	virtual void Shell_Init(const std::string& filename);
-	virtual void Shell_Cleanup() override;
-	virtual void Shell_Show(bool show) override;
-	virtual void Shell_CreateMenu(bool inGame);
-	virtual bool Shell_IsActive() const override;
-	virtual bool Shell_HandleGuiEvent(const sysEvent_t* sev) override;
-	virtual void Shell_Render() override;
-	virtual void Shell_ResetMenu() override;
-	virtual void Shell_SyncWithSession() override;
+	void Shell_Init(const std::string& filename) override;
+	void Shell_Cleanup() override;
+	void Shell_Show(bool show) override;
+	void Shell_CreateMenu(bool inGame);
+	bool Shell_IsActive() const override;
+	bool Shell_HandleGuiEvent(const sysEvent_t* sev) override;
+	void Shell_Render() override;
+	void Shell_ResetMenu() override;
+	void Shell_SyncWithSession() override;
 
 	template <typename T>
 	T GetRandomValue(T min, T max);

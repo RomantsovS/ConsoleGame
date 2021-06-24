@@ -42,6 +42,11 @@ void idCommonLocal::Quit() {
 	if (!com_errorEntered) {
 		Shutdown();
 	}
+	
+	Sys_DebugMemory_f();
+
+	isCommonExists = false;
+
 	Sys_Quit();
 }
 
@@ -115,9 +120,9 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// init the session
 		session->Initialize();
 
-		/*CreateMainMenu();
+		CreateMainMenu();
 
-		StartMenu(true);*/
+		StartMenu(true);
 
 		delayMilliseconds = 100;
 		FPSupdateMilliseconds = 1000;
@@ -196,7 +201,7 @@ void idCommonLocal::Shutdown() {
 	// shut down the cvar system
 	printf("cvarSystem->Shutdown();\n");
 	cvarSystem->Shutdown();
-
+	
 	// shut down the console command system
 	printf("cmdSystem->Shutdown();\n");
 	cmdSystem->Shutdown();

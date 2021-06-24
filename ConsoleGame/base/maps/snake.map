@@ -14,7 +14,7 @@ Version 2
  }
 }
 }
-/*
+
 // entity 1
 {
 "classname" "simpleobject"
@@ -36,4 +36,3 @@ Version 2
 "origin" "20 30"
 "color" "7"
 }
-*/
