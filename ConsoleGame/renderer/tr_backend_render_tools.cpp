@@ -44,7 +44,7 @@ void DrawFPS()
 	}
 }
 
-constexpr size_t MAX_DEBUG_LINES = 256;
+constexpr size_t MAX_DEBUG_LINES = 512;
 
 struct debugLine_t {
 	Screen::ConsoleColor		rgb;
@@ -210,7 +210,7 @@ RB_ShowDebugLines
 void RB_ShowDebugLines() {
 	int			i;
 	debugLine_t* line;
-	float x_pos, y_pos;
+	Screen::pos_type x_pos, y_pos;
 
 	if (!rb_numDebugLines) {
 		return;
@@ -222,14 +222,12 @@ void RB_ShowDebugLines() {
 	line = rb_debugLines;
 	for (i = 0; i < rb_numDebugLines; i++, line++) {
 		if (!line->depthTest) {
-			for (x_pos = line->start.x; x_pos <= line->end.x; ++x_pos)
-			{
-				tr.screen.set(static_cast<Screen::pos_type>(x_pos) + tr.borderHeight, static_cast<Screen::pos_type>(line->start.y) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+			for (x_pos = static_cast<Screen::pos_type>(line->start.x); x_pos <= line->end.x; ++x_pos) {
+				tr.screen.set(x_pos + tr.borderHeight, static_cast<Screen::pos_type>(line->start.y) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
 			}
 			
-			for (y_pos = line->start.y; y_pos <= line->end.y; ++y_pos)
-			{
-				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) + tr.borderHeight, static_cast<Screen::pos_type>(y_pos) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+			for (y_pos = static_cast<Screen::pos_type>(line->start.y); y_pos <= line->end.y; ++y_pos) {
+				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) + tr.borderHeight, y_pos + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
 			}
 		}
 	}

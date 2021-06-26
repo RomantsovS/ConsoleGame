@@ -11,16 +11,14 @@ struct portalArea_t;
 // areas have references to hold all the lights and entities in them
 struct areaReference_t
 {
-	areaReference_t()
-	{
+	areaReference_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s ctor\n", "areaReference_t");
+		idLib::Printf("%s ctor\n", "areaReference_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
-	~areaReference_t()
-	{
+	~areaReference_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s dtor\n", "areaReference_t");
+		idLib::Printf("%s dtor\n", "areaReference_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 

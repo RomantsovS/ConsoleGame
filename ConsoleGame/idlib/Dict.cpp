@@ -36,7 +36,7 @@ void idDict::Set(std::string key, std::string value) {
 	args.insert_or_assign(key, value);
 }
 
-std::string idDict::GetString(const char * key, std::string defaultString) const {
+const std::string& idDict::GetString(const std::string& key, const std::string& defaultString) const {
 	auto iter = args.find(key);
 
 	if (iter != args.end()) {
@@ -46,10 +46,10 @@ std::string idDict::GetString(const char * key, std::string defaultString) const
 	return defaultString;
 }
 
-bool idDict::GetString(const std::string key, std::string defaultString, std::string *out) const {
+bool idDict::GetString(const std::string& key, const std::string& defaultString, std::string* out) const {
 	auto iter = args.find(key);
-	
-	if(iter != args.end()) {
+
+	if (iter != args.end()) {
 		*out = iter->second;
 		return true;
 	}
@@ -68,7 +68,7 @@ bool idDict::GetInt(const std::string key, const std::string defaultString, int 
 	return found;
 }
 
-int idDict::GetInt(const std::string key, const int defaultInt) const {
+int idDict::GetInt(const std::string& key, const int defaultInt) const {
 	auto iter = args.find(key);
 
 	if (iter != args.end())

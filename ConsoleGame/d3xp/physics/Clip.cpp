@@ -105,6 +105,36 @@ idClipModel::idClipModel(const idTraceModel& trm)
 	LoadModel(trm, true);
 }
 
+/*
+================
+idClipModel::idClipModel
+================
+*/
+idClipModel::idClipModel(const std::shared_ptr<idClipModel>& model) {
+#ifdef DEBUG_PRINT_Ctor_Dtor
+	common->DPrintf("%s ctor\n", "idClipModel");
+#endif // DEBUG_PRINT_Ctor_Dtor
+
+	enabled = model->enabled;
+	entity = model->entity;
+	id = model->id;
+	owner = model->owner;
+	origin = model->origin;
+	//axis = model->axis;
+	bounds = model->bounds;
+	absBounds = model->absBounds;
+	//material = model->material;
+	contents = model->contents;
+	collisionModelHandle = model->collisionModelHandle;
+	traceModelIndex = -1;
+	if (model->traceModelIndex != -1) {
+		LoadModel(*GetCachedTraceModel(model->traceModelIndex));
+	}
+	renderModelHandle = model->renderModelHandle;
+	clipLinks = NULL;
+	touchCount = -1;
+}
+
 idClipModel::~idClipModel()
 {
 #ifdef DEBUG_PRINT_Ctor_Dtor
@@ -391,13 +421,13 @@ void idClipModel::ClearTraceModelCache() {
 
 std::shared_ptr<idTraceModel> idClipModel::GetCachedTraceModel(int traceModelIndex)
 {
-	int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
+	const int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
 
 	if (traceModelIndex & TRACE_MODEL_SAVED) {
-		return traceModelCache[realTraceModelIndex]->trm;
+		return traceModelCache.at(realTraceModelIndex)->trm;
 	}
 	else {
-		return traceModelCache_Unsaved[realTraceModelIndex]->trm;
+		return traceModelCache_Unsaved.at(realTraceModelIndex)->trm;
 	}
 }
 
@@ -930,15 +960,42 @@ void idClip::PrintStatistics() {
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
-void idClip::DrawClipSectors()
-{
+/*
+============
+idClip::DrawClipModels
+============
+*/
+void idClip::DrawClipModels(const Vector2& eye, const float radius, const std::shared_ptr<idEntity>& passEntity) {
+	int				i, num;
+	idBounds		bounds;
+	std::vector<idClipModel*> clipModelList(1);
+	idClipModel* clipModel;
+
+	bounds = idBounds(eye).Expand(radius);
+
+	num = idClip::ClipModelsTouchingBounds(bounds, -1, clipModelList, MAX_GENTITIES);
+
+	for (i = 0; i < num; i++) {
+		clipModel = clipModelList[i];
+		if (clipModel->GetEntity() == passEntity) {
+			continue;
+		}
+		//if (clipModel->renderModelHandle != -1) {
+			gameRenderWorld->DebugBounds(Screen::ConsoleColor::Cyan, clipModel->GetAbsBounds());
+		/* }
+		else {
+			collisionModelManager->DrawModel(clipModel->Handle(), clipModel->GetOrigin(), clipModel->GetAxis(), eye, radius);
+		}*/
+	}
+}
+
+void idClip::DrawClipSectors() {
 	const auto node = clipSectors.front();
 
 	DrawClipSectors_r(node, worldBounds);
 }
 
-bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const idBounds& bounds)
-{
+bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const idBounds& bounds) {
 	if (node->axis == -1)
 		return false;
 
@@ -949,13 +1006,11 @@ bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const i
 
 	front[0][node->axis] = back[1][node->axis] = node->dist;
 
-	if (!DrawClipSectors_r(node->children[0], front))
-	{
+	if (!DrawClipSectors_r(node->children[0], front)) {
 		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, front, vec2_origin, 0);
 	}
 
-	if (!DrawClipSectors_r(node->children[1], back))
-	{
+	if (!DrawClipSectors_r(node->children[1], back)) {
 		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, back, vec2_origin, 0);
 	}
 

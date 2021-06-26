@@ -10,14 +10,14 @@ public:
 	virtual ~idRenderModelManagerLocal() {}
 
 	// registers console commands and clears the list
-	virtual void Init();
-	virtual void Shutdown();
+	virtual void Init() override;
+	virtual void Shutdown() override;
 	virtual void FreeModel(std::shared_ptr<idRenderModel> model);
-	virtual std::shared_ptr<idRenderModel> FindModel(const std::string &modelName);
-	virtual std::shared_ptr<idRenderModel> DefaultModel();
+	virtual std::shared_ptr<idRenderModel> FindModel(const std::string &modelName) override;
+	virtual std::shared_ptr<idRenderModel> DefaultModel() override;
 	virtual void AddModel(std::shared_ptr<idRenderModel> model);
-	virtual void BeginLevelLoad();
-	virtual void EndLevelLoad();
+	virtual void BeginLevelLoad() override;
+	virtual void EndLevelLoad() override;
 private:
 	std::vector<std::shared_ptr<idRenderModel>> models;
 	std::map<std::string, size_t> hash;
@@ -31,24 +31,20 @@ private:
 idRenderModelManagerLocal localModelManager;
 idRenderModelManager * renderModelManager = &localModelManager;
 
-std::shared_ptr<idRenderModel> idRenderModelManagerLocal::FindModel(const std::string &modelName)
-{
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::FindModel(const std::string &modelName) {
 	return GetModel(modelName, true);
 }
 
-std::shared_ptr<idRenderModel> idRenderModelManagerLocal::DefaultModel()
-{
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::DefaultModel() {
 	return defaultModel;
 }
 
-idRenderModelManagerLocal::idRenderModelManagerLocal()
-{
+idRenderModelManagerLocal::idRenderModelManagerLocal() {
 	defaultModel = nullptr;
 	insideLevelLoad = false;
 }
 
-void idRenderModelManagerLocal::Init()
-{
+void idRenderModelManagerLocal::Init() {
 	insideLevelLoad = false;
 
 	// create a default model
@@ -65,15 +61,13 @@ void idRenderModelManagerLocal::Init()
 idRenderModelManagerLocal::Shutdown
 =================
 */
-void idRenderModelManagerLocal::Shutdown()
-{
+void idRenderModelManagerLocal::Shutdown() {
 	defaultModel = nullptr;
 	models.clear();
 	hash.clear();
 }
 
-std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::string & modelName, bool createIfNotFound)
-{
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::string & modelName, bool createIfNotFound) {
 	if (modelName.empty())
 		return nullptr;
 
@@ -81,17 +75,14 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 	auto key = modelName;
 	auto iter = hash.find(key);
 
-	if (iter != hash.end())
-	{
+	if (iter != hash.end()) {
 		auto model = models[iter->second];
 
-		if (!model->IsLoaded())
-		{
+		if (!model->IsLoaded()) {
 			// reload it if it was purged
 			model->LoadModel();
 		}
-		else if (insideLevelLoad && !model->IsLevelLoadReferenced())
-		{
+		else if (insideLevelLoad && !model->IsLevelLoadReferenced()) {
 			// we are reusing a model already in memory, but
 			// touch all the materials to make sure they stay
 			// in memory as well
@@ -110,10 +101,8 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 		model->InitFromFile(modelName);
 	}
 
-	if (!model)
-	{
-		if (!createIfNotFound)
-		{
+	if (!model) {
+		if (!createIfNotFound) {
 			return nullptr;
 		}
 
@@ -136,19 +125,15 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 idRenderModelManagerLocal::FreeModel
 =================
 */
-void idRenderModelManagerLocal::FreeModel(std::shared_ptr<idRenderModel> model)
-{
-	if (!model)
-	{
+void idRenderModelManagerLocal::FreeModel(std::shared_ptr<idRenderModel> model) {
+	if (!model) {
 		return;
 	}
-	if (std::dynamic_pointer_cast<idRenderModelStatic>(model))
-	{
+	if (std::dynamic_pointer_cast<idRenderModelStatic>(model)) {
 		std::logic_error("idRenderModelManager::FreeModel: model " + model->Name() + " is not a static model");
 		return;
 	}
-	if (model == defaultModel)
-	{
+	if (model == defaultModel) {
 		std::logic_error("idRenderModelManager::FreeModel: can't free the default model");
 		return;
 	}
@@ -158,8 +143,7 @@ void idRenderModelManagerLocal::FreeModel(std::shared_ptr<idRenderModel> model)
 	model = nullptr;
 }
 
-void idRenderModelManagerLocal::AddModel(std::shared_ptr<idRenderModel> model)
-{
+void idRenderModelManagerLocal::AddModel(std::shared_ptr<idRenderModel> model) {
 	models.push_back(model);
 
 	hash[model->Name()] = models.size() - 1;
@@ -170,8 +154,7 @@ void idRenderModelManagerLocal::AddModel(std::shared_ptr<idRenderModel> model)
 idRenderModelManagerLocal::BeginLevelLoad
 =================
 */
-void idRenderModelManagerLocal::BeginLevelLoad()
-{
+void idRenderModelManagerLocal::BeginLevelLoad() {
 	insideLevelLoad = true;
 
 	for (auto &model : models)
@@ -189,8 +172,7 @@ void idRenderModelManagerLocal::BeginLevelLoad()
 idRenderModelManagerLocal::EndLevelLoad
 =================
 */
-void idRenderModelManagerLocal::EndLevelLoad()
-{
+void idRenderModelManagerLocal::EndLevelLoad() {
 	insideLevelLoad = false;
 
 	int	purgeCount = 0;
@@ -198,8 +180,7 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	int	loadCount = 0;
 
 	// purge any models not touched
-	for (auto &model : models)
-	{
+	for (auto &model : models) {
 		if (!model->IsLevelLoadReferenced() && model->IsLoaded() && model->IsReloadable()) {
 
 			common->Printf( "purging %s\n", model->Name().c_str() );
@@ -211,8 +192,7 @@ void idRenderModelManagerLocal::EndLevelLoad()
 			model->PurgeModel();
 
 		}
-		else
-		{
+		else {
 			common->Printf( "keeping %s\n", model->Name().c_str() );
 
 			keepCount++;
@@ -220,8 +200,7 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	}
 
 	// load any new ones
-	for (auto &model : models)
-	{
+	for (auto &model : models) {
 		if (model->IsLevelLoadReferenced() && !model->IsLoaded() && model->IsReloadable()) {
 			loadCount++;
 			model->LoadModel();

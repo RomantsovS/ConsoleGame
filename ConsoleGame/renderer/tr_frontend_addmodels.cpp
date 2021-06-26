@@ -4,8 +4,7 @@
 #include "tr_local.h"
 #include "Model_local.h"
 
-std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderEntityLocal> def)
-{
+std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderEntityLocal> def) {
 	auto model = def->parms.hModel;
 
 	if (model->IsDynamicModel() == DM_STATIC) {
@@ -15,8 +14,7 @@ std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderE
 	return model;
 }
 
-void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity)
-{
+void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity) {
 	// globals we really should pass in...
 	const auto viewDef = tr.viewDef;
 

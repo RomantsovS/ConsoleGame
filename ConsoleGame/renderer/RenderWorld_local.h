@@ -78,7 +78,7 @@ public:
 	void PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum);
 	void PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def);
 
-	virtual std::shared_ptr<idRenderWorld> getptr();
+	virtual std::shared_ptr<idRenderWorld> getptr() override;
 };
 
 #endif

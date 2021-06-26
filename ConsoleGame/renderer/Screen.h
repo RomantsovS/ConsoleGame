@@ -88,18 +88,6 @@ Screen::Pixel Screen::get(pos_type r, pos_type c) const // declared as inline in
 	return contents[row + c]; // return character at the given column
 }
 
-inline Screen &Screen::set(pos_type r, pos_type col, Screen::Pixel ch) {
-	if (r >= height || r < 0)
-		common->Error("Screen height: %d out of range: %d", r, height);
-
-	if (col >= width || col < 0)
-		common->Error("Screen width: %d out of range: %d", col, width);
-
-	contents[r*width + col] = ch;  // set specified location to given value
-
-	return *this;                  // return this object as an lvalue
-}
-
 inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }

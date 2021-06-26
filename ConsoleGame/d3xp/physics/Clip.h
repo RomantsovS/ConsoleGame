@@ -16,6 +16,7 @@ public:
 	idClipModel();
 	explicit idClipModel(const std::string& name);
 	explicit idClipModel(const idTraceModel& trm);
+	explicit idClipModel(const std::shared_ptr<idClipModel>& model);
 	~idClipModel();
 
 	bool LoadModel(const std::string&  name);
@@ -168,6 +169,7 @@ public:
 
 	// stats and debug drawing
 	void PrintStatistics();
+	void DrawClipModels(const Vector2& eye, const float radius, const std::shared_ptr<idEntity>& passEntity);
 	void DrawClipSectors();
 private:
 	int						numClipSectors;

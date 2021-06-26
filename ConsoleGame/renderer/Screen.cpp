@@ -81,6 +81,22 @@ void Screen::init() {
 	cur_write_coord = { 0, 0 };
 }
 
+Screen& Screen::set(pos_type r, pos_type col, Screen::Pixel ch) {
+	if (r >= height || r < 0) {
+		return *this;
+		common->Error("Screen height: %d out of range: %d", r, height);
+	}
+
+	if (col >= width || col < 0) {
+		return *this;
+		common->Error("Screen width: %d out of range: %d", col, width);
+	}
+
+	contents[r * width + col] = ch;  // set specified location to given value
+
+	return *this;                  // return this object as an lvalue
+}
+
 void Screen::clear() {
 	clearContents();
 }

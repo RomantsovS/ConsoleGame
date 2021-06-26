@@ -7,8 +7,7 @@ void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict * args, renderEntity_
 {
 	auto temp = args->GetString("model");
 
-	if (!temp.empty())
-	{
+	if (!temp.empty()) {
 		if (!renderEntity->hModel) {
 			renderEntity->hModel = renderModelManager->FindModel(temp);
 		}

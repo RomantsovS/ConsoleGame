@@ -36,7 +36,7 @@ void idSimpleObject::Spawn() {
 	std::string clipModelName;
 
 	// check if a clip model is set
-	spawnArgs.GetString("clipmodel", "", &clipModelName);
+	/*spawnArgs.GetString("clipmodel", "", &clipModelName);
 	if (!clipModelName[0]) {
 		clipModelName = spawnArgs.GetString("model");		// use the visual model
 	}
@@ -44,13 +44,14 @@ void idSimpleObject::Spawn() {
 	if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
 		gameLocal.Error("idSimpleObject '%s': cannot load collision model %s", name, clipModelName);
 		return;
-	}
+	}*/
 
 	density = 0.0f;
 
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
 	physicsObj->SetSelf(shared_from_this());
-	physicsObj->SetClipModel(std::make_shared<idClipModel>(trm), density);
+	//physicsObj->SetClipModel(std::make_shared<idClipModel>(trm), density);
+	physicsObj->SetClipModel(std::make_shared<idClipModel>(GetPhysics()->GetClipModel()), density);
 	physicsObj->SetOrigin(GetPhysics()->GetOrigin());
 
 	SetPhysics(physicsObj);

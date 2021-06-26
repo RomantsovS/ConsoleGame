@@ -11,7 +11,7 @@ public:
 
 	void Spawn();
 	void Think() override;
-	virtual void Present() override;
+	void Present() override;
 
 	void Init();
 	void SelectInitialSpawnPoint(Vector2& origin, Vector2& angles);

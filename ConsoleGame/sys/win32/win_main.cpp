@@ -359,7 +359,7 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent) {
 			"CTRL+BREAK received!", "CEvent", MB_OK);
 		break;
 	case CTRL_CLOSE_EVENT:
-		common->Quit();
+		//common->Quit();
 		break;
 	case CTRL_LOGOFF_EVENT:
 		MessageBox(NULL,

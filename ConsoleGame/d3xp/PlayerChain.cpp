@@ -226,7 +226,7 @@ PlayerChain::Collide
 bool PlayerChain::Collide(const trace_t& collision, const Vector2& velocity) {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
-		if (other->IsType(idSimpleObject::Type)) {
+		if (other->IsType(idSimpleObject::Type) || other->IsType(idChain::Type)) {
 			idTraceModel trm;
 			float density = 0.0f;
 			std::string clipModelName;

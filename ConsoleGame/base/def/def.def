@@ -24,27 +24,37 @@ entityDef worldspawn {
 entityDef staticentity {
 	"spawnclass"			"idStaticEntity"
 	"name"					"idStaticEntity"
-	"model"					"asterisk"
-	"clipmodel"				"pixel"
+	"model"					"pixel"
+	"size"					"20 20"
 }
 
 entityDef simpleobject {
 	"spawnclass"			"idSimpleObject"
 	"name"					"idSimpleObject"
-	"model"					"asterisk"
-	"clipmodel"				"pixel"
+	"model"					"pixel"
+	"size"					"10 10"
 }
 
 entityDef chain {
 	"spawnclass"			"idChain"
 	"name"					"idChain"
-	"model"					"asterisk"
-	"clipmodel"				"pixel"
 	"links"					"3"
+	"model"					"pixel"
 }
 
-entityDef player_snake {
+entityDef player_snake_short {
 	"spawnclass"			"PlayerChain"
 	"name"					"PlayerChain"
+	"links"					"3"
 	"model"					"pixel"
+	"size"					"10 10"
+}
+
+entityDef player_snake_long {
+	"spawnclass"			"PlayerChain"
+	"name"					"PlayerChain"
+	"links"					"30"
+	"model"					"pixel"
+	"size"					"10 10"
+	"linearVelocity"		"0 10"
 }

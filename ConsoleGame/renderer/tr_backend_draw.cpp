@@ -12,8 +12,7 @@ RB_DrawViewInternal
 ==================
 */
 void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
-	if (tr.update_frame)
-	{
+	if (tr.update_frame) {
 		tr.Display();
 
 		tr.update_frame = false;
@@ -23,8 +22,7 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 		DrawFPS();
 	}
 
-	if (tr.update_info)
-	{
+	if (tr.update_info) {
 		tr.screen.clearTextInfo();
 
 		// draw the half console / notify console on top of everything

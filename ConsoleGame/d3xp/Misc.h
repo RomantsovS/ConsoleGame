@@ -26,9 +26,9 @@ public:
 	virtual ~idSimpleObject() override;
 
 	void Spawn();
-	virtual void Think() override;
+	void Think() override;
 
-	virtual void Remove() override;
+	void Remove() override;
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:

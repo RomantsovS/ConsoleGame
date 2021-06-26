@@ -350,63 +350,55 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) 
 		}
 	}
 
-	/*if (!spawnArgs.GetBool("noclipmodel", "0")) {
+	if (!spawnArgs.GetBool("noclipmodel", "0")) {
 
 		// check if mins/maxs or size key/value pairs are set
 		if (!clipModel) {
-			idVec3 size;
+			Vector2 size;
 			idBounds bounds;
 			bool setClipModel = false;
 
-			if (spawnArgs.GetVector("mins", NULL, bounds[0]) &&
-				spawnArgs.GetVector("maxs", NULL, bounds[1])) {
+			if (spawnArgs.GetVector("mins", "", bounds[0]) &&
+				spawnArgs.GetVector("maxs", "", bounds[1])) {
 				setClipModel = true;
-				if (bounds[0][0] > bounds[1][0] || bounds[0][1] > bounds[1][1] || bounds[0][2] > bounds[1][2]) {
+				if (bounds[0][0] > bounds[1][0] || bounds[0][1] > bounds[1][1] /* || bounds[0][2] > bounds[1][2]*/) {
 					gameLocal.Error("Invalid bounds '%s'-'%s' on entity '%s'", bounds[0].ToString(), bounds[1].ToString(), name.c_str());
 				}
 			}
-			else if (spawnArgs.GetVector("size", NULL, size)) {
-				if ((size.x < 0.0f) || (size.y < 0.0f) || (size.z < 0.0f)) {
+			else if (spawnArgs.GetVector("size", "", size)) {
+				if ((size.x < 0.0f) || (size.y < 0.0f)) {
 					gameLocal.Error("Invalid size '%s' on entity '%s'", size.ToString(), name.c_str());
 				}
-				bounds[0].Set(size.x * -0.5f, size.y * -0.5f, 0.0f);
-				bounds[1].Set(size.x * 0.5f, size.y * 0.5f, size.z);
+				bounds[0].Set(size.x * -0.5f, size.y * -0.5f);
+				bounds[1].Set(size.x * 0.5f, size.y * 0.5f);
 				setClipModel = true;
 			}
 
 			if (setClipModel) {
-				int numSides;
 				idTraceModel trm;
 
-				if (spawnArgs.GetInt("cylinder", "0", numSides) && numSides > 0) {
-					trm.SetupCylinder(bounds, numSides < 3 ? 3 : numSides);
-				}
-				else if (spawnArgs.GetInt("cone", "0", numSides) && numSides > 0) {
-					trm.SetupCone(bounds, numSides < 3 ? 3 : numSides);
-				}
-				else {
-					trm.SetupBox(bounds);
-				}
-				clipModel = new (TAG_PHYSICS_CLIP_ENTITY) idClipModel(trm);
+				trm.SetupBox(bounds);
+
+				clipModel = std::make_shared<idClipModel>(trm);
 			}
 		}
 
 		// check if the visual model can be used as collision model
 		if (!clipModel) {
 			temp = spawnArgs.GetString("model");
-			if ((temp != NULL) && (*temp != 0)) {
+			if (!temp.empty()) {
 				if (idClipModel::CheckModel(temp)) {
-					clipModel = new (TAG_PHYSICS_CLIP_ENTITY) idClipModel(temp);
+					clipModel = std::make_shared<idClipModel>(temp);
 				}
 			}
 		}
-	}*/
+	}
 
-/*#ifdef DEBUG
+#ifdef DEBUG
 	defaultPhysicsObj = std::shared_ptr<idPhysics_Static>(DBG_NEW idPhysics_Static);
-#else*/
+#else
 	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
-//#endif
+#endif
 	defaultPhysicsObj->SetSelf(shared_from_this());
 	defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);

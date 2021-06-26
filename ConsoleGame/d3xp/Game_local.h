@@ -91,7 +91,7 @@ public:
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
 	void RunSingleUserCmd(usercmd_t& cmd, idPlayer& player);
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
-	virtual bool Draw(int clientNum) override;
+	bool Draw(int clientNum) override;
 
 	virtual bool IsInGame() const override  { return GameState() == GAMESTATE_ACTIVE; }
 
@@ -200,7 +200,7 @@ inline T idGameLocal::GetRandomValue(T min, T max)
 		max = max - min;
 
 	if (min > max)
-		Error("Error getting random value. Min %3f, max %3f", min, max);
+		Warning("Error getting random value. Min %3f, max %3f", min, max);
 
 	std::uniform_int_distribution<size_t> u(static_cast<size_t>(cur_min), static_cast<size_t>(max));
 

@@ -194,8 +194,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 
 	//args.Set("model", "pixel");
 	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
-	args.Set("origin", Vector2(10.0f, 10.0f).ToString());
-	args.Set("linearVelocity", Vector2(pm_walkspeed.GetFloat(), 0.0f).ToString());
+	args.Set("origin", world->spawnArgs.GetString("player_origin", "10, 10"));
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -287,16 +286,14 @@ void idGameLocal::RunFrame() {
 	}
 
 	// let entities think
-	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
-	{
+	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next()) {
 		RunEntityThink(*ent);
 	}
 
 	// remove any entities that have stopped thinking
 	if (numEntitiesToDeactivate) {
 		std::shared_ptr<idEntity> next_ent;
-		for (auto ent = activeEntities.Next(); ent != nullptr; ent = next_ent)
-		{
+		for (auto ent = activeEntities.Next(); ent != nullptr; ent = next_ent) {
 			next_ent = ent->activeNode.Next();
 			if (!ent->thinkFlags) {
 				ent->activeNode.Remove();
@@ -378,14 +375,10 @@ void idGameLocal::RunDebugInfo() {
 	if (!tr.update_info)
 		return;
 
-	/*idPlayer *player;
-
-	player = GetLocalPlayer();
+	/*const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
 	if (!player) {
 		return;
-	}
-
-	const idVec3 &origin = player->GetPhysics()->GetOrigin();*/
+	}*/
 
 	char buf[256];
 	
@@ -546,6 +539,15 @@ idGameLocal::RunDebugInfoScreen
 void idGameLocal::RunDebugInfoScreen() {
 	if (!tr.update_frame)
 		return;
+
+	const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
+	if (!player) {
+		return;
+	}
+
+	if (g_showCollisionModels.GetBool()) {
+		clip->DrawClipModels(player->GetPhysics()->GetOrigin(), g_maxShowDistance.GetFloat(), player);
+	}
 
 	if (g_showCollisionTraces.GetBool()) {
 		clip->DrawClipSectors();
@@ -944,52 +946,53 @@ void idGameLocal::MapClear(bool clearClients) {
 void idGameLocal::AddRandomPoint() {
 	idDict args;
 
-	size_t ent_type = GetRandomValue(2, 2);
+	size_t ent_type = GetRandomValue(1, 10);
 
 	float searching_radius = 0.0f;
-	float ent_size = 1.0f;
 	float start_pos = 0.0f;
 
 	if (ent_type == 0) {
 		args.Set("classname", "staticentity");
 	}
-	else if (ent_type == 1) {
+	else if (ent_type < 3) {
 		args.Set("classname", "chain");
 
-		size_t links = GetRandomValue(3, 15);
+		const size_t links = GetRandomValue(3, 15);
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
-		ent_size = searching_radius;
-		start_pos = searching_radius;
 	}
 	else {
 		args.Set("classname", "simpleobject");
 	}
 
-	Vector2 origin(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
+	auto size_x = gameLocal.GetRandomValue(2.0f, 4.0f);
+	auto size_y = gameLocal.GetRandomValue(2.0f, 4.0f);
+	auto size_max = max(size_x, size_y);
+	searching_radius = max(searching_radius, size_max);
+	start_pos += searching_radius;
+
+	Vector2 origin(GetRandomValue(start_pos, GetHeight() - size_max), GetRandomValue(start_pos, GetWidth() - size_max));
 	//Vector2 origin = { 11.0f, 10.0f };
-	Vector2 axis(0, 0);
+	const Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
 	int num_attempts = 0;
 	int finded_ents = 0;
-	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0) {
+	while ((finded_ents = EntitiesWithinRadius(origin, size_max, ent_vec, ent_vec.size())) != 0) {
 		if (num_attempts++ > 100) {
-			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %5.2f", origin.x, origin.y, finded_ents, searching_radius);
 			return;
 		}
 
-		origin = Vector2(GetRandomValue(start_pos, GetHeight() - ent_size), GetRandomValue(start_pos, GetWidth() - ent_size));
+		origin = Vector2(GetRandomValue(start_pos, GetHeight() - size_max), GetRandomValue(start_pos, GetWidth() - size_max));
 	}
 
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
-	args.Set("model", "asterisk");
-	args.Set("clipmodel", "pixel");
+	args.Set("size", va("%s %s", std::to_string(size_x).c_str(), std::to_string(size_y).c_str()));
 	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
 	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
-	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
 
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {

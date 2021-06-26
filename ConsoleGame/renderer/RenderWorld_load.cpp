@@ -86,8 +86,7 @@ bool idRenderWorldLocal::InitFromMap(const std::string &name)
 	ReadBinaryNodes();
 
 	// if it was a trivial map without any areas, create a single area
-	if (!numPortalAreas)
-	{
+	if (!numPortalAreas) {
 		ClearWorld();
 	}
 

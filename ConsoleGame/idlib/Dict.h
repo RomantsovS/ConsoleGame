@@ -26,11 +26,12 @@ public:
 	void SetInt(const std::string& key, int val);
 
 	// these return default values of 0.0, 0 and false
-	std::string GetString(const char *key, std::string defaultString = "") const;
-	int	GetInt(const std::string key, const int defaultInt = 0) const;
+	const std::string& GetString(const std::string& key, const std::string& defaultString = "") const;
+	int	GetInt(const std::string& key, const int defaultInt = 0) const;
+	bool GetBool(const std::string& key, const std::string& defaultString) const;
 	Vector2 GetVector(const std::string key, const std::string defaultString = "") const;
 
-	bool GetString(const std::string key, const std::string defaultString, std::string *out) const;
+	bool GetString(const std::string& key, const std::string& defaultString, std::string *out) const;
 	bool GetInt(const std::string key, const std::string defaultString, int &out) const;
 	bool GetVector(const std::string key, std::string defaultString, Vector2 &out) const;
 
@@ -46,6 +47,10 @@ private:
 
 inline void idDict::SetInt(const std::string& key, int val) {
 	Set(key, va("%i", val));
+}
+
+inline bool idDict::GetBool(const std::string& key, const std::string& defaultString) const {
+	return (atoi(GetString(key, defaultString).c_str()) != 0);
 }
 
 #endif
