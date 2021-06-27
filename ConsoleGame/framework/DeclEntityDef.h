@@ -14,9 +14,9 @@ public:
 	idDict dict;
 
 	//virtual size_t Size() const;
-	virtual std::string DefaultDefinition() const override;
-	virtual bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
-	virtual void FreeData() override;
+	std::string DefaultDefinition() const override;
+	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
+	void FreeData() override;
 	//virtual void Print();
 };
 

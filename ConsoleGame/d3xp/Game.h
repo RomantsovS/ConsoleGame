@@ -18,6 +18,9 @@ public:
 	// Shut down the current map.
 	virtual void MapShutdown() = 0;
 
+	// Caches media referenced from in key/value pairs in the given dictionary.
+	virtual void CacheDictionaryMedia(const idDict* dict) = 0;
+
 	// Runs a game frame, may return a session command for level changing, etc
 	virtual void RunFrame() = 0;
 

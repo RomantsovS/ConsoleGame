@@ -1,0 +1,3 @@
+model pixel {
+	mesh "models/pixel.textmodel"
+}

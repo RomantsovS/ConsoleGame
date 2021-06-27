@@ -136,6 +136,7 @@
     <ClInclude Include="d3xp\Actor.h" />
     <ClInclude Include="d3xp\AFEntity.h" />
     <ClInclude Include="d3xp\ai\AI.h" />
+    <ClInclude Include="d3xp\anim\Anim.h" />
     <ClInclude Include="d3xp\Entity.h" />
     <ClInclude Include="d3xp\Game.h" />
     <ClInclude Include="d3xp\gamesys\Class.h" />
@@ -224,8 +225,8 @@
     <ClCompile Include="d3xp\Actor.cpp" />
     <ClCompile Include="d3xp\AFEntity.cpp" />
     <ClCompile Include="d3xp\ai\AI.cpp" />
+    <ClCompile Include="d3xp\anim\Anim_Blend.cpp" />
     <ClCompile Include="d3xp\Entity.cpp" />
-    <ClCompile Include="d3xp\Game.cpp" />
     <ClCompile Include="d3xp\GameEdit.cpp" />
     <ClCompile Include="d3xp\gamesys\Class.cpp" />
     <ClCompile Include="d3xp\gamesys\Event.cpp" />

@@ -516,7 +516,7 @@ const std::shared_ptr<idDecl> idDeclManagerLocal::FindType(declType_t type, std:
 
 	if (name.empty()) {
 		name = "_emptyName";
-		//common->Warning( "idDeclManager::FindType: empty %s name", GetDeclType( (int)type )->typeName.c_str() );
+		common->Warning( "idDeclManager::FindType: empty %s name", GetDeclType( static_cast<int>(type) )->typeName.c_str() );
 	}
 
 	std::shared_ptr<idDeclLocal> decl = FindTypeWithoutParsing(type, name, makeDefault);

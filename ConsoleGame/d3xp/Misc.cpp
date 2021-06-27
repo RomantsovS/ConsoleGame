@@ -21,7 +21,7 @@ void idStaticEntity::Think() {
 	idEntity::Think();
 }
 
-CLASS_DECLARATION(idEntity, idSimpleObject)
+CLASS_DECLARATION(idAnimatedEntity, idSimpleObject)
 END_CLASS
 
 idSimpleObject::idSimpleObject() {

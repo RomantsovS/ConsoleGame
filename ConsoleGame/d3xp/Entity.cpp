@@ -6,10 +6,34 @@
 ABSTRACT_DECLARATION(idClass, idEntity)
 END_CLASS
 
+void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict* args, renderEntity_t* renderEntity) {
+	memset(renderEntity, 0, sizeof(*renderEntity));
+
+	auto temp = args->GetString("model");
+
+	if (!temp.empty()) {
+		const std::shared_ptr<idDeclModelDef> modelDef = std::dynamic_pointer_cast<idDeclModelDef>(declManager->FindType(declType_t::DECL_MODELDEF, temp, false));
+		if (modelDef) {
+			renderEntity->hModel = modelDef->ModelHandle().lock();
+		}
+		if (!renderEntity->hModel) {
+			renderEntity->hModel = renderModelManager->FindModel(temp);
+		}
+	}
+	/*if (renderEntity->hModel) {
+		renderEntity->bounds = renderEntity->hModel->Bounds(renderEntity);
+	}
+	else {
+		renderEntity->bounds.Zero();
+	}*/
+
+	args->GetVector("origin", "0 0", renderEntity->origin);
+	args->GetVector("axis", "0 0", renderEntity->axis);
+}
+
 idEntity::idEntity() :
 	originDelta(vec2_origin),
-	axisDelta(vec2_origin)
-{
+	axisDelta(vec2_origin) {
 	entityNumber = ENTITYNUM_NONE;
 	//entityDefNumber = -1;
 
@@ -177,8 +201,19 @@ renderEntity_t * idEntity::GetRenderEntity() {
 	return &renderEntity;
 }
 
-void idEntity::SetModel(std::string modelname) {
+void idEntity::SetModel(const std::string& modelname) {
+	FreeModelDef();
+
 	renderEntity.hModel = renderModelManager->FindModel(modelname);
+
+	if (renderEntity.hModel) {
+		//renderEntity.bounds = renderEntity.hModel->Bounds(&renderEntity);
+	}
+	else {
+		renderEntity.bounds.Zero();
+	}
+
+	UpdateVisuals();
 }
 
 /*
@@ -429,4 +464,62 @@ void idEntity::UpdateFromPhysics(bool moveBack) {
 
 int idEntity::GetPhysicsTimeStep() const {
 	return gameLocal.time - gameLocal.previousTime;
+}
+
+CLASS_DECLARATION(idEntity, idAnimatedEntity)
+END_CLASS
+
+/*
+================
+idAnimatedEntity::idAnimatedEntity
+================
+*/
+idAnimatedEntity::idAnimatedEntity() {
+}
+
+/*
+================
+idAnimatedEntity::~idAnimatedEntity
+================
+*/
+idAnimatedEntity::~idAnimatedEntity() {
+}
+
+/*
+================
+idAnimatedEntity::Think
+================
+*/
+void idAnimatedEntity::Think() {
+	RunPhysics();
+	//UpdateAnimation();
+	Present();
+}
+
+/*
+================
+idAnimatedEntity::SetModel
+================
+*/
+void idAnimatedEntity::SetModel(const std::string& modelname) {
+	FreeModelDef();
+
+	auto modelDef = std::dynamic_pointer_cast<idDeclModelDef>(declManager->FindType(declType_t::DECL_MODELDEF,
+		modelname, false));
+	if (!modelDef) {
+		return;
+	}
+
+	std::shared_ptr<idRenderModel> renderModel = modelDef->ModelHandle().lock();
+	if (!renderModel) {
+		return;
+	}
+
+	renderEntity.hModel = renderModel;
+	if (!renderEntity.hModel) {
+		idEntity::SetModel(modelname);
+		return;
+	}
+
+	UpdateVisuals();
 }

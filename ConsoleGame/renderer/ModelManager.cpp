@@ -71,6 +71,11 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 	if (modelName.empty())
 		return nullptr;
 
+	std::string canonical = modelName;
+
+	std::string extension;
+	idStr::ExtractFileExtension(canonical, extension);
+
 	// see if it is already present
 	auto key = modelName;
 	auto iter = hash.find(key);
@@ -94,14 +99,19 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 
 	std::shared_ptr<idRenderModel> model;
 
-	model = std::make_shared<idRenderModelStatic>();
+	if (extension == "textmodel") {
+		model = std::make_shared<idRenderModelStatic>();
+	}
 
-	//if (model)
-	{
+	if (model) {
 		model->InitFromFile(modelName);
 	}
 
 	if (!model) {
+		if (!extension.empty()) {
+			common->Warning("unknown model type '%s'", canonical.c_str());
+		}
+
 		if (!createIfNotFound) {
 			return nullptr;
 		}
@@ -114,6 +124,12 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 	}
 
 	model->SetLevelLoadReferenced(true);
+
+	if (!createIfNotFound && model->IsDefaultModel()) {
+		model = nullptr;
+
+		return nullptr;
+	}
 
 	AddModel(model);
 

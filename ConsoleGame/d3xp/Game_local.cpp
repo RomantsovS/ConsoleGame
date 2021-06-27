@@ -35,8 +35,7 @@ void idGameLocal::Init() {
 	Printf("gamedate: %s\n", __DATE__);
 
 	// register game specific decl types
-	//declManager->RegisterDeclType("model", DECL_MODELDEF, idDeclAllocator<idDeclModelDef>);
-	//declManager->RegisterDeclType("export", DECL_MODELEXPORT, idDeclAllocator<idDecl>);
+	declManager->RegisterDeclType("model", declType_t::DECL_MODELDEF, idDeclAllocator<idDeclModelDef>);
 
 	// register game specific decl folders
 	declManager->RegisterDeclFolder("def", ".def", declType_t::DECL_ENTITYDEF);
@@ -176,6 +175,32 @@ int idGameLocal::GetLocalClientNum() const {
 }
 
 /*
+===================
+idGameLocal::CacheDictionaryMedia
+
+This is called after parsing an EntityDef and for each entity spawnArgs before
+merging the entitydef.  It could be done post-merge, but that would
+avoid the fast pre-cache check associated with each entityDef
+===================
+*/
+void idGameLocal::CacheDictionaryMedia(const idDict* dict) {
+	auto kv = dict->MatchPrefix("model");
+	while (kv) {
+		if (!kv->second.empty()) {
+			//declManager->MediaPrint("Precaching model %s\n", kv->GetValue().c_str());
+			// precache model/animations
+			if (!declManager->FindType(declType_t::DECL_MODELDEF, kv->second, false)) {
+				// precache the render model
+				renderModelManager->FindModel(kv->second);
+				// precache .cm files only
+				collisionModelManager->LoadModel(kv->second);
+			}
+		}
+		kv = dict->MatchPrefix("model", kv->second);
+	}
+}
+
+/*
 ===========
 idGameLocal::SpawnPlayer
 ============
@@ -277,10 +302,10 @@ void idGameLocal::RunFrame() {
 	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > game_add_point_delay.GetInteger()) {
+	if (time - lastTimePointSpawn > world->spawnArgs.GetInt("game_add_point_delay", 1000)) {
 		lastTimePointSpawn = time;
 		
-		for (int i = 0; i < game_add_point_count.GetInteger(); ++i) {
+		for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0); ++i) {
 			AddRandomPoint();
 		}
 	}
@@ -910,6 +935,9 @@ void idGameLocal::SpawnMapEntities() {
 	for (i = 1; i < numEntities; i++) {
 		mapEnt = mapFile->GetEntity(i);
 		args = mapEnt->epairs;
+
+		// precache any media specified in the map entity
+		CacheDictionaryMedia(&args);
 
 		SpawnEntityDef(args);
 			num++;

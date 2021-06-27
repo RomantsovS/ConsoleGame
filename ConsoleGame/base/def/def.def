@@ -24,7 +24,7 @@ entityDef worldspawn {
 entityDef staticentity {
 	"spawnclass"			"idStaticEntity"
 	"name"					"idStaticEntity"
-	"model"					"pixel"
+	"model"					"models/test.textmodel"
 	"size"					"20 20"
 }
 
@@ -39,7 +39,7 @@ entityDef chain {
 	"spawnclass"			"idChain"
 	"name"					"idChain"
 	"links"					"3"
-	"model"					"pixel"
+	"model"					"models/pixel.textmodel"
 }
 
 entityDef player_snake_short {
@@ -47,7 +47,7 @@ entityDef player_snake_short {
 	"name"					"PlayerChain"
 	"links"					"3"
 	"model"					"pixel"
-	"size"					"10 10"
+	"linearVelocity"		"0 10"
 }
 
 entityDef player_snake_long {
@@ -55,6 +55,5 @@ entityDef player_snake_long {
 	"name"					"PlayerChain"
 	"links"					"30"
 	"model"					"pixel"
-	"size"					"10 10"
 	"linearVelocity"		"0 10"
 }

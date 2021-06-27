@@ -7,7 +7,7 @@ public:
 	std::shared_ptr<idEntity> ent;
 };
 
-class idActor : public idEntity
+class idActor : public idAnimatedEntity
 {
 public:
 	CLASS_PROTOTYPE(idActor);

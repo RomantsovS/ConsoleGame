@@ -1,0 +1,45 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+"call" "map_marscity1::main"
+"no_Weapons" "1"
+"def_player" "player_snake_long"
+"player_origin" "30 40"
+"game_add_point_delay" "1000"
+"game_add_point_count" "1"
+// primitive 2
+{
+ brushDef3
+ {
+  ( 0 0 40 80 )
+ }
+}
+}
+
+// entity 1
+{
+"classname" "simpleobject"
+"name" "simpleobject1"
+"origin" "10 30"
+"color" "5"
+"linearVelocity" "0 -1"
+}
+
+// entity 2
+{
+"classname" "staticentity"
+"name" "staticentity1"
+"origin" "10 10"
+"color" "6"
+}
+
+/*
+// entity 3
+{
+"classname" "chain"
+"name" "chain1"
+"origin" "10 50"
+"color" "7"
+}
+*/

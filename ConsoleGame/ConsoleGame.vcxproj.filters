@@ -70,6 +70,9 @@
     <Filter Include="Framework\Decls">
       <UniqueIdentifier>{1463e988-2492-4ec3-8be8-28e97ae9dc2a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="d3xp\Animation">
+      <UniqueIdentifier>{dc8f6f47-5cba-4150-b00c-f7e480aa7b77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer\Model.h">
@@ -315,6 +318,9 @@
     <ClInclude Include="idlib\Heap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="d3xp\anim\Anim.h">
+      <Filter>d3xp\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer\Model.cpp">
@@ -364,9 +370,6 @@
     </ClCompile>
     <ClCompile Include="Sys\Win32\win_shared.cpp">
       <Filter>Sys\Win32</Filter>
-    </ClCompile>
-    <ClCompile Include="d3xp\Game.cpp">
-      <Filter>d3xp</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\Game_local.cpp">
       <Filter>d3xp</Filter>
@@ -631,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="d3xp\WorldSpawn.cpp">
       <Filter>d3xp</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\anim\Anim_Blend.cpp">
+      <Filter>d3xp\Animation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

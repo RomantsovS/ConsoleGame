@@ -16,7 +16,7 @@ private:
 	//int spawnTime;
 };
 
-class idSimpleObject : public idEntity
+class idSimpleObject : public idAnimatedEntity
 {
 public:
 	CLASS_PROTOTYPE(idSimpleObject);

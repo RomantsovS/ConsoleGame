@@ -19,6 +19,7 @@ public:
 
 	static void SetFileExtension(std::string& str, const std::string extension);		// set the given file extension
 	static void StripFileExtension(std::string& str); // remove any file extension
+	static void ExtractFileExtension(const std::string& str, std::string& dest);		// copy the file extension to another string
 };
 
 std::string va(const char* fmt, ...);

@@ -1,6 +1,8 @@
 #ifndef RENDER_MODEL_H
 #define RENDER_MODEL_H
 
+#define MD5_MESH_EXT "textmodel"
+
 class ModelPixel
 {
 public:
@@ -57,6 +59,9 @@ public:
 
 	// md3, md5, particles, etc
 	virtual dynamicModel_t		IsDynamicModel() const = 0;
+
+	// if the load failed for any reason, this will return true
+	virtual bool				IsDefaultModel() const = 0;
 
 	virtual Screen::ConsoleColor GetColor() const = 0;
 	virtual void SetColor(Screen::ConsoleColor col) = 0;

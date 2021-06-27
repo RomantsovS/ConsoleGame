@@ -25,22 +25,30 @@ idRenderModelStatic::~idRenderModelStatic() {
 	PurgeModel();
 }
 
+/*
+================
+idRenderModelStatic::IsDefaultModel
+================
+*/
+bool idRenderModelStatic::IsDefaultModel() const {
+	return defaulted;
+}
+
 void idRenderModelStatic::InitFromFile(std::string fileName) {
-	bool loaded;
+	bool loaded{};
+	std::string extension;
 
 	InitEmpty(fileName);
 
-	auto ch = '*';
-	if (fileName == "asterisk") {
+	idStr::ExtractFileExtension(name, extension);
 
+	if (extension == "textmodel") {
+		loaded = LoadTextModel(name);
+		reloadable = true;
 	}
 
-	surfaces.emplace_back(Vector2(), Screen::Pixel(ch, Screen::ConsoleColor::White));
-
-	loaded = true;
-	reloadable = true;
-
 	if (!loaded) {
+		common->Warning("Couldn't load model: '%s'", name.c_str());
 		MakeDefaultModel();
 		return;
 	}
@@ -121,10 +129,45 @@ bool idRenderModelStatic::IsReloadable() const {
 }
 
 void idRenderModelStatic::MakeDefaultModel() {
+	defaulted = true;
+
 	// throw out any surfaces we already have
 	PurgeModel();
 
 	surfaces.emplace_back(Vector2(), Screen::Pixel('?', Screen::ConsoleColor::White));
+}
+
+/*
+=================
+idRenderModelStatic::LoadASE
+=================
+*/
+bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
+	char* buf;
+	ID_TIME_T timeStamp;
+
+	size_t len = fileSystem->ReadFile(fileName, (void**)&buf, &timeStamp);
+	if (!buf) {
+		return false;
+	}
+
+	size_t x{}, y{};
+	for(size_t i = 0; i < len; ++i) {
+		auto symbol = *(buf + i);
+		
+		if (symbol == '\n') {
+			x = 0;
+			++y;
+			continue;
+		}
+
+		surfaces.emplace_back(Vector2(y, x), Screen::Pixel(symbol, Screen::ConsoleColor::White));
+		++x;
+	}
+
+	fileSystem->FreeFile(buf);
+
+	return true;
 }
 
 Screen::ConsoleColor idRenderModelStatic::GetColor() const {

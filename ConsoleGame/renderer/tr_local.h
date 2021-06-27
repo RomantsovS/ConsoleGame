@@ -168,8 +168,8 @@ public:
 
 	void Clear();
 
-	virtual void Init() override;
-	virtual void Shutdown() override;
+	void Init() override;
+	void Shutdown() override;
 
 	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() override;
 	virtual void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) override;

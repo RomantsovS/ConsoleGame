@@ -47,7 +47,7 @@ public:
 	// visuals
 	virtual void Present();
 	virtual renderEntity_t *GetRenderEntity();
-	virtual void SetModel(std::string modelname);
+	virtual void SetModel(const std::string& modelname);
 	void UpdateVisuals();
 	void UpdateModel();
 	void UpdateModelTransform();
@@ -99,6 +99,18 @@ private:
 	void UpdateFromPhysics(bool moveBack);
 	// get physics timestep
 	virtual int GetPhysicsTimeStep() const;
+};
+
+class idAnimatedEntity : public idEntity {
+public:
+	CLASS_PROTOTYPE(idAnimatedEntity);
+
+	idAnimatedEntity();
+	~idAnimatedEntity();
+
+	void Think() override;
+
+	void SetModel(const std::string& modelname) override;
 };
 
 #endif

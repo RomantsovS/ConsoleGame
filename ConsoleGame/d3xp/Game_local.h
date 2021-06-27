@@ -29,6 +29,8 @@ const int ENTITYNUM_FIRST_NON_REPLICATED = ENTITYNUM_MAX_NORMAL - 256;
 #include "gamesys/Class.h"
 #include "gamesys/SysCvar.h"
 
+#include "anim/Anim.h"
+
 #include "physics/Clip.h"
 
 enum gameState_t {
@@ -87,6 +89,7 @@ public:
 
 	void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
 	virtual void MapShutdown() override;
+	virtual void CacheDictionaryMedia(const idDict* dict) override;
 	virtual void RunFrame() override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
 	void RunSingleUserCmd(usercmd_t& cmd, idPlayer& player);

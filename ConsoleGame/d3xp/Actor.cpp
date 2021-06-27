@@ -3,7 +3,7 @@
 
 #include "Game_local.h"
 
-CLASS_DECLARATION(idEntity, idActor)
+CLASS_DECLARATION(idAnimatedEntity, idActor)
 END_CLASS
 
 idActor::idActor() {

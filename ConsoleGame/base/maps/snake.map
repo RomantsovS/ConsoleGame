@@ -4,7 +4,7 @@ Version 2
 "classname" "worldspawn"
 "call" "map_marscity1::main"
 "no_Weapons" "1"
-"def_player" "player_snake_long"
+"def_player" "player_snake_short"
 "player_origin" "30 40"
 // primitive 2
 {
@@ -23,21 +23,3 @@ Version 2
 "color" "5"
 "linearVelocity" "0 -1"
 }
-
-// entity 2
-{
-"classname" "staticentity"
-"name" "staticentity1"
-"origin" "10 10"
-"color" "6"
-}
-
-/*
-// entity 3
-{
-"classname" "chain"
-"name" "chain1"
-"origin" "10 50"
-"color" "7"
-}
-*/

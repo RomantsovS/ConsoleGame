@@ -52,6 +52,8 @@ bool idDeclEntityDef::Parse(const char* text, const int textLength, bool allowBi
 	// we always automatically set a "classname" key to our name
 	dict.Set("classname", GetName());
 
+	game->CacheDictionaryMedia(&dict);
+
 	return true;
 }
 

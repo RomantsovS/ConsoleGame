@@ -27,7 +27,7 @@ PlayerChain::SetModelForId
 void PlayerChain::SetModelForId(int id, const std::string& modelName) {
 	modelHandles.resize(id + 1);
 	modelDefHandles.resize(id + 1, -1);
-	modelHandles[id] = renderModelManager->FindModel(modelName);
+	modelHandles[id] = renderEntity.hModel;
 }
 
 /*

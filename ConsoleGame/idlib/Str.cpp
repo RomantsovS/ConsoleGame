@@ -194,3 +194,28 @@ void idStr::StripFileExtension(std::string& str) {
 		}
 	}
 }
+
+/*
+====================
+idStr::ExtractFileExtension
+====================
+*/
+void idStr::ExtractFileExtension(const std::string& str, std::string& dest) {
+	int pos;
+
+	//
+	// back up until a . or the start
+	//
+	pos = str.size() - 1;
+	while (pos > 0 && str[pos - 1] != '.') {
+		pos--;
+	}
+
+	if (!pos) {
+		// no extension
+		dest.clear();
+	}
+	else {
+		dest = str.substr(pos, str.size() - pos);
+	}
+}

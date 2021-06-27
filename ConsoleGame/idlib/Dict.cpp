@@ -128,8 +128,7 @@ std::string idDict::FindKey(const std::string& key) const {
 const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const {
 	map_type::const_iterator iter;
 
-	if (!lastMatch.empty())
-	{
+	if (!lastMatch.empty()) {
 		iter = args.lower_bound(lastMatch);
 		++iter;
 	}
