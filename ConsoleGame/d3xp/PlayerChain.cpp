@@ -75,14 +75,16 @@ void PlayerChain::Init() {
 	origin = GetPhysics()->GetOrigin();
 
 	Vector2 linearVelocity;
-	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
+	spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
+	auto size = spawnArgs.GetVector("size", "1 1");
 
 	Vector2 dir = vec2_origin;
+
 	for (size_t i = 0; i < 2; ++i) {
 		if (linearVelocity[i] > 0)
-			dir[i] = -1.0f;
+			dir[i] = -size.x;
 		else if (linearVelocity[i] < 0)
-			dir[i] = 1.0f;
+			dir[i] = size.x;
 	}
 
 	BuildChain("link", origin, 1.0f, numLinks, dir);
@@ -112,15 +114,16 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin, flo
 		clipModelName = spawnArgs.GetString("model");		// use the visual model
 	}
 
-	if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
+	/*if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
 		gameLocal.Error("idSimpleObject '%s': cannot load collision model %s", name, clipModelName);
 		return;
-	}
+	}*/
 
 	org = origin;
 
 	for (i = 0; i < numLinks; i++) {
-		AddModel(trm, org, i, density);
+		//AddModel(trm, org, i, density);
+		AddModel(org, i, density);
 
 		org += dir;
 
@@ -131,6 +134,18 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin, flo
 void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin, const int id, const float density) {
 	// add body
 	auto clip = std::make_shared<idClipModel>(trm);
+	//clip->SetContents(CONTENTS_SOLID);
+	clip->Link(gameLocal.clip, shared_from_this(), id, origin);
+	auto body = std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
+	physicsObj->AddBody(body);
+
+	// visual model for body
+	SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
+}
+
+void PlayerChain::AddModel(const Vector2& origin, const int id, const float density) {
+	// add body
+	auto clip = std::make_shared<idClipModel>(GetPhysics()->GetClipModel());
 	//clip->SetContents(CONTENTS_SOLID);
 	clip->Link(gameLocal.clip, shared_from_this(), id, origin);
 	auto body = std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
@@ -206,6 +221,14 @@ void PlayerChain::SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn
 
 	Vector2 linearVelocity;
 	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
+
+	for (size_t i = 0; i < 2; ++i) {
+		if (linearVelocity[i] > 0)
+			linearVelocity[i] = pm_walkspeed.GetFloat();
+		else if (linearVelocity[i] < 0)
+			linearVelocity[i] = -pm_walkspeed.GetFloat();
+	}
+
 	physicsObj->SetLinearVelocity(linearVelocity);
 
 	// setup our initial view
@@ -309,7 +332,15 @@ PlayerChain::AdjustSpeed
 ==============
 */
 void PlayerChain::AdjustSpeed() {
-	auto speed = pm_walkspeed.GetFloat();
+	float speed{};
+
+	if (usercmd.buttons & BUTTON_RUN) {
+		speed = pm_runspeed.GetFloat();
+	}
+	else {
+		speed = pm_walkspeed.GetFloat();
+	}
+
 	physicsObj->SetSpeed(speed, 0.0f);
 }
 

@@ -1,6 +1,9 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+extern idCVar window_font_width;
+extern idCVar window_font_height;
+
 class Screen {
 public:
 	using pos_type = int;
@@ -44,7 +47,7 @@ public:
 
 	inline Screen::Pixel get(pos_type r, pos_type c) const; // explicitly inline
 
-	Screen &set(pos_type r, pos_type col, Screen::Pixel ch);
+	Screen &set(pos_type row, pos_type col, Screen::Pixel ch);
 	Screen &set(Vector2 pos, Screen::Pixel ch);
 	
 	pos_type getHeight() const { return height; }

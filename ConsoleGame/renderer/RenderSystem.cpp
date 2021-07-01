@@ -93,20 +93,20 @@ void idRenderSystemLocal::Clear() {
 }
 
 void idRenderSystemLocal::FillBorder() {
-	for (Screen::pos_type i = 0; i < height; ++i) {
-		for (Screen::pos_type j = 0; j < borderWidth; ++j)
-			screen.set(i, j, borderPixel);
+	for (Screen::pos_type y = 0; y < height; ++y) {
+		for (Screen::pos_type x = 0; x < borderWidth; ++x)
+			screen.set(x, y, borderPixel);
 
-		for (Screen::pos_type j = width - 1; j > width - 1 - borderWidth; --j)
-			screen.set(i, j, borderPixel);
+		for (Screen::pos_type x = width - 1; x > width - 1 - borderWidth; --x)
+			screen.set(x, y, borderPixel);
 	}
 
-	for (Screen::pos_type j = 0; j < width; ++j) {
-		for (Screen::pos_type i = 0; i < borderHeight; ++i)
-			screen.set(i, j, borderPixel);
+	for (Screen::pos_type x = 0; x < width; ++x) {
+		for (Screen::pos_type y = 0; y < borderHeight; ++y)
+			screen.set(x, y, borderPixel);
 
-		for (Screen::pos_type i = height - 1; i > height - 1 - borderHeight; --i)
-			screen.set(i, j, borderPixel);
+		for (Screen::pos_type y = height - 1; y > height - 1 - borderHeight; --y)
+			screen.set(x, y, borderPixel);
 	}
 }
 

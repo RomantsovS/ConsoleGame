@@ -1,3 +1,19 @@
 model pixel {
-	mesh "models/pixel.textmodel"
+	mesh "models/test.bmp"
+}
+
+model test {
+	mesh "models/test.bmp"
+}
+
+model mushroom {
+	mesh "models/mushroom16.bmp"
+}
+
+model mario {
+	mesh "models/mario16.bmp"
+}
+
+model turtle {
+	mesh "models/turtle16x23.bmp"
 }

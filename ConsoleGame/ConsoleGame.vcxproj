@@ -154,10 +154,12 @@
     <ClInclude Include="d3xp\physics\Physics_Base.h" />
     <ClInclude Include="d3xp\physics\Physics_Player.h" />
     <ClInclude Include="d3xp\physics\Physics_PlayerChain.h" />
+    <ClInclude Include="d3xp\physics\Physics_PlayerMy.h" />
     <ClInclude Include="d3xp\physics\Physics_RigidBody.h" />
     <ClInclude Include="d3xp\physics\Physics_Static.h" />
     <ClInclude Include="d3xp\Player.h" />
     <ClInclude Include="d3xp\PlayerChain.h" />
+    <ClInclude Include="d3xp\PlayerMy.h" />
     <ClInclude Include="d3xp\WorldSpawn.h" />
     <ClInclude Include="framework\CmdSystem.h" />
     <ClInclude Include="framework\Common.h" />
@@ -195,6 +197,7 @@
     <ClInclude Include="idlib\Token.h" />
     <ClInclude Include="Renderer\Model.h" />
     <ClInclude Include="Renderer\ModelManager.h" />
+    <ClInclude Include="renderer\Model_bmp.h" />
     <ClInclude Include="Renderer\Model_local.h" />
     <ClInclude Include="Renderer\RenderSystem.h" />
     <ClInclude Include="Renderer\RenderWorld.h" />
@@ -257,10 +260,12 @@
     <ClCompile Include="d3xp\physics\Physics_Base.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Player.cpp" />
     <ClCompile Include="d3xp\physics\Physics_PlayerChain.cpp" />
+    <ClCompile Include="d3xp\physics\Physics_PlayerMy.cpp" />
     <ClCompile Include="d3xp\physics\Physics_RigidBody.cpp" />
     <ClCompile Include="d3xp\physics\Physics_Static.cpp" />
     <ClCompile Include="d3xp\Player.cpp" />
     <ClCompile Include="d3xp\PlayerChain.cpp" />
+    <ClCompile Include="d3xp\PlayerMy.cpp" />
     <ClCompile Include="d3xp\WorldSpawn.cpp" />
     <ClCompile Include="framework\CmdSystem.cpp" />
     <ClCompile Include="framework\Common.cpp" />
@@ -298,6 +303,7 @@
     <ClCompile Include="idlib\Token.cpp" />
     <ClCompile Include="Renderer\Model.cpp" />
     <ClCompile Include="Renderer\ModelManager.cpp" />
+    <ClCompile Include="renderer\Model_bmp.cpp" />
     <ClCompile Include="Renderer\RenderEntity.cpp" />
     <ClCompile Include="Renderer\RenderSystem.cpp" />
     <ClCompile Include="Renderer\RenderSystem_init.cpp" />

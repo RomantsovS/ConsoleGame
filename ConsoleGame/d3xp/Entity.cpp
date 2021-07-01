@@ -321,14 +321,12 @@ bool idEntity::RunPhysics() {
 	}
 
 	// move the whole team
-	if (part->physics)
-	{
+	if (part->physics) {
 		// run physics
 		moved = part->physics->Evaluate(GetPhysicsTimeStep(), endTime);
 
 		// if moved or forced to update the visual position and orientation from the physics
-		if (moved)
-		{
+		if (moved) {
 			part->UpdateFromPhysics(false);
 		}
 	}

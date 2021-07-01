@@ -56,6 +56,8 @@ public:
 	virtual void FreeFile(void* buffer) = 0;
 	// Opens a file for reading.
 	virtual std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") = 0;
+	// Opens a file for reading, reads the file completely in memory and returns an idFile_Memory obj.
+	virtual std::shared_ptr<idFile> OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles = true, const std::string& gamedir = "") = 0;
 	// Opens a file for writing, will create any needed subdirectories.
 	virtual std::shared_ptr<idFile> OpenFileWrite(const std::string& relativePath, const std::string& basePath) = 0;
 

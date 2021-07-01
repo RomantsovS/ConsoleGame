@@ -1,6 +1,8 @@
 #ifndef MODEL_LOCAL_H
 #define MODEL_LOCAL_H
 
+#include "Model_bmp.h"
+
 class idRenderModelStatic : public idRenderModel
 {
 public:
@@ -8,6 +10,8 @@ public:
 	virtual ~idRenderModelStatic();
 
 	void InitFromFile(std::string fileName) override;
+	bool LoadBinaryModel(idFile* file) override;
+	bool SupportsBinaryModel() override { return false; }
 
 	void PurgeModel() override;
 	void LoadModel() override;
@@ -27,6 +31,9 @@ public:
 	void MakeDefaultModel();
 
 	bool LoadTextModel(const std::string& fileName);
+	bool LoadBMPModel(const std::string& fileName);
+
+	bool ConvertBMPToModelSurfaces(const BMP& bmp);
 
 	Screen::ConsoleColor GetColor() const override;
 	void SetColor(Screen::ConsoleColor col) override;

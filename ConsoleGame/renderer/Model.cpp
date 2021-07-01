@@ -46,6 +46,10 @@ void idRenderModelStatic::InitFromFile(std::string fileName) {
 		loaded = LoadTextModel(name);
 		reloadable = true;
 	}
+	else if (extension == "bmp") {
+		loaded = LoadBMPModel(name);
+		reloadable = true;
+	}
 
 	if (!loaded) {
 		common->Warning("Couldn't load model: '%s'", name.c_str());
@@ -55,6 +59,19 @@ void idRenderModelStatic::InitFromFile(std::string fileName) {
 
 	// it is now available for use
 	purged = false;
+}
+
+/*
+========================
+idRenderModelStatic::LoadBinaryModel
+========================
+*/
+bool idRenderModelStatic::LoadBinaryModel(idFile* file) {
+	if (file == nullptr) {
+		return false;
+	}
+
+	return false;
 }
 
 void idRenderModelStatic::PurgeModel() {
@@ -134,7 +151,11 @@ void idRenderModelStatic::MakeDefaultModel() {
 	// throw out any surfaces we already have
 	PurgeModel();
 
-	surfaces.emplace_back(Vector2(), Screen::Pixel('?', Screen::ConsoleColor::White));
+	for (int i = -8 / window_font_height.GetInteger(); i < 8 / window_font_height.GetInteger(); ++i) {
+		for (int j = -8 / window_font_width.GetInteger(); j < 8 / window_font_width.GetInteger(); ++j) {
+			surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', Screen::ConsoleColor::White));
+		}
+	}
 }
 
 /*
@@ -151,21 +172,146 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 		return false;
 	}
 
-	size_t x{}, y{};
-	for(size_t i = 0; i < len; ++i) {
-		auto symbol = *(buf + i);
-		
-		if (symbol == '\n') {
-			x = 0;
-			++y;
-			continue;
+	idLexer src;
+	idToken token;
+	idToken token2;
+
+	src.LoadMemory(buf, len, fileName, 0);
+	//src.SetFlags(DECL_LEXER_FLAGS);
+	src.SkipUntilString("{");
+
+	float x{}, y{};
+	char symbol;
+	Screen::ConsoleColor col{};
+
+	while (1) {
+		if (!src.ReadToken(&token)) {
+			break;
 		}
 
-		surfaces.emplace_back(Vector2(y, x), Screen::Pixel(symbol, Screen::ConsoleColor::White));
-		++x;
+		if (token == "}") {
+			break;
+		}
+
+		if (token == "{") {
+			while (1) {
+				if (!src.ReadToken(&token2)) {
+					src.Warning("Unexpected end of file");
+					return false;
+				}
+
+				if (token2 == "}") {
+					++y;
+					x = 0;
+					break;
+				}
+
+				if (!src.ReadToken(&token2)) {
+					src.Warning("Unexpected end of file");
+					return false;
+				}
+
+				symbol = token2.at(0);
+
+				if (!src.ReadToken(&token2)) {
+					src.Warning("Unexpected end of file");
+					return false;
+				}
+
+				col = static_cast<Screen::ConsoleColor>(std::stoi(token2));
+
+				surfaces.emplace_back(Vector2(x, y), Screen::Pixel(symbol, col));
+
+				++x;
+
+				if (!src.ExpectTokenString("}")) {
+					src.Warning("Unexpected token");
+					return false;
+				}
+			}
+		}
+		else {
+			src.Warning("unknown token '%s'", token.c_str());
+			return false;
+		}
 	}
 
 	fileSystem->FreeFile(buf);
+
+	auto max_x = surfaces.back().origin.x + 1;
+	auto max_y = surfaces.back().origin.y + 1;
+
+	for (float i = 0; i < max_y; ++i) {
+		for (float j = 0; j < max_x; ++j) {
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= (max_x - 1) / 2;
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= (max_y - 1) / 2;
+		}
+	}
+
+	return true;
+}
+
+bool idRenderModelStatic::LoadBMPModel(const std::string& fileName) {
+	BMP bmp(fileName);
+
+	if (bmp.data.empty())
+		return false;
+	
+	ConvertBMPToModelSurfaces(bmp);
+	
+	return true;
+}
+
+bool idRenderModelStatic::ConvertBMPToModelSurfaces(const BMP& bmp) {
+	const char symbol{'\xDB'};
+	Screen::ConsoleColor col{};
+
+	for (int j = bmp.bmp_info_header.height - 1; j >= 0; --j) {
+		for (int i = 0; i < bmp.bmp_info_header.width; ++i) {
+			int cur_pixel = (j * bmp.bmp_info_header.width + i) * 3;
+
+			if (bmp.data.at(cur_pixel + 0) > 200 &&
+				bmp.data.at(cur_pixel + 1) > 200 &&
+				bmp.data.at(cur_pixel + 2) > 200) {
+				col = Screen::ConsoleColor::White;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 100 &&
+				bmp.data.at(cur_pixel + 2) > 200) {
+				col = Screen::ConsoleColor::Yellow;
+			}
+			else if (bmp.data.at(cur_pixel + 0) > 200) {
+				col = Screen::ConsoleColor::Blue;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 200) {
+				col = Screen::ConsoleColor::Green;
+			}
+			else if (bmp.data.at(cur_pixel + 2) > 200) {
+				col = Screen::ConsoleColor::Red;
+			}
+			else if (bmp.data.at(cur_pixel + 0) < 50 &&
+				bmp.data.at(cur_pixel + 1) < 50 &&
+				bmp.data.at(cur_pixel + 2) < 50) {
+				col = Screen::ConsoleColor::Black;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 100) {
+				col = Screen::ConsoleColor::LightGreen;
+			}
+			else
+				col = Screen::ConsoleColor::None;
+
+			surfaces.emplace_back(Vector2(i, bmp.bmp_info_header.height - j - 1), Screen::Pixel(symbol, col));
+		}
+	}
+
+	auto max_x = surfaces.back().origin.x + 1;
+	auto max_y = surfaces.back().origin.y + 1;
+
+	for (float i = 0; i < max_y; ++i) {
+		for (float j = 0; j < max_x; ++j) {
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= (max_x - 1) / 2;
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= (max_y - 1) / 2;
+		}
+	}
 
 	return true;
 }

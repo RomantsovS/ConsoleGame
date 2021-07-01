@@ -92,7 +92,7 @@ public:
 	virtual void CacheDictionaryMedia(const idDict* dict) override;
 	virtual void RunFrame() override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
-	void RunSingleUserCmd(usercmd_t& cmd, idPlayer& player);
+	void RunSingleUserCmd(usercmd_t& cmd, std::shared_ptr<idPlayer>& player);
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	bool Draw(int clientNum) override;
 
@@ -229,6 +229,7 @@ const int MASK_SOLID = 1;
 #include "physics/Physics_RigidBody.h"
 #include "physics/Physics_AF.h"
 #include "physics/Physics_PlayerChain.h"
+#include "physics/Physics_PlayerMy.h"
 
 #include "Entity.h"
 #include "AFEntity.h"
@@ -237,6 +238,7 @@ const int MASK_SOLID = 1;
 #include "WorldSpawn.h"
 #include "Player.h"
 #include "PlayerChain.h"
+#include "PlayerMy.h"
 
 #include "ai/AI.h"
 

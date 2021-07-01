@@ -34,7 +34,7 @@ struct playerPState_t {
 	}
 };
 
-class Physics_PlayerChain : public idPhysics_Player {
+class Physics_PlayerChain : public idPhysics_PlayerBase {
 
 public:
 	CLASS_PROTOTYPE(Physics_PlayerChain);
@@ -43,7 +43,6 @@ public:
 	~Physics_PlayerChain();
 
 	// initialisation
-	void SetSpeed(const float newWalkSpeed, const float newCrouchSpeed) override;
 	const Vector2& PlayerGetOrigin() const;	// != GetOrigin
 
 	int AddBody(const std::shared_ptr<idAFBody>& body);	// returns body id
@@ -95,13 +94,6 @@ private:
 	// player physics state
 	playerPState_t current;
 	playerPState_t saved;
-
-	// properties
-	float walkSpeed;
-
-	// run-time variables
-	int framemsec;
-	float frametime;
 private:
 	void Evolve(float timeStep);
 	std::shared_ptr<idEntity> SetupCollisionForBody(std::shared_ptr<idAFBody> body) const;

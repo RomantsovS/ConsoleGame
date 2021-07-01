@@ -24,6 +24,11 @@ public:
 	virtual void Flush();
 
 	virtual int WriteString(const std::string& str);
+
+	template<class type> inline size_t ReadBig(type& c) {
+		size_t r = Read(&c, sizeof(c));
+		return r;
+	}
 };
 
 class idFile_Permanent : public idFile {
@@ -48,6 +53,37 @@ private:
 	int mode;				// open mode
 	int fileSize;			// size of the file
 	idFileHandle o;			// file handle
+};
+
+/*
+================================================
+idFileLocal is a FileStream wrapper that automatically closes a file when the
+class variable goes out of scope. Note that the pointer passed in to the constructor can be for
+any type of File Stream that ultimately inherits from idFile, and that this is not actually a
+SmartPointer, as it does not keep a reference count.
+================================================
+*/
+class idFileLocal {
+public:
+	// Constructor that accepts and stores the file pointer.
+	idFileLocal(std::shared_ptr<idFile> _file) : file(_file) {
+	}
+
+	// Destructor that will destroy (close) the file when this wrapper class goes out of scope.
+	~idFileLocal();
+
+	// Cast to a file pointer.
+	operator idFile* () const {
+		return file.get();
+	}
+
+	// Member access operator for treating the wrapper as if it were the file, itself.
+	idFile* operator -> () const {
+		return file.get();
+	}
+
+protected:
+	std::shared_ptr<idFile> file;	// The managed file pointer.
 };
 
 #endif // !FILE_H

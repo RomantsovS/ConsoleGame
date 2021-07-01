@@ -57,6 +57,45 @@ std::vector<userCmdString_t> userCmdStrings = {
 	{ "",				UB_NONE }
 };
 
+class buttonState_t {
+public:
+	int		on{};
+	bool	held{};
+
+	buttonState_t() { };
+	void	Clear();
+	void	SetKeyState(int keystate, bool toggle);
+};
+
+/*
+================
+buttonState_t::Clear
+================
+*/
+void buttonState_t::Clear() {
+	held = false;
+	on = 0;
+}
+
+/*
+================
+buttonState_t::SetKeyState
+================
+*/
+void buttonState_t::SetKeyState(int keystate, bool toggle) {
+	if (!toggle) {
+		held = false;
+		on = keystate;
+	}
+	else if (!keystate) {
+		held = false;
+	}
+	else if (!held) {
+		held = true;
+		on ^= 1;
+	}
+}
+
 class idUsercmdGenLocal : public idUsercmdGen {
 public:
 	idUsercmdGenLocal();
@@ -109,10 +148,10 @@ private:
 	/*idVec3			viewangles;
 	int				impulseSequence;*/
 	int				impulse;
-	/*
-	buttonState_t	toggled_crouch;
-	buttonState_t	toggled_run;
-	buttonState_t	toggled_zoom;*/
+	
+	//buttonState_t	toggled_crouch;
+	buttonState_t	toggled_run{};
+	//buttonState_t	toggled_zoom;
 
 	int				buttonState[UB_MAX_BUTTONS];
 	bool			keyState[static_cast<int>(keyNum_t::K_LAST_KEY)];
@@ -231,6 +270,15 @@ void idUsercmdGenLocal::CmdButtons() {
 	if (ButtonState(UB_USE)) {
 		cmd.buttons |= BUTTON_USE;
 	}
+
+	// check the run button
+	if (toggled_run.on) {
+		cmd.buttons |= BUTTON_RUN;
+	}
+
+	if (ButtonState(UB_MOVEUP)) {
+		cmd.buttons |= BUTTON_JUMP;
+	}
 }
 
 /*
@@ -255,6 +303,8 @@ creates the current command for this frame
 ================
 */
 void idUsercmdGenLocal::MakeCurrent() {
+	toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
+
 	// set button bits
 	CmdButtons();
 
@@ -296,6 +346,10 @@ idUsercmdGenLocal::InitForNewMap
 */
 void idUsercmdGenLocal::InitForNewMap() {
 	impulse = 0;
+
+	toggled_run.Clear();
+	toggled_run.on = false;
+
 	Clear();
 }
 

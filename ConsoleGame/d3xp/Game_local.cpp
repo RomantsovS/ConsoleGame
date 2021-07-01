@@ -18,7 +18,9 @@ idCVar game_add_point_delay("game_add_point_delay", "1000", CVAR_SYSTEM | CVAR_I
 idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT, "");
 
 void AddRandomPoints(const idCmdArgs& args) {
-	for (int i = 0; i < 100; ++i)
+	auto cnt = max(game_add_point_count.GetInteger(), 1);
+
+	for (int i = 0; i < cnt; ++i)
 		gameLocal.AddRandomPoint();
 }
 
@@ -185,7 +187,8 @@ avoid the fast pre-cache check associated with each entityDef
 */
 void idGameLocal::CacheDictionaryMedia(const idDict* dict) {
 	auto kv = dict->MatchPrefix("model");
-	while (kv) {
+	//while (kv) {
+	if(kv) {
 		if (!kv->second.empty()) {
 			//declManager->MediaPrint("Precaching model %s\n", kv->GetValue().c_str());
 			// precache model/animations
@@ -196,7 +199,7 @@ void idGameLocal::CacheDictionaryMedia(const idDict* dict) {
 				collisionModelManager->LoadModel(kv->second);
 			}
 		}
-		kv = dict->MatchPrefix("model", kv->second);
+		//kv = dict->MatchPrefix("model", kv->second);
 	}
 }
 
@@ -227,7 +230,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	}
 
 	// make sure it's a compatible class
-	if (!ent->IsType(idPlayer::Type)) {
+	if (ent && !ent->IsType(idPlayer::Type)) {
 		Error("'%s' spawned the player as a '%s'.  Player spawnclass must be a subclass of idPlayer.", args.GetString("classname").c_str(), ent->GetClassname().c_str());
 	}
 }
@@ -343,10 +346,11 @@ Runs a Think or a ClientThink for a player. Will write the client's
 position and firecount to the usercmd.
 ====================
 */
-void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, idPlayer& player) {
-	player.HandleUserCmds(cmd);
+void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, std::shared_ptr<idPlayer>& player) {
 
-	player.Think();
+	player->HandleUserCmds(cmd);
+
+	player->Think();
 }
 
 /*
@@ -364,12 +368,12 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 		return;
 	}
 
-	idPlayer& player = static_cast<idPlayer&>(*entities[playerNumber]);
+	std::shared_ptr<idPlayer> player = std::dynamic_pointer_cast<idPlayer>(entities[playerNumber]);
 
 	// Only run a single userCmd each game frame for local players, otherwise when
 	// we are running < 60fps things like footstep sounds may get started right on top
 	// of each other instead of spread out in time.
-	if (player.IsLocallyControlled()) {
+	if (player->IsLocallyControlled()) {
 		auto cmd = usercmdGen->GetCurrentUsercmd();
 		RunSingleUserCmd(cmd, player);
 		return;
@@ -974,32 +978,42 @@ void idGameLocal::MapClear(bool clearClients) {
 void idGameLocal::AddRandomPoint() {
 	idDict args;
 
-	size_t ent_type = GetRandomValue(1, 10);
+	const size_t ent_type = GetRandomValue(3, 10);
 
 	float searching_radius = 0.0f;
 	float start_pos = 0.0f;
+	std::string classname;
 
 	if (ent_type == 0) {
-		args.Set("classname", "staticentity");
+		classname = "staticentity";
 	}
 	else if (ent_type < 3) {
-		args.Set("classname", "chain");
+		classname = "chain";
 
-		const size_t links = GetRandomValue(3, 15);
+		const size_t links = GetRandomValue(3, 5);
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
 	}
 	else {
-		args.Set("classname", "simpleobject");
+		classname = "simpleobject";
 	}
 
-	auto size_x = gameLocal.GetRandomValue(2.0f, 4.0f);
-	auto size_y = gameLocal.GetRandomValue(2.0f, 4.0f);
+	args.Set("classname", classname);
+
+	const std::shared_ptr<idDeclEntityDef> def = FindEntityDef(classname, false);
+
+	if (!def) {
+		Warning("Unknown classname '%s'.", classname.c_str());
+		return;
+	}
+
+	auto size_x = def->dict.GetVector("size").x;
+	auto size_y = def->dict.GetVector("size").y;
 	auto size_max = max(size_x, size_y);
 	searching_radius = max(searching_radius, size_max);
 	start_pos += searching_radius;
 
-	Vector2 origin(GetRandomValue(start_pos, GetHeight() - size_max), GetRandomValue(start_pos, GetWidth() - size_max));
+	Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max), GetRandomValue(start_pos, GetHeight() - size_max));
 	//Vector2 origin = { 11.0f, 10.0f };
 	const Vector2 axis(0, 0);
 
@@ -1013,7 +1027,7 @@ void idGameLocal::AddRandomPoint() {
 			return;
 		}
 
-		origin = Vector2(GetRandomValue(start_pos, GetHeight() - size_max), GetRandomValue(start_pos, GetWidth() - size_max));
+		origin = Vector2(GetRandomValue(start_pos, GetWidth() - size_max), GetRandomValue(start_pos, GetHeight() - size_max));
 	}
 
 	args.Set("origin", origin.ToString());

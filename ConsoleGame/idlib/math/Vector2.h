@@ -5,6 +5,7 @@ struct Vector2
 {
 	Vector2() = default;
 	Vector2(float height, float width) : x(height), y(width) {}
+	Vector2(int height, int width) : x(static_cast<float>(height)), y(static_cast<float>(width)) {}
 	Vector2(std::initializer_list<float> il)
 	{
 		if (il.size() != 2)

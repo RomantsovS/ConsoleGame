@@ -23,37 +23,52 @@ entityDef worldspawn {
 
 entityDef staticentity {
 	"spawnclass"			"idStaticEntity"
-	"name"					"idStaticEntity"
-	"model"					"models/test.textmodel"
-	"size"					"20 20"
+	//"name"					"idStaticEntity"
+	"model"					"models/test.bmp"
+	"size"					"16 16"
 }
 
 entityDef simpleobject {
 	"spawnclass"			"idSimpleObject"
-	"name"					"idSimpleObject"
-	"model"					"pixel"
-	"size"					"10 10"
+	//"name"					"idSimpleObject"
+	"model"					"mushroom"
+	"size"					"16 16"
 }
 
 entityDef chain {
 	"spawnclass"			"idChain"
-	"name"					"idChain"
+	//"name"					"idChain"
 	"links"					"3"
-	"model"					"models/pixel.textmodel"
+	"model"					"models/test.bmp"
+	"size"					"16 16"
 }
 
 entityDef player_snake_short {
 	"spawnclass"			"PlayerChain"
-	"name"					"PlayerChain"
-	"links"					"3"
-	"model"					"pixel"
+	//"name"					"PlayerChain"
+	"links"					"1"
+	"model"					"mario"
+	"size"					"16 16"
 	"linearVelocity"		"0 10"
 }
 
 entityDef player_snake_long {
 	"spawnclass"			"PlayerChain"
-	"name"					"PlayerChain"
+	//"name"					"PlayerChain"
 	"links"					"30"
-	"model"					"pixel"
+	"model"					"mario"
 	"linearVelocity"		"0 10"
+}
+
+entityDef player {
+	"spawnclass"			"PlayerMy"
+	"model"					"mario"
+	"size"					"16 16"
+	"linearVelocity"		"0 10"
+}
+
+entityDef turtle {
+	"spawnclass"			"idSimpleObject"
+	"model"					"turtle"
+	"size"					"16 23"
 }

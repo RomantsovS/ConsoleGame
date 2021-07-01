@@ -321,6 +321,15 @@
     <ClInclude Include="d3xp\anim\Anim.h">
       <Filter>d3xp\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\Model_bmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\PlayerMy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\physics\Physics_PlayerMy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer\Model.cpp">
@@ -637,6 +646,15 @@
     </ClCompile>
     <ClCompile Include="d3xp\anim\Anim_Blend.cpp">
       <Filter>d3xp\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Model_bmp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\PlayerMy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\physics\Physics_PlayerMy.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

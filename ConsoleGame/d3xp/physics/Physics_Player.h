@@ -12,12 +12,12 @@
 ===================================================================================
 */
 
-class idPhysics_Player : public idPhysics_Actor {
+class idPhysics_PlayerBase : public idPhysics_Actor {
 
 public:
-	CLASS_PROTOTYPE(idPhysics_Player);
+	CLASS_PROTOTYPE(idPhysics_PlayerBase);
 
-	idPhysics_Player();
+	idPhysics_PlayerBase();
 
 	// initialisation
 	void SetPlayerInput(const usercmd_t& cmd, const Vector2& forwardVector);
@@ -41,10 +41,23 @@ public:	// common physics interface
 
 	const Vector2& GetLinearVelocity(int id = 0) const override;
 private:
+	// properties
+	float walkSpeed{};
+
 	// player input
 	usercmd_t command;
+
+	// run-time variables
+	int framemsec{};
+	float frametime{};
+	float playerSpeed{};
 protected:
+	void MovePlayer(int msec);
+
+	float CmdScale(const usercmd_t& cmd) const;
 	const usercmd_t& GetUserCmd() const { return command; }
+	float GetFrameTime() { return frametime; }
+	float GetPlayerSpeed() const { return playerSpeed; }
 };
 
 #endif // !PHYSICS_PHYSICS_PLAYER_H_

@@ -41,6 +41,7 @@ public:
 	virtual void FreeFile(void* buffer) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
 	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
+	virtual std::shared_ptr<idFile> OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles = true, const std::string& gamedir = "") override;
 	virtual std::shared_ptr<idFile> OpenFileWrite(const std::string &relativePath, const std::string &basePath) override;
 
 	virtual void CloseFile(std::shared_ptr<idFile> f) override;
@@ -90,6 +91,8 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenOSFile(const std::string &fileNam
 	else if (mode == FS_APPEND) {
 		ios_mode = std::ios_base::out | std::ios_base::app;
 	}
+
+	ios_mode |= std::ifstream::binary;
 
 #ifdef DEBUG
 	auto file = std::shared_ptr<idFile_Permanent>(DBG_NEW idFile_Permanent(fileName, ios_mode));
@@ -321,6 +324,15 @@ idFileSystemLocal::OpenFileRead
 */
 std::shared_ptr<idFile> idFileSystemLocal::OpenFileRead(const std::string &relativePath, bool allowCopyFiles, const std::string &gamedir) {
 	return OpenFileReadFlags(relativePath, FSFLAG_SEARCH_DIRS, allowCopyFiles, gamedir);
+}
+
+/*
+===========
+idFileSystemLocal::OpenFileReadMemory
+===========
+*/
+std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles, const std::string& gamedir) {
+	return OpenFileReadFlags(relativePath, FSFLAG_SEARCH_DIRS | FSFLAG_RETURN_FILE_MEM, allowCopyFiles, gamedir);
 }
 
 /*

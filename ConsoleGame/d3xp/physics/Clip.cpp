@@ -533,8 +533,7 @@ inline bool TestHugeTranslation(trace_t& results, const std::shared_ptr<idClipMo
 }
 
 bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& end,
-	const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity)
-{
+	const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity) {
 	int i, num;
 	std::vector<idClipModel*> clipModelList(1);
 	idBounds traceBounds;

@@ -64,14 +64,11 @@ int Sys_ReturnKeyboardInputEvent(const int n, int& ch, bool& state) {
 
 	ReadConsoleInput(win32.h_console_std_in, &input_record, 1, &events);
 
-	switch (input_record.EventType)
-	{
-	case KEY_EVENT:
-	{
+	switch (input_record.EventType) {
+	case KEY_EVENT: {
 		ch = input_record.Event.KeyEvent.wVirtualKeyCode;
 
-		if (input_record.Event.KeyEvent.bKeyDown)
-		{
+		if (input_record.Event.KeyEvent.bKeyDown) {
 			state = true;
 		}
 		else

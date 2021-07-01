@@ -144,7 +144,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin, float l
 	std::string clipModelName;
 
 	// check if a clip model is set
-	spawnArgs.GetString("clipmodel", "", &clipModelName);
+	/*spawnArgs.GetString("clipmodel", "", &clipModelName);
 	if (!clipModelName[0]) {
 		clipModelName = spawnArgs.GetString("model");		// use the visual model
 	}
@@ -152,7 +152,19 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin, float l
 	if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
 		gameLocal.Error("idSimpleObject '%s': cannot load collision model %s", name, clipModelName);
 		return;
+	}*/
+	idBounds bounds;
+	Vector2 size;
+
+	spawnArgs.GetVector("size", "", size);
+
+	if ((size.x < 0.0f) || (size.y < 0.0f)) {
+		gameLocal.Error("Invalid size '%s' on entity '%s'", size.ToString(), name.c_str());
 	}
+	bounds[0].Set(size.x * -0.5f, size.y * -0.5f);
+	bounds[1].Set(size.x * 0.5f, size.y * 0.5f);
+
+	trm.SetupBox(bounds);
 
 	org = origin;
 
@@ -191,14 +203,17 @@ void idChain::Spawn() {
 	SetPhysics(physicsObj);
 
 	Vector2 linearVelocity;
-	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
+	spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
+
+	Vector2 size;
+	spawnArgs.GetVector("size", "", size);
 
 	Vector2 dir = vec2_origin;
 	for (size_t i = 0; i < 2; ++i) {
 		if (linearVelocity[i] > 0)
-			dir[i] = -1.0f;
-		else
-			dir[i] = 1.0f;
+			dir[i] = -size.x;
+		else if (linearVelocity[i] < 0)
+			dir[i] = size.x;
 	}
 
 	BuildChain("link", origin, 1.0f, numLinks, dir);

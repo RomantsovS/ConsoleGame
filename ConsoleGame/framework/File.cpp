@@ -111,7 +111,7 @@ Properly handles partial reads
 =================
 */
 int idFile_Permanent::Read(void* buffer, int len) {
-	int remaining;
+	int block, remaining;
 	int read;
 	char *buf;
 	int tries;
@@ -130,34 +130,25 @@ int idFile_Permanent::Read(void* buffer, int len) {
 	remaining = len;
 	tries = 0;
 	while (remaining) {
-		o.read(buf, fileSize);
-		auto state = o.rdstate();
-		if (o.eof()) {
-			common->Warning("idFile_Permanent::Read failed with %d from %s", "eofbit", name.c_str());
-		}
-		else if (o.fail()) {
-			common->Warning("idFile_Permanent::Read failed with %d from %s", "failbit", name.c_str());
-		}
-		else if (o.bad()) {
-			common->Warning("idFile_Permanent::Read failed with %d from %s", "badbit", name.c_str());
-		}
+		block = remaining;
+		o.read(buf, block);
+		auto bytesRead = static_cast<int>(o.gcount());
 
-		if (o) {
-			read = fileSize;
+		if (!o) {
+			common->Warning("idFile_Permanent::Read failed with %d from %s. Trying to read %d, read %d",
+				o.rdstate(), name.c_str(), block, bytesRead);
 		}
-		else
-		{
-			read = static_cast<int>(o.gcount());
+		
+		read = bytesRead;
 
-			if (read == 0) {
-				// we might have been trying to read from a CD, which
-				// sometimes returns a 0 read on windows
-				if (!tries) {
-					tries = 1;
-				}
-				else {
-					return len - remaining;
-				}
+		if (read == 0) {
+			// we might have been trying to read from a CD, which
+			// sometimes returns a 0 read on windows
+			if (!tries) {
+				tries = 1;
+			}
+			else {
+				return len - remaining;
 			}
 		}
 
@@ -247,4 +238,25 @@ idFile_Permanent::Length
 */
 int idFile_Permanent::Length() const {
 	return fileSize;
+}
+
+/*
+================================================================================================
+
+idFileLocal
+
+================================================================================================
+*/
+
+/*
+========================
+idFileLocal::~idFileLocal
+
+Destructor that will destroy (close) the managed file when this wrapper class goes out of scope.
+========================
+*/
+idFileLocal::~idFileLocal() {
+	if (file) {
+		file = nullptr;
+	}
 }

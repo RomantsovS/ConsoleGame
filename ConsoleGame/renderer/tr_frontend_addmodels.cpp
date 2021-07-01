@@ -49,8 +49,7 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity) {
 		const ModelPixel & surf = model->Surface(surfaceNum);
 
 		tr.screen.set(Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +
-			vEntity->entityDef.lock()->parms.origin.GetIntegerVectorFloor() + surf.origin,
-			model_col == Screen::ConsoleColor::None ? surf.screenPixel : Screen::Pixel(surf.screenPixel, model_col));
+			vEntity->entityDef.lock()->parms.origin.GetIntegerVectorFloor() + surf.origin, surf.screenPixel);
 	}
 }
 

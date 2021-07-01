@@ -3,7 +3,7 @@
 
 #include "../Game_local.h"
 
-CLASS_DECLARATION(idPhysics_Player, Physics_PlayerChain)
+CLASS_DECLARATION(idPhysics_PlayerBase, Physics_PlayerChain)
 END_CLASS
 
 /*
@@ -25,20 +25,32 @@ void Physics_PlayerChain::WalkMove() {
 	Physics_PlayerChain::Friction();
 
 	if (GetUserCmd().forwardmove > 0) {
-		this->SetLinearVelocity(Vector2(walkSpeed, 0.0f));
+		SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
 	}
 	else if (GetUserCmd().forwardmove < 0) {
-		this->SetLinearVelocity(Vector2(-walkSpeed, 0.0f));
+		SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
 	}
 	else if (GetUserCmd().rightmove > 0) {
-		this->SetLinearVelocity(Vector2(0.0f, walkSpeed));
+		SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
 	}
 	else if (GetUserCmd().rightmove < 0) {
-		this->SetLinearVelocity(Vector2(0.0f, -walkSpeed));
+		SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
+	}
+	else {
+		auto linearvel = GetLinearVelocity();
+
+		if (linearvel.x > 0)
+			SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
+		else if (linearvel.x < 0)
+			SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
+		else if (linearvel.y > 0)
+			SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
+		else if (linearvel.y < 0)
+			SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
 	}
 
 	// evolve current state to next state
-	Evolve(frametime);
+	Evolve(GetFrameTime());
 }
 
 /*
@@ -48,9 +60,7 @@ Physics_PlayerChain::MovePlayer
 */
 void Physics_PlayerChain::MovePlayer(int msec) {
 
-	// determine the time
-	framemsec = msec;
-	frametime = framemsec * 0.001f;
+	idPhysics_PlayerBase::MovePlayer(msec);
 
 	// move the player velocity into the frame of a pusher
 	//current.velocity -= current.pushVelocity;
@@ -76,9 +86,6 @@ Physics_PlayerChain::Physics_PlayerChain() {
 	clipMask = 0;
 	memset(&current, 0, sizeof(current));
 	saved = current;
-	walkSpeed = 0;
-	framemsec = 0;
-	frametime = 0;
 
 	bodies.clear();
 	contacts.clear();
@@ -99,16 +106,6 @@ Physics_PlayerChain::~Physics_PlayerChain() {
 	for (i = 0; i < bodies.size(); i++) {
 		bodies[i] = nullptr;
 	}
-}
-
-/*
-================
-Physics_PlayerChain::SetSpeed
-================
-*/
-void Physics_PlayerChain::SetSpeed(const float newWalkSpeed, const float newCrouchSpeed) {
-	walkSpeed = newWalkSpeed;
-	//crouchSpeed = newCrouchSpeed;
 }
 
 /*

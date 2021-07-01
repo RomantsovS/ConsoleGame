@@ -22,7 +22,8 @@ std::vector<keyname_t> keynames = {
 	keyname_t({keyNum_t::K_LEFTARROW, "LEFTARROW", "#str_07025"}),
 	keyname_t({keyNum_t::K_RIGHTARROW, "RIGHTARROW", "#str_07026"}),
 	keyname_t({keyNum_t::K_DOWNARROW, "DOWNARROW", "#str_07024"}),
-	keyname_t({keyNum_t::K_ENTER, "ENTER", "#str_07019"})
+	keyname_t({keyNum_t::K_ENTER, "ENTER", "#str_07019"}),
+	keyname_t({keyNum_t::K_LSHIFT, "LSHIFT", "#str_07019"})
 };
 
 class idKey {

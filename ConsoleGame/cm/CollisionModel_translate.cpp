@@ -177,11 +177,11 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] - CM_CLIP_EPSILON;
 			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
-		else if(tw.start[i] > tw.end[i]) {
+		else /*if (tw.start[i] > tw.end[i])*/ {
 			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_CLIP_EPSILON;
 			tw.bounds[1][i] = tw.start[i] + tw.size[1][i] + CM_CLIP_EPSILON;
 		}
-		else {
+		/*else {
 			tw.bounds[0][i] = tw.start[i];
 			tw.bounds[1][i] = tw.start[i];
 
@@ -189,7 +189,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 				tw.bounds[0][i] += CM_CLIP_EPSILON;
 				tw.bounds[1][i] += CM_CLIP_EPSILON;
 			}
-		}
+		}*/
 		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
 			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;
 		}

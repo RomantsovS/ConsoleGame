@@ -85,7 +85,16 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 
 		if (!model->IsLoaded()) {
 			// reload it if it was purged
-			model->LoadModel();
+			if (model->SupportsBinaryModel()) {
+				idFileLocal file(fileSystem->OpenFileReadMemory(canonical));
+				model->PurgeModel();
+				if (!model->LoadBinaryModel(file)) {
+					model->LoadModel();
+				}
+			}
+			else {
+				model->LoadModel();
+			}
 		}
 		else if (insideLevelLoad && !model->IsLevelLoadReferenced()) {
 			// we are reusing a model already in memory, but
@@ -99,12 +108,21 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 
 	std::shared_ptr<idRenderModel> model;
 
-	if (extension == "textmodel") {
+	if (extension == "textmodel" || extension == "bmp") {
 		model = std::make_shared<idRenderModelStatic>();
 	}
 
 	if (model) {
-		model->InitFromFile(modelName);
+		idFileLocal file(fileSystem->OpenFileReadMemory(canonical));
+
+		if (!model->SupportsBinaryModel()) {
+			model->InitFromFile(canonical);
+		}
+		else {
+			if (!model->LoadBinaryModel(file)) {
+				model->InitFromFile(canonical);
+			}
+		}
 	}
 
 	if (!model) {
