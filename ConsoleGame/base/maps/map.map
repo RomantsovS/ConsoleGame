@@ -5,7 +5,7 @@ Version 2
 "call" "map_marscity1::main"
 "no_Weapons" "1"
 "def_player" "player"
-"player_origin" "50 23"
+"player_origin" "13 13"
 "game_add_point_delay" "1000"
 "game_add_point_count" "0"
 // primitive 2
@@ -17,28 +17,160 @@ Version 2
 }
 }
 
-// entity 1
 {
-"classname" "simpleobject"
-"name" "simpleobject1"
-"origin" "20 20"
-"color" "5"
-"linearVelocity" "-10 16"
+"classname" "block"
+"origin" "36 36"
+}
+
+{
+"classname" "block"
+"origin" "76 36"
+}
+
+{
+"classname" "block"
+"origin" "116 36"
+}
+
+{
+"classname" "block"
+"origin" "156 36"
+}
+
+{
+"classname" "block"
+"origin" "196 36"
+}
+
+{
+"classname" "block"
+"origin" "236 36"
+}
+
+{
+"classname" "block"
+"origin" "276 36"
+}
+
+{
+"classname" "block"
+"origin" "36 76"
+}
+
+{
+"classname" "block"
+"origin" "76 76"
+}
+
+{
+"classname" "block"
+"origin" "116 76"
+}
+
+{
+"classname" "block"
+"origin" "156 76"
+}
+
+{
+"classname" "block"
+"origin" "196 76"
+}
+
+{
+"classname" "block"
+"origin" "236 76"
+}
+
+{
+"classname" "block"
+"origin" "276 76"
+}
+
+{
+"classname" "block"
+"origin" "36 116"
+}
+
+{
+"classname" "block"
+"origin" "76 116"
+}
+
+{
+"classname" "block"
+"origin" "116 116"
+}
+
+{
+"classname" "block"
+"origin" "156 116"
+}
+
+{
+"classname" "block"
+"origin" "196 116"
+}
+
+{
+"classname" "block"
+"origin" "236 116"
+}
+
+{
+"classname" "block"
+"origin" "276 116"
+}
+
+{
+"classname" "block"
+"origin" "36 156"
+}
+
+{
+"classname" "block"
+"origin" "76 156"
+}
+
+{
+"classname" "block"
+"origin" "116 156"
+}
+
+{
+"classname" "block"
+"origin" "156 156"
+}
+
+{
+"classname" "block"
+"origin" "196 156"
+}
+
+{
+"classname" "block"
+"origin" "236 156"
+}
+
+{
+"classname" "block"
+"origin" "276 156"
 }
 
 // entity 2
 {
-"classname" "staticentity"
-"name" "staticentity1"
-"origin" "40 40"
-"color" "6"
+"classname" "mushroom"
+"name" "mushroom1"
+"origin" "215 132"
+"color" "5"
+"linearVelocity" "0 20"
 }
 
-// entity 3
+
 {
-"classname" "simpleobject"
-"model" "turtle"
-"origin" "10 100"
-"linearVelocity" "10 10"
+"classname" "turtle"
+"name" "turtle1"
+"origin" "175 100"
+"linearVelocity" "0 -20"
 "color" "6"
 }

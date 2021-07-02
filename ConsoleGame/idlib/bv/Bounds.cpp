@@ -99,8 +99,8 @@ void idBounds::FromTransformedBounds(const idBounds& bounds, const Vector2& orig
 	}*/
 
 	center = origin + center;// * axis;
-	b[0] = center;// -rotatedExtents;
-	b[1] = center;// +rotatedExtents;
+	b[0] = center - extents;// -rotatedExtents;
+	b[1] = center + extents;// +rotatedExtents;
 }
 
 void idBounds::FromPointTranslation(const Vector2& point, const Vector2& translation)

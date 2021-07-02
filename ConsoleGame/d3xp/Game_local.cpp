@@ -994,8 +994,11 @@ void idGameLocal::AddRandomPoint() {
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
 	}
+	else if (ent_type < 6) {
+		classname = "mushroom";
+	}
 	else {
-		classname = "simpleobject";
+		classname = "turtle";
 	}
 
 	args.Set("classname", classname);
@@ -1022,7 +1025,7 @@ void idGameLocal::AddRandomPoint() {
 	int num_attempts = 0;
 	int finded_ents = 0;
 	while ((finded_ents = EntitiesWithinRadius(origin, size_max, ent_vec, ent_vec.size())) != 0) {
-		if (num_attempts++ > 100) {
+		if (num_attempts++ > 1000) {
 			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %5.2f", origin.x, origin.y, finded_ents, searching_radius);
 			return;
 		}
@@ -1034,7 +1037,13 @@ void idGameLocal::AddRandomPoint() {
 	args.Set("axis", axis.ToString());
 	args.Set("size", va("%s %s", std::to_string(size_x).c_str(), std::to_string(size_y).c_str()));
 	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
-	args.Set("linearVelocity", Vector2(gameLocal.GetRandomValue(-10.0f, 10.0f), gameLocal.GetRandomValue(-10.0f, 10.0f)).ToString());
+	
+	int speed = def->dict.GetInt("speed");
+	auto rand = gameLocal.GetRandomValue(0.0f, 1.0f);
+	if (gameLocal.GetRandomValue(0.0f, 1.0f) > 0)
+		speed = -speed;
+
+	args.Set("linearVelocity", (rand > 0) ? Vector2(speed, 0).ToString() : Vector2(0, speed).ToString());
 
 	std::shared_ptr<idEntity> ent;
 	if (!gameLocal.SpawnEntityDef(args, &ent)) {

@@ -315,8 +315,7 @@ bool idEntity::RunPhysics() {
 	part = this;
 
 	// save the physics state of the whole team and disable the team for collision detection
-	if (part->physics)
-	{
+	if (part->physics) {
 		part->physics->SaveState();
 	}
 

@@ -18,7 +18,7 @@ public:
 	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
 	void SetClipModel();
 
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:
 	std::shared_ptr<Physics_PlayerMy> physicsObj; // player physics
 

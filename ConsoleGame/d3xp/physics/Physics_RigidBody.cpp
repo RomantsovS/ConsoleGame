@@ -170,6 +170,9 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 	// check for collisions from the current to the next state
 	collided = CheckForCollisions(timeStep, next_step, collision);
 
+	// set the new state
+	current = next_step;
+
 	if (collided) {
 		// apply collision impulse
 		if (CollisionImpulse(collision, impulse)) {
@@ -184,9 +187,6 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
 			}
 		}*/
 	}
-
-	// set the new state
-	current = next_step;
 
 	// update the position of the clip model
 	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);

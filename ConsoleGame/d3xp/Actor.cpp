@@ -35,6 +35,7 @@ void idActor::Spawn() {
 		kv = spawnArgs.MatchPrefix("def_attach", kv->first);
 	}
 }
+
 #include "../idlib/precompiled.h"
 #pragma hdrstop
 

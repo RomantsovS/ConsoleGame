@@ -21,18 +21,23 @@ entityDef worldspawn {
 	"name"					"world"
 }
 
-entityDef staticentity {
+entityDef brick {
 	"spawnclass"			"idStaticEntity"
-	//"name"					"idStaticEntity"
-	"model"					"models/test.bmp"
+	"model"					"models/brick16x16.bmp"
 	"size"					"16 16"
 }
 
-entityDef simpleobject {
-	"spawnclass"			"idSimpleObject"
-	//"name"					"idSimpleObject"
+entityDef block {
+	"spawnclass"			"idStaticEntity"
+	"model"					"models/block16x16.bmp"
+	"size"					"16 16"
+}
+
+entityDef mushroom {
+	"spawnclass"			"AISimple"
 	"model"					"mushroom"
 	"size"					"16 16"
+	"speed"					"20"
 }
 
 entityDef chain {
@@ -63,12 +68,13 @@ entityDef player_snake_long {
 entityDef player {
 	"spawnclass"			"PlayerMy"
 	"model"					"mario"
-	"size"					"16 16"
+	"size"					"13 16"
 	"linearVelocity"		"0 10"
 }
 
 entityDef turtle {
-	"spawnclass"			"idSimpleObject"
+	"spawnclass"			"AISimple"
 	"model"					"turtle"
 	"size"					"16 23"
+	"speed"					"20"
 }

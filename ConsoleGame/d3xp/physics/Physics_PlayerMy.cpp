@@ -101,16 +101,17 @@ void Physics_PlayerMy::WalkMove() {
 	Vector2 wishvel{};
 
 	if (GetUserCmd().forwardmove > 0) {
-		wishvel = Vector2(0.0f, GetPlayerSpeed());
+		wishvel += Vector2(0.0f, GetPlayerSpeed());
 	}
 	else if (GetUserCmd().forwardmove < 0) {
-		wishvel = Vector2(0.0f, -GetPlayerSpeed());
+		wishvel += Vector2(0.0f, -GetPlayerSpeed());
 	}
-	else if (GetUserCmd().rightmove > 0) {
-		wishvel = Vector2(GetPlayerSpeed(), 0.0f);
+	
+	if (GetUserCmd().rightmove > 0) {
+		wishvel += Vector2(GetPlayerSpeed(), 0.0f);
 	}
 	else if (GetUserCmd().rightmove < 0) {
-		wishvel = Vector2(-GetPlayerSpeed(), 0.0f);
+		wishvel += Vector2(-GetPlayerSpeed(), 0.0f);
 	}
 
 	current.velocity = wishvel;

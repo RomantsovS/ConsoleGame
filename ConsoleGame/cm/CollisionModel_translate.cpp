@@ -116,8 +116,8 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	tw.maxContacts = idCollisionModelManagerLocal::maxContacts;
 	tw.numContacts = 0;
 	tw.model = idCollisionModelManagerLocal::models[model];
-	tw.start = start - modelOrigin.GetIntegerVectorFloor();
-	tw.end = end - modelOrigin.GetIntegerVectorFloor();
+	tw.start = start - modelOrigin;// .GetIntegerVectorFloor();
+	tw.end = end - modelOrigin;// .GetIntegerVectorFloor();
 	tw.dir = end - start;
 
 	// the trace fraction is too inaccurate to describe translations over huge distances
@@ -160,6 +160,9 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		for (size_t j = 0; j < 2; j++) {
 			if (tw.start[j] < tw.end[j]) {
 				vert->endp[j] += CM_CLIP_EPSILON;
+			}
+			else if (tw.start[j] > tw.end[j]) {
+				vert->endp[j] -= CM_CLIP_EPSILON;
 			}
 
 			if (vert->p[j] == CM_POINT_SIZE) {

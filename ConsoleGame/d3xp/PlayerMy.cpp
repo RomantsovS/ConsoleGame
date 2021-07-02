@@ -118,7 +118,7 @@ PlayerMy::Collide
 bool PlayerMy::Collide(const trace_t& collision, const Vector2& velocity) {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
-		if (other->IsType(idSimpleObject::Type) || other->IsType(idChain::Type)) {
+		if (other->IsType(AISimple::Type) || other->IsType(idChain::Type)) {
 			other->PostEventMS(&EV_Remove, 0);
 			gameLocal.AddRandomPoint();
 

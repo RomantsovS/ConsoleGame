@@ -270,14 +270,16 @@ bool idRenderModelStatic::ConvertBMPToModelSurfaces(const BMP& bmp) {
 		for (int i = 0; i < bmp.bmp_info_header.width; ++i) {
 			int cur_pixel = (j * bmp.bmp_info_header.width + i) * 3;
 
-			if (bmp.data.at(cur_pixel + 0) > 200 &&
-				bmp.data.at(cur_pixel + 1) > 200 &&
+			if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
 				bmp.data.at(cur_pixel + 2) > 200) {
 				col = Screen::ConsoleColor::White;
 			}
-			else if (bmp.data.at(cur_pixel + 1) > 100 &&
-				bmp.data.at(cur_pixel + 2) > 200) {
+			else if (bmp.data.at(cur_pixel + 1) > 100 && bmp.data.at(cur_pixel + 2) > 200) {
 				col = Screen::ConsoleColor::Yellow;
+			}
+			else if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
+				bmp.data.at(cur_pixel + 3) > 100) {
+				col = Screen::ConsoleColor::LightCyan;
 			}
 			else if (bmp.data.at(cur_pixel + 0) > 200) {
 				col = Screen::ConsoleColor::Blue;
@@ -286,15 +288,25 @@ bool idRenderModelStatic::ConvertBMPToModelSurfaces(const BMP& bmp) {
 				col = Screen::ConsoleColor::Green;
 			}
 			else if (bmp.data.at(cur_pixel + 2) > 200) {
-				col = Screen::ConsoleColor::Red;
+				col = Screen::ConsoleColor::LightRed;
 			}
-			else if (bmp.data.at(cur_pixel + 0) < 50 &&
-				bmp.data.at(cur_pixel + 1) < 50 &&
+			else if (bmp.data.at(cur_pixel + 0) < 50 && bmp.data.at(cur_pixel + 1) < 50 &&
 				bmp.data.at(cur_pixel + 2) < 50) {
 				col = Screen::ConsoleColor::Black;
 			}
+			else if (bmp.data.at(cur_pixel + 0) > 100 && bmp.data.at(cur_pixel + 1) > 100 &&
+				bmp.data.at(cur_pixel + 2) < 50) {
+				col = Screen::ConsoleColor::LightGray;
+			}
+			else if (bmp.data.at(cur_pixel + 0) < 100 && bmp.data.at(cur_pixel + 1) < 100 &&
+				bmp.data.at(cur_pixel + 2) < 100) {
+				col = Screen::ConsoleColor::Cyan;
+			}
 			else if (bmp.data.at(cur_pixel + 1) > 100) {
 				col = Screen::ConsoleColor::LightGreen;
+			}
+			else if (bmp.data.at(cur_pixel + 2) > 50) {
+				col = Screen::ConsoleColor::Red;
 			}
 			else
 				col = Screen::ConsoleColor::None;

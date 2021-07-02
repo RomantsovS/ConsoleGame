@@ -7,11 +7,11 @@ model test {
 }
 
 model mushroom {
-	mesh "models/mushroom16.bmp"
+	mesh "models/mushroom16x16.bmp"
 }
 
 model mario {
-	mesh "models/mario16.bmp"
+	mesh "models/mario13x16.bmp"
 }
 
 model turtle {
