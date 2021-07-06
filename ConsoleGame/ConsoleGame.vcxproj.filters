@@ -324,10 +324,13 @@
     <ClInclude Include="renderer\Model_bmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3xp\PlayerMy.h">
+    <ClInclude Include="d3xp\physics\Physics_PlayerMy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3xp\physics\Physics_PlayerMy.h">
+    <ClInclude Include="d3xp\Weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="d3xp\Projectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -650,10 +653,13 @@
     <ClCompile Include="renderer\Model_bmp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3xp\PlayerMy.cpp">
+    <ClCompile Include="d3xp\physics\Physics_PlayerMy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3xp\physics\Physics_PlayerMy.cpp">
+    <ClCompile Include="d3xp\Weapon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="d3xp\Projectile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -157,6 +157,31 @@ Version 2
 "origin" "276 156"
 }
 
+{
+"classname" "brick"
+"origin" "56 36"
+}
+
+{
+"classname" "brick"
+"origin" "56 56"
+}
+
+{
+"classname" "brick"
+"origin" "216 156"
+}
+
+{
+"classname" "brick"
+"origin" "136 156"
+}
+
+{
+"classname" "brick"
+"origin" "96 96"
+}
+
 // entity 2
 {
 "classname" "mushroom"

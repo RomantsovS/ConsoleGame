@@ -46,6 +46,10 @@ const std::string& idDict::GetString(const std::string& key, const std::string& 
 	return defaultString;
 }
 
+int idDict::GetInt(const std::string& key, const std::string& defaultString) const {
+	return atoi(GetString(key, defaultString).c_str());
+}
+
 bool idDict::GetString(const std::string& key, const std::string& defaultString, std::string* out) const {
 	auto iter = args.find(key);
 
@@ -71,12 +75,21 @@ bool idDict::GetInt(const std::string key, const std::string defaultString, int 
 int idDict::GetInt(const std::string& key, const int defaultInt) const {
 	auto iter = args.find(key);
 
-	if (iter != args.end())
-	{
+	if (iter != args.end()) {
 		return std::atoi(iter->second.c_str());
 	}
 
 	return defaultInt;
+}
+
+bool idDict::GetBool(const std::string& key, const bool defaultBool) const {
+	auto iter = args.find(key);
+
+	if (iter != args.end()) {
+		return std::atoi(iter->second.c_str()) != 0;
+	}
+
+	return defaultBool;
 }
 
 Vector2 idDict::GetVector(const std::string key, const std::string defaultString) const {

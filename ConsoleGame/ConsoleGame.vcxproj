@@ -159,7 +159,8 @@
     <ClInclude Include="d3xp\physics\Physics_Static.h" />
     <ClInclude Include="d3xp\Player.h" />
     <ClInclude Include="d3xp\PlayerChain.h" />
-    <ClInclude Include="d3xp\PlayerMy.h" />
+    <ClInclude Include="d3xp\Projectile.h" />
+    <ClInclude Include="d3xp\Weapon.h" />
     <ClInclude Include="d3xp\WorldSpawn.h" />
     <ClInclude Include="framework\CmdSystem.h" />
     <ClInclude Include="framework\Common.h" />
@@ -265,7 +266,8 @@
     <ClCompile Include="d3xp\physics\Physics_Static.cpp" />
     <ClCompile Include="d3xp\Player.cpp" />
     <ClCompile Include="d3xp\PlayerChain.cpp" />
-    <ClCompile Include="d3xp\PlayerMy.cpp" />
+    <ClCompile Include="d3xp\Projectile.cpp" />
+    <ClCompile Include="d3xp\Weapon.cpp" />
     <ClCompile Include="d3xp\WorldSpawn.cpp" />
     <ClCompile Include="framework\CmdSystem.cpp" />
     <ClCompile Include="framework\Common.cpp" />

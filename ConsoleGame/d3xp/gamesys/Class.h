@@ -147,8 +147,10 @@ public:
 
 	bool PostEventMS(const idEventDef* ev, int time);
 
+	bool PostEventSec(const idEventDef* ev, float time);
+
 	bool ProcessEventArgPtr(const idEventDef* ev, int* data);
-	//void CancelEvents(const idEventDef* ev);
+	void CancelEvents(const idEventDef* ev);
 
 	void Event_Remove();
 	virtual void Remove();

@@ -1070,6 +1070,37 @@ Screen::ConsoleColor idGameLocal::GetRandomColor() {
 	return colors[col];
 }
 
+/*
+================
+idGameLocal::SpawnEntityType
+================
+*/
+std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const std::shared_ptr<idDict>& args) {
+	std::shared_ptr<idClass> obj;
+
+	if (!classdef.IsType(idEntity::Type)) {
+		Error("Attempted to spawn non-entity class '%s'", classdef.classname.c_str());
+	}
+
+	try {
+		if (args) {
+			spawnArgs = *args;
+		}
+		else {
+			spawnArgs.Clear();
+		}
+		obj = classdef.CreateInstance();
+		obj->CallSpawn();
+	}
+
+	catch (std::exception&) {
+		obj = nullptr;
+	}
+	spawnArgs.Clear();
+
+	return std::static_pointer_cast<idEntity>(obj);
+}
+
 bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>* ent) {
 	std::string classname, spawn, error, name;
 	idTypeInfo *cls;
@@ -1132,6 +1163,16 @@ idGameLocal::FindEntityDef
 const std::shared_ptr<idDeclEntityDef> idGameLocal::FindEntityDef(const std::string& name, bool makeDefault) const {
 	const std::shared_ptr<idDecl> decl = declManager->FindType(declType_t::DECL_ENTITYDEF, name, makeDefault);
 	return std::dynamic_pointer_cast<idDeclEntityDef>(decl);
+}
+
+/*
+================
+idGameLocal::FindEntityDefDict
+================
+*/
+const idDict* idGameLocal::FindEntityDefDict(const std::string& name, bool makeDefault) const {
+	const std::shared_ptr<idDeclEntityDef> decl = FindEntityDef(name, makeDefault);
+	return decl ? &decl->dict : nullptr;
 }
 
 void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy) {

@@ -27,8 +27,11 @@ public:
 
 	// these return default values of 0.0, 0 and false
 	const std::string& GetString(const std::string& key, const std::string& defaultString = "") const;
+	int GetInt(const std::string& key, const std::string& defaultString) const;
+	bool GetBool(const std::string key, const char* defaultString) const;
+	float GetFloat(const std::string& key, const float defaultFloat = 0.0f) const;
 	int	GetInt(const std::string& key, const int defaultInt = 0) const;
-	bool GetBool(const std::string& key, const std::string& defaultString) const;
+	bool GetBool(const std::string& key, const bool defaultBool = false) const;
 	Vector2 GetVector(const std::string key, const std::string defaultString = "") const;
 
 	bool GetString(const std::string& key, const std::string& defaultString, std::string *out) const;
@@ -49,8 +52,18 @@ inline void idDict::SetInt(const std::string& key, int val) {
 	Set(key, va("%i", val));
 }
 
-inline bool idDict::GetBool(const std::string& key, const std::string& defaultString) const {
+inline bool idDict::GetBool(const std::string key, const char* defaultString) const {
 	return (atoi(GetString(key, defaultString).c_str()) != 0);
+}
+
+inline float idDict::GetFloat(const std::string& key, const float defaultFloat) const {
+	auto iter = args.find(key);
+
+	if (iter != args.end()) {
+		return static_cast<float>(std::atof(iter->second.c_str()));
+	}
+
+	return defaultFloat;
 }
 
 #endif

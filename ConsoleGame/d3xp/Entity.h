@@ -25,6 +25,25 @@ public:
 
 	int thinkFlags; // TH_? flags
 
+	int						health = 0;					// FIXME: do all objects really need health?
+
+	struct entityFlags_s {
+		bool				notarget : 1;	// if true never attack or target this entity
+		bool				noknockback : 1;	// if true no knockback from hits
+		bool				takedamage : 1;	// if true this entity can be damaged
+		bool				hidden : 1;	// if true this entity is not visible
+		bool				bindOrientated : 1;	// if true both the master orientation is used for binding
+		bool				solidForTeam : 1;	// if true this entity is considered solid when a physics team mate pushes entities
+		bool				forcePhysicsUpdate : 1;	// if true always update from the physics whether the object moved or not
+		bool				selected : 1;	// if true the entity is selected for editing
+		bool				neverDormant : 1;	// if true the entity never goes dormant
+		bool				isDormant : 1;	// if true the entity is dormant
+		bool				hasAwakened : 1;	// before a monster has been awakened the first time, use full PVS for dormant instead of area-connected
+		bool				networkSync : 1; // if true the entity is synchronized over the network
+		bool				grabbed : 1;	// if true object is currently being grabbed
+		bool				skipReplication : 1; // don't replicate this entity over the network.
+	} fl = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+
 	ABSTRACT_PROTOTYPE(idEntity);
 
 	idEntity();
@@ -53,6 +72,8 @@ public:
 	void UpdateModelTransform();
 	virtual void SetColor(const Screen::ConsoleColor &color);
 	virtual void FreeModelDef();
+	virtual void Hide();
+	bool IsHidden() const;
 
 	// animation
 	virtual bool UpdateAnimationControllers();
@@ -80,6 +101,15 @@ public:
 	virtual void AddContactEntity(std::shared_ptr<idEntity> ent);
 	// remove a touching entity
 	virtual void RemoveContactEntity(std::shared_ptr<idEntity> ent);
+
+	// damage
+	// applies damage to this entity
+	virtual	void Damage(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker,
+		const Vector2& dir, const std::string& damageDefName, const float damageScale);
+	// notifies this entity that is has been killed
+	virtual void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+		const Vector2& dir);
+
 protected:
 	renderEntity_t renderEntity;
 	int modelDefHandle;

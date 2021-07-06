@@ -5,6 +5,7 @@
 #undef INFINITY
 #endif
 
+#define SEC2MS(t)				( static_cast<float>( (t) * idMath::M_SEC2MS ) )
 #define MS2SEC(t)				( (t) * idMath::M_MS2SEC )
 
 /*
@@ -35,6 +36,7 @@ public:
 	static int ValueInRange(T val, T min, T max);
 
 	static const float M_MS2SEC; // milliseconds to seconds multiplier
+	static const float M_SEC2MS; // seconds to milliseconds multiplier
 	static const float INFINITY; // huge number which should be larger than any valid number used
 	static const float FLT_SMALLEST_NON_DENORMAL;	// smallest non-denormal 32-bit floating point value
 };

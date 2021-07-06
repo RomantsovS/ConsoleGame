@@ -273,6 +273,16 @@ const std::string idClass::GetClassname() const {
 
 /*
 ================
+idClass::CancelEvents
+================
+*/
+void idClass::CancelEvents(const idEventDef* ev) {
+	idEvent::CancelEvents(this, ev);
+}
+
+
+/*
+================
 idClass::PostEventArgs
 ================
 */
@@ -315,6 +325,16 @@ idClass::PostEventMS
 bool idClass::PostEventMS(const idEventDef* ev, int time) {
 	return PostEventArgs(ev, time, 0);
 }
+
+/*
+================
+idClass::PostEventSec
+================
+*/
+bool idClass::PostEventSec(const idEventDef* ev, float time) {
+	return PostEventArgs(ev, static_cast<int>(SEC2MS(time)), 0);
+}
+
 
 classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo* cls)
 {

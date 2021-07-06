@@ -13,9 +13,39 @@ idAI::~idAI() {
 }
 
 void idAI::Spawn() {
+	fl.takedamage = !spawnArgs.GetBool("noDamage");
 }
 
 void idAI::Think() {
+}
+
+/*
+================
+idAI::Hide
+================
+*/
+void idAI::Hide() {
+	idActor::Hide();
+	fl.takedamage = false;
+}
+
+/*
+=====================
+idAI::Killed
+=====================
+*/
+void idAI::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+	const Vector2& dir) {
+
+	//const std::string modelDeath;
+
+	/*if (spawnArgs.GetString("model_death", "", &modelDeath)) {
+		SetModel(modelDeath);
+		physicsObj.SetLinearVelocity(vec3_zero);
+		physicsObj.PutToRest();
+		physicsObj.DisableImpact();
+	}*/
+	PostEventMS(&EV_Remove, 0);
 }
 
 CLASS_DECLARATION(idAI, AISimple)
@@ -80,4 +110,21 @@ bool AISimple::Collide(const trace_t& collision, const Vector2& velocity) {
 	}
 
 	return false;
+}
+
+void AISimple::Hide() {
+	idAI::Hide();
+
+	//physicsObj.SetContents(0);
+	physicsObj->GetClipModel()->Unlink();
+}
+
+void AISimple::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+	const Vector2& dir) {
+
+	// make monster nonsolid
+	//physicsObj.SetContents(0);
+	physicsObj->GetClipModel()->Unlink();
+
+	idAI::Killed(inflictor, attacker, damage, dir);
 }

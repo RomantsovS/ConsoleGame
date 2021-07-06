@@ -34,7 +34,7 @@ public:
 	std::shared_ptr<idEntity> GetEntity() const;
 	void SetId(int newId);
 	int GetId() const;
-	//void					SetOwner(idEntity* newOwner);
+	void SetOwner(std::shared_ptr<idEntity> newOwner);
 	std::weak_ptr<idEntity> GetOwner() const;
 	const idBounds& GetBounds() const;
 	const idBounds& GetAbsBounds() const;
@@ -73,6 +73,10 @@ private:
 
 inline void idClipModel::SetEntity(std::shared_ptr<idEntity> newEntity) {
 	entity = newEntity;
+}
+
+inline void idClipModel::SetOwner(std::shared_ptr<idEntity> newOwner) {
+	owner = newOwner;
 }
 
 inline std::shared_ptr<idEntity> idClipModel::GetEntity() const {

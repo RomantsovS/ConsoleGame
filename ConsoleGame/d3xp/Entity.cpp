@@ -184,7 +184,7 @@ void idEntity::Present() {
 	}*/
 
 	// if set to invisible, skip
-	if (!renderEntity.hModel /*|| IsHidden()*/) {
+	if (!renderEntity.hModel || IsHidden()) {
 		return;
 	}
 
@@ -225,6 +225,28 @@ void idEntity::FreeModelDef() {
 	if (modelDefHandle != -1) {
 		gameRenderWorld->FreeEntityDef(modelDefHandle);
 		modelDefHandle = -1;
+	}
+}
+
+/*
+================
+idEntity::IsHidden
+================
+*/
+bool idEntity::IsHidden() const {
+	return fl.hidden;
+}
+
+/*
+================
+idEntity::Hide
+================
+*/
+void idEntity::Hide() {
+	if (!IsHidden()) {
+		fl.hidden = true;
+		FreeModelDef();
+		UpdateVisuals();
 	}
 }
 
@@ -369,6 +391,76 @@ void idEntity::AddContactEntity(std::shared_ptr<idEntity> ent) {
 
 void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent) {
 	GetPhysics()->RemoveContactEntity(ent);
+}
+
+/*
+============
+Damage
+
+this		entity that is being damaged
+inflictor	entity that is causing the damage
+attacker	entity that caused the inflictor to damage targ
+	example: this=monster, inflictor=rocket, attacker=player
+
+dir			direction of the attack for knockback in global space
+point		point at which the damage is being inflicted, used for headshots
+damage		amount of damage being inflicted
+
+inflictor, attacker, dir, and point can be NULL for environmental effects
+
+============
+*/
+void idEntity::Damage(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker,
+	const Vector2& dir, const std::string& damageDefName, const float damageScale) {
+	
+	if (!fl.takedamage) {
+		return;
+	}
+
+	if (!inflictor) {
+		inflictor = gameLocal.world;
+	}
+
+	if (!attacker) {
+		attacker = gameLocal.world;
+	}
+
+	const idDict* damageDef = gameLocal.FindEntityDefDict(damageDefName);
+	if (damageDef == NULL) {
+		gameLocal.Error("Unknown damageDef '%s'\n", damageDefName.c_str());
+		return;
+	}
+
+	int	damage = damageDef->GetInt("damage");
+
+	// inform the attacker that they hit someone
+	//attacker->DamageFeedback(this, inflictor, damage);
+	if (damage) {
+		// do the damage
+		health -= damage;
+		if (health <= 0) {
+			if (health < -999) {
+				health = -999;
+			}
+
+			Killed(inflictor, attacker, damage, dir);
+		}
+		else {
+			//Pain(inflictor, attacker, damage, dir, location);
+		}
+	}
+}
+
+/*
+============
+idEntity::Killed
+
+Called whenever an entity's health is reduced to 0 or less.
+This is a virtual function that subclasses are expected to implement.
+============
+*/
+void idEntity::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+	const Vector2& dir) {
 }
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) {

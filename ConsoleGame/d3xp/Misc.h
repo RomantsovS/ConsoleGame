@@ -14,6 +14,9 @@ public:
 	virtual void Think() override;
 private:
 	//int spawnTime;
+protected:
+	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+		const Vector2& dir) override;
 };
 
 class idSimpleObject : public idAnimatedEntity

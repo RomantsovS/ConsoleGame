@@ -12,6 +12,13 @@ public:
 
 	void Spawn();
 	virtual void Think() override;
+protected:
+	void Hide() override;
+
+	// damage
+	//virtual bool Pain(idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location);
+	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+		const Vector2& dir) override;
 };
 
 class AISimple : public idAI
@@ -31,6 +38,11 @@ public:
 	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
+protected:
+	void Hide() override;
+
+	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+		const Vector2& dir) override;
 };
 
 #endif

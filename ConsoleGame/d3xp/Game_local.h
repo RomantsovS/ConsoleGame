@@ -112,9 +112,11 @@ public:
 	void LoadMap(const std::string mapName, int randseed);
 
 	gameState_t GameState() const;
+	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const std::shared_ptr<idDict>& args = nullptr);
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
 	const std::shared_ptr<idDeclEntityDef> FindEntityDef(const std::string& name, bool makeDefault = true) const;
+	const idDict* FindEntityDefDict(const std::string& name, bool makeDefault = true) const;
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
 	void UnregisterEntity(std::shared_ptr<idEntity> ent);
@@ -235,10 +237,11 @@ const int MASK_SOLID = 1;
 #include "AFEntity.h"
 #include "Misc.h"
 #include "Actor.h"
+#include "Projectile.h"
+#include "Weapon.h"
 #include "WorldSpawn.h"
 #include "Player.h"
 #include "PlayerChain.h"
-#include "PlayerMy.h"
 
 #include "ai/AI.h"
 

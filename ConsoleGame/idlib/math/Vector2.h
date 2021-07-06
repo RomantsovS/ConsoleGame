@@ -6,8 +6,7 @@ struct Vector2
 	Vector2() = default;
 	Vector2(float height, float width) : x(height), y(width) {}
 	Vector2(int height, int width) : x(static_cast<float>(height)), y(static_cast<float>(width)) {}
-	Vector2(std::initializer_list<float> il)
-	{
+	Vector2(std::initializer_list<float> il) {
 		if (il.size() != 2)
 			throw std::invalid_argument("expected list with 2 members");
 
@@ -30,6 +29,7 @@ struct Vector2
 	Vector2& operator*=(const Vector2& r);
 
 	Vector2 Cross(const Vector2& a) const;
+	float Length() const;
 	float LengthSqr() const;
 	float Normalize(); // returns length
 
@@ -94,6 +94,10 @@ inline Vector2 &Vector2::operator*=(const Vector2 & r)
 inline Vector2 Vector2::Cross(const Vector2& a) const
 {
 	return Vector2(y * a.x - x * a.y, x * a.y - y * a.x);
+}
+
+inline float Vector2::Length() const {
+	return static_cast<float>(idMath::Sqrt(x * x + y * y));
 }
 
 inline float Vector2::LengthSqr() const

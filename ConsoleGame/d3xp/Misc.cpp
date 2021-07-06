@@ -14,11 +14,17 @@ idStaticEntity::~idStaticEntity() {
 }
 
 void idStaticEntity::Spawn() {
-	//spawnTime = gameLocal.time;
+	fl.takedamage = !spawnArgs.GetBool("noDamage");
 }
 
 void idStaticEntity::Think() {
 	idEntity::Think();
+}
+
+void idStaticEntity::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
+	const Vector2& dir) {
+
+	PostEventMS(&EV_Remove, 0);
 }
 
 CLASS_DECLARATION(idAnimatedEntity, idSimpleObject)

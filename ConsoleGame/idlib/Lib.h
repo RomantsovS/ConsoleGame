@@ -8,6 +8,7 @@ public:
 
 	// wrapper to idCommon functions 
 	static void Printf(const char* fmt, ...);
+	static void Warning(const char* fmt, ...);
 };
 
 #define MAX_STRING_CHARS		1024		// max length of a string
