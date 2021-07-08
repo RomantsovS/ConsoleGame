@@ -46,8 +46,6 @@ void idGameLocal::Init() {
 
 	Clear();
 
-	clip = std::make_shared<idClip>();
-
 	idEvent::Init();
 	idClass::Init();
 
@@ -152,8 +150,7 @@ void idGameLocal::MapShutdown() {
 
 	MapClear(true);
 
-	if(clip)
-		clip->Shutdown();
+	clip.Shutdown();
 	idClipModel::ClearTraceModelCache();
 
 	collisionModelManager->FreeMap();		// Fixes an issue where when maps were reloaded the materials wouldn't get their surfaceFlags re-set.  Now we free the map collision model forcing materials to be reparsed.
@@ -421,9 +418,9 @@ void idGameLocal::RunDebugInfo() {
 
 	sprintf_s(buf, "num ents %3d, active ents %3d", num_spawned_entities, num_active_entities);
 
-	gameRenderWorld->DrawText(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
+	gameRenderWorld->DrawTextToScreen(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
 
-	clip->PrintStatistics();
+	clip.PrintStatistics();
 
 	if (/*g_showEntityInfo.GetBool()*/true) {
 		/*idMat3		axis = player->viewAngles.ToMat3();
@@ -467,7 +464,7 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			if (true || ent->IsActive())
+			/*if (true || ent->IsActive())
 			{
 				static char buf[256];
 				auto phys = ent->GetPhysics();
@@ -475,8 +472,8 @@ void idGameLocal::RunDebugInfo() {
 					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,
 					phys->IsAtRest());
 
-				gameRenderWorld->DrawText(buf, Vector2(), ent->GetRenderEntity()->color, 0);
-			}
+				gameRenderWorld->DrawTextToScreen(buf, Vector2(), ent->GetRenderEntity()->color, 0);
+			}*/
 		}
 	}
 
@@ -575,11 +572,11 @@ void idGameLocal::RunDebugInfoScreen() {
 	}
 
 	if (g_showCollisionModels.GetBool()) {
-		clip->DrawClipModels(player->GetPhysics()->GetOrigin(), g_maxShowDistance.GetFloat(), player);
+		clip.DrawClipModels(player->GetPhysics()->GetOrigin(), g_maxShowDistance.GetFloat(), player);
 	}
 
 	if (g_showCollisionTraces.GetBool()) {
-		clip->DrawClipSectors();
+		clip.DrawClipSectors();
 	}
 }
 
@@ -713,7 +710,7 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 
 	spawnArgs.Clear();
 
-	clip->Init();
+	clip.Init();
 
 	if (!sameMap) {
 		mapFile->RemovePrimitiveData();
@@ -731,10 +728,7 @@ void idGameLocal::Clear() {
 	numEntitiesToDeactivate = 0;
 	world = nullptr;
 	
-	if (clip) {
-		clip->Shutdown();
-		clip = nullptr;
-	}
+	clip.Shutdown();
 
 	framenum = 0;
 	previousTime = 0;
@@ -1013,18 +1007,18 @@ void idGameLocal::AddRandomPoint() {
 	auto size_x = def->dict.GetVector("size").x;
 	auto size_y = def->dict.GetVector("size").y;
 	auto size_max = max(size_x, size_y);
-	searching_radius = max(searching_radius, size_max);
+	searching_radius = max(searching_radius, size_max) / 2.0f;
 	start_pos += searching_radius;
 
 	Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max), GetRandomValue(start_pos, GetHeight() - size_max));
-	//Vector2 origin = { 11.0f, 10.0f };
+	//Vector2 origin = { 136.0f, 156.0f };
 	const Vector2 axis(0, 0);
 
 	std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
 	int num_attempts = 0;
 	int finded_ents = 0;
-	while ((finded_ents = EntitiesWithinRadius(origin, size_max, ent_vec, ent_vec.size())) != 0) {
+	while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0) {
 		if (num_attempts++ > 1000) {
 			Warning("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %5.2f", origin.x, origin.y, finded_ents, searching_radius);
 			return;

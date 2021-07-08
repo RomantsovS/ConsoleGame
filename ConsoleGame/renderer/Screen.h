@@ -47,8 +47,8 @@ public:
 
 	inline Screen::Pixel get(pos_type r, pos_type c) const; // explicitly inline
 
-	Screen &set(pos_type row, pos_type col, Screen::Pixel ch);
-	Screen &set(Vector2 pos, Screen::Pixel ch);
+	Screen &set(pos_type row, pos_type col, const Screen::Pixel& ch);
+	Screen &set(const Vector2& pos, const Screen::Pixel& ch);
 	
 	pos_type getHeight() const { return height; }
 	pos_type getWidth() const { return width; }
@@ -91,7 +91,7 @@ Screen::Pixel Screen::get(pos_type r, pos_type c) const // declared as inline in
 	return contents[row + c]; // return character at the given column
 }
 
-inline Screen & Screen::set(Vector2 pos, Screen::Pixel ch) {
+inline Screen & Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
 

@@ -22,6 +22,7 @@ struct Vector2
 	float operator[](const int index) const;
 	float& operator[](const int index);
 	Vector2 operator*(const float a) const;
+	Vector2 operator+(const Vector2& a) const;
 	Vector2 operator-(const Vector2& a) const;
 	Vector2 operator-() const;
 	Vector2 &operator+=(const Vector2 & r);
@@ -81,6 +82,10 @@ inline float& Vector2::operator[](const int index)
 inline Vector2 Vector2::operator*(const float a) const
 {
 	return Vector2(x * a, y * a);
+}
+
+inline Vector2 Vector2::operator+(const Vector2& a) const {
+	return Vector2(x + a.x, y + a.y);
 }
 
 inline Vector2 &Vector2::operator*=(const Vector2 & r)
@@ -177,14 +182,14 @@ inline Vector2& Vector2::operator-=(const Vector2& a)
 
 	return *this;
 }
-
+/*
 inline Vector2 operator+(const Vector2 & l, const Vector2 & r)
 {
 	Vector2 sum = l;
 	sum += r;
 	return sum;
 }
-
+*/
 template<typename T>
 inline Vector2 operator/(const Vector2& l, const T val)
 {

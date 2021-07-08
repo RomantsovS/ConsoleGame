@@ -43,7 +43,9 @@ void idCommonLocal::Quit() {
 		Shutdown();
 	}
 	
+#ifdef DEBUG
 	Sys_DebugMemory_f();
+#endif
 
 	isCommonExists = false;
 

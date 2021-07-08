@@ -266,7 +266,7 @@ idRenderWorldLocal::DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-void idRenderWorldLocal::DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0) {
+void idRenderWorldLocal::DrawTextToScreen(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0) {
 	RB_AddDebugText(text, origin, color, lifetime);
 }
 

@@ -381,8 +381,8 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
 			auto passEntity = SetupCollisionForBody(body);
 
 			// if there was a collision
-			if (gameLocal.clip->Motion(collision, body->current->worldOrigin, body->next->worldOrigin,
-				body->clipModel, body->clipMask, passEntity)) {
+			if (gameLocal.clip.Motion(collision, body->current->worldOrigin, body->next->worldOrigin,
+				body->clipModel.get(), body->clipMask, passEntity.get())) {
 
 				// set the next state to the state at the moment of impact
 				body->next->worldOrigin = collision.endpos;

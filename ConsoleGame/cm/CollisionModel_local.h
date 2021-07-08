@@ -206,20 +206,20 @@ public:
 	bool GetModelContents(int model, int& contents) const override;
 	// translates a trm and reports the first collision if any
 	void Translation(trace_t* results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) override;
+		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) override;
 	// stores all contact points of the trm with the model, returns the number of contacts
 	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
-		const Vector2& dir, const float depth, const std::shared_ptr<idTraceModel> trm, 
+		const Vector2& dir, const float depth, const idTraceModel* trm, 
 		int contentMask, int model, const Vector2& modelOrigin) override;
 
 private:			// CollisionMap_translate.cpp
-	void SetupTrm(cm_traceWork_t* tw, const std::shared_ptr<idTraceModel> trm);
+	void SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm);
 	void TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin);
+		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin);
 private:			// CollisionMap_contents.cpp
 	bool TestTrmVertsInBrush(cm_traceWork_t* tw, std::shared_ptr<cm_brush_t> b);
 	int ContentsTrm(trace_t* results, const Vector2& start,
-		const std::shared_ptr<idTraceModel> trm, int contentMask,
+		const idTraceModel* trm, int contentMask,
 		int model, const Vector2& modelOrigin);
 private:			// CollisionMap_trace.cpp
 	void TraceTrmThroughNode(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node);

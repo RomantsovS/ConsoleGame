@@ -79,7 +79,7 @@ public:
 	virtual void DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) = 0;
 
 	// Text drawing for debug visualization.
-	virtual void DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) = 0;
+	virtual void DrawTextToScreen(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) = 0;
 
 	virtual std::shared_ptr<idRenderWorld> getptr() = 0;
 };

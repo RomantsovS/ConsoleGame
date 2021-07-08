@@ -22,8 +22,8 @@ public:
 	bool LoadModel(const std::string&  name);
 	void LoadModel(const idTraceModel& trm, bool persistantThroughSave = true);
 
-	void Link(std::shared_ptr<idClip>& clp);				// must have been linked with an entity and id before
-	void Link(std::shared_ptr<idClip>& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
+	void Link(idClip& clp);				// must have been linked with an entity and id before
+	void Link(idClip& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
 	void Unlink(); // unlink from sectors
 	//void					SetPosition(const idVec3& newOrigin, const idMat3& newAxis);	// unlinks the clip model
 	void Translate(const Vector2& translation);							// unlinks the clip model
@@ -63,11 +63,11 @@ private:
 	int						touchCount;
 
 	void Init(); // initialize
-	void Link_r(std::shared_ptr<clipSector_t> node);
+	void Link_r(clipSector_t* node);
 
 	static int AllocTraceModel(const idTraceModel& trm, bool persistantThroughSaves = true);
 	static void FreeTraceModel(int traceModelIndex);
-	static std::shared_ptr<idTraceModel> GetCachedTraceModel(int traceModelIndex);
+	static idTraceModel* GetCachedTraceModel(int traceModelIndex);
 	static int GetTraceModelHashKey(const idTraceModel& trm);
 };
 
@@ -157,13 +157,13 @@ public:
 
 	// clip versus the rest of the world
 	bool Translation(trace_t& results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity);
+		const idClipModel* mdl, int contentMask, const idEntity* passEntity);
 	bool Motion(trace_t& results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idClipModel>& mdl, int contentMask, const std::shared_ptr<idEntity>& passEntity);
+		const idClipModel* mdl, int contentMask, const idEntity* passEntity);
 
 	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
-		const Vector2& dir, const float depth, const std::shared_ptr<idClipModel>& mdl, int contentMask,
-		const std::shared_ptr<idEntity>& passEntity);
+		const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask,
+		const idEntity* passEntity);
 
 	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
 		int maxCount) const;
@@ -191,10 +191,10 @@ private:
 	int						numContacts;
 private:
 	std::shared_ptr<clipSector_t> CreateClipSectors_r(const int depth, const idBounds& bounds, Vector2& maxSector);
-	void ClipModelsTouchingBounds_r(std::shared_ptr<const clipSector_t> node, listParms_t& parms) const;
-	const std::shared_ptr<idTraceModel> TraceModelForClipModel(const std::shared_ptr<idClipModel> mdl) const;
+	void ClipModelsTouchingBounds_r(const clipSector_t* node, listParms_t& parms) const;
+	const idTraceModel* TraceModelForClipModel(const idClipModel* mdl) const;
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
-		const std::shared_ptr<idEntity> passEntity, std::vector<idClipModel*>& clipModelList) const;
+		const idEntity* passEntity, std::vector<idClipModel*>& clipModelList) const;
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
 		std::shared_ptr<idClipModel> touch) const;
 

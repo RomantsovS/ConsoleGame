@@ -25,7 +25,7 @@ void CM_AddContact(cm_traceWork_t* tw) {
 idCollisionModelManagerLocal::SetupTrm
 ================
 */
-void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const std::shared_ptr<idTraceModel> trm) {
+void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm) {
 	int i;
 
 	// vertices
@@ -39,7 +39,7 @@ void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const std::share
 }
 
 void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& start, const Vector2& end,
-	const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin)
+	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin)
 {
 	Vector2 last_step_dist, cur_step_dist;
 	int cur_step;
@@ -78,7 +78,7 @@ void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& 
 }
 
 void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
-	const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin)
+	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin)
 {
 	int i;
 	cm_trmVertex_t* vert;

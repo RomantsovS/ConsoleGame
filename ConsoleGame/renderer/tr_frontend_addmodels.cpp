@@ -14,11 +14,11 @@ std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderE
 	return model;
 }
 
-void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity) {
+void R_AddSingleModel(const viewEntity_t& vEntity) {
 	// globals we really should pass in...
 	const auto viewDef = tr.viewDef;
 
-	auto entityDef = vEntity->entityDef.lock();
+	auto entityDef = vEntity.entityDef.lock();
 	const auto renderEntity = &entityDef->parms;
 	//const idRenderWorldLocal * world = entityDef->world;
 
@@ -43,13 +43,21 @@ void R_AddSingleModel(std::shared_ptr<viewEntity_t> vEntity) {
 	// add all the model surfaces
 	//---------------------------
 
-	auto model_col = renderEntity->color;
+	const auto model_col = renderEntity->color;
+	const auto modelNumSurfaces = model->NumSurfaces();
 
-	for (int surfaceNum = 0; surfaceNum < model->NumSurfaces(); surfaceNum++) {
-		const ModelPixel & surf = model->Surface(surfaceNum);
+	auto rEntSp = vEntity.entityDef.lock();
+	auto modelRawPtr = model.get();
 
-		tr.screen.set(Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +
-			vEntity->entityDef.lock()->parms.origin.GetIntegerVectorFloor() + surf.origin, surf.screenPixel);
+	if (rEntSp) {
+		const auto curPos = Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +
+			rEntSp->parms.origin.GetIntegerVectorFloor();
+
+		for (int surfaceNum = 0; surfaceNum < modelNumSurfaces; surfaceNum++) {
+			const ModelPixel& surf = modelRawPtr->Surface(surfaceNum);
+
+			tr.screen.set(curPos + surf.origin, surf.screenPixel);
+		}
 	}
 }
 
@@ -71,7 +79,7 @@ void R_AddModels()
 	}
 	else {*/
 		for (auto vEntity = tr.viewDef->viewEntitys; vEntity; vEntity = vEntity->next) {
-			R_AddSingleModel(vEntity);
+			R_AddSingleModel(*vEntity);
 		}
 	//}
 }

@@ -163,9 +163,9 @@ bool idPhysics_AF::ApplyCollisions(float timeStep) {
 idPhysics_AF::SetupCollisionForBody
 ================
 */
-std::shared_ptr<idEntity> idPhysics_AF::SetupCollisionForBody(std::shared_ptr<idAFBody> body) const {
+idEntity* idPhysics_AF::SetupCollisionForBody(std::shared_ptr<idAFBody> body) const {
 	size_t i;
-	std::shared_ptr<idEntity> passEntity;
+	idEntity* passEntity = nullptr;
 
 	if (!selfCollision || !body->fl.selfCollision) {
 
@@ -221,8 +221,8 @@ void idPhysics_AF::CheckForCollisions(float timeStep) {
 			auto passEntity = SetupCollisionForBody(body);
 
 			// if there was a collision
-			if (gameLocal.clip->Motion(collision, body->current->worldOrigin, body->next->worldOrigin,
-				body->clipModel, body->clipMask, passEntity)) {
+			if (gameLocal.clip.Motion(collision, body->current->worldOrigin, body->next->worldOrigin,
+				body->clipModel.get(), body->clipMask, passEntity)) {
 
 				// set the next state to the state at the moment of impact
 				body->next->worldOrigin = collision.endpos;

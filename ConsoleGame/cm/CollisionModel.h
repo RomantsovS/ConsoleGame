@@ -61,10 +61,10 @@ public:
 	virtual bool GetModelContents(int model, int& contents) const = 0;
 	// translates a trm and reports the first collision if any
 	virtual void Translation(trace_t* results, const Vector2& start, const Vector2& end,
-		const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) = 0;
+		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) = 0;
 	// stores all contact points of the trm with the model, returns the number of contacts
 	virtual int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
-		const Vector2& dir, const float depth, const std::shared_ptr<idTraceModel> trm,
+		const Vector2& dir, const float depth, const idTraceModel* trm,
 		int contentMask, int model, const Vector2& modelOrigin) = 0;
 };
 

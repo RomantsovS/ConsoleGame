@@ -55,7 +55,7 @@ public:
 	virtual void Remove();
 
 	void SetName(const std::string name);
-	const std::string GetName() const;
+	const std::string& GetName() const;
 
 	// thinking
 	virtual void Think();

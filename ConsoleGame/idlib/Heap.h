@@ -26,8 +26,11 @@ template <typename T>
 T* MyAlloc<T>::allocate(const size_t size) {
 	idLib::Printf("Alloc request size %d\n", size);
 
+#ifdef DEBUG
 	return DBG_NEW T[size];
-	//return static_cast<T*>(::operator new(size * sizeof(T)));
+#else
+	return static_cast<T*>(::operator new(size * sizeof(T)));
+#endif
 }
 
 template <typename T>

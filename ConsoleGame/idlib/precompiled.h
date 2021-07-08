@@ -21,6 +21,7 @@
 #include <fstream>
 #include <sstream>
 #include <direct.h>
+#include <algorithm>
 
 #include "sys/sys_defines.h"
 #include "sys/sys_includes.h"

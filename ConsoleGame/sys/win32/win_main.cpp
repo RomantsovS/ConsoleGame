@@ -376,8 +376,9 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent) {
 
 int main(int argc, const char * const * argv) {
 #ifdef DEBUG
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	_CrtSetAllocHook(Sys_AllocHook);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	_CrtSetDbgFlag(0);
+	//_CrtSetAllocHook(Sys_AllocHook);
 
 	char timeStr[TIME_STR_LENGTH], dateStr[DATE_STR_LENGTH];         // Used to set up log file
 
@@ -406,15 +407,14 @@ int main(int argc, const char * const * argv) {
 	// get the initial time base
 	Sys_Milliseconds();
 
-	//auto j = DBG_NEW int;
-
 	common->Init(argc, argv, nullptr);
-	
+
+#ifdef DEBUG
 	Sys_DebugMemory_f();
+#endif
 
 	// main game loop
 	while (1) {
-	//for(size_t i = 0; i < 100000; ++i) {
 #ifdef DEBUG
 		Sys_MemFrame();
 #endif

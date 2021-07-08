@@ -51,7 +51,7 @@ std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const
 	if (clipModel) {
 		return clipModel;
 	}
-	return gameLocal.clip->DefaultClipModel();
+	return gameLocal.clip.DefaultClipModel();
 }
 
 /*

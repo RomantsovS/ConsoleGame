@@ -88,7 +88,7 @@ idCollisionModelManagerLocal::ContentsTrm
 ==================
 */
 int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& start,
-	const std::shared_ptr<idTraceModel> trm, int contentMask, int model, const Vector2& modelOrigin) {
+	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) {
 	
 	int i;
 	cm_traceWork_t tw;

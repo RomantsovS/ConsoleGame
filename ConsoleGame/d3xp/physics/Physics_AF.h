@@ -142,7 +142,7 @@ private:
 
 private:
 	void Evolve(float timeStep);
-	std::shared_ptr<idEntity> SetupCollisionForBody(std::shared_ptr<idAFBody> body) const;
+	idEntity* SetupCollisionForBody(std::shared_ptr<idAFBody> body) const;
 	bool CollisionImpulse(float timeStep, std::shared_ptr<idAFBody> body, trace_t& collision);
 	bool ApplyCollisions(float timeStep);
 	void CheckForCollisions(float timeStep);

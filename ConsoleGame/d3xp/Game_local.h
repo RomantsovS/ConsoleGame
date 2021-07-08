@@ -64,7 +64,7 @@ public:
 	int num_entities; // current number <= MAX_GENTITIES
 	std::shared_ptr<idWorldspawn> world; // world entity
 
-	std::shared_ptr<idClip> clip; // collision detection
+	idClip clip; // collision detection
 
 	int framenum;
 	game_time_type time;					// in msec

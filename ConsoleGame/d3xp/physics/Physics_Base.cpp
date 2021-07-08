@@ -245,7 +245,7 @@ void idPhysics_Base::ActivateContactEntities()
 
 bool idPhysics_Base::IsOutsideWorld() const
 {
-	if (!gameLocal.clip->GetWorldBounds().Expand(1.0f).IntersectsBounds(GetAbsBounds())) {
+	if (!gameLocal.clip.GetWorldBounds().Expand(1.0f).IntersectsBounds(GetAbsBounds())) {
 		return true;
 	}
 	return false;

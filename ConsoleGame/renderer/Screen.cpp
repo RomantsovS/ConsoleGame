@@ -81,7 +81,7 @@ void Screen::init() {
 	cur_write_coord = { 0, 0 };
 }
 
-Screen& Screen::set(pos_type col, pos_type row, Screen::Pixel ch) {
+Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
 	if (row >= height || row < 0) {
 		return *this;
 		common->Error("Screen height: %d out of range: %d", row, height);
@@ -121,9 +121,8 @@ void Screen::display() {
 }
 
 void Screen::clearContents() {
-	for (size_t i = 0; i != height * width; ++i)
-	{
-		contents[i] = Pixel(backgroundPixel.value, backgroundPixel.color);
+	for(auto & pix : contents) {
+		pix = backgroundPixel;
 	}
 }
 

@@ -67,10 +67,12 @@ bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown, bool 
 	// calculate position we are trying to move to
 	end = current.origin + time_left * current.velocity;
 
-	// see if we can make it there
-	if (gameLocal.clip->Translation(trace, current.origin, end, clipModel, clipMask, self.lock())) {
-		// let the entity know about the collision
-		self.lock()->Collide(trace, current.velocity);
+	if (auto selfSp = self.lock()) {
+		// see if we can make it there
+		if (gameLocal.clip.Translation(trace, current.origin, end, clipModel.get(), clipMask, selfSp.get())) {
+			// let the entity know about the collision
+			selfSp->Collide(trace, current.velocity);
+		}
 	}
 
 	time_left -= time_left * trace.fraction;

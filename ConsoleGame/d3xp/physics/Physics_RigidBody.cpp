@@ -345,8 +345,8 @@ bool idPhysics_RigidBody::EvaluateContacts() {
 	dir.SubVec3(1).Normalize();*/
 	dir = current.i.linearMomentum;
 	dir.Normalize();
-	auto num = gameLocal.clip->Contacts(&contacts[0], 10, clipModel->GetOrigin(),
-		dir, CONTACT_EPSILON, clipModel, /*clipModel->GetAxis(),*/ clipMask, self.lock());
+	auto num = gameLocal.clip.Contacts(&contacts[0], 10, clipModel->GetOrigin(),
+		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self.lock().get());
 	contacts.resize(num);
 
 	AddContactEntitiesForContacts();
@@ -398,7 +398,7 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPSt
 	bool collided = false;
 
 	// if there was a collision
-	if (gameLocal.clip->Motion(collision, current.i.position, next_.i.position, clipModel, clipMask, self.lock())) {
+	if (gameLocal.clip.Motion(collision, current.i.position, next_.i.position, clipModel.get(), clipMask, self.lock().get())) {
 		// set the next state to the state at the moment of impact
 		next_.i.position = collision.endpos;
 		//next_.i.orientation = collision.endAxis;

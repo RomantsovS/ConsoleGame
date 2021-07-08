@@ -112,7 +112,7 @@ void idEntity::SetName(const std::string newname) {
 idEntity::GetName
 ================
 */
-const std::string idEntity::GetName() const {
+const std::string& idEntity::GetName() const {
 	return name;
 }
 
