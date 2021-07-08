@@ -988,7 +988,7 @@ void idGameLocal::AddRandomPoint() {
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
 	}
-	else if (ent_type < 6) {
+	else if (ent_type < 8) {
 		classname = "mushroom";
 	}
 	else {

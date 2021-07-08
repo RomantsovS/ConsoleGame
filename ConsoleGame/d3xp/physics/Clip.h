@@ -198,7 +198,7 @@ private:
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
 		std::shared_ptr<idClipModel> touch) const;
 
-	bool DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const idBounds& bounds);
+	bool DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds);
 };
 
 inline const idBounds& idClip::GetWorldBounds() const {

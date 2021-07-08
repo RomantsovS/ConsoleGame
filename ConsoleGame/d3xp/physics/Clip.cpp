@@ -3,8 +3,8 @@
 
 #include "../Game_local.h"
 
-const size_t MAX_SECTOR_DEPTH = 12;
-const size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
+const size_t MAX_SECTOR_DEPTH = 5;
+constexpr size_t MAX_SECTORS = ((1 << (MAX_SECTOR_DEPTH + 1)) - 1);
 
 struct clipSector_t {
 	clipSector_t() {
@@ -980,12 +980,12 @@ void idClip::DrawClipModels(const Vector2& eye, const float radius, const std::s
 }
 
 void idClip::DrawClipSectors() {
-	const auto node = clipSectors.front();
+	const auto node = clipSectors.front().get();
 
 	DrawClipSectors_r(node, worldBounds);
 }
 
-bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const idBounds& bounds) {
+bool idClip::DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds) {
 	if (node->axis == -1)
 		return false;
 
@@ -996,11 +996,11 @@ bool idClip::DrawClipSectors_r(const std::shared_ptr<clipSector_t> node, const i
 
 	front[0][node->axis] = back[1][node->axis] = node->dist;
 
-	if (!DrawClipSectors_r(node->children[0], front)) {
+	if (!DrawClipSectors_r(node->children[0].get(), front)) {
 		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, front, vec2_origin, 0);
 	}
 
-	if (!DrawClipSectors_r(node->children[1], back)) {
+	if (!DrawClipSectors_r(node->children[1].get(), back)) {
 		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, back, vec2_origin, 0);
 	}
 
