@@ -1,5 +1,5 @@
+#include <precompiled.h>
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 const float CM_CLIP_EPSILON = 0.05f;			// always stay this distance away from any model
 const float CM_BOX_EPSILON = 0.2f;			// should always be larger than clip epsilon

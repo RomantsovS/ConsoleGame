@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 idCVar net_allowCheats("net_allowCheats", "1", CVAR_BOOL | CVAR_NOCHEAT, "Allow cheats in multiplayer");
@@ -141,8 +141,8 @@ idCmdSystemLocal::Exec_f
 ===============
 */
 void idCmdSystemLocal::Exec_f(const idCmdArgs& args) {
-	char* f;
-	int		len;
+	std::unique_ptr<char[]> f;
+	int len;
 	std::string filename;
 
 	if (args.Argc() != 2) {
@@ -152,16 +152,16 @@ void idCmdSystemLocal::Exec_f(const idCmdArgs& args) {
 
 	filename = args.Argv(1);
 	//filename.DefaultFileExtension(".cfg");
-	len = fileSystem->ReadFile(filename, reinterpret_cast<void**>(&f));
-	if (!f) {
+	f = fileSystem->ReadFile(filename, len, nullptr, true);
+	if (len <= 0) {
 		common->Printf("couldn't exec %s\n", args.Argv(1).c_str());
 		return;
 	}
 	common->Printf("execing %s\n", args.Argv(1).c_str());
 
-	cmdSystemLocal.BufferCommandText(CMD_EXEC_INSERT, f);
+	cmdSystemLocal.BufferCommandText(CMD_EXEC_INSERT, f.get());
 
-	fileSystem->FreeFile(f);
+	//fileSystem->FreeFile(f);
 }
 
 /*

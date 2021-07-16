@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #include "Common_local.h"
 
 // the console will query the cvar and command systems for

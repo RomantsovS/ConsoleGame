@@ -1,5 +1,5 @@
+#include <precompiled.h>
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 #include "Model_local.h"
@@ -164,10 +164,10 @@ idRenderModelStatic::LoadASE
 =================
 */
 bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
-	char* buf;
 	ID_TIME_T timeStamp;
+	int len;
 
-	size_t len = fileSystem->ReadFile(fileName, (void**)&buf, &timeStamp);
+	auto buf = fileSystem->ReadFile(fileName, len, &timeStamp, true);
 	if (!buf) {
 		return false;
 	}
@@ -176,7 +176,7 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 	idToken token;
 	idToken token2;
 
-	src.LoadMemory(buf, len, fileName, 0);
+	src.LoadMemory(buf.get(), len, fileName, 0);
 	//src.SetFlags(DECL_LEXER_FLAGS);
 	src.SkipUntilString("{");
 
@@ -236,7 +236,7 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 		}
 	}
 
-	fileSystem->FreeFile(buf);
+	//fileSystem->FreeFile(buf);
 
 	auto max_x = surfaces.back().origin.x + 1;
 	auto max_y = surfaces.back().origin.y + 1;

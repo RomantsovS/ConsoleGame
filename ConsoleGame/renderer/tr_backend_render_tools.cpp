@@ -1,5 +1,5 @@
+#include <precompiled.h>
 #pragma hdrstop
-#include "../idlib/precompiled.h"
 
 #include "tr_local.h"
 #include "../d3xp/Game_local.h"
@@ -19,7 +19,7 @@ int				rb_numDebugLines = 0;
 int				rb_debugLineTime = 0;
 
 constexpr size_t MAX_DEBUG_TEXT = 10;
-idCVar max_debug_text("max_debug_text", "10", CVAR_TOOL, "", 0, MAX_DEBUG_TEXT);
+idCVar max_debug_text("max_debug_text", "4", CVAR_TOOL, "", 0, MAX_DEBUG_TEXT);
 
 struct debugText_t {
 	std::string text;

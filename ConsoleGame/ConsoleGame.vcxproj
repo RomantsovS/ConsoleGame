@@ -73,12 +73,12 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
     <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)lib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)idlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
     <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
-    <IncludePath>$(ProjectDir)lib;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)idlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

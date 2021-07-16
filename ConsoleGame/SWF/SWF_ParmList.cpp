@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 
 std::shared_ptr<idSWFScriptVar> idSWFParmList::Alloc() {
 	emplace_back(std::make_shared<idSWFScriptVar>());

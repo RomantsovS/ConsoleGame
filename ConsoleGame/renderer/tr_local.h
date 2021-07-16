@@ -1,7 +1,7 @@
 #ifndef TR_LOCAL_H
 #define TR_LOCAL_H
 
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 
 class idRenderWorldLocal;
 class idRenderEntityLocal;

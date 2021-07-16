@@ -271,7 +271,8 @@ idMapFile::NeedsReload
 bool idMapFile::NeedsReload() {
 	if (!name.empty()) {
 		ID_TIME_T time = FILE_NOT_FOUND_TIMESTAMP;
-		if (fileSystem->ReadFile(name, NULL, &time) > 0) {
+		int len;
+		if (fileSystem->ReadFile(name, len, &time) > 0) {
 			return (time > fileTime);
 		}
 	}

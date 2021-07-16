@@ -1029,7 +1029,7 @@ idLexer::LoadFile
 int idLexer::LoadFile(const std::string& filename, bool OSPath) {
 	std::string pathname;
 	int length;
-	char* buf;
+	std::unique_ptr<char[]> buf;
 
 	if (idLexer::loaded) {
 		common->Error("idLexer::LoadFile: another script already loaded");
@@ -1044,14 +1044,15 @@ int idLexer::LoadFile(const std::string& filename, bool OSPath) {
 		return false;
 	}
 	length = fp->Length();
-	buf = (char*)new char[length + 1];
+	buf = std::make_unique<char[]>(length + 1);
 	buf[length] = '\0';
-	fp->Read(buf, length);
+	fp->Read(buf.get(), length);
 	idLexer::fileTime = fp->Timestamp();
 	idLexer::filename = fp->GetFullPath();
 	fileSystem->CloseFile(fp);
 
-	idLexer::buffer = buf;
+	idLexer::bufferUniq = std::move(buf);
+	idLexer::buffer = bufferUniq.get();
 	idLexer::length = length;
 	// pointer in script buffer
 	idLexer::script_p = idLexer::buffer;
@@ -1116,7 +1117,6 @@ void idLexer::FreeSource() {
 	}
 #endif //PUNCTABLE
 	if (idLexer::allocated) {
-		delete[] buffer;
 		idLexer::buffer = nullptr;
 		idLexer::allocated = false;
 	}

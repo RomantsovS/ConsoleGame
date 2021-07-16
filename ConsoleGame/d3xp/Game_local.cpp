@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -9,8 +9,8 @@ std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this w
 idGameLocal gameLocal;
 idGame *game = &gameLocal;
 
-idCVar game_width("game_width", "80", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar game_height("game_height", "50", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_width("game_width", "120", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar game_height("game_height", "40", CVAR_SYSTEM | CVAR_INIT, "");
 
 idCVar game_add_point_delay("game_add_point_delay", "1000", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT, "");

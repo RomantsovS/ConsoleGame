@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../../idLib/precompiled.h"
+#include <precompiled.h>
 #include "../Game_local.h"
 #include "../../framework/Common_local.h"
 

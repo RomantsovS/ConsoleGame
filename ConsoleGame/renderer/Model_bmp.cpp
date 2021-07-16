@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 
 
 #include "Model_bmp.h"

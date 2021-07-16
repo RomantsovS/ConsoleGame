@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 idCVar* idCVar::staticVars = nullptr;
@@ -358,7 +358,7 @@ public:
 	void SetInternal(const std::string& name, const std::string& value, int flags);
 private:
 	bool initialized;
-	using cvars_map_type = std::map<std::string, idInternalCVar*>;
+	using cvars_map_type = std::map<std::string, std::unique_ptr<idInternalCVar>>;
 	cvars_map_type cvars;
 	int modifiedFlags;
 private:
@@ -379,7 +379,7 @@ idInternalCVar* idCVarSystemLocal::FindInternal(const std::string& name) const {
 	if (iter == cvars.end())
 		return nullptr;
 	
-	return iter->second;
+	return iter->second.get();
 }
 
 /*
@@ -388,20 +388,21 @@ idCVarSystemLocal::SetInternal
 ============
 */
 void idCVarSystemLocal::SetInternal(const std::string& name, const std::string& value, int flags) {
-	auto internal = FindInternal(name);
+	auto internalVar = FindInternal(name);
 
-	if (internal) {
-		internal->InternalSetString(value);
-		internal->flags |= flags & ~CVAR_STATIC;
+	if (internalVar) {
+		internalVar->InternalSetString(value);
+		internalVar->flags |= flags & ~CVAR_STATIC;
 		//internal->UpdateCheat();
 	}
 	else {
 #ifdef DEBUG
-		internal = DBG_NEW idInternalCVar(name, value, flags);
+		//internal = DBG_NEW idInternalCVar(name, value, flags);
+		auto internalVar = std::make_unique<idInternalCVar>(name, value, flags);
 #else
-		internal = new idInternalCVar(name, value, flags);
+		auto internalVar = std::make_unique<idInternalCVar>(name, value, flags);
 #endif
-		cvars.insert(cvars_map_type::value_type(internal->GetName(), internal));
+		cvars.insert(cvars_map_type::value_type(internalVar->GetName(), std::move(internalVar)));
 	}
 }
 
@@ -439,7 +440,6 @@ idCVarSystemLocal::Shutdown
 void idCVarSystemLocal::Shutdown() {
 	
 	for (auto iter = cvars.begin(); iter != cvars.end(); ++iter) {
-		delete iter->second;
 		iter->second = nullptr;
 	}
 	cvars.clear();
@@ -464,21 +464,17 @@ idCVarSystemLocal::Register
 void idCVarSystemLocal::Register(idCVar* cvar) {
 	cvar->SetInternalVar(cvar);
 
-	auto internal = FindInternal(cvar->GetName());
+	auto internalVar = FindInternal(cvar->GetName());
 
-	if (internal) {
-		internal->Update(cvar);
+	if (internalVar) {
+		internalVar->Update(cvar);
 	}
 	else {
-#ifdef DEBUG
-		internal = DBG_NEW idInternalCVar(cvar);
-#else
-		internal = new idInternalCVar(cvar);
-#endif
-		cvars.insert({ internal->nameString, internal });
+		auto internalVarUniq = std::make_unique<idInternalCVar>(cvar);
+		internalVar = cvars.emplace(internalVarUniq->nameString, std::move(internalVarUniq)).first->second.get();
 	}
 
-	cvar->SetInternalVar(internal);
+	cvar->SetInternalVar(internalVar);
 }
 
 /*

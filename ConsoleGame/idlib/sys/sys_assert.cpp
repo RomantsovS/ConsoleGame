@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../precompiled.h"
+#include <precompiled.h>
 
 struct skippedAssertion_t {
 	skippedAssertion_t() {

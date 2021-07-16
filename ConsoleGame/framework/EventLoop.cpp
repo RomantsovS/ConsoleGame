@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 constexpr int MAX_PUSHED_EVENTS = 64;

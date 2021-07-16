@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../../idLib/precompiled.h"
+#include <precompiled.h>
 #include "../Game_local.h"
 
 const static int NUM_NEW_GAME_OPTIONS = 8;

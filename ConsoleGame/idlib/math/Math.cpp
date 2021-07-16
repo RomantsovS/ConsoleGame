@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../precompiled.h"
+#include <precompiled.h>
 
 const int SMALLEST_NON_DENORMAL = 1 << IEEE_FLT_MANTISSA_BITS;
 

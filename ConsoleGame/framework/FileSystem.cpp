@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 // search flags when opening a file
@@ -37,7 +37,7 @@ public:
 	virtual void FreeFileList(std::shared_ptr<idFileList> fileList) override;
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
 	virtual void CreateOSPath(const std::string &OSPath);
-	int ReadFile(const std::string& relativePath, void** buffer, ID_TIME_T* timestamp) override;
+	std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) override;
 	virtual void FreeFile(void* buffer) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
 	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
@@ -164,7 +164,9 @@ void idFileSystemLocal::Init()
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
 	// Dedicated servers can run with no outside files at all
-	if (ReadFile("default.cfg", nullptr, nullptr) <= 0) {
+	int len;
+	ReadFile("default.cfg", len, nullptr);
+	if (len <= 0) {
 		common->FatalError("Couldn't load default.cfg");
 	}
 }
@@ -344,8 +346,7 @@ a null buffer will just return the file length and time without loading
 timestamp can be NULL if not required
 ============
 */
-int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer, ID_TIME_T* timestamp)
-{
+std::unique_ptr<char[]> idFileSystemLocal::ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer) {
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
 		return 0;
@@ -360,39 +361,32 @@ int idFileSystemLocal::ReadFile(const std::string& relativePath, void** buffer, 
 		*timestamp = FILE_NOT_FOUND_TIMESTAMP;
 	}
 
-	if (buffer) {
-		*buffer = nullptr;
-	}
-
 	// look for it in the filesystem or pack files
-	auto f = OpenFileRead(relativePath, (buffer != nullptr));
+	auto f = OpenFileRead(relativePath, returnBuffer);
 	if (!f) {
-		if (buffer) {
-			*buffer = nullptr;
-		}
-		return -1;
+		len = -1;
+		return nullptr;
 	}
-	auto len = f->Length();
+	len = f->Length();
 
 	if (timestamp) {
 		*timestamp = f->Timestamp();
 	}
 
-	if (!buffer) {
+	if (!returnBuffer) {
 		CloseFile(f);
-		return len;
+		return nullptr;
 	}
 
-	unsigned char* buf = new unsigned char[len + 1];
-	*buffer = buf;
+	auto buf = std::make_unique<char[]>(len + 1);
 
-	f->Read(buf, len);
+	f->Read(buf.get(), len);
 
 	// guarantee that it will have a trailing 0 for string operations
-	buf[len] = 0;
+	buf.operator[](len) = 0;
 	CloseFile(f);
 
-	return len;
+	return buf;
 }
 
 /*

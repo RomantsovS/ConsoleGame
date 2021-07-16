@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 #include "Game_local.h"
@@ -36,7 +36,7 @@ void idActor::Spawn() {
 	}
 }
 
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 #include "Game_local.h"

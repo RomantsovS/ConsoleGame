@@ -132,6 +132,7 @@ private:
 	std::string			filename;				// file name of the script
 	int				allocated;				// true if buffer memory was allocated
 	const char* buffer;					// buffer containing the script
+	std::unique_ptr<char[]> bufferUniq;
 	const char* script_p;				// current pointer in the script
 	const char* end_p;					// pointer to the end of the script
 	const char* lastScript_p;			// script pointer before reading token

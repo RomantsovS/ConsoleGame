@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 
 #include "Model_local.h"
 #include "tr_local.h"	// just for R_FreeWorldInteractions and R_CreateWorldInteractions

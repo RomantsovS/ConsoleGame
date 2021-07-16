@@ -1,11 +1,11 @@
 #pragma hdrstop
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 
 #include "tr_local.h"
 
 idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar text_info_max_height("text_info_max_height", "20", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar text_info_max_height("text_info_max_height", "10", CVAR_SYSTEM | CVAR_INIT, "");
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), cur_write_coord({0, 0}),

@@ -1,4 +1,4 @@
-#include "../idlib/precompiled.h"
+#include <precompiled.h>
 #pragma hdrstop
 
 class idDeclType {
@@ -169,7 +169,7 @@ int idDeclFile::LoadAndParse() {
 	idLexer		src;
 	idToken		token;
 	int			startMarker;
-	char* buffer;
+	std::unique_ptr<char[]> buffer;
 	int			length, size;
 	int			sourceLine;
 	std::string		name;
@@ -177,15 +177,14 @@ int idDeclFile::LoadAndParse() {
 
 	// load the text
 	common->DPrintf("...loading '%s'\n", fileName.c_str());
-	length = fileSystem->ReadFile(fileName, (void**)&buffer, &timestamp);
+	buffer = fileSystem->ReadFile(fileName, length, &timestamp, true);
 	if (length == -1) {
 		common->FatalError("couldn't load %s", fileName.c_str());
 		return 0;
 	}
 
-	if (!src.LoadMemory(buffer, length, fileName)) {
+	if (!src.LoadMemory(buffer.get(), length, fileName)) {
 		common->Error("Couldn't parse %s", fileName.c_str());
-		delete[] buffer;
 		return 0;
 	}
 
@@ -309,7 +308,7 @@ int idDeclFile::LoadAndParse() {
 			newDecl->textSource = nullptr;
 		}
 
-		newDecl->SetTextLocal(buffer + startMarker, size);
+		newDecl->SetTextLocal(buffer.get() + startMarker, size);
 		newDecl->sourceFile = shared_from_this();
 		newDecl->sourceTextOffset = startMarker;
 		newDecl->sourceTextLength = size;
@@ -323,8 +322,6 @@ int idDeclFile::LoadAndParse() {
 	}
 
 	numLines = src.GetLineNum();
-
-	delete[] buffer;
 
 	// any defs that weren't redefinedInReload should now be defaulted
 	/*for (idDeclLocal* decl = decls; decl; decl = decl->nextInFile) {

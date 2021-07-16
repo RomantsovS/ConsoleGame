@@ -1,5 +1,5 @@
 #pragma hdrstop
-#include "../precompiled.h"
+#include <precompiled.h>
 
 idBounds bounds_zero(vec2_origin, vec2_origin);
 //idBounds bounds_zeroOneCube(idVec3(0.0f), idVec3(1.0f));

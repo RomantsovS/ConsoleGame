@@ -51,7 +51,7 @@ public:
 	// As a quick check for existance. -1 length == not present.
 	// A 0 byte will always be appended at the end, so string ops are safe.
 	// The buffer should be considered read-only, because it may be cached for other uses.
-	virtual int ReadFile(const std::string& file_name, void** buffer, ID_TIME_T* timestamp = nullptr) = 0;
+	virtual std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) = 0;
 	// Frees the memory allocated by ReadFile.
 	virtual void FreeFile(void* buffer) = 0;
 	// Opens a file for reading.
