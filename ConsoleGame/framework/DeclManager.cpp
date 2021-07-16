@@ -48,7 +48,7 @@ private:
 	std::shared_ptr<idDecl> self;
 
 	std::string name; // name of the decl
-	char* textSource; // decl text definition
+	std::vector<char> textSource; // decl text definition
 	int textLength; // length of textSource
 	std::weak_ptr<idDeclFile> sourceFile; // source file in which the decl was defined
 	int sourceTextOffset;		// offset in source file to decl text
@@ -303,9 +303,8 @@ int idDeclFile::LoadAndParse() {
 
 		//newDecl->redefinedInReload = true;
 
-		if (newDecl->textSource) {
-			delete[] newDecl->textSource;
-			newDecl->textSource = nullptr;
+		if (!newDecl->textSource.empty()) {
+			newDecl->textSource.clear();
 		}
 
 		newDecl->SetTextLocal(buffer.get() + startMarker, size);
@@ -385,9 +384,8 @@ void idDeclManagerLocal::Shutdown() {
 				decl->self->FreeData();
 				decl->self = nullptr;;
 			}
-			if (decl->textSource) {
-				delete[] decl->textSource;
-				decl->textSource = nullptr;
+			if (!decl->textSource.empty()) {
+				decl->textSource.clear();
 			}
 			decl = nullptr;
 		}
@@ -799,7 +797,6 @@ std::shared_ptr<idDeclLocal> idDeclManagerLocal::FindTypeWithoutParsing(declType
 	decl->name = canonicalName;
 	decl->type = type;
 	decl->declState = declState_t::DS_UNPARSED;
-	decl->textSource = NULL;
 	decl->textLength = 0;
 	//decl->sourceFile = &implicitDecls;
 	decl->referencedThisLevel = false;
@@ -828,7 +825,6 @@ idDeclLocal::idDeclLocal
 */
 idDeclLocal::idDeclLocal() {
 	name = "unnamed";
-	textSource = nullptr;
 	textLength = 0;
 	//compressedLength = 0;
 	sourceFile.reset();
@@ -882,7 +878,8 @@ void idDeclLocal::GetText(char* text) const {
 #ifdef USE_COMPRESSED_DECLS
 	HuffmanDecompressText(text, textLength, (byte*)textSource, compressedLength);
 #else
-	memcpy(text, textSource, textLength + 1);
+	//memcpy(text, textSource, textLength + 1);
+	std::copy(textSource.begin(), textSource.end(), text);
 #endif
 }
 
@@ -902,7 +899,7 @@ idDeclLocal::SetTextLocal
 */
 void idDeclLocal::SetTextLocal(const char* text, const int length) {
 
-	delete[] textSource;
+	textSource.clear();
 
 	//checksum = MD5_BlockChecksum(text, length);
 
@@ -920,9 +917,8 @@ void idDeclLocal::SetTextLocal(const char* text, const int length) {
 	memcpy(textSource, compressed, compressedLength);
 #else
 	//compressedLength = length;
-	textSource = new char[length + 1];
-	memcpy(textSource, text, length);
-	textSource[length] = '\0';
+	textSource.resize(length + 1);
+	std::copy(text, text + length, textSource.begin());
 #endif
 	textLength = length;
 }
@@ -1029,7 +1025,7 @@ void idDeclLocal::ParseLocal() {
 	//declManagerLocal.MediaPrint("parsing %s %s\n", declManagerLocal.declTypes[type]->typeName.c_str(), name.c_str());
 
 	// if no text source try to generate default text
-	if (textSource == nullptr) {
+	if (textSource.empty()) {
 		generatedDefaultText = self->SetDefaultText();
 	}
 
@@ -1037,7 +1033,7 @@ void idDeclLocal::ParseLocal() {
 	//declManagerLocal.indent++;
 
 	// no text immediately causes a MakeDefault()
-	if (textSource == nullptr) {
+	if (textSource.empty()) {
 		MakeDefault();
 		//declManagerLocal.indent--;
 		return;
@@ -1056,8 +1052,7 @@ void idDeclLocal::ParseLocal() {
 
 	// free generated text
 	if (generatedDefaultText) {
-		delete[] textSource;
-		textSource = NULL;
+		textSource.clear();
 		textLength = 0;
 	}
 

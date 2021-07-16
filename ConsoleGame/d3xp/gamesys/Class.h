@@ -176,7 +176,7 @@ public:
 	void (idClass::*Spawn)();
 
 	idEventFunc<idClass>* eventCallbacks;
-	eventCallback_t* eventMap;
+	std::shared_ptr<std::vector<eventCallback_t>> eventMap;
 	idTypeInfo *super;
 	idTypeInfo *next;
 	bool freeEventMap;

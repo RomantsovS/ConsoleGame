@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
@@ -34,8 +34,7 @@ idTypeInfo::idTypeInfo(const std::string& classname, const std::string& supercla
 	for (insert = &typelist; *insert; insert = &(*insert)->next) {
 		//assert(idStr::Cmp(classname, (*insert)->classname));
 		
-		if (classname < (*insert)->classname)
-		{
+		if (classname < (*insert)->classname) {
 			next = *insert;
 			*insert = this;
 			break;
@@ -90,14 +89,12 @@ void idTypeInfo::Init() {
 	// are events.  NOTE: could save some space by keeping track of the maximum
 	// event that the class responds to and doing range checking.
 	auto num = idEventDef::NumEventCommands();
-	eventMap = new eventCallback_t[num];
-	memset(eventMap, 0, sizeof(eventCallback_t) * num);
+	eventMap = std::make_shared<std::vector<eventCallback_t>>(num);
 	//eventCallbackMemory += sizeof(eventCallback_t) * num;
 
 	// allocate temporary memory for flags so that the subclass's event callbacks
 	// override the superclass's event callback
-	auto set = new bool[num];
-	memset(set, 0, sizeof(bool) * num);
+	std::vector<bool> set(num, 0);
 
 	// go through the inheritence order and copies the event callback function into
 	// a list indexed by the event number.  This allows fast lookups of
@@ -116,18 +113,15 @@ void idTypeInfo::Init() {
 				continue;
 			}
 			set[ev] = true;
-			eventMap[ev] = def[i].function;
+			eventMap->operator[](ev) = def[i].function;
 		}
 	}
-
-	delete[] set;
 }
 
 void idTypeInfo::Shutdown() {
 	// free up the memory used for event lookups
 	if (eventMap) {
 		if (freeEventMap) {
-			delete[] eventMap;
 		}
 		eventMap = nullptr;
 	}
@@ -296,7 +290,7 @@ bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {
 	}
 
 	auto c = GetType();
-	if (!c->eventMap[ev->GetEventNum()]) {
+	if (!c->eventMap->operator[](ev->GetEventNum())) {
 		// we don't respond to this event, so ignore it
 		return false;
 	}
@@ -377,12 +371,12 @@ bool idClass::ProcessEventArgPtr(const idEventDef* ev, int* data) {
 
 	auto c = GetType();
 	auto num = ev->GetEventNum();
-	if (!c->eventMap[num]) {
+	if (!c->eventMap->operator[](num)) {
 		// we don't respond to this event, so ignore it
 		return false;
 	}
 
-	auto callback = c->eventMap[num];
+	auto callback = c->eventMap->operator[](num);
 
 	/*
 	on ppc architecture, floats are passed in a seperate set of registers
