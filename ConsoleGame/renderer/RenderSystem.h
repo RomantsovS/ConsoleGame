@@ -33,6 +33,10 @@ public:
 	virtual void BeginLevelLoad() = 0;
 	virtual void EndLevelLoad() = 0;
 
+	// font support
+
+	virtual void SetColor(const int rgba) = 0;
+
 	virtual void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) = 0;
 
 	virtual void DrawBigChar(int x, int y, int ch) = 0;

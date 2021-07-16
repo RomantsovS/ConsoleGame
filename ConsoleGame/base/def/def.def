@@ -39,6 +39,7 @@ entityDef mushroom {
 	"model"					"mushroom"
 	"size"					"16 16"
 	"speed"					"20"
+	"color"					"10"
 }
 
 entityDef chain {
@@ -80,6 +81,7 @@ entityDef turtle {
 	"model"					"turtle"
 	"size"					"16 23"
 	"speed"					"20"
+	"color"					"11"
 }
 
 entityDef font {
@@ -94,6 +96,7 @@ entityDef weapon_handgrenade {
 	"size"						"16 16"
 	"def_projectile"			"projectile_grenade"
 	"ready_time"				"500"
+	"color"						"9"
 }
 
 entityDef projectile_grenade {

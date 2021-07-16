@@ -60,11 +60,11 @@ void idGameLocal::Init() {
 	height = game_height.GetInteger();
 	width = game_width.GetInteger();
 
-	//colors.push_back(Screen::Green);
+	colors.push_back(colorGreen);
 	colors.push_back(colorCyan);
 	colors.push_back(colorRed);
 	colors.push_back(colorMagenta);
-	//colors.push_back(Screen::Brown);
+	colors.push_back(colorBrown);
 	colors.push_back(colorLightGray);
 	colors.push_back(colorLightGreen);
 	colors.push_back(colorLightCyan);
@@ -669,7 +669,7 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 		mapFile = std::make_shared<idMapFile>();
 		if (!mapFile->Parse(mapName + ".map")) {
 			mapFile = nullptr;
-			Error("Couldn't load %s", mapName);
+			Error("Couldn't load %s", mapName.c_str());
 		}
 	}
 	mapFileName = mapFile->GetName();

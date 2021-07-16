@@ -20,7 +20,10 @@ void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data)
 	options = std::make_shared<idMenuWidget_DynamicList>();
 	std::vector<std::vector<std::string>> menuOptions;
 	std::vector<std::string> option;
-	option.push_back("snake");	// doom 3
+	option.push_back("snake");
+	menuOptions.push_back(option);
+
+	option[0] = "bomber";
 	menuOptions.push_back(option);
 
 	options->SetListData(menuOptions);
@@ -46,16 +49,14 @@ void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data)
 
 	AddChild(btnBack);
 
-	/*
-	options->AddEventAction(WIDGET_EVENT_SCROLL_DOWN).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_UP).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_DOWN_RELEASE).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_RELEASE));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_UP_RELEASE).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_DOWN_LSTICK).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_UP_LSTICK).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE));
-	options->AddEventAction(WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE).Set(new (TAG_SWF) idWidgetActionHandler(options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE));
-	*/
+	options->AddEventAction(widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN).Set(std::make_shared<idWidgetActionHandler>(options, actionHandler_t::WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER,
+		widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN));
+	options->AddEventAction(widgetEvent_t::WIDGET_EVENT_SCROLL_UP).Set(std::make_shared<idWidgetActionHandler>(options, actionHandler_t::WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER,
+		widgetEvent_t::WIDGET_EVENT_SCROLL_UP));
+	options->AddEventAction(widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN_RELEASE).Set(std::make_shared<idWidgetActionHandler>(options, actionHandler_t::WIDGET_ACTION_EVENT_STOP_REPEATER,
+		widgetEvent_t::WIDGET_EVENT_SCROLL_DOWN_RELEASE));
+	options->AddEventAction(widgetEvent_t::WIDGET_EVENT_SCROLL_UP_RELEASE).Set(std::make_shared<idWidgetActionHandler>(options, actionHandler_t::WIDGET_ACTION_EVENT_STOP_REPEATER,
+		widgetEvent_t::WIDGET_EVENT_SCROLL_UP_RELEASE));
 }
 
 /*
@@ -152,8 +153,8 @@ bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWi
 		if (auto spMenuData = menuData.lock()) {
 			std::shared_ptr<idMenuHandler_Shell> shell = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
 			if (shell) {
-				shell->SetNewGameType(selectionIndex);
-				shell->StartGame(0);
+				shell->SetNewGameType(0);
+				shell->StartGame(selectionIndex);
 			}
 		}
 

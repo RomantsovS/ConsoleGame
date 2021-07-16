@@ -113,7 +113,7 @@ void RB_ShowDebugText() {
 
 	text = rb_debugText;
 	for (i = 0; i < rb_numDebugText; i++, text++) {
-		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text->text, colorWhite, true);
+		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text->text, text->color, true);
 	}
 }
 

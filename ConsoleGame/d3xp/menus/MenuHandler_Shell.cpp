@@ -380,7 +380,14 @@ idMenuHandler_Shell::StartGame
 ========================
 */
 void idMenuHandler_Shell::StartGame(int index) {
-	if (index == 0) {
+	switch(index){
+	case 0: {
 		cmdSystem->AppendCommandText(va("map %s %d\n", "snake", 0));
+		break;
+	}
+	case 1: {
+		cmdSystem->AppendCommandText(va("map %s %d\n", "bomber", 0));
+		break;
+	}
 	}
 }

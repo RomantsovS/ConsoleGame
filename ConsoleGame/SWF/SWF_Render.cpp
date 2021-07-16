@@ -65,5 +65,5 @@ void idSWF::RenderEditText(idRenderSystem* gui, std::shared_ptr<idSWFTextInstanc
 		return;
 	}
 
-	gui->DrawPositionedString(renderState.pos, textInstance->text, textInstance->color);
+	gui->DrawBigStringExt(static_cast<int>(renderState.pos.x), static_cast<int>(renderState.pos.y), textInstance->text, textInstance->color, true);
 }

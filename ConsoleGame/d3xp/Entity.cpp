@@ -81,9 +81,8 @@ void idEntity::Spawn() {
 	temp = spawnArgs.GetString("model");
 	if (!temp.empty()) {
 		SetModel(temp);
-
-		renderEntity.color = spawnArgs.GetInt("color", 15);
 	}
+	renderEntity.color = spawnArgs.GetInt("color", 15);
 }
 
 void idEntity::Remove() {

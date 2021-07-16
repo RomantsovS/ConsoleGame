@@ -46,6 +46,15 @@ idRenderSystemLocal::~idRenderSystemLocal() {
 
 /*
 =============
+idRenderSystemLocal::SetColor
+=============
+*/
+void idRenderSystemLocal::SetColor(const int rgba) {
+	currentColorNativeBytesOrder = rgba;
+}
+
+/*
+=============
 idRenderSystemLocal::DrawStretchPic
 =============
 */
@@ -62,7 +71,11 @@ void idRenderSystemLocal::DrawStretchPic(int x, int y, int w, int h, int s1, int
 	for(int i = 0; i < h; ++i) {
 		for(int j = 0; j < w; ++j) {
 			int pixelIndex = t1 * BIGCHAR_WIDTH * BIGCHAR_WIDTH * 16 + i * BIGCHAR_WIDTH * 16 + s1 * BIGCHAR_WIDTH + j;
-			tr.screen.set(x + j, y + i, imagePixels[pixelIndex].screenPixel);
+			auto pixel = imagePixels[pixelIndex].screenPixel;
+			if (pixel.color != colorBlack)
+				pixel.color = currentColorNativeBytesOrder;
+
+			tr.screen.set(x + j, y + i, pixel);
 		}
 	}
 }
@@ -107,26 +120,12 @@ void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& stri
 
 	// draw the colored text
 	xx = x;
-	//SetColor(setColor);
+	SetColor(setColor);
 	for(const auto& s : string) {
-		/*if (idStr::IsColor(s)) {
-			if (!forceColor) {
-				if (*(s + 1) == C_COLOR_DEFAULT) {
-					SetColor(setColor);
-				}
-				else {
-					color = idStr::ColorForIndex(*(s + 1));
-					color[3] = setColor[3];
-					SetColor(color);
-				}
-			}
-			s += 2;
-			continue;
-		}*/
 		DrawBigChar(xx, y, s);
 		xx += BIGCHAR_WIDTH;
 	}
-	//SetColor(colorWhite);
+	SetColor(colorWhite);
 }
 
 void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, int color) {
@@ -161,26 +160,6 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) {
 
 void idRenderSystemLocal::Display() {
 	screen.display();
-}
-
-void idRenderSystemLocal::Clear() {
-	frameCount = 0;
-	viewCount = 0;
-
-	screen.clear();
-	
-	// free all the entityDefs, lightDefs, portals, etc
-	for(auto &world : worlds)
-		world->FreeWorld();
-
-	worlds.clear();
-
-	if (viewDef) {
-		viewDef->renderWorld = nullptr;
-		viewDef = nullptr;
-	}
-
-	update_frame = update_info = true;
 }
 
 void idRenderSystemLocal::FillBorder() {

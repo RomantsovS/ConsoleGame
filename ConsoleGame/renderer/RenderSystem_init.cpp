@@ -22,6 +22,28 @@ void R_InitMaterials() {
 	tr.charSetMaterial = declManager->FindMaterial("textures/bigchars");
 }
 
+void idRenderSystemLocal::Clear() {
+	frameCount = 0;
+	viewCount = 0;
+
+	screen.clear();
+
+	// free all the entityDefs, lightDefs, portals, etc
+	for (auto& world : worlds)
+		world->FreeWorld();
+
+	worlds.clear();
+
+	if (viewDef) {
+		viewDef->renderWorld = nullptr;
+		viewDef = nullptr;
+	}
+
+	currentColorNativeBytesOrder = 15;
+
+	update_frame = update_info = true;
+}
+
 void idRenderSystemLocal::Init() {
 	Sys_InitInput();
 

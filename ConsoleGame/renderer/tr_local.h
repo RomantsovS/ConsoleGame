@@ -176,6 +176,8 @@ public:
 	void BeginLevelLoad() override;
 	void EndLevelLoad() override;
 
+	void SetColor(const int color) override;
+
 	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material);
 	void DrawBigChar(int x, int y, int ch) override;
 	void DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) override;
@@ -206,6 +208,9 @@ public:
 	//std::shared_ptr<idMaterial> defaultMaterial;
 
 	std::shared_ptr<viewDef_t> viewDef;
+
+	// GUI drawing variables for surface creation
+	int currentColorNativeBytesOrder;
 
 	Screen screen;
 	bool update_frame;
