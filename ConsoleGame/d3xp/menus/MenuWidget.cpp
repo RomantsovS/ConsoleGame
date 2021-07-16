@@ -292,14 +292,14 @@ void idMenuWidget::SetState(const widgetState_t state) {
 			}
 			else if (state == widgetState_t::WIDGET_STATE_SELECTING) {
 				if (widgetState == widgetState_t::WIDGET_STATE_NORMAL) {
-					GetSprite()->SetColor(Screen::ConsoleColor::Yellow); // transition from unselected to selected
+					GetSprite()->SetColor(colorYellow); // transition from unselected to selected
 				}
 				else {
-					GetSprite()->SetColor(Screen::ConsoleColor::Yellow);
+					GetSprite()->SetColor(colorYellow);
 				}
 			}
 			else if (state == widgetState_t::WIDGET_STATE_SELECTED) {
-				GetSprite()->SetColor(Screen::ConsoleColor::Yellow);
+				GetSprite()->SetColor(colorYellow);
 			}
 			else if (state == widgetState_t::WIDGET_STATE_NORMAL) {
 				if (widgetState == widgetState_t::WIDGET_STATE_SELECTING) {
@@ -311,7 +311,7 @@ void idMenuWidget::SetState(const widgetState_t state) {
 				else {
 					//GetSprite()->PlayFrame("up");
 				}
-				GetSprite()->SetColor(Screen::ConsoleColor::White);
+				GetSprite()->SetColor(colorWhite);
 			}
 		}
 

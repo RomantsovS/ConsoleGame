@@ -82,6 +82,13 @@ entityDef turtle {
 	"speed"					"20"
 }
 
+entityDef font {
+	"spawnclass"			"AISimple"
+	"model"					"font"
+	"size"					"42 7"
+	"speed"					"20"
+}
+
 entityDef weapon_handgrenade {
 	"spawnclass"				"idItem"
 	"size"						"16 16"

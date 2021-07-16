@@ -7,12 +7,12 @@ Version 2
 "def_player" "player"
 "player_origin" "13 13"
 "game_add_point_delay" "1000"
-"game_add_point_count" "1"
+"game_add_point_count" "0"
 // primitive 2
 {
  brushDef3
  {
-  ( 0 0 320 200 )
+  ( 0 0 355 200 )
  }
 }
 }

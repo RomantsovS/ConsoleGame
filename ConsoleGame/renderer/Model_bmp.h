@@ -1,3 +1,5 @@
+#ifndef  MODEL_DMP_H_
+#define MODEL_DMP_H_
 
 #pragma pack(push, 1)
 
@@ -59,3 +61,8 @@ private:
 	// Add 1 to the row_stride until it is divisible with align_stride
 	uint32_t make_stride_aligned(uint32_t align_stride);
 };
+
+class ModelPixel;
+bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces);
+
+#endif // ! MODEL_DMP_H_

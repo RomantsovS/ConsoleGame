@@ -23,7 +23,7 @@ struct renderEntity_t
 	Vector2 origin;
 	Vector2 axis;
 
-	Screen::ConsoleColor color;
+	int color;
 };
 
 struct renderView_t {
@@ -75,11 +75,11 @@ public:
 	//-------------- Debug Visualization  -----------------
 	// Line drawing for debug visualization
 	virtual void DebugClearLines(int time) = 0;		// a time of 0 will clear all lines and text
-	virtual void DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) = 0;
-	virtual void DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) = 0;
+	virtual void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) = 0;
+	virtual void DebugBounds(const int color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) = 0;
 
 	// Text drawing for debug visualization.
-	virtual void DrawTextToScreen(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) = 0;
+	virtual void DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime) = 0;
 
 	virtual std::shared_ptr<idRenderWorld> getptr() = 0;
 };

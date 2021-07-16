@@ -6,6 +6,9 @@
 idRenderSystemLocal tr;
 idRenderSystem * renderSystem = &tr;
 
+constexpr int BIGCHAR_WIDTH = 8;
+constexpr int BIGCHAR_HEIGHT = 8;
+ 
 /*
 ====================
 RenderCommandBuffers
@@ -18,6 +21,9 @@ void idRenderSystemLocal::RenderCommandBuffers() {
 	// are going to a file, or r_skipBackEnd is later disabled,
 	// usefull data can be received.
 
+	if (!tr.update_frame)
+		return;
+	
 	// r_skipRender is usually more usefull, because it will still
 	// draw 2D graphics
 	if (!r_skipBackEnd.GetBool()) {
@@ -31,21 +37,106 @@ idRenderSystem::idRenderSystem() {
 idRenderSystem::~idRenderSystem() {
 }
 
-idRenderSystemLocal::idRenderSystemLocal() {
+idRenderSystemLocal::idRenderSystemLocal() : update_frame_time(100) {
 	Clear();
 }
 
 idRenderSystemLocal::~idRenderSystemLocal() {
 }
 
-void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) {
+/*
+=============
+idRenderSystemLocal::DrawStretchPic
+=============
+*/
+void idRenderSystemLocal::DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) {
+	if (!R_IsInitialized()) {
+		return;
+	}
+	if (material == nullptr) {
+		return;
+	}
+
+	const auto& imagePixels = material->GetStage()->image->GetPixels();
+
+	for(int i = 0; i < h; ++i) {
+		for(int j = 0; j < w; ++j) {
+			int pixelIndex = t1 * BIGCHAR_WIDTH * BIGCHAR_WIDTH * 16 + i * BIGCHAR_WIDTH * 16 + s1 * BIGCHAR_WIDTH + j;
+			tr.screen.set(x + j, y + i, imagePixels[pixelIndex].screenPixel);
+		}
+	}
+}
+
+/*
+=====================
+idRenderSystemLocal::DrawBigChar
+=====================
+*/
+void idRenderSystemLocal::DrawBigChar(int x, int y, int ch) {
+	int row{}, col{};
+
+	ch &= 255;
+
+	if (ch == ' ') {
+		return;
+	}
+
+	if (y < -BIGCHAR_HEIGHT) {
+		return;
+	}
+
+	col = ch % 16;
+	row = (ch - ' ') / 16;
+
+	DrawStretchPic(x, y, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, col, row, charSetMaterial.get());
+}
+
+/*
+==================
+idRenderSystemLocal::DrawBigStringExt
+
+Draws a multi-colored string with a drop shadow, optionally forcing
+to a fixed color.
+
+Coordinates are at 640 by 480 virtual resolution
+==================
+*/
+void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) {
+	//idVec4		color;
+	int			xx;
+
+	// draw the colored text
+	xx = x;
+	//SetColor(setColor);
+	for(const auto& s : string) {
+		/*if (idStr::IsColor(s)) {
+			if (!forceColor) {
+				if (*(s + 1) == C_COLOR_DEFAULT) {
+					SetColor(setColor);
+				}
+				else {
+					color = idStr::ColorForIndex(*(s + 1));
+					color[3] = setColor[3];
+					SetColor(color);
+				}
+			}
+			s += 2;
+			continue;
+		}*/
+		DrawBigChar(xx, y, s);
+		xx += BIGCHAR_WIDTH;
+	}
+	//SetColor(colorWhite);
+}
+
+void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, int color) {
 	for (const auto& ch : str) {
 		screen.set(pos, Screen::Pixel(ch, color));
 		++pos.y;
 	}
 }
 
-void idRenderSystemLocal::DrawString(const std::string& text, const Screen::ConsoleColor& color) {
+void idRenderSystemLocal::DrawString(const std::string& text, const int color) {
 	if (!text.empty()) {
 		tr.screen.writeInColor(text, color);
 	}
@@ -112,4 +203,21 @@ void idRenderSystemLocal::FillBorder() {
 
 void idRenderSystemLocal::ClearScreen() {
 	screen.clear();
+}
+
+void idRenderSystemLocal::UpdateTimers() {
+	static auto prev_frame_update_time = Sys_Milliseconds();
+
+	auto t = Sys_Milliseconds();
+
+	if (t - prev_frame_update_time > update_frame_time) {
+		tr.update_frame = true;
+		prev_frame_update_time = t;
+	}
+
+	if (!tr.update_frame)
+		return;
+
+	tr.ClearScreen();
+	tr.FillBorder();
 }

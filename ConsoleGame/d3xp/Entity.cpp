@@ -82,7 +82,7 @@ void idEntity::Spawn() {
 	if (!temp.empty()) {
 		SetModel(temp);
 
-		renderEntity.color = static_cast<Screen::ConsoleColor>(spawnArgs.GetInt("color", 15));
+		renderEntity.color = spawnArgs.GetInt("color", 15);
 	}
 }
 
@@ -276,7 +276,7 @@ void idEntity::UpdateModelTransform() {
 	}
 }
 
-void idEntity::SetColor(const Screen::ConsoleColor & color) {
+void idEntity::SetColor(const int color) {
 	renderEntity.color = color;
 
 	UpdateVisuals();

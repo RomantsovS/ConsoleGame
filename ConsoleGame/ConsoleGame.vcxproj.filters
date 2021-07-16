@@ -333,6 +333,12 @@
     <ClInclude Include="d3xp\Projectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderer\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer\Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer\Model.cpp">
@@ -660,6 +666,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="d3xp\Projectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\ImageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Image_intrinsic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer\Image_load.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

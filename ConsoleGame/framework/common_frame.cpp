@@ -80,6 +80,7 @@ void idCommonLocal::Frame() {
 			// we don't have vsync on, or the monitor is running at 120hz while
 			// com_engineHz is 60, so sleep a bit and check again
 			Sys_Sleep(0);
+			//std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 
 		// Update session and syncronize to the new session state after sleeping
@@ -107,17 +108,17 @@ void idCommonLocal::Frame() {
 		}
 
 		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
+		
+		renderSystem->UpdateTimers();
 
 		RunGameAndDraw(numGameFrames);
 
 		renderSystem->RenderCommandBuffers();
 	}
-	catch (const std::exception& err)
-	{
+	catch (const std::exception& err) {
 		common->Error(err.what());
 	}
 }
-
 void idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
 	for(size_t i = 0; i < numGameFrames_; ++i)
 		game->RunFrame();
@@ -143,6 +144,9 @@ void idCommonLocal::Draw() {
 			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
 		}
 	}
+
+	// draw the half console / notify console on top of everything
+	console->Draw(false);
 }
 
 /*

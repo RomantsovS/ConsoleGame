@@ -22,6 +22,7 @@
 #include <sstream>
 #include <direct.h>
 #include <algorithm>
+#include <thread>
 
 #include "sys/sys_defines.h"
 #include "sys/sys_includes.h"
@@ -51,6 +52,9 @@
 #include "../framework/DeclEntityDef.h"
 
 // renderer
+#include "../renderer/Model_bmp.h"
+#include "../renderer/Image.h"
+#include "../renderer/Material.h"
 #include "../renderer/Screen.h"
 #include "../renderer/Model.h"
 #include "../renderer/ModelManager.h"

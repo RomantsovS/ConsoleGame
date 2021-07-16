@@ -97,6 +97,8 @@ public:
 
 	virtual void ListType(const idCmdArgs& args, declType_t type) override;
 	virtual void PrintType(const idCmdArgs& args, declType_t type) override;
+
+	const std::shared_ptr<idMaterial> FindMaterial(const std::string& name, bool makeDefault = true) override;
 public:
 	static void MakeNameCanonical(const std::string& name, std::string& result, int maxLength);
 	std::shared_ptr<idDeclLocal> FindTypeWithoutParsing(declType_t type, const std::string& name, bool makeDefault = true);
@@ -357,8 +359,10 @@ void idDeclManagerLocal::Init() {
 #endif
 
 	// decls used throughout the engine
+	RegisterDeclType("material", declType_t::DECL_MATERIAL, idDeclAllocator<idMaterial>);
 	RegisterDeclType("entityDef", declType_t::DECL_ENTITYDEF, idDeclAllocator<idDeclEntityDef>);
-	//RegisterDeclType("mapDef", DECL_MAPDEF, idDeclAllocator<idDeclEntityDef>);
+
+	RegisterDeclFolder("materials", ".mtr", declType_t::DECL_MATERIAL);
 
 	// add console commands
 	cmdSystem->AddCommand("listDecls", ListDecls_f, CMD_FL_SYSTEM, "lists all decls");
@@ -675,6 +679,10 @@ void idDeclManagerLocal::PrintType(const idCmdArgs& args, declType_t type) {
 	if (decl->self != NULL) {
 		decl->self->Print();
 	}*/
+}
+
+const std::shared_ptr<idMaterial> idDeclManagerLocal::FindMaterial(const std::string& name, bool makeDefault) {
+	return std::static_pointer_cast<idMaterial>(FindType(declType_t::DECL_MATERIAL, name, makeDefault));
 }
 
 /*

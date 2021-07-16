@@ -71,6 +71,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
+    <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
+    <IncludePath>$(ProjectDir)lib;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
+    <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
+    <IncludePath>$(ProjectDir)lib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,7 +88,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile />
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -107,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile />
+      <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -196,6 +204,8 @@
     <ClInclude Include="idlib\sys\sys_includes.h" />
     <ClInclude Include="idlib\sys\sys_types.h" />
     <ClInclude Include="idlib\Token.h" />
+    <ClInclude Include="renderer\Image.h" />
+    <ClInclude Include="renderer\Material.h" />
     <ClInclude Include="Renderer\Model.h" />
     <ClInclude Include="Renderer\ModelManager.h" />
     <ClInclude Include="renderer\Model_bmp.h" />
@@ -296,13 +306,17 @@
     <ClCompile Include="idlib\math\Vector2.cpp" />
     <ClCompile Include="idlib\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">precompiled.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="idlib\Str.cpp" />
     <ClCompile Include="idlib\sys\sys_assert.cpp" />
     <ClCompile Include="idlib\Token.cpp" />
+    <ClCompile Include="renderer\ImageManager.cpp" />
+    <ClCompile Include="renderer\Image_intrinsic.cpp" />
+    <ClCompile Include="renderer\Image_load.cpp" />
+    <ClCompile Include="renderer\Material.cpp" />
     <ClCompile Include="Renderer\Model.cpp" />
     <ClCompile Include="Renderer\ModelManager.cpp" />
     <ClCompile Include="renderer\Model_bmp.cpp" />

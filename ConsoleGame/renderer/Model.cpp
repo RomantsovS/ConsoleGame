@@ -14,7 +14,7 @@ idRenderModelStatic::idRenderModelStatic() {
 	reloadable = true;
 	levelLoadReferenced = false;
 
-	color = Screen::ConsoleColor::None;
+	color = colorNone;
 }
 
 idRenderModelStatic::~idRenderModelStatic() {
@@ -153,7 +153,7 @@ void idRenderModelStatic::MakeDefaultModel() {
 
 	for (int i = -8 / window_font_height.GetInteger(); i < 8 / window_font_height.GetInteger(); ++i) {
 		for (int j = -8 / window_font_width.GetInteger(); j < 8 / window_font_width.GetInteger(); ++j) {
-			surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', Screen::ConsoleColor::White));
+			surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', colorWhite));
 		}
 	}
 }
@@ -182,7 +182,7 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 
 	float x{}, y{};
 	char symbol;
-	Screen::ConsoleColor col{};
+	int col{};
 
 	while (1) {
 		if (!src.ReadToken(&token)) {
@@ -218,7 +218,7 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 					return false;
 				}
 
-				col = static_cast<Screen::ConsoleColor>(std::stoi(token2));
+				col = std::stoi(token2);
 
 				surfaces.emplace_back(Vector2(x, y), Screen::Pixel(symbol, col));
 
@@ -257,64 +257,8 @@ bool idRenderModelStatic::LoadBMPModel(const std::string& fileName) {
 	if (bmp.data.empty())
 		return false;
 	
-	ConvertBMPToModelSurfaces(bmp);
+	ConvertBMPToModelSurfaces(bmp, surfaces);
 	
-	return true;
-}
-
-bool idRenderModelStatic::ConvertBMPToModelSurfaces(const BMP& bmp) {
-	const char symbol{'\xDB'};
-	Screen::ConsoleColor col{};
-
-	for (int j = bmp.bmp_info_header.height - 1; j >= 0; --j) {
-		for (int i = 0; i < bmp.bmp_info_header.width; ++i) {
-			int cur_pixel = (j * bmp.bmp_info_header.width + i) * 3;
-
-			if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
-				bmp.data.at(cur_pixel + 2) > 200) {
-				col = Screen::ConsoleColor::White;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 100 && bmp.data.at(cur_pixel + 2) > 200) {
-				col = Screen::ConsoleColor::Yellow;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
-				bmp.data.at(cur_pixel + 3) > 100) {
-				col = Screen::ConsoleColor::LightCyan;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 200) {
-				col = Screen::ConsoleColor::Blue;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 200) {
-				col = Screen::ConsoleColor::Green;
-			}
-			else if (bmp.data.at(cur_pixel + 2) > 200) {
-				col = Screen::ConsoleColor::LightRed;
-			}
-			else if (bmp.data.at(cur_pixel + 0) < 50 && bmp.data.at(cur_pixel + 1) < 50 &&
-				bmp.data.at(cur_pixel + 2) < 50) {
-				col = Screen::ConsoleColor::Black;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 100 && bmp.data.at(cur_pixel + 1) > 100 &&
-				bmp.data.at(cur_pixel + 2) < 50) {
-				col = Screen::ConsoleColor::LightGray;
-			}
-			else if (bmp.data.at(cur_pixel + 0) < 100 && bmp.data.at(cur_pixel + 1) < 100 &&
-				bmp.data.at(cur_pixel + 2) < 100) {
-				col = Screen::ConsoleColor::Cyan;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 100) {
-				col = Screen::ConsoleColor::LightGreen;
-			}
-			else if (bmp.data.at(cur_pixel + 2) > 50) {
-				col = Screen::ConsoleColor::Red;
-			}
-			else
-				col = Screen::ConsoleColor::None;
-
-			surfaces.emplace_back(Vector2(i, bmp.bmp_info_header.height - j - 1), Screen::Pixel(symbol, col));
-		}
-	}
-
 	auto max_x = surfaces.back().origin.x + 1;
 	auto max_y = surfaces.back().origin.y + 1;
 
@@ -328,11 +272,67 @@ bool idRenderModelStatic::ConvertBMPToModelSurfaces(const BMP& bmp) {
 	return true;
 }
 
-Screen::ConsoleColor idRenderModelStatic::GetColor() const {
+bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces) {
+	const char symbol{'\xDB'};
+	int col{};
+
+	for (int j = bmp.bmp_info_header.height - 1; j >= 0; --j) {
+		for (int i = 0; i < bmp.bmp_info_header.width; ++i) {
+			int cur_pixel = (j * bmp.bmp_info_header.width + i) * 3;
+
+			if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
+				bmp.data.at(cur_pixel + 2) > 200) {
+				col = colorWhite;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 100 && bmp.data.at(cur_pixel + 2) > 200) {
+				col = colorYellow;
+			}
+			else if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
+				bmp.data.at(cur_pixel + 3) > 100) {
+				col = colorLightCyan;
+			}
+			else if (bmp.data.at(cur_pixel + 0) > 200) {
+				col = colorBlue;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 200) {
+				col = colorGreen;
+			}
+			else if (bmp.data.at(cur_pixel + 2) > 200) {
+				col = colorLightRed;
+			}
+			else if (bmp.data.at(cur_pixel + 0) < 50 && bmp.data.at(cur_pixel + 1) < 50 &&
+				bmp.data.at(cur_pixel + 2) < 50) {
+				col = colorBlack;
+			}
+			else if (bmp.data.at(cur_pixel + 0) > 100 && bmp.data.at(cur_pixel + 1) > 100 &&
+				bmp.data.at(cur_pixel + 2) < 50) {
+				col = colorLightGray;
+			}
+			else if (bmp.data.at(cur_pixel + 0) < 100 && bmp.data.at(cur_pixel + 1) < 100 &&
+				bmp.data.at(cur_pixel + 2) < 100) {
+				col = colorCyan;
+			}
+			else if (bmp.data.at(cur_pixel + 1) > 100) {
+				col = colorLightGreen;
+			}
+			else if (bmp.data.at(cur_pixel + 2) > 50) {
+				col = colorRed;
+			}
+			else
+				col = colorWhite;
+
+			surfaces.emplace_back(Vector2(i, bmp.bmp_info_header.height - j - 1), Screen::Pixel(symbol, col));
+		}
+	}
+
+	return true;
+}
+
+int idRenderModelStatic::GetColor() const {
 	return color;
 }
 
-void idRenderModelStatic::SetColor(Screen::ConsoleColor col) {
+void idRenderModelStatic::SetColor(int col) {
 	/*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
 	{
 		iter->screenPixel.color = col;

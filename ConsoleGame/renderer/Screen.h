@@ -8,7 +8,7 @@ class Screen {
 public:
 	using pos_type = int;
 
-	enum class ConsoleColor {
+	/*enum class ConsoleColor {
 		None = -1,
 		Black = 0,
 		Blue = 1,
@@ -27,15 +27,15 @@ public:
 		Yellow = 14,
 		White = 15
 	};
-
+	*/
 	struct Pixel {
 		Pixel() = default;
 
-		Pixel(char val, ConsoleColor col) : value(val), color(col) {}
-		Pixel(const Pixel &p, ConsoleColor col) : value(p.value), color(col) {}
+		Pixel(char val, int col) : value(val), color(col) {}
+		Pixel(const Pixel &p, int col) : value(p.value), color(col) {}
 		
 		char value;
-		ConsoleColor color;
+		int color;
 	};
 
 	Screen() = default;
@@ -59,8 +59,8 @@ public:
 	void clearTextInfo();
 
 	void display();
-	void writeInColor(COORD coord, const char* symbol, size_t lenght, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
-	void writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background = ConsoleColor::None);
+	void writeInColor(COORD coord, const char* symbol, size_t lenght, int color_text, int color_background = colorNone);
+	void writeInColor(const std::string& text, int color_text, int color_background = colorNone);
 
 	bool readInput(unsigned& key);
 	std::string waitConsoleInput();

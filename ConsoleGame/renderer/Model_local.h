@@ -1,8 +1,6 @@
 #ifndef MODEL_LOCAL_H
 #define MODEL_LOCAL_H
 
-#include "Model_bmp.h"
-
 class idRenderModelStatic : public idRenderModel
 {
 public:
@@ -33,10 +31,8 @@ public:
 	bool LoadTextModel(const std::string& fileName);
 	bool LoadBMPModel(const std::string& fileName);
 
-	bool ConvertBMPToModelSurfaces(const BMP& bmp);
-
-	Screen::ConsoleColor GetColor() const override;
-	void SetColor(Screen::ConsoleColor col) override;
+	int GetColor() const override;
+	void SetColor(int col) override;
 public:
 	std::vector<ModelPixel> surfaces;
 
@@ -47,7 +43,7 @@ protected:
 	bool reloadable; // if not, reloadModels won't check timestamp
 	bool levelLoadReferenced; // for determining if it needs to be freed
 private:
-	Screen::ConsoleColor color;
+	int color;
 };
 
 #endif

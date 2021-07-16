@@ -4,50 +4,10 @@
 #include "tr_local.h"
 #include "../d3xp/Game_local.h"
 
-const int FPS_FRAMES = 8;
-
-void DrawFPS()
-{
-	static long long previousTimes[FPS_FRAMES];
-	static int index;
-	static long long previous;
-
-	// don't use serverTime, because that will be drifting to
-	// correct for internet lag changes, timescales, timedemos, etc
-	auto t = Sys_Microseconds();
-	auto frameTime = t - previous;
-	previous = t;
-
-	previousTimes[index % FPS_FRAMES] = frameTime;
-	index++;
-
-	int fps = 0;
-
-	if (index > FPS_FRAMES) {
-		// average multiple frames together to smooth changes out a bit
-		long long total = 0;
-		for (int i = 0; i < FPS_FRAMES; i++) {
-			total += previousTimes[i];
-		}
-		if (!total) {
-			total = 1;
-		}
-		fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
-		fps = (fps + 500) / 1000;
-	}
-
-	if (tr.update_info) {
-		static char buf[256];
-
-		sprintf_s(buf, " %8d fps, %8lld microsec last frame time, current game time % d", fps, frameTime, gameLocal.GetTime());
-		RB_DrawText(buf, vec2_origin, Screen::ConsoleColor::White);
-	}
-}
-
 constexpr size_t MAX_DEBUG_LINES = 512;
 
 struct debugLine_t {
-	Screen::ConsoleColor		rgb;
+	int			rgb;
 	Vector2		start;
 	Vector2		end;
 	bool		depthTest;
@@ -64,7 +24,7 @@ idCVar max_debug_text("max_debug_text", "10", CVAR_TOOL, "", 0, MAX_DEBUG_TEXT);
 struct debugText_t {
 	std::string text;
 	Vector2 origin;
-	Screen::ConsoleColor color;
+	int color;
 	int lifeTime;
 };
 
@@ -113,7 +73,7 @@ void RB_ClearDebugText(int time) {
 RB_AddDebugText
 ================
 */
-void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime) {
+void RB_AddDebugText(const std::string &text, const Vector2 &origin, const int color, const int lifetime) {
 	if (rb_numDebugText < max_debug_text.GetInteger()) {
 		auto debugText = &rb_debugText[rb_numDebugText++];
 		debugText->text = text;
@@ -132,7 +92,7 @@ RB_DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color) {
+void RB_DrawText(const std::string &text, const Vector2 &origin, const int color) {
 	if (!text.empty()) {
 		tr.screen.writeInColor(text, color);
 	}
@@ -153,7 +113,7 @@ void RB_ShowDebugText() {
 
 	text = rb_debugText;
 	for (i = 0; i < rb_numDebugText; i++, text++) {
-		RB_DrawText(text->text, text->origin, text->color);
+		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text->text, colorWhite, true);
 	}
 }
 
@@ -188,7 +148,7 @@ void RB_ClearDebugLines(int time) {
 	rb_numDebugLines = num;
 }
 
-void RB_AddDebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest)
+void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest)
 {
 	debugLine_t* line;
 
@@ -238,16 +198,8 @@ void RB_ShowDebugLines() {
 RB_RenderDebugTools
 =================
 */
-void RB_RenderDebugToolsBefore() {
-	if (!tr.update_frame)
-		return;
-
-	tr.ClearScreen();
-	tr.FillBorder();
-
-	RB_ShowDebugLines();
-}
 
 void RB_RenderDebugTools() {
+	RB_ShowDebugLines();
 	RB_ShowDebugText();
 }

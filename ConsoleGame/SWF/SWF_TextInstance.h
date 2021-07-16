@@ -14,7 +14,7 @@ public:
 		scriptObject(std::make_shared<idSWFScriptObject>()),
 #endif
 		text(""),
-		color(Screen::ConsoleColor::None),
+		color(colorNone),
 		visible(false)
 	{
 		swf.reset();
@@ -36,7 +36,7 @@ public:
 	std::shared_ptr<idSWFScriptObject> scriptObject;
 
 	std::string text;
-	Screen::ConsoleColor color;
+	int color;
 
 	bool visible;
 };

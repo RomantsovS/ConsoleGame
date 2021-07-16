@@ -90,10 +90,6 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 	// based on the model bounds, add references in each area
 	// that may contain the updated surface
 	R_CreateEntityRefs(def);
-	
-	if (!tr.update_frame){
-		//tr.update_frame = true;
-	}
 }
 
 /*
@@ -266,15 +262,15 @@ idRenderWorldLocal::DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-void idRenderWorldLocal::DrawTextToScreen(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0) {
+void idRenderWorldLocal::DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime = 0) {
 	RB_AddDebugText(text, origin, color, lifetime);
 }
 
-void idRenderWorldLocal::DebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) {
+void idRenderWorldLocal::DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) {
 	RB_AddDebugLine(color, start, end, lifetime, depthTest);
 }
 
-void idRenderWorldLocal::DebugBounds(const Screen::ConsoleColor color, const idBounds& bounds, const Vector2& org, const int lifetime) {
+void idRenderWorldLocal::DebugBounds(const int color, const idBounds& bounds, const Vector2& org, const int lifetime) {
 	int i;
 	Vector2 v[4];
 

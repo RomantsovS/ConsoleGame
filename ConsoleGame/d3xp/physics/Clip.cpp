@@ -942,10 +942,10 @@ idClip::PrintStatistics
 void idClip::PrintStatistics() {
 	static char buf[256];
 
-	sprintf_s(buf, "t = %3d, r = %3d, m = %3d, render = %3d, contents = %3d, contacts = %3d",
-		numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
+	//sprintf_s(buf, "t = %3d, r = %3d, m = %3d, render = %3d, contents = %3d, contacts = %3d",
+	//	numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
 
-	gameRenderWorld->DrawTextToScreen(buf, Vector2(), gameLocal.GetColors()[8], 0);
+	//gameRenderWorld->DrawTextToScreen(buf, Vector2(), gameLocal.GetColors()[8], 0);
 
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
@@ -971,7 +971,7 @@ void idClip::DrawClipModels(const Vector2& eye, const float radius, const std::s
 			continue;
 		}
 		//if (clipModel->renderModelHandle != -1) {
-			gameRenderWorld->DebugBounds(Screen::ConsoleColor::Cyan, clipModel->GetAbsBounds());
+			gameRenderWorld->DebugBounds(colorCyan, clipModel->GetAbsBounds(), vec2_origin, gameLocal.GetInfoUpdateTime() + 1);
 		/* }
 		else {
 			collisionModelManager->DrawModel(clipModel->Handle(), clipModel->GetOrigin(), clipModel->GetAxis(), eye, radius);
@@ -997,11 +997,11 @@ bool idClip::DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds)
 	front[0][node->axis] = back[1][node->axis] = node->dist;
 
 	if (!DrawClipSectors_r(node->children[0].get(), front)) {
-		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, front, vec2_origin, 0);
+		gameRenderWorld->DebugBounds(colorGreen, front, vec2_origin, gameLocal.GetInfoUpdateTime() + 1);
 	}
 
 	if (!DrawClipSectors_r(node->children[1].get(), back)) {
-		gameRenderWorld->DebugBounds(Screen::ConsoleColor::Green, back, vec2_origin, 0);
+		gameRenderWorld->DebugBounds(colorGreen, back, vec2_origin, gameLocal.GetInfoUpdateTime() + 1);
 	}
 
 	return true;

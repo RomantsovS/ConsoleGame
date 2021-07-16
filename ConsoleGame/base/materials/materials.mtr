@@ -1,0 +1,5 @@
+textures/bigchars {
+	{
+		map textures/bigchars.bmp
+	}
+}

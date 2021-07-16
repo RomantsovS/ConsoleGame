@@ -9,6 +9,19 @@
 
 idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
 
+/*
+=================
+R_InitMaterials
+=================
+*/
+void R_InitMaterials() {
+	/*tr.defaultMaterial = declManager->FindMaterial("_default", false);
+	if (!tr.defaultMaterial) {
+		common->FatalError("_default material not found");
+	}*/
+	tr.charSetMaterial = declManager->FindMaterial("textures/bigchars");
+}
+
 void idRenderSystemLocal::Init() {
 	Sys_InitInput();
 
@@ -19,6 +32,8 @@ void idRenderSystemLocal::Init() {
 	// we used to memset tr, but now that it is a class, we can't, so
 	// there may be other state we need to reset
 
+	R_InitMaterials();
+
 	renderModelManager->Init();
 
 	borderHeight = 2;
@@ -27,14 +42,16 @@ void idRenderSystemLocal::Init() {
 	height = game_height.GetInteger() + borderHeight * 2;
 	width = game_width.GetInteger() + borderWidth * 2;
 
-	borderPixel = Screen::Pixel('#', Screen::ConsoleColor::White);
+	borderPixel = Screen::Pixel('#', colorWhite);
 
-	screen = Screen(height, width, Screen::Pixel(' ', Screen::ConsoleColor::Black));
+	screen = Screen(height + max_debug_text.GetInteger() * 10, width, Screen::Pixel(' ', colorBlack));
 	screen.init();
 	
 	viewDef = nullptr;
 
-	update_frame = true;
+	update_frame = update_info = true;
+
+	r_initialized = true;
 
 	common->Printf("renderSystem initialized.\n");
 	common->Printf("--------------------------------------\n");
@@ -75,7 +92,7 @@ void idRenderSystemLocal::EndLevelLoad() {
 	renderModelManager->EndLevelLoad();
 }
 
-static bool r_initialized = false;
+bool r_initialized = false;
 
 /*
 =============================

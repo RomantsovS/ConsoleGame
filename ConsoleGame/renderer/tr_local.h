@@ -171,24 +171,30 @@ public:
 	void Init() override;
 	void Shutdown() override;
 
-	virtual std::shared_ptr<idRenderWorld> AllocRenderWorld() override;
-	virtual void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) override;
+	std::shared_ptr<idRenderWorld> AllocRenderWorld() override;
+	void FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) override;
 	void BeginLevelLoad() override;
 	void EndLevelLoad() override;
 
-	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::ConsoleColor color) override;
-	virtual void DrawString(const std::string& text, const Screen::ConsoleColor& color) override;
+	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material);
+	void DrawBigChar(int x, int y, int ch) override;
+	void DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) override;
+
+	void DrawPositionedString(Vector2 pos, const std::string& str, int color) override;
+	void DrawString(const std::string& text, const int color) override;
 	virtual void RenderCommandBuffers();
 
 	void SetHeight(int h) override { height = h; }
 	void SetWidth(int w) override { width = w; }
-	virtual int GetWidth() const override { return width; }
-	virtual int GetHeight() const override { return height; }
+	int GetWidth() const override { return width; }
+	int GetHeight() const override { return height; }
 
 	void Display();
 
 	void FillBorder();
 	void ClearScreen();
+
+	void UpdateTimers() override;
 
 	int frameCount;		// incremented every frame
 	int viewCount;		// incremented every view (twice a scene if subviewed)
@@ -196,13 +202,19 @@ public:
 
 	std::list<std::shared_ptr<idRenderWorldLocal>> worlds;
 
+	std::shared_ptr<idMaterial> charSetMaterial;
+	//std::shared_ptr<idMaterial> defaultMaterial;
+
 	std::shared_ptr<viewDef_t> viewDef;
 
 	Screen screen;
-	bool update_frame, update_info;
+	bool update_frame;
+	bool update_info;
 
 	Screen::pos_type height, width, borderWidth, borderHeight;
 	Screen::Pixel borderPixel;
+
+	int update_frame_time;
 };
 
 extern idRenderSystemLocal tr;
@@ -284,13 +296,15 @@ TR_BACKEND_RENDERTOOLS
 
 void DrawFPS();
 
-void RB_AddDebugText(const std::string &text, const Vector2 &origin, const Screen::ConsoleColor &color, const int lifetime = 0);
+void RB_AddDebugText(const std::string &text, const Vector2 &origin, const int color, const int lifetime = 0);
 void RB_ClearDebugText(int time);
-void RB_AddDebugLine(const Screen::ConsoleColor color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest);
+void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest);
 void RB_ClearDebugLines(int time);
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
-void RB_DrawText(const std::string& text, const Vector2& origin, const Screen::ConsoleColor& color);
+void RB_DrawText(const std::string& text, const Vector2& origin, const int color);
+
+extern idCVar max_debug_text;
 
 #include "RenderWorld_local.h"
 

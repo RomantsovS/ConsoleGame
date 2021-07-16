@@ -3,8 +3,7 @@
 
 #define MD5_MESH_EXT "bmp"
 
-class ModelPixel
-{
+class ModelPixel {
 public:
 	ModelPixel(Vector2 pos, Screen::Pixel pixel);
 
@@ -19,8 +18,7 @@ enum dynamicModel_t {
 	DM_CONTINUOUS	// must be recreated for every single view (time dependent things like particles)
 };
 
-class idRenderModel
-{
+class idRenderModel {
 public:	
 	virtual ~idRenderModel() {}
 
@@ -67,8 +65,8 @@ public:
 	// if the load failed for any reason, this will return true
 	virtual bool				IsDefaultModel() const = 0;
 
-	virtual Screen::ConsoleColor GetColor() const = 0;
-	virtual void SetColor(Screen::ConsoleColor col) = 0;
+	virtual int GetColor() const = 0;
+	virtual void SetColor(int col) = 0;
 };
 
 #endif

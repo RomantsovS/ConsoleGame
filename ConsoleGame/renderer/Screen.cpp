@@ -92,13 +92,17 @@ Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
 		common->Error("Screen width: %d out of range: %d", col, width);
 	}
 
-	contents[row * width + col] = ch;  // set specified location to given value
-
+	//contents[row * width + col] = ch;  // set specified location to given value
+	buffer[row * width + col].Char.AsciiChar = ch.value;
+	buffer[row * width + col].Attributes = ch.color;
+	
 	return *this;                  // return this object as an lvalue
 }
 
 void Screen::clear() {
-	clearContents();
+	memset(buffer, 0, height * width * sizeof(CHAR_INFO));
+	
+	//clearContents();
 }
 
 void Screen::clearTextInfo() {
@@ -109,13 +113,13 @@ void Screen::clearTextInfo() {
 void Screen::display() {
 	cur_write_coord = { 0, 0 };
 
-	for (pos_type y = 0; y < height; ++y) {
+	/*for (pos_type y = 0; y < height; ++y) {
 		for (pos_type x = 0; x < width; ++x) {
 			buffer[y * width + x].Char.AsciiChar = contents[y * width + x].value;
-			buffer[y * width + x].Attributes = static_cast<int>(contents[y * width + x].color);
+			buffer[y * width + x].Attributes = contents[y * width + x].color;
 		}
 	}
-
+	*/
 	WriteConsoleOutput(h_console_std_out, buffer, { (short)width, (short)height }, { 0,0 }, &window_rect);
 	cur_write_coord.Y += height;
 }
@@ -126,18 +130,18 @@ void Screen::clearContents() {
 	}
 }
 
-void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::ConsoleColor color_text, Screen::ConsoleColor color_background) {
-	if (color_background == ConsoleColor::None)
+void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, int color_text, int color_background) {
+	if (color_background == colorNone)
 		color_background = backgroundPixel.color;
 
-	std::vector<WORD> attribute(lenght, (WORD)((static_cast<int>(color_background) << 4) | static_cast<int>(color_text) | FOREGROUND_INTENSITY));
+	std::vector<WORD> attribute(lenght, (WORD)(color_background << 4) | color_text | FOREGROUND_INTENSITY);
 	DWORD written;
 	
 	WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght, coord, &written);
 	WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght, coord, &written);
 }
 
-void Screen::writeInColor(const std::string& text, ConsoleColor color_text, ConsoleColor color_background) {
+void Screen::writeInColor(const std::string& text, int color_text, int color_background) {
 	std::string text_full_string = text;
 
 	if (text.size() % width != 0) {

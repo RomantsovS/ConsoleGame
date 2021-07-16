@@ -126,7 +126,7 @@ public:
 
 	// added the following to assist licensees with merge issues
 	int GetFrameNum() const { return framenum; };
-	int GetTime() const { return time; };
+	int GetTime() const override { return time; };
 
 	std::shared_ptr<idPlayer> GetLocalPlayer() const;
 
@@ -148,13 +148,15 @@ public:
 	template <typename T>
 	T GetRandomValue(T min, T max);
 
-	Screen::ConsoleColor GetRandomColor();
+	int GetRandomColor();
 
 	short GetHeight() { return height; }
 	short GetWidth() { return width; }
 
-	const std::vector<Screen::ConsoleColor>& GetColors() const { return colors; }
+	const std::vector<int>& GetColors() const { return colors; }
 	void AddRandomPoint();
+
+	int GetInfoUpdateTime() { return info_update_time; }
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	std::shared_ptr<idMapFile> mapFile; // will be NULL during the game unless in-game editing is used
@@ -175,7 +177,6 @@ private:
 	void MapClear(bool clearClients);
 
 	void RunDebugInfo();
-	void RunDebugInfoScreen();
 	void PrintSpawnedEntities();
 
 	void SpawnPlayer(int clientNum);
@@ -188,8 +189,8 @@ private:
 	bool checkCollidePosToAllObjects(pos_type pos);*/
 
 	short height, width;
-
-	std::vector<Screen::ConsoleColor> colors;
+	int info_update_time;
+	std::vector<int> colors;
 
 	std::default_random_engine rand_eng;
 

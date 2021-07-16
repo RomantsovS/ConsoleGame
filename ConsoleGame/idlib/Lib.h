@@ -14,6 +14,27 @@ public:
 #define MAX_STRING_CHARS		1024		// max length of a string
 #define MAX_PRINT_MSG			16384		// buffer size for our various printf routines
 
+// basic colors
+extern int colorNone;
+extern int colorBlack;
+extern int colorWhite;
+extern int colorBlack;
+extern int colorBlue;
+extern int colorGreen;
+extern int colorCyan;
+extern int colorRed;
+extern int colorMagenta;
+extern int colorBrown;
+extern int colorLightGray;
+extern int colorDarkGray;
+extern int colorLightBlue;
+extern int colorLightGreen;
+extern int colorLightCyan;
+extern int colorLightRed;
+extern int colorLightMagenta;
+extern int colorYellow;
+extern int colorWhite;
+
 /*
 ===============================================================================
 

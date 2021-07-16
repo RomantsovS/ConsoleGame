@@ -150,7 +150,7 @@ void idSWFSpriteInstance::SetVisible(bool visible) {
 idSWFSpriteInstance::SetColor
 ========================
 */
-void idSWFSpriteInstance::SetColor(const Screen::ConsoleColor color) {
+void idSWFSpriteInstance::SetColor(const int color) {
 	for (auto& display : displayList) {
 		if (display.textInstance) {
 			display.textInstance->color = color;

@@ -70,7 +70,7 @@ public:
 	void UpdateVisuals();
 	void UpdateModel();
 	void UpdateModelTransform();
-	virtual void SetColor(const Screen::ConsoleColor &color);
+	virtual void SetColor(const int color);
 	virtual void FreeModelDef();
 	virtual void Hide();
 	bool IsHidden() const;

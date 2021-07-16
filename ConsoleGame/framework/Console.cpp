@@ -20,27 +20,9 @@ public:
 	void				Clear();
 
 private:
-	void				KeyDownEvent(int key);
+	void KeyDownEvent(int key);
 
-	/*void				Linefeed();
-
-	void				PageUp();
-	void				PageDown();
-	void				Top();
-	void				Bottom();
-
-	void				DrawInput();
-	void				DrawNotify();
-	void				DrawSolidConsole(float frac);
-
-	void				Scroll();
-	void				SetDisplayFraction(float frac);
-	void				UpdateDisplayFraction();
-
-	void				DrawTextLeftAlign(float x, float& y, const char* text, ...);
-	void				DrawTextRightAlign(float x, float& y, const char* text, ...);
-*/
-	//float				DrawMemoryUsage(float y);
+	int DrawFPS(int y);
 
 	//============================
 
@@ -51,6 +33,43 @@ private:
 
 static idConsoleLocal localConsole;
 idConsole* console = &localConsole;
+
+constexpr int FPS_FRAMES = 8;
+
+int idConsoleLocal::DrawFPS(int y) {
+	static long long previousTimes[FPS_FRAMES];
+	static int index;
+	static long long previous;
+
+	// don't use serverTime, because that will be drifting to
+	// correct for internet lag changes, timescales, timedemos, etc
+	auto t = Sys_Microseconds();
+	auto frameTime = t - previous;
+	previous = t;
+
+	previousTimes[index % FPS_FRAMES] = frameTime;
+	index++;
+
+	int fps = 0;
+
+	if (index > FPS_FRAMES) {
+		// average multiple frames together to smooth changes out a bit
+		long long total = 0;
+		for (int i = 0; i < FPS_FRAMES; i++) {
+			total += previousTimes[i];
+		}
+		if (!total) {
+			total = 1;
+		}
+		fps = static_cast<int>(1000000000ll * FPS_FRAMES / total);
+		fps = (fps + 500) / 1000;
+	}
+
+	const std::string s = va("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime), game->GetTime());
+	renderSystem->DrawBigStringExt(0, y, s, colorWhite, true);
+
+	return y;
+}
 
 /*
 ==============
@@ -214,10 +233,14 @@ void idConsoleLocal::Draw(bool forceFullScreen) {
 		keyCatching = true;
 	}
 
-	if (keyCatching /*&& tr.update_info*/) {
+	if (keyCatching) {
 		std::string console_text = std::string(":").append(consoleField.GetBuffer());
 		console_text.append("_");
 
-		renderSystem->DrawString(console_text, Screen::ConsoleColor::White);
+		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight(), console_text, colorWhite, true);
+	}
+
+	if (com_showFPS.GetBool()) {
+		DrawFPS(0);
 	}
 }

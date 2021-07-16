@@ -31,6 +31,7 @@ public:
 
 	virtual int GetLocalClientNum() const = 0;
 
+	virtual int GetTime() const = 0;
 
 	// MAIN MENU FUNCTIONS
 	virtual void Shell_Init(const std::string& filename) = 0;

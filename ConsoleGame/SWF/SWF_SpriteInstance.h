@@ -16,7 +16,7 @@ public:
 
 	void SetVisible(bool visible);
 	bool IsVisible() { return isVisible; }
-	void SetColor(const Screen::ConsoleColor color);
+	void SetColor(const int color);
 
 	void SetXPos(float xPos = -1.0f);
 

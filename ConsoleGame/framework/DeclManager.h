@@ -98,6 +98,8 @@ inline std::shared_ptr<idDecl> idDeclAllocator() {
 	return std::make_shared<type>();
 }
 
+class idMaterial;
+
 class idDeclManager {
 public:
 	virtual ~idDeclManager() {}
@@ -125,6 +127,9 @@ public:
 	// List and print decls.
 	virtual void ListType(const idCmdArgs& args, declType_t type) = 0;
 	virtual void PrintType(const idCmdArgs& args, declType_t type) = 0;
+
+	// Convenience functions for specific types.
+	virtual	const std::shared_ptr<idMaterial> FindMaterial(const std::string& name, bool makeDefault = true) = 0;
 };
 
 extern idDeclManager* declManager;

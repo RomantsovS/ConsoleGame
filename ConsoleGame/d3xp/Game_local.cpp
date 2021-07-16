@@ -9,8 +9,6 @@ std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this w
 idGameLocal gameLocal;
 idGame *game = &gameLocal;
 
-const size_t frame_time_min = 10;
-
 idCVar game_width("game_width", "80", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_height("game_height", "50", CVAR_SYSTEM | CVAR_INIT, "");
 
@@ -24,7 +22,7 @@ void AddRandomPoints(const idCmdArgs& args) {
 		gameLocal.AddRandomPoint();
 }
 
-idGameLocal::idGameLocal() {
+idGameLocal::idGameLocal() : info_update_time(200) {
 	Clear();
 }
 
@@ -63,17 +61,17 @@ void idGameLocal::Init() {
 	width = game_width.GetInteger();
 
 	//colors.push_back(Screen::Green);
-	colors.push_back(Screen::ConsoleColor::Cyan);
-	colors.push_back(Screen::ConsoleColor::Red);
-	colors.push_back(Screen::ConsoleColor::Magenta);
+	colors.push_back(colorCyan);
+	colors.push_back(colorRed);
+	colors.push_back(colorMagenta);
 	//colors.push_back(Screen::Brown);
-	colors.push_back(Screen::ConsoleColor::LightGray);
-	colors.push_back(Screen::ConsoleColor::LightGreen);
-	colors.push_back(Screen::ConsoleColor::LightCyan);
-	colors.push_back(Screen::ConsoleColor::LightRed);
-	colors.push_back(Screen::ConsoleColor::LightMagenta);
-	colors.push_back(Screen::ConsoleColor::Yellow);
-	colors.push_back(Screen::ConsoleColor::White);
+	colors.push_back(colorLightGray);
+	colors.push_back(colorLightGreen);
+	colors.push_back(colorLightCyan);
+	colors.push_back(colorLightRed);
+	colors.push_back(colorLightMagenta);
+	colors.push_back(colorYellow);
+	colors.push_back(colorWhite);
 
 	rand_eng.seed(static_cast<unsigned>(Sys_Time()));
 
@@ -279,12 +277,20 @@ void idGameLocal::RunFrame() {
 
 	auto player = GetLocalPlayer();
 
+	static auto start_time = Sys_Milliseconds();
+
 	framenum++;
 	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
 	fast.time = FRAME_TO_MSEC(framenum);
 	//fast.previousTime = fast.time;
 	//fast.time = FRAME_TO_MSEC(Sys_Milliseconds());
 	fast.realClientTime = fast.time;
+
+	if (time == 3000) {
+		auto end = Sys_Milliseconds();
+
+		DPrintf("reached 3k game time for %d msec\n", (end - start_time));
+	}
 
 	//ComputeSlowScale();
 
@@ -331,7 +337,6 @@ void idGameLocal::RunFrame() {
 	idEvent::ServiceEvents();
 
 	// show any debug info for this frame
-	RunDebugInfoScreen();
 	RunDebugInfo();
 }
 
@@ -377,10 +382,7 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 	}
 }
 
-bool idGameLocal::Draw(int clientNum)
-{
-	RB_RenderDebugToolsBefore();
-
+bool idGameLocal::Draw(int clientNum) {
 	std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities[clientNum]);
 
 	if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
@@ -398,13 +400,18 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-	if (!tr.update_info)
+	static auto prev_info_update_time = time;
+
+	if (time - prev_info_update_time > info_update_time) {
+		prev_info_update_time = time;
+	}
+	else
 		return;
 
-	/*const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
+	const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
 	if (!player) {
 		return;
-	}*/
+	}
 
 	char buf[256];
 	
@@ -418,7 +425,7 @@ void idGameLocal::RunDebugInfo() {
 
 	sprintf_s(buf, "num ents %3d, active ents %3d", num_spawned_entities, num_active_entities);
 
-	gameRenderWorld->DrawTextToScreen(buf, Vector2(), Screen::ConsoleColor::Yellow, 0);
+	gameRenderWorld->DrawTextToScreen(buf, Vector2(), colorYellow, info_update_time + 1);
 
 	clip.PrintStatistics();
 
@@ -464,16 +471,16 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			/*if (true || ent->IsActive())
+			if (true || ent->IsActive())
 			{
 				static char buf[256];
 				auto phys = ent->GetPhysics();
-				sprintf_s(buf, "ent %30s pos [%5.2f %5.2f] vel [%6.2f %6.2f] rest %d", ent->GetName().c_str(),
+				sprintf_s(buf, "ent %15s pos[%5.2f %5.2f] vel[%6.2f %6.2f] rest %d", ent->GetName().c_str(),
 					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,
 					phys->IsAtRest());
 
-				gameRenderWorld->DrawTextToScreen(buf, Vector2(), ent->GetRenderEntity()->color, 0);
-			}*/
+				gameRenderWorld->DrawTextToScreen(buf, Vector2(), ent->GetRenderEntity()->color, info_update_time + 1);
+			}
 		}
 	}
 
@@ -518,9 +525,9 @@ void idGameLocal::RunDebugInfo() {
 		collisionModelManager->DrawModel(0, vec3_origin, mat3_identity, origin, 128.0f);
 	}*/
 
-	/*if (g_showCollisionModels.GetBool()) {
-		clip.DrawClipModels(player->GetEyePosition(), g_maxShowDistance.GetFloat(), pm_thirdPerson.GetBool() ? NULL : player);
-	}*/
+	if (g_showCollisionModels.GetBool()) {
+		clip.DrawClipModels(player->GetPhysics()->GetOrigin(), g_maxShowDistance.GetFloat(), nullptr);
+	}
 
 	/*if (g_showPVS.GetInteger()) {
 		pvs.DrawPVS(origin, (g_showPVS.GetInteger() == 2) ? PVS_ALL_PORTALS_OPEN : PVS_NORMAL);
@@ -555,25 +562,6 @@ void idGameLocal::RunDebugInfo() {
 
 	// collision map debug output
 	collisionModelManager->DebugOutput(player->GetEyePosition());*/
-}
-
-/*
-================
-idGameLocal::RunDebugInfoScreen
-================
-*/
-void idGameLocal::RunDebugInfoScreen() {
-	if (!tr.update_frame)
-		return;
-
-	const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
-	if (!player) {
-		return;
-	}
-
-	if (g_showCollisionModels.GetBool()) {
-		clip.DrawClipModels(player->GetPhysics()->GetOrigin(), g_maxShowDistance.GetFloat(), player);
-	}
 
 	if (g_showCollisionTraces.GetBool()) {
 		clip.DrawClipSectors();
@@ -1052,11 +1040,11 @@ void idGameLocal::AddRandomPoint() {
 	args.Set("spawnclass", "idSimpleObject");
 	args.Set("origin", Vector2(4.0f, 5.0f).ToString());
 	args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
-	args.Set("color", std::to_string(Screen::ConsoleColor::LightRed));
+	args.Set("color", std::to_string(colorLightRed));
 	gameLocal.SpawnEntityDef(args, &ent);*/
 }
 
-Screen::ConsoleColor idGameLocal::GetRandomColor() {
+int idGameLocal::GetRandomColor() {
 	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
 
 	int col(u_c(rand_eng));
