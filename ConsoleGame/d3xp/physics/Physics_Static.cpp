@@ -1,20 +1,18 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics, idPhysics_Static)
 END_CLASS
 
-idPhysics_Static::idPhysics_Static()
-{
+idPhysics_Static::idPhysics_Static() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idPhysics_Static");
 #endif // DEBUG_PRINT_Ctor_Dtor
 }
 
-idPhysics_Static::~idPhysics_Static()
-{
+idPhysics_Static::~idPhysics_Static() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s dtor\n", "idPhysics_Static");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -25,13 +23,11 @@ idPhysics_Static::~idPhysics_Static()
 	}*/
 }
 
-void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e)
-{
+void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e) {
 	self = e;
 }
 
-void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
-{
+void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) {
 	if (clipModel && clipModel != model && freeOld) {
 		clipModel = nullptr;
 	}
@@ -46,8 +42,7 @@ void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float de
 idPhysics_Static::GetClipModel
 ================
 */
-std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const
-{
+std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const {
 	if (clipModel) {
 		return clipModel;
 	}
@@ -89,7 +84,7 @@ const idBounds& idPhysics_Static::GetBounds(int id) const {
 	if (clipModel) {
 		return clipModel->GetBounds();
 	}
-	return bounds_zero;
+	return idBounds::GetBoundsZero();
 }
 
 /*
@@ -107,8 +102,7 @@ const idBounds& idPhysics_Static::GetAbsBounds(int id) const {
 	return absBounds;
 }
 
-bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec)
-{
+bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec) {
 	//Vector2 masterOrigin, oldOrigin;
 
 	/*if (hasMaster) {
@@ -132,17 +126,14 @@ bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec)
 	return false;
 }
 
-void idPhysics_Static::UpdateTime(int endTimeMSec)
-{
+void idPhysics_Static::UpdateTime(int endTimeMSec) {
 }
 
-int idPhysics_Static::GetTime() const
-{
+int idPhysics_Static::GetTime() const {
 	return 0;
 }
 
-void idPhysics_Static::Activate()
-{
+void idPhysics_Static::Activate() {
 }
 
 /*
@@ -153,8 +144,7 @@ idPhysics_Static::PutToRest
 void idPhysics_Static::PutToRest() {
 }
 
-bool idPhysics_Static::IsAtRest() const
-{
+bool idPhysics_Static::IsAtRest() const {
 	return true;
 }
 

@@ -1,14 +1,12 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-class idAttachInfo
-{
+class idAttachInfo {
 public:
 	std::shared_ptr<idEntity> ent;
 };
 
-class idActor : public idAnimatedEntity
-{
+class idActor : public idAnimatedEntity {
 public:
 	CLASS_PROTOTYPE(idActor);
 

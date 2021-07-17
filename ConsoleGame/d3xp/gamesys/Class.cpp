@@ -23,9 +23,7 @@ idTypeInfo::idTypeInfo(const std::string& classname, const std::string& supercla
 
 	// Check if any subclasses were initialized before their superclass
 	for (type = typelist; type != NULL; type = type->next) {
-		if ((type->super == NULL) && type->superclass == this->classname &&
-			type->classname != "idClass")
-		{
+		if ((type->super == NULL) && type->superclass == this->classname && type->classname != "idClass") {
 			type->super = this;
 		}
 	}
@@ -197,8 +195,7 @@ void idClass::Init() {
 	gameLocal.Printf("...%i classes\n", types.size());
 }
 
-void idClass::Shutdown()
-{
+void idClass::Shutdown() {
 	idTypeInfo* c;
 
 	for (c = typelist; c != NULL; c = c->next) {
@@ -209,8 +206,7 @@ void idClass::Shutdown()
 	initialized = false;
 }
 
-idTypeInfo* idClass::GetClass(const std::string& name)
-{
+idTypeInfo* idClass::GetClass(const std::string& name) {
 	idTypeInfo* c;
 	int			order;
 	int			mid;
@@ -330,8 +326,7 @@ bool idClass::PostEventSec(const idEventDef* ev, float time) {
 }
 
 
-classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo* cls)
-{
+classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo* cls) {
 	classSpawnFunc_t func;
 
 	if (cls->super) {

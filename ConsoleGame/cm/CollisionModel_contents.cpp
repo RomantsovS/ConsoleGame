@@ -21,7 +21,6 @@ idCollisionModelManagerLocal::TestTrmVertsInBrush
 bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_brush_t* b) {
 	int j, numVerts;// , bestPlane;
 	//float d, bestd;
-	Vector2* p;
 
 	/*if (b->checkcount == idCollisionModelManagerLocal::checkCount) {
 		return false;
@@ -45,7 +44,7 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 	}
 
 	for (j = 0; j < numVerts; j++) {
-		p = &tw->vertices[j].p;
+		Vector2* p = &tw->vertices[j].p;
 
 		// see if the point is inside the brush
 		/*bestPlane = 0;

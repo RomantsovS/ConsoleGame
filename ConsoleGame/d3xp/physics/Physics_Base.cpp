@@ -57,7 +57,7 @@ idPhysics_Base::GetBounds
 ================
 */
 const idBounds& idPhysics_Base::GetBounds(int id) const {
-	return bounds_zero;
+	return idBounds::GetBoundsZero();
 }
 
 /*
@@ -66,7 +66,7 @@ idPhysics_Base::GetAbsBounds
 ================
 */
 const idBounds& idPhysics_Base::GetAbsBounds(int id) const {
-	return bounds_zero;
+	return idBounds::GetBoundsZero();
 }
 
 bool idPhysics_Base::Evaluate(int timeStepMSec, int endTimeMSec) {

@@ -23,6 +23,7 @@
 #include <direct.h>
 #include <algorithm>
 #include <thread>
+#include <gsl/gsl>
 
 #include "sys/sys_defines.h"
 #include "sys/sys_includes.h"

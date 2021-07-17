@@ -38,6 +38,10 @@ public:
 	// most tight bounds for a translation
 	void FromPointTranslation(const Vector2& point, const Vector2& translation);
 	void FromBoundsTranslation(const idBounds& bounds, const Vector2& origin, const Vector2& translation);
+
+	static idBounds GetBoundsZero() {
+		return idBounds(vec2_origin, vec2_origin);
+	}
 private:
 	Vector2 b[2];
 };
@@ -87,19 +91,16 @@ inline bool idBounds::operator==(const idBounds& a) const
 	return Compare(a);
 }
 
-inline bool idBounds::operator!=(const idBounds& a) const
-{
+inline bool idBounds::operator!=(const idBounds& a) const {
 	return !Compare(a);
 }
 
-inline void idBounds::Clear()
-{
+inline void idBounds::Clear() {
 	b[0][0] = b[0][1] = idMath::INFINITY;
 	b[1][0] = b[1][1] = -idMath::INFINITY;
 }
 
-inline void idBounds::Zero()
-{
+inline void idBounds::Zero() {
 	b[0][0] = b[0][1] = b[1][0] = b[1][1] = 0;
 }
 
@@ -107,8 +108,7 @@ inline bool idBounds::IsCleared() const {
 	return b[0][0] > b[1][0];
 }
 
-inline bool idBounds::AddPoint(const Vector2& v)
-{
+inline bool idBounds::AddPoint(const Vector2& v) {
 	bool expanded = false;
 	if (v[0] < b[0][0]) {
 		b[0][0] = v[0];
@@ -158,14 +158,12 @@ inline bool idBounds::AddBounds(const idBounds& a) {
 	return expanded;
 }
 
-inline idBounds idBounds::Expand(const float d) const
-{
+inline idBounds idBounds::Expand(const float d) const {
 	return idBounds(Vector2(b[0][0] - d, b[0][1] - d),
 		Vector2(b[1][0] + d, b[1][1] + d));
 }
 
-inline idBounds& idBounds::ExpandSelf(const float d)
-{
+inline idBounds& idBounds::ExpandSelf(const float d) {
 	b[0][0] -= d;
 	b[0][1] -= d;
 	b[1][0] += d;
@@ -194,8 +192,6 @@ inline bool idBounds::ContainsBounds(const idBounds& a) const {
 		b[1][0] > a.b[1][0] && b[1][1] > a.b[1][1];
 }
 
-extern idBounds	bounds_zero;
-//extern idBounds bounds_zeroOneCube;
-//extern idBounds bounds_unitCube;
+//extern idBounds	bounds_zero;
 
 #endif // ! BOUNDS_H

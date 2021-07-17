@@ -497,7 +497,7 @@ const idBounds& Physics_PlayerChain::GetBounds(int id) const {
 		gameLocal.Warning("Error Physics_AF GetBounds()");
 	}
 
-	return bounds_zero;
+	return idBounds::GetBoundsZero();
 }
 
 /*
