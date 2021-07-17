@@ -96,7 +96,7 @@ public:
 	// called from the physics object when colliding, should return true if the physics simulation should stop
 	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
 	// activate the physics object, 'ent' is the entity activating this entity
-	virtual void ActivatePhysics(std::shared_ptr<idEntity> ent);
+	virtual void ActivatePhysics(idEntity* ent);
 	// add a contact entity
 	virtual void AddContactEntity(std::shared_ptr<idEntity> ent);
 	// remove a touching entity
@@ -104,11 +104,9 @@ public:
 
 	// damage
 	// applies damage to this entity
-	virtual	void Damage(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker,
-		const Vector2& dir, const std::string& damageDefName, const float damageScale);
+	virtual	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName, const float damageScale);
 	// notifies this entity that is has been killed
-	virtual void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-		const Vector2& dir);
+	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir);
 
 protected:
 	renderEntity_t renderEntity;

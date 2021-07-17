@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../Game_local.h"
 
 /*
@@ -126,7 +127,7 @@ bool idMenuWidget::ExecuteEvent(const idWidgetEvent& event) {
 	if (actions != nullptr) {
 		for (size_t actionIndex = 0; actionIndex < actions->size(); ++actionIndex) {
 			auto this_sp = shared_from_this();
-			HandleAction((*actions)[actionIndex], event, this_sp);
+			HandleAction((*actions)[actionIndex], event, this_sp.get());
 		}
 	}
 
@@ -227,7 +228,7 @@ This is setup in this manner, because we can't resolve from path -> sprite immed
 SWFs aren't necessarily loaded at the time widgets are instantiated.
 ========================
 */
-bool idMenuWidget::BindSprite(std::shared_ptr<idSWFScriptObject> root) {
+bool idMenuWidget::BindSprite(idSWFScriptObject* root) {
 	const char* args[6] = { NULL };
 	//assert(GetSpritePath().Num() > 0);
 	for (size_t i = 0; i < GetSpritePath().size(); ++i) {
@@ -326,7 +327,7 @@ void idMenuWidget::SetState(const widgetState_t state) {
 idMenuWidget::HandleAction
 ========================
 */
-bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	bool handled = false;
 	if (GetParent()) {

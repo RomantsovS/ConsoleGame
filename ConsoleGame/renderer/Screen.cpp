@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "tr_local.h"
 
@@ -8,15 +8,13 @@ idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, ""
 idCVar text_info_max_height("text_info_max_height", "10", CVAR_SYSTEM | CVAR_INIT, "");
 
 Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
-	height(ht), width(wd), backgroundPixel(back), buffer(nullptr), cur_write_coord({0, 0}),
+	height(ht), width(wd), backgroundPixel(back), cur_write_coord({0, 0}),
 	window_rect({ 0, 0, 1, 1 }) {
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
 
 Screen::~Screen() {
-	if(buffer)
-		delete[] buffer;
 }
 
 void Screen::init() {
@@ -72,8 +70,8 @@ void Screen::init() {
 		common->FatalError("SetConsoleMode std in");
 
 	// Allocate memory for screen buffer
-	buffer = new CHAR_INFO[width * height];
-	memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
+	buffer.resize(width * height);
+	//memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
 
 	contents.resize(height * width);
 	clearContents();
@@ -100,8 +98,8 @@ Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
 }
 
 void Screen::clear() {
-	memset(buffer, 0, height * width * sizeof(CHAR_INFO));
-	
+	std::fill(buffer.begin(), buffer.end(), CHAR_INFO());
+
 	//clearContents();
 }
 
@@ -120,7 +118,7 @@ void Screen::display() {
 		}
 	}
 	*/
-	WriteConsoleOutput(h_console_std_out, buffer, { (short)width, (short)height }, { 0,0 }, &window_rect);
+	WriteConsoleOutput(h_console_std_out, buffer.data(), { (short)width, (short)height }, { 0,0 }, &window_rect);
 	cur_write_coord.Y += height;
 }
 

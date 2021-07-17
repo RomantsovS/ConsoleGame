@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../Game_local.h"
 
 /*
@@ -24,7 +25,7 @@ void idMenuWidget_MenuBar::Update() {
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
 
-	if (!BindSprite(root)) {
+	if (!BindSprite(root.get())) {
 		return;
 	}
 
@@ -43,7 +44,7 @@ void idMenuWidget_MenuBar::Update() {
 
 		std::shared_ptr<idMenuWidget> child = GetChildByIndex(index);
 		child->SetSpritePath(GetSpritePath(), va("btn%d", index).c_str());
-		if (child->BindSprite(root)) {
+		if (child->BindSprite(root.get())) {
 			PrepareListElement(child, index);
 			child->Update();
 		}

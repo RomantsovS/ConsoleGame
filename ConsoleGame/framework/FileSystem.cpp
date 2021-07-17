@@ -38,7 +38,6 @@ public:
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
 	virtual void CreateOSPath(const std::string &OSPath);
 	std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) override;
-	virtual void FreeFile(void* buffer) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
 	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
 	virtual std::shared_ptr<idFile> OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles = true, const std::string& gamedir = "") override;
@@ -94,11 +93,7 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenOSFile(const std::string &fileNam
 
 	ios_mode |= std::ifstream::binary;
 
-#ifdef DEBUG
-	auto file = std::shared_ptr<idFile_Permanent>(DBG_NEW idFile_Permanent(fileName, ios_mode));
-#else
 	auto file = std::make_shared<idFile_Permanent>(fileName, ios_mode);
-#endif
 
 	return file;
 }
@@ -387,22 +382,6 @@ std::unique_ptr<char[]> idFileSystemLocal::ReadFile(const std::string& relativeP
 	CloseFile(f);
 
 	return buf;
-}
-
-/*
-=============
-idFileSystemLocal::FreeFile
-=============
-*/
-void idFileSystemLocal::FreeFile(void* buffer) {
-	if (!IsInitialized()) {
-		common->FatalError("Filesystem call made without initialization\n");
-	}
-	if (!buffer) {
-		common->FatalError("idFileSystemLocal::FreeFile( NULL )");
-	}
-
-	delete[] buffer;
 }
 
 /*

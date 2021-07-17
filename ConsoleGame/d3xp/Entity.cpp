@@ -380,7 +380,7 @@ bool idEntity::Collide(const trace_t& collision, const Vector2& velocity) {
 	return false;
 }
 
-void idEntity::ActivatePhysics(std::shared_ptr<idEntity> ent) {
+void idEntity::ActivatePhysics(idEntity* ent) {
 	GetPhysics()->Activate();
 }
 
@@ -409,19 +409,18 @@ inflictor, attacker, dir, and point can be NULL for environmental effects
 
 ============
 */
-void idEntity::Damage(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker,
-	const Vector2& dir, const std::string& damageDefName, const float damageScale) {
+void idEntity::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName, const float damageScale) {
 	
 	if (!fl.takedamage) {
 		return;
 	}
 
 	if (!inflictor) {
-		inflictor = gameLocal.world;
+		inflictor = gameLocal.world.get();
 	}
 
 	if (!attacker) {
-		attacker = gameLocal.world;
+		attacker = gameLocal.world.get();
 	}
 
 	const idDict* damageDef = gameLocal.FindEntityDefDict(damageDefName);
@@ -458,8 +457,7 @@ Called whenever an entity's health is reduced to 0 or less.
 This is a virtual function that subclasses are expected to implement.
 ============
 */
-void idEntity::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-	const Vector2& dir) {
+void idEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
 }
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) {
@@ -517,11 +515,8 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) 
 		}
 	}
 
-#ifdef DEBUG
-	defaultPhysicsObj = std::shared_ptr<idPhysics_Static>(DBG_NEW idPhysics_Static);
-#else
 	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
-#endif
+
 	defaultPhysicsObj->SetSelf(shared_from_this());
 	defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);

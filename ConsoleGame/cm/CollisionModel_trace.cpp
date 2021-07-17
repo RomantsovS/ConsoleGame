@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "CollisionModel_local.h"
 
@@ -8,7 +8,7 @@
 idCollisionModelManagerLocal::TraceTrmThroughNode
 ================
 */
-void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node) {
+void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, cm_node_t* node) {
 	//cm_polygonRef_t* pref;
 	std::shared_ptr<cm_brushRef_t> bref;
 
@@ -20,7 +20,7 @@ void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, std::
 		}
 		// test if any of the trm vertices is inside a brush
 		for (bref = node->brushes; bref; bref = bref->next) {
-			if (idCollisionModelManagerLocal::TestTrmVertsInBrush(tw, bref->b)) {
+			if (idCollisionModelManagerLocal::TestTrmVertsInBrush(tw, bref->b.get())) {
 				return;
 			}
 		}
@@ -53,8 +53,7 @@ void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, std::
 	}*/
 }
 
-void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node, float p1f, float p2f, Vector2& p1, Vector2& p2)
-{
+void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, cm_node_t* node, float p1f, float p2f, Vector2& p1, Vector2& p2) {
 	if (!node) {
 		return;
 	}
@@ -81,8 +80,8 @@ void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(cm_traceWork_t* tw
 		return;
 	}
 
-	idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, node->children[0], p1f, p2f, p1, p2);
-	idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, node->children[1], p1f, p2f, p1, p2);
+	idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, node->children[0].get(), p1f, p2f, p1, p2);
+	idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, node->children[1].get(), p1f, p2f, p1, p2);
 	
 	return;
 }
@@ -100,7 +99,7 @@ void idCollisionModelManagerLocal::TraceThroughModel(cm_traceWork_t* tw) {
 
 	//if (!tw->rotation) {
 		// trace through spatial subdivision and then through leafs
-		idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, tw->model.lock()->node, 0, 1, tw->start, tw->end);
+		idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(tw, tw->model.lock()->node.get(), 0, 1, tw->start, tw->end);
 	/*}
 	else {
 		// approximate the rotation with a series of straight line movements

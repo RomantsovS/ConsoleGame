@@ -16,7 +16,7 @@ public:
 	virtual void Think();
 
 	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
-	virtual void Explode(const trace_t& collision, std::shared_ptr<idEntity> ignore);
+	virtual void Explode(const trace_t& collision, idEntity* ignore);
 protected:
 	std::weak_ptr<idEntity>	owner;
 

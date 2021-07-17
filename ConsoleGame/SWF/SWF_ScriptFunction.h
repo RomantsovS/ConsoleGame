@@ -19,7 +19,7 @@ public:
 #endif // DEBUG_PRINT_Ctor_Dtor
 	};
 
-	virtual idSWFScriptVar Call(std::shared_ptr<idSWFScriptObject> thisObject, const idSWFParmList& parm) { return idSWFScriptVar(); }; // this should never be hit
+	virtual idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parm) { return idSWFScriptVar(); }; // this should never be hit
 };
 
 /*

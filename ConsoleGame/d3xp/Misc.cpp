@@ -21,9 +21,7 @@ void idStaticEntity::Think() {
 	idEntity::Think();
 }
 
-void idStaticEntity::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-	const Vector2& dir) {
-
+void idStaticEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
 	PostEventMS(&EV_Remove, 0);
 }
 
@@ -57,7 +55,7 @@ void idSimpleObject::Spawn() {
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
 	physicsObj->SetSelf(shared_from_this());
 	//physicsObj->SetClipModel(std::make_shared<idClipModel>(trm), density);
-	physicsObj->SetClipModel(std::make_shared<idClipModel>(GetPhysics()->GetClipModel()), density);
+	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), density);
 	physicsObj->SetOrigin(GetPhysics()->GetOrigin());
 
 	SetPhysics(physicsObj);

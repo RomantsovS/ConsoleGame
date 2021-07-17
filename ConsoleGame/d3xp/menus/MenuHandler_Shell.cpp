@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../Game_local.h"
 
 static const int MAX_MENU_OPTIONS = 6;
@@ -24,7 +25,7 @@ void idMenuHandler_Shell::Update() {
 			}
 			if (menuBar && gui) {
 				std::shared_ptr<idSWFScriptObject> root = gui->GetRootObject();
-				menuBar->BindSprite(root);
+				menuBar->BindSprite(root.get());
 				SetupPCOptions();
 			}
 			state = nextState;
@@ -124,15 +125,10 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 	//---------------------
 	// Initialize the menus
 	//---------------------
-#ifdef DEBUG
-	#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
-	menuScreens[ (screenId) ] = std::shared_ptr<className>(DBG_NEW className());	\
-	menuScreens[ (screenId) ]->Initialize( menuHandler );
-#else
 	#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
 	menuScreens[ (screenId) ] = std::make_shared<className>();	\
 	menuScreens[ (screenId) ]->Initialize( menuHandler );
-#endif
+
 
 	for (int i = 0; i < static_cast<int>(shellAreas_t::SHELL_NUM_AREAS); ++i) {
 		menuScreens[i] = nullptr;
@@ -148,22 +144,16 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME), idMenuScreen_Shell_NewGame, shared_from_this());
 	}
 
-#ifdef DEBUG
-	menuBar = std::shared_ptr<idMenuWidget_MenuBar>(DBG_NEW idMenuWidget_MenuBar());
-#else
 	menuBar = std::make_shared<idMenuWidget_MenuBar>();
-#endif
+
 	menuBar->SetSpritePath("pcBar");
 	menuBar->Initialize(shared_from_this());
 	menuBar->SetNumVisibleOptions(MAX_MENU_OPTIONS);
 	menuBar->SetWrappingAllowed(true);
 	menuBar->SetButtonSpacing(45.0f);
 	while (menuBar->GetChildren().size() < MAX_MENU_OPTIONS) {
-#ifdef DEBUG
-		std::shared_ptr<idMenuWidget_MenuButton> const navButton = std::shared_ptr<idMenuWidget_MenuButton>(DBG_NEW idMenuWidget_MenuButton());
-#else
 		std::shared_ptr<idMenuWidget_MenuButton> const navButton = std::make_shared<idMenuWidget_MenuButton>();
-#endif
+
 		std::shared_ptr<idMenuScreen_Shell_Root> rootScreen = std::dynamic_pointer_cast<idMenuScreen_Shell_Root>(menuScreens[static_cast<int>(shellAreas_t::SHELL_AREA_ROOT)]);
 		if (rootScreen) {
 			//navButton->RegisterEventObserver(rootScreen->GetHelpWidget());
@@ -279,7 +269,7 @@ void idMenuHandler_Shell::SetupPCOptions() {
 
 	if (menuBar && gui) {
 		std::shared_ptr<idSWFScriptObject> root = gui->GetRootObject();
-		if (menuBar->BindSprite(root)) {
+		if (menuBar->BindSprite(root.get())) {
 			menuBar->GetSprite()->SetVisible(true);
 			menuBar->SetListHeadings(navOptions);
 			menuBar->Update();
@@ -308,7 +298,7 @@ void idMenuHandler_Shell::HandleExitGameBtn() {
 idMenuHandler_Shell::HandleAction
 ========================
 */
-bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	if (activeScreen == static_cast<int>(shellAreas_t::SHELL_AREA_INVALID)) {
 		return true;
@@ -382,11 +372,11 @@ idMenuHandler_Shell::StartGame
 void idMenuHandler_Shell::StartGame(int index) {
 	switch(index){
 	case 0: {
-		cmdSystem->AppendCommandText(va("map %s %d\n", "snake", 0));
+		cmdSystem->AppendCommandText(va("map %s %d\n", "bomber", 0));
 		break;
 	}
 	case 1: {
-		cmdSystem->AppendCommandText(va("map %s %d\n", "bomber", 0));
+		cmdSystem->AppendCommandText(va("map %s %d\n", "snake", 0));
 		break;
 	}
 	}

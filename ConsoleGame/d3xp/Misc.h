@@ -15,8 +15,7 @@ public:
 private:
 	//int spawnTime;
 protected:
-	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-		const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
 };
 
 class idSimpleObject : public idAnimatedEntity

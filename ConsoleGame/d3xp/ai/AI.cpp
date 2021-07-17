@@ -34,8 +34,7 @@ void idAI::Hide() {
 idAI::Killed
 =====================
 */
-void idAI::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-	const Vector2& dir) {
+void idAI::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
 
 	//const std::string modelDeath;
 
@@ -78,7 +77,7 @@ void AISimple::Spawn() {
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
 	physicsObj->SetSelf(shared_from_this());
 	//physicsObj->SetClipModel(std::make_shared<idClipModel>(trm), density);
-	physicsObj->SetClipModel(std::make_shared<idClipModel>(GetPhysics()->GetClipModel()), density);
+	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), density);
 	physicsObj->SetOrigin(GetPhysics()->GetOrigin());
 
 	SetPhysics(physicsObj);
@@ -119,8 +118,7 @@ void AISimple::Hide() {
 	physicsObj->GetClipModel()->Unlink();
 }
 
-void AISimple::Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-	const Vector2& dir) {
+void AISimple::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
 
 	// make monster nonsolid
 	//physicsObj.SetContents(0);

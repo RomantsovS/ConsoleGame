@@ -94,7 +94,7 @@ use normal spawn selection.
 ============
 */
 void idPlayer::SelectInitialSpawnPoint(Vector2& origin, Vector2& angles) {
-	origin = gameLocal.SelectInitialSpawnPoint(std::dynamic_pointer_cast<idPlayer>(shared_from_this()));
+	origin = gameLocal.SelectInitialSpawnPoint(dynamic_cast<idPlayer*>(this));
 	angles = vec2_origin;
 }
 

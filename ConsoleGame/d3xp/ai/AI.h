@@ -17,8 +17,7 @@ protected:
 
 	// damage
 	//virtual bool Pain(idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location);
-	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-		const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
 };
 
 class AISimple : public idAI
@@ -41,8 +40,7 @@ private:
 protected:
 	void Hide() override;
 
-	void Killed(std::shared_ptr<idEntity> inflictor, std::shared_ptr<idEntity> attacker, int damage,
-		const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
 };
 
 #endif

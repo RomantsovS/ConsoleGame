@@ -160,8 +160,6 @@ void idCmdSystemLocal::Exec_f(const idCmdArgs& args) {
 	common->Printf("execing %s\n", args.Argv(1).c_str());
 
 	cmdSystemLocal.BufferCommandText(CMD_EXEC_INSERT, f.get());
-
-	//fileSystem->FreeFile(f);
 }
 
 /*
@@ -225,11 +223,8 @@ void idCmdSystemLocal::AddCommand(const std::string& cmdName, cmdFunction_t func
 		return;
 	}
 
-#ifdef DEBUG
-	auto cmd = std::shared_ptr<commandDef_t>(DBG_NEW commandDef_t());
-#else
 	auto cmd = std::make_shared<commandDef_t>();
-#endif
+
 	cmd->name = cmdName;
 	cmd->function = function;
 	//cmd->argCompletion = argCompletion;

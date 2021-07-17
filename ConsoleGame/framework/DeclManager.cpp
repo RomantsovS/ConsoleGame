@@ -788,11 +788,8 @@ std::shared_ptr<idDeclLocal> idDeclManagerLocal::FindTypeWithoutParsing(declType
 		return nullptr;
 	}
 
-#ifdef DEBUG
-	std::shared_ptr<idDeclLocal> decl = std::shared_ptr<idDeclLocal>(DBG_NEW idDeclLocal());
-#else
 	std::shared_ptr<idDeclLocal> decl = std::make_shared<idDeclLocal>();
-#endif
+
 	decl->self = NULL;
 	decl->name = canonicalName;
 	decl->type = type;
@@ -1042,13 +1039,10 @@ void idDeclLocal::ParseLocal() {
 	declState = declState_t::DS_PARSED;
 
 	// parse
-#ifdef DEBUG
-	std::unique_ptr<char[]> declText = std::unique_ptr<char[]>(DBG_NEW char[GetTextLength() + 1]);
-#else
-	std::unique_ptr<char[]> declText = std::make_unique<char[]>(GetTextLength() + 1);
-#endif
-	GetText(declText.get());
-	self->Parse(declText.get(), GetTextLength(), true);
+	std::vector<char> declText(GetTextLength() + 1);
+
+	GetText(declText.data());
+	self->Parse(declText.data(), GetTextLength(), true);
 
 	// free generated text
 	if (generatedDefaultText) {

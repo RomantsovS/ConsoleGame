@@ -92,7 +92,7 @@ public:
 	virtual void CacheDictionaryMedia(const idDict* dict) override;
 	virtual void RunFrame() override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
-	void RunSingleUserCmd(usercmd_t& cmd, std::shared_ptr<idPlayer>& player);
+	void RunSingleUserCmd(usercmd_t& cmd, idPlayer* player);
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	bool Draw(int clientNum) override;
 
@@ -112,7 +112,7 @@ public:
 	void LoadMap(const std::string mapName, int randseed);
 
 	gameState_t GameState() const;
-	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const std::shared_ptr<idDict>& args = nullptr);
+	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const idDict* args = nullptr);
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
 	const std::shared_ptr<idDeclEntityDef> FindEntityDef(const std::string& name, bool makeDefault = true) const;
@@ -130,7 +130,7 @@ public:
 
 	std::shared_ptr<idPlayer> GetLocalPlayer() const;
 
-	Vector2 SelectInitialSpawnPoint(std::shared_ptr<idPlayer> player);
+	Vector2 SelectInitialSpawnPoint(idPlayer* player);
 
 	void SyncPlayersWithLobbyUsers(bool initial);
 

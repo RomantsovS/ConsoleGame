@@ -64,7 +64,7 @@ struct actionRepeater_t {
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	std::shared_ptr<idMenuWidget> widget{};
+	idMenuWidget* widget = nullptr;
 	idWidgetEvent		event;
 	idWidgetAction		action;
 	int					numRepetitions{};
@@ -92,11 +92,11 @@ public:
 	virtual bool HandleGuiEvent(const sysEvent_t* sev);
 	virtual bool IsActive();
 	virtual void ActivateMenu(bool show);
-	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false);
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false);
 	virtual int ActiveScreen() { return activeScreen; }
 	virtual void SetNextScreen(shellAreas_t screen) { nextScreen = static_cast<int>(screen); }
 
-	virtual void StartWidgetActionRepeater(std::shared_ptr<idMenuWidget> widget, const idWidgetAction& action, const idWidgetEvent& event);
+	virtual void StartWidgetActionRepeater(idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event);
 	virtual void PumpWidgetActionRepeater();
 	virtual void ClearWidgetActionRepeater();
 	virtual std::shared_ptr<idSWF> GetGUI() { return gui; }
@@ -134,7 +134,7 @@ public:
 	virtual void ActivateMenu(bool show) override;
 	virtual void Initialize(const std::string& filename) override;
 	virtual void Cleanup() override;
-	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled = false) override;
+	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 	virtual bool HandleGuiEvent(const sysEvent_t* sev) override;
 
 	void SetShellState(shellState_t s) { nextState = s; }

@@ -132,7 +132,7 @@ idPhysics_AF::CollisionImpulse
   this is silly as it doesn't take the AF structure into account
 ================
 */
-bool idPhysics_AF::CollisionImpulse(float timeStep, std::shared_ptr<idAFBody> body, trace_t& collision) {
+bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) {
 	auto ent = gameLocal.entities[collision.c.entityNum];
 	if (ent == self.lock()) {
 		return false;
@@ -151,7 +151,7 @@ idPhysics_AF::ApplyCollisions
 */
 bool idPhysics_AF::ApplyCollisions(float timeStep) {
 	for (size_t i = 0; i < collisions.size(); i++) {
-		if (CollisionImpulse(timeStep, collisions[i].body, collisions[i].trace)) {
+		if (CollisionImpulse(timeStep, collisions[i].body.get(), collisions[i].trace)) {
 			return true;
 		}
 	}
@@ -163,7 +163,7 @@ bool idPhysics_AF::ApplyCollisions(float timeStep) {
 idPhysics_AF::SetupCollisionForBody
 ================
 */
-idEntity* idPhysics_AF::SetupCollisionForBody(std::shared_ptr<idAFBody> body) const {
+idEntity* idPhysics_AF::SetupCollisionForBody(idAFBody* body) const {
 	size_t i;
 	idEntity* passEntity = nullptr;
 
@@ -218,7 +218,7 @@ void idPhysics_AF::CheckForCollisions(float timeStep) {
 
 		if (body->clipMask != 0) {
 
-			auto passEntity = SetupCollisionForBody(body);
+			auto passEntity = SetupCollisionForBody(body.get());
 
 			// if there was a collision
 			if (gameLocal.clip.Motion(collision, body->current->worldOrigin, body->next->worldOrigin,

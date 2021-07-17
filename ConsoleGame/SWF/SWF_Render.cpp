@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../renderer/tr_local.h"
 
 /*
@@ -19,7 +20,7 @@ void idSWF::Render(idRenderSystem* gui, int time) {
 	renderState.pos.y = static_cast<float>(sysWidth / 2);
 	renderState.pos.x = static_cast<float>(sysHeight / 2);
 
-	RenderSprite(gui, mainspriteInstance, renderState, time);
+	RenderSprite(gui, mainspriteInstance.get(), renderState, time);
 }
 
 /*
@@ -27,7 +28,7 @@ void idSWF::Render(idRenderSystem* gui, int time) {
 idSWF::RenderSprite
 ========================
 */
-void idSWF::RenderSprite(idRenderSystem* gui, std::shared_ptr<idSWFSpriteInstance> spriteInstance, const swfRenderState_t& renderState, int time) {
+void idSWF::RenderSprite(idRenderSystem* gui, idSWFSpriteInstance* spriteInstance, const swfRenderState_t& renderState, int time) {
 
 	if (!spriteInstance) {
 		common->Warning("%s: RenderSprite: spriteInstance == NULL", filename.c_str());
@@ -44,9 +45,9 @@ void idSWF::RenderSprite(idRenderSystem* gui, std::shared_ptr<idSWFSpriteInstanc
 		renderState2.pos = renderState.pos + display.pos;
 
 		if (display.spriteInstance)
-			RenderSprite(gui, display.spriteInstance, renderState2, time);
+			RenderSprite(gui, display.spriteInstance.get(), renderState2, time);
 		else
-			RenderEditText(gui, display.textInstance, renderState2, time);
+			RenderEditText(gui, display.textInstance.get(), renderState2, time);
 	}
 }
 
@@ -55,7 +56,7 @@ void idSWF::RenderSprite(idRenderSystem* gui, std::shared_ptr<idSWFSpriteInstanc
 idSWF::RenderEditText
 ========================
 */
-void idSWF::RenderEditText(idRenderSystem* gui, std::shared_ptr<idSWFTextInstance> textInstance, const swfRenderState_t& renderState, int time) {
+void idSWF::RenderEditText(idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time) {
 	if (!textInstance) {
 		common->Warning("%s: RenderEditText: textInstance == NULL", filename.c_str());
 		return;

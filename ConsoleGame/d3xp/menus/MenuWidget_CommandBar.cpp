@@ -36,7 +36,7 @@ void idMenuWidget_CommandBar::Update() {
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
 
-	if (!BindSprite(root)) {
+	if (!BindSprite(root.get())) {
 		return;
 	}
 
@@ -125,7 +125,7 @@ bool idMenuWidget_CommandBar::ExecuteEvent(const idWidgetEvent& event) {
 	if (event.type == widgetEvent_t::WIDGET_EVENT_COMMAND) {
 		if (event.arg >= 0 && event.arg < buttons.size()) {
 			auto this_sp = shared_from_this();
-			HandleAction(buttons[event.arg].action, event, this_sp);
+			HandleAction(buttons[event.arg].action, event, this_sp.get());
 		}
 		return true;
 	}

@@ -292,7 +292,7 @@ Physics_PlayerChain::CollisionImpulse
   this is silly as it doesn't take the AF structure into account
 ================
 */
-bool Physics_PlayerChain::CollisionImpulse(float timeStep, std::shared_ptr<idAFBody> body, trace_t& collision) {
+bool Physics_PlayerChain::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) {
 	auto ent = gameLocal.entities[collision.c.entityNum];
 	if (ent == self.lock()) {
 		return false;
@@ -311,7 +311,7 @@ Physics_PlayerChain::ApplyCollisions
 */
 bool Physics_PlayerChain::ApplyCollisions(float timeStep) {
 	for (size_t i = 0; i < collisions.size(); i++) {
-		if (CollisionImpulse(timeStep, collisions[i].body, collisions[i].trace)) {
+		if (CollisionImpulse(timeStep, collisions[i].body.get(), collisions[i].trace)) {
 			return true;
 		}
 	}
@@ -323,7 +323,7 @@ bool Physics_PlayerChain::ApplyCollisions(float timeStep) {
 Physics_PlayerChain::SetupCollisionForBody
 ================
 */
-std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(std::shared_ptr<idAFBody> body) const {
+std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(idAFBody* body) const {
 	size_t i;
 	std::shared_ptr<idEntity> passEntity;
 
@@ -378,7 +378,7 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
 
 		if (body->clipMask != 0) {
 
-			auto passEntity = SetupCollisionForBody(body);
+			auto passEntity = SetupCollisionForBody(body.get());
 
 			// if there was a collision
 			if (gameLocal.clip.Motion(collision, body->current->worldOrigin, body->next->worldOrigin,

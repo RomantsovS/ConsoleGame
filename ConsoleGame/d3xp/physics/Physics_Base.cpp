@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
@@ -235,7 +235,7 @@ void idPhysics_Base::ActivateContactEntities()
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (ent) {
-			ent->ActivatePhysics(self.lock());
+			ent->ActivatePhysics(self.lock().get());
 		}
 		else {
 			iter = contactEntities.erase(iter);

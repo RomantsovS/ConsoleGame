@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 /*
 ===================
@@ -37,7 +37,7 @@ bool idSWF::HandleEvent(const sysEvent_t* event) {
 					var = object->Get("onRelease");
 				}
 				if (var.IsFunction()) {
-					var.GetFunction()->Call(object, eventParms);
+					var.GetFunction()->Call(object.get(), eventParms);
 					return true;
 				}
 			}

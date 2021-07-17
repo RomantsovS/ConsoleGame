@@ -58,7 +58,7 @@ public:
 
 	//virtual void AddEntity(const renderEntity_s *ent) = 0;
 
-	virtual void RenderScene(const std::shared_ptr<renderView_t> renderView) = 0;
+	virtual void RenderScene(const renderView_t* renderView) = 0;
 
 	//-------------- Tracing  -----------------
 

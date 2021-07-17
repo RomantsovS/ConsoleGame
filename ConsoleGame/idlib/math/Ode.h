@@ -46,7 +46,7 @@ public:
 	virtual float		Evaluate(const float* state, float* newState, float t0, float t1);
 
 protected:
-	float *derivatives;	// space to store derivatives
+	std::vector<float> derivatives;	// space to store derivatives
 };
 
 #endif // !IDLIB_MATH_ODE_H_

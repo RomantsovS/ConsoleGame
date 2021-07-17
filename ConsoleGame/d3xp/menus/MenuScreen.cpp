@@ -107,7 +107,7 @@ void idMenuScreen::HideScreen() {
 		return;
 	}
 
-	if (!BindSprite(spmenuGUI->GetRootObject())) {
+	if (!BindSprite(spmenuGUI->GetRootObject().get())) {
 		return;
 	}
 
@@ -127,7 +127,7 @@ void idMenuScreen::ShowScreen() {
 		return;
 	}
 
-	if (!BindSprite(spmenuGUI->GetRootObject())) {
+	if (!BindSprite(spmenuGUI->GetRootObject().get())) {
 		return;
 	}
 

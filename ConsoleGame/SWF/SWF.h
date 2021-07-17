@@ -28,8 +28,8 @@ public:
 	//----------------------------------
 	// SWF_Render.cpp
 	//----------------------------------
-	void RenderSprite(idRenderSystem* gui, std::shared_ptr<idSWFSpriteInstance> sprite, const swfRenderState_t& renderState, int time);
-	void RenderEditText(idRenderSystem* gui, std::shared_ptr<idSWFTextInstance> textInstance, const swfRenderState_t& renderState, int time);
+	void RenderSprite(idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time);
+	void RenderEditText(idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time);
 private:
 	std::string filename;
 	bool isActive;

@@ -101,17 +101,6 @@ void idLexer::CreatePunctuationTable(const punctuation_t* punctuations) {
 		default_setup = true;
 		i = sizeof(default_punctuations) / sizeof(punctuation_t);
 	}
-	else {
-		if (!idLexer::punctuationtable || idLexer::punctuationtable == default_punctuationtable) {
-			idLexer::punctuationtable = new int[256];
-		}
-		if (idLexer::nextpunctuation && idLexer::nextpunctuation != default_nextpunctuation) {
-			delete[] idLexer::nextpunctuation;
-		}
-		for (i = 0; punctuations[i].p; i++) {
-		}
-		idLexer::nextpunctuation = new int[i];
-	}
 	memset(idLexer::punctuationtable, 0xFF, 256 * sizeof(int));
 	memset(idLexer::nextpunctuation, 0xFF, i * sizeof(int));
 	//add the punctuations in the list to the punctuation table
@@ -1106,16 +1095,6 @@ idLexer::FreeSource
 ================
 */
 void idLexer::FreeSource() {
-#ifdef PUNCTABLE
-	if (idLexer::punctuationtable && idLexer::punctuationtable != default_punctuationtable) {
-		delete[] idLexer::punctuationtable;
-		idLexer::punctuationtable = NULL;
-	}
-	if (idLexer::nextpunctuation && idLexer::nextpunctuation != default_nextpunctuation) {
-		delete[] idLexer::nextpunctuation;
-		idLexer::nextpunctuation = NULL;
-	}
-#endif //PUNCTABLE
 	if (idLexer::allocated) {
 		idLexer::buffer = nullptr;
 		idLexer::allocated = false;

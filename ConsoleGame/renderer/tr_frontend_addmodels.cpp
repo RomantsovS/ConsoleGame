@@ -4,7 +4,7 @@
 #include "tr_local.h"
 #include "Model_local.h"
 
-std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(std::shared_ptr<idRenderEntityLocal> def) {
+std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(idRenderEntityLocal* def) {
 	auto model = def->parms.hModel;
 
 	if (model->IsDynamicModel() == DM_STATIC) {
@@ -34,7 +34,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	//---------------------------
 	// create a dynamic model if the geometry isn't static
 	//---------------------------
-	auto model = R_EntityDefDynamicModel(entityDef);
+	auto model = R_EntityDefDynamicModel(entityDef.get());
 	if (!model || model->NumSurfaces() <= 0) {
 		return;
 	}

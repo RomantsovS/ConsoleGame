@@ -24,7 +24,7 @@ void idMenuWidget_DynamicList::Update() {
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
 
-	if (!BindSprite(root)) {
+	if (!BindSprite(root.get())) {
 		return;
 	}
 
@@ -42,7 +42,7 @@ void idMenuWidget_DynamicList::Update() {
 		const int childIndex = GetViewOffset() + optionIndex;
 		bool shown = false;
 		child->SetSpritePath(GetSpritePath(), va("item%d", optionIndex).c_str());
-		if (child->BindSprite(root)) {
+		if (child->BindSprite(root.get())) {
 
 			if (optionIndex >= GetTotalNumberOfOptions()) {
 				child->ClearSprite();

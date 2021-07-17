@@ -348,7 +348,7 @@ Runs a Think or a ClientThink for a player. Will write the client's
 position and firecount to the usercmd.
 ====================
 */
-void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, std::shared_ptr<idPlayer>& player) {
+void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, idPlayer* player) {
 
 	player->HandleUserCmds(cmd);
 
@@ -377,7 +377,7 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 	// of each other instead of spread out in time.
 	if (player->IsLocallyControlled()) {
 		auto cmd = usercmdGen->GetCurrentUsercmd();
-		RunSingleUserCmd(cmd, player);
+		RunSingleUserCmd(cmd, player.get());
 		return;
 	}
 }
@@ -675,7 +675,7 @@ void idGameLocal::LoadMap(const std::string mapName, int randseed) {
 	mapFileName = mapFile->GetName();
 
 	// load the collision map
-	collisionModelManager->LoadMap(mapFile);
+	collisionModelManager->LoadMap(mapFile.get());
 	//collisionModelManager->Preload(mapName);
 
 	entities.clear();
@@ -841,11 +841,8 @@ idGameLocal::Shell_ResetMenu
 void idGameLocal::Shell_ResetMenu() {
 	if (shellHandler) {
 		shellHandler = nullptr;
-#ifdef DEBUG
-		shellHandler = std::shared_ptr<idMenuHandler_Shell>(DBG_NEW idMenuHandler_Shell());
-#else
+
 		shellHandler = std::make_shared<idMenuHandler_Shell>();
-#endif
 	}
 }
 
@@ -1057,7 +1054,7 @@ int idGameLocal::GetRandomColor() {
 idGameLocal::SpawnEntityType
 ================
 */
-std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const std::shared_ptr<idDict>& args) {
+std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const idDict* args) {
 	std::shared_ptr<idClass> obj;
 
 	if (!classdef.IsType(idEntity::Type)) {
@@ -1245,7 +1242,7 @@ upon map restart, initial spawns are used (randomized ordered list of spawns fla
   if there are more players than initial spots, overflow to regular spawning
 ============
 */
-Vector2 idGameLocal::SelectInitialSpawnPoint(std::shared_ptr<idPlayer> player) {
+Vector2 idGameLocal::SelectInitialSpawnPoint(idPlayer* player) {
 	Vector2 origin = player->spawnArgs.GetVector("origin", "0, 0");
 
 	/*std::vector<std::shared_ptr<idEntity>> ent_vec(1);

@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
@@ -46,15 +46,13 @@ struct clipLink_t {
 };
 
 struct trmCache_t {
-	trmCache_t() : trm(std::make_shared<idTraceModel>())
-	{
+	trmCache_t() : trm(std::make_shared<idTraceModel>()) {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "trmCache_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	~trmCache_t()
-	{
+	~trmCache_t() 	{
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "trmCache_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -76,8 +74,7 @@ const static int TRACE_MODEL_SAVED = BIT(16);
 
 //#define DEBUG_PRINT_Ctor_Dtor
 
-idClipModel::idClipModel()
-{
+idClipModel::idClipModel() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idClipModel");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -95,8 +92,7 @@ idClipModel::idClipModel(const std::string& name) {
 	LoadModel(name);
 }
 
-idClipModel::idClipModel(const idTraceModel& trm)
-{
+idClipModel::idClipModel(const idTraceModel& trm) {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idClipModel");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -110,33 +106,32 @@ idClipModel::idClipModel(const idTraceModel& trm)
 idClipModel::idClipModel
 ================
 */
-idClipModel::idClipModel(const std::shared_ptr<idClipModel>& model) {
+idClipModel::idClipModel(const idClipModel& model) {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idClipModel");
 #endif // DEBUG_PRINT_Ctor_Dtor
 
-	enabled = model->enabled;
-	entity = model->entity;
-	id = model->id;
-	owner = model->owner;
-	origin = model->origin;
-	//axis = model->axis;
-	bounds = model->bounds;
-	absBounds = model->absBounds;
-	//material = model->material;
-	contents = model->contents;
-	collisionModelHandle = model->collisionModelHandle;
+	enabled = model.enabled;
+	entity = model.entity;
+	id = model.id;
+	owner = model.owner;
+	origin = model.origin;
+	//axis = model.axis;
+	bounds = model.bounds;
+	absBounds = model.absBounds;
+	//material = model.material;
+	contents = model.contents;
+	collisionModelHandle = model.collisionModelHandle;
 	traceModelIndex = -1;
-	if (model->traceModelIndex != -1) {
-		LoadModel(*GetCachedTraceModel(model->traceModelIndex));
+	if (model.traceModelIndex != -1) {
+		LoadModel(*GetCachedTraceModel(model.traceModelIndex));
 	}
-	renderModelHandle = model->renderModelHandle;
+	renderModelHandle = model.renderModelHandle;
 	clipLinks = NULL;
 	touchCount = -1;
 }
 
-idClipModel::~idClipModel()
-{
+idClipModel::~idClipModel() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	if(isCommonExists)
 		common->DPrintf("%s dtor\n", "idClipModel");
@@ -172,8 +167,7 @@ bool idClipModel::LoadModel(const std::string& name) {
 	}
 }
 
-void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
-{
+void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave) {
 	collisionModelHandle = 0;
 	renderModelHandle = -1;
 	if (traceModelIndex != -1) {
@@ -291,11 +285,8 @@ void idClipModel::Link_r(clipSector_t* node)
 		}
 	}
 
-#ifdef DEBUG
-	auto link = std::shared_ptr<clipLink_t>(DBG_NEW clipLink_t);
-#else
 	auto link = std::make_shared<clipLink_t>();
-#endif
+
 	link->clipModel = this;
 	link->sector = node;
 	link->nextInSector = node->clipLinks;
@@ -740,11 +731,8 @@ std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const
 	Vector2			size;
 	idBounds		front, back;
 
-#ifdef DEBUG
-	clipSectors[idClip::numClipSectors] = std::shared_ptr<clipSector_t>(DBG_NEW clipSector_t());
-#else
 	clipSectors[idClip::numClipSectors] = std::make_shared<clipSector_t>();
-#endif
+
 	std::shared_ptr<clipSector_t> anode = clipSectors[idClip::numClipSectors];
 
 	idClip::numClipSectors++;
@@ -908,7 +896,7 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 }
 
 void idClip::TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
-	std::shared_ptr<idClipModel> touch) const {
+	idClipModel* touch) const {
 	trace.fraction = 1.0f;
 
 	// if the trace is passing through the bounds

@@ -18,7 +18,7 @@ idCollisionModelManagerLocal::TestTrmVertsInBrush
   returns true if any of the trm vertices is inside the brush
 ================
 */
-bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, std::shared_ptr<cm_brush_t> b) {
+bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_brush_t* b) {
 	int j, numVerts;// , bestPlane;
 	//float d, bestd;
 	Vector2* p;

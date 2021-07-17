@@ -38,11 +38,9 @@ idMenuHandler::Initialize
 */
 void idMenuHandler::Initialize(const std::string& filename) {
 	Cleanup();
-#ifdef DEBUG
-	gui = std::shared_ptr<idSWF>(DBG_NEW idSWF(filename));
-#else
+
 	gui = std::make_shared<idSWF>(filename);
-#endif
+
 	gui->Init();
 }
 
@@ -153,7 +151,7 @@ bool idMenuHandler::HandleGuiEvent(const sysEvent_t* sev) {
 idMenuHandler::Update
 ================================================
 */
-bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	const widgetAction_t actionType = action.GetType();
 	const idSWFParmList& parms = action.GetParms();
@@ -216,7 +214,7 @@ bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& ev
 idMenuHandler::StartWidgetActionRepeater
 ========================
 */
-void idMenuHandler::StartWidgetActionRepeater(std::shared_ptr<idMenuWidget> widget, const idWidgetAction& action, const idWidgetEvent& event) {
+void idMenuHandler::StartWidgetActionRepeater(idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event) {
 	if (actionRepeater.isActive && actionRepeater.action == action) {
 		return;	// don't attempt to reactivate an already active repeater
 	}

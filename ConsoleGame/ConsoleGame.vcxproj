@@ -74,11 +74,13 @@
     <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
     <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)idlib;$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\build\$(PlatformName)\$(Configuration)\</OutDir>
     <IntDir>..\build\$(PlatformName)\$(Configuration)\intermediate\$(ProjectName)\</IntDir>
     <IncludePath>$(ProjectDir)idlib;$(IncludePath)</IncludePath>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

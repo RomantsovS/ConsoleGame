@@ -15,7 +15,7 @@ void idMenuWidget_List::Update() {
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
 
-	if (!BindSprite(root)) {
+	if (!BindSprite(root.get())) {
 		return;
 	}
 
@@ -27,7 +27,7 @@ void idMenuWidget_List::Update() {
 			std::shared_ptr<idMenuWidget> child = GetChildByIndex(optionIndex);
 			const int controlIndex = GetNumVisibleOptions() - min(GetNumVisibleOptions(), GetTotalNumberOfOptions()) + optionIndex;
 			child->SetSpritePath(GetSpritePath(), va("item%d", controlIndex).c_str());
-			if (child->BindSprite(root)) {
+			if (child->BindSprite(root.get())) {
 				//PrepareListElement(child, childIndex);
 				child->Update();
 				shown = true;
@@ -49,7 +49,7 @@ void idMenuWidget_List::Update() {
 idMenuWidget_List::HandleAction
 ========================
 */
-bool idMenuWidget_List::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuWidget_List::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	const idSWFParmList& parms = action.GetParms();
 

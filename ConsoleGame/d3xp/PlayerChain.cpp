@@ -145,7 +145,7 @@ void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin, const
 
 void PlayerChain::AddModel(const Vector2& origin, const int id, const float density) {
 	// add body
-	auto clip = std::make_shared<idClipModel>(GetPhysics()->GetClipModel());
+	auto clip = std::make_shared<idClipModel>(*GetPhysics()->GetClipModel());
 	//clip->SetContents(CONTENTS_SOLID);
 	clip->Link(gameLocal.clip, shared_from_this(), id, origin);
 	auto body = std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
@@ -180,7 +180,7 @@ use normal spawn selection.
 ============
 */
 void PlayerChain::SelectInitialSpawnPoint(Vector2& origin, Vector2& angles) {
-	origin = gameLocal.SelectInitialSpawnPoint(std::dynamic_pointer_cast<PlayerChain>(shared_from_this()));
+	origin = gameLocal.SelectInitialSpawnPoint(dynamic_cast<PlayerChain*>(this));
 	angles = vec2_origin;
 }
 

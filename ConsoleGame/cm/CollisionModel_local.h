@@ -188,7 +188,7 @@ struct cm_traceWork_t {
 class idCollisionModelManagerLocal : public idCollisionModelManager {
 public:
 	// load collision models from a map file
-	void LoadMap(const std::shared_ptr<idMapFile> mapFile) override;
+	void LoadMap(const idMapFile* mapFile) override;
 	// frees all the collision models
 	void FreeMap();
 
@@ -217,47 +217,47 @@ private:			// CollisionMap_translate.cpp
 	void TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
 		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin);
 private:			// CollisionMap_contents.cpp
-	bool TestTrmVertsInBrush(cm_traceWork_t* tw, std::shared_ptr<cm_brush_t> b);
+	bool TestTrmVertsInBrush(cm_traceWork_t* tw, cm_brush_t* b);
 	int ContentsTrm(trace_t* results, const Vector2& start,
 		const idTraceModel* trm, int contentMask,
 		int model, const Vector2& modelOrigin);
 private:			// CollisionMap_trace.cpp
-	void TraceTrmThroughNode(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node);
-	void TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, std::shared_ptr<cm_node_t> node, float p1f, float p2f, Vector2& p1, Vector2& p2);
+	void TraceTrmThroughNode(cm_traceWork_t* tw, cm_node_t* node);
+	void TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, cm_node_t* node, float p1f, float p2f, Vector2& p1, Vector2& p2);
 	void TraceThroughModel(cm_traceWork_t* tw);
 private:			// CollisionMap_load.cpp
 	void Clear();
 	void FreeTrmModelStructure();
 	// model deallocation
-	void RemoveBrushReferences_r(std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b);
+	void RemoveBrushReferences_r(cm_node_t* node, const cm_brush_t* b);
 	void FreeNode(std::shared_ptr<cm_node_t> node);
 	void FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref);
 
 	// model deallocation
-	void FreeBrush(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_brush_t> brush);
+	void FreeBrush(cm_model_t* model, cm_brush_t* brush);
 	void FreeTree_r(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> headNode, std::shared_ptr<cm_node_t> node);
 	void FreeModel(std::shared_ptr<cm_model_t> model);
 
 	// creation of axial BSP tree
 	std::shared_ptr<cm_model_t> AllocModel();
-	std::shared_ptr<cm_node_t> AllocNode(std::shared_ptr<cm_model_t> model, int blockSize);
-	std::shared_ptr<cm_brushRef_t> AllocBrushReference(std::shared_ptr<cm_model_t> model, int blockSize);
-	std::shared_ptr<cm_brush_t> AllocBrush(std::shared_ptr<cm_model_t> model);
-	void AddBrushToNode(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> node, std::shared_ptr<cm_brush_t> b);
+	std::shared_ptr<cm_node_t> AllocNode(cm_model_t* model, int blockSize);
+	std::shared_ptr<cm_brushRef_t> AllocBrushReference(cm_model_t* model, int blockSize);
+	std::shared_ptr<cm_brush_t> AllocBrush(cm_model_t* model);
+	void AddBrushToNode(cm_model_t* model, cm_node_t* node, std::shared_ptr<cm_brush_t> b);
 	void SetupTrmModelStructure();
 	
 	// creation of raw polygons
 	void ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum);
-	void ConvertBrush(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush>& mapBrush, int primitiveNum);
+	void ConvertBrush(cm_model_t* model, const idMapBrush* mapBrush, int primitiveNum);
 	void			PrintModelInfo(const cm_model_t* model);
 	void			AccumulateModelInfo(cm_model_t* model);
-	void FinishModel(std::shared_ptr<cm_model_t> model);
-	void BuildModels(const std::shared_ptr<idMapFile> mapFile);
+	void FinishModel(cm_model_t* model);
+	void BuildModels(const idMapFile* mapFile);
 	int FindModel(const std::string& name);
 	std::shared_ptr<cm_model_t> CollisionModelForMapEntity(const std::shared_ptr<idMapEntity> mapEnt);	// brush/patch model from .map
 	std::shared_ptr<cm_model_t> LoadBinaryModel(const std::string& fileName);
 	std::shared_ptr<cm_model_t> LoadBinaryModelFromFile();
-	bool TrmFromModel(const std::shared_ptr<cm_model_t> model, idTraceModel& trm);
+	bool TrmFromModel(const cm_model_t* model, idTraceModel& trm);
 private:			// collision map data
 	std::string mapName;
 	long long mapFileTime;

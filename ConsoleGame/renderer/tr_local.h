@@ -235,7 +235,7 @@ RENDERWORLD_DEFS
 */
 
 void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> def);
-void R_FreeEntityDefDerivedData(std::shared_ptr<idRenderEntityLocal> def, bool keepDecals, bool keepCachedDynamicModel);
+void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel);
 
 void R_FreeDerivedData();
 void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model);

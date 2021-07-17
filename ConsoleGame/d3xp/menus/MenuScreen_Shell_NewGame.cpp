@@ -20,10 +20,10 @@ void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data)
 	options = std::make_shared<idMenuWidget_DynamicList>();
 	std::vector<std::vector<std::string>> menuOptions;
 	std::vector<std::string> option;
-	option.push_back("snake");
+	option.push_back("bomber");
 	menuOptions.push_back(option);
 
-	option[0] = "bomber";
+	option[0] = "snake";
 	menuOptions.push_back(option);
 
 	options->SetListData(menuOptions);
@@ -80,7 +80,7 @@ void idMenuScreen_Shell_NewGame::Update() {
 	}
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
-	if (BindSprite(root)) {
+	if (BindSprite(root.get())) {
 		std::shared_ptr<idSWFTextInstance> heading = GetSprite()->GetScriptObject()->GetNestedText("info", "txtHeading");
 		if (heading) {
 			heading->SetText("NEW GAME");	// NEW GAME
@@ -88,7 +88,7 @@ void idMenuScreen_Shell_NewGame::Update() {
 	}
 
 	if (btnBack) {
-		btnBack->BindSprite(root);
+		btnBack->BindSprite(root.get());
 	}
 
 	idMenuScreen::Update();
@@ -117,7 +117,7 @@ void idMenuScreen_Shell_NewGame::HideScreen() {
 idMenuScreen_Shell_NewGame::HandleAction h
 ========================
 */
-bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuScreen_Shell_NewGame::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	if (auto spMenuData = menuData.lock()) {
 		if (spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME)) {

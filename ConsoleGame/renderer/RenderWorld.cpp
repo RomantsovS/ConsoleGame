@@ -66,19 +66,16 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t 
 		// save any decals if the model is the same, allowing marks to move with entities
 		if (def->parms.hModel == re->hModel)
 		{
-			R_FreeEntityDefDerivedData(def, true, true);
+			R_FreeEntityDefDerivedData(def.get(), true, true);
 		}
 		else {
-			R_FreeEntityDefDerivedData(def, false, false);
+			R_FreeEntityDefDerivedData(def.get(), false, false);
 		}
 	}
 	else {
 		// creating a new one
-#ifdef DEBUG
-		def = std::shared_ptr<idRenderEntityLocal>(DBG_NEW idRenderEntityLocal());
-#else
 		def = std::make_shared<idRenderEntityLocal>();
-#endif
+
 		entityDefs[entityHandle] = def;
 
 		def->world = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());
@@ -112,7 +109,7 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle) {
 		return;
 	}
 
-	R_FreeEntityDefDerivedData(def, false, false);
+	R_FreeEntityDefDerivedData(def.get(), false, false);
 
 	// if we are playing a demo, these will have been freed
 	// in R_FreeEntityDefDerivedData(), otherwise the gui
@@ -137,7 +134,7 @@ const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) cons
 	return &def->parms;
 }
 
-void idRenderWorldLocal::RenderScene(const std::shared_ptr<renderView_t> renderView)
+void idRenderWorldLocal::RenderScene(const renderView_t* renderView)
 {
 	if (!tr.update_frame)
 		return;

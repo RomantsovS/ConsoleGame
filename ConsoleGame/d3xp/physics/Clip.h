@@ -16,7 +16,7 @@ public:
 	idClipModel();
 	explicit idClipModel(const std::string& name);
 	explicit idClipModel(const idTraceModel& trm);
-	explicit idClipModel(const std::shared_ptr<idClipModel>& model);
+	explicit idClipModel(const idClipModel& model);
 	~idClipModel();
 
 	bool LoadModel(const std::string&  name);
@@ -196,7 +196,7 @@ private:
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
 		const idEntity* passEntity, std::vector<idClipModel*>& clipModelList) const;
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
-		std::shared_ptr<idClipModel> touch) const;
+		idClipModel* touch) const;
 
 	bool DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds);
 };

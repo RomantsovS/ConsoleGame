@@ -8,15 +8,10 @@
 class idSWFTextInstance :public std::enable_shared_from_this<idSWFTextInstance> {
 public:
 	idSWFTextInstance() :
-#ifdef DEBUG
-		scriptObject(std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject)),
-#else
 		scriptObject(std::make_shared<idSWFScriptObject>()),
-#endif
 		text(""),
 		color(colorNone),
-		visible(false)
-	{
+		visible(false) {
 		swf.reset();
 	}
 	~idSWFTextInstance() {}

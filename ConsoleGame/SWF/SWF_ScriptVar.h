@@ -27,11 +27,7 @@ public:
 	void SetString(const std::string& s) {
 		Free();
 		type = swfScriptVarType::SWF_VAR_STRING;
-#ifdef DEBUG
-		value.string = std::shared_ptr<std::string>(DBG_NEW std::string(s));
-#else
 		value.string = std::make_shared<std::string>(s);
-#endif
 	}
 	void SetFloat(float f) { Free(); type = swfScriptVarType::SWF_VAR_FLOAT; value.f = f; }
 	void SetBool(bool b) { Free(); type = swfScriptVarType::SWF_VAR_BOOL; value.b = b; }

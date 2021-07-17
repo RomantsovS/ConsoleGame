@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../Game_local.h"
 
 /*
@@ -31,12 +32,7 @@ void idMenuWidget_MenuButton::Update() {
 	std::shared_ptr<idSWFScriptObject> textObj = spriteObject->GetNestedObj("txtVal");
 
 	if (textObj) {
-#ifdef DEBUG
-		textObj->Set("onPress", idSWFScriptVar(std::shared_ptr<WrapWidgetSWFEvent>(DBG_NEW WrapWidgetSWFEvent(shared_from_this(), widgetEvent_t::WIDGET_EVENT_PRESS, 0))));
-		textObj->Set("onRelease", idSWFScriptVar(std::shared_ptr<WrapWidgetSWFEvent>(DBG_NEW WrapWidgetSWFEvent(shared_from_this(), widgetEvent_t::WIDGET_EVENT_RELEASE, 0))));
-#else
 		textObj->Set("onPress", idSWFScriptVar(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_PRESS, 0)));
 		textObj->Set("onRelease", idSWFScriptVar(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_RELEASE, 0)));
-#endif
 	}
 }

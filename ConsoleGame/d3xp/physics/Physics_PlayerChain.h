@@ -96,8 +96,8 @@ private:
 	playerPState_t saved;
 private:
 	void Evolve(float timeStep);
-	std::shared_ptr<idEntity> SetupCollisionForBody(std::shared_ptr<idAFBody> body) const;
-	bool CollisionImpulse(float timeStep, std::shared_ptr<idAFBody> body, trace_t& collision);
+	std::shared_ptr<idEntity> SetupCollisionForBody(idAFBody* body) const;
+	bool CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision);
 	bool ApplyCollisions(float timeStep);
 	void CheckForCollisions(float timeStep);
 	void SwapStates();

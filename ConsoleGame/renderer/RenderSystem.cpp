@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "tr_local.h"
 
@@ -142,11 +142,8 @@ void idRenderSystemLocal::DrawString(const std::string& text, const int color) {
 }
 
 std::shared_ptr<idRenderWorld> idRenderSystemLocal::AllocRenderWorld() {
-#ifdef DEBUG
-	auto rw = std::shared_ptr<idRenderWorldLocal>(DBG_NEW idRenderWorldLocal());
-#else
 	auto rw = std::make_shared<idRenderWorldLocal>();
-#endif
+
 	worlds.push_back(rw);
 	return std::dynamic_pointer_cast<idRenderWorld>(rw);
 }

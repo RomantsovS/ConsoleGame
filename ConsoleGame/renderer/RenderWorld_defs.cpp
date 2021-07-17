@@ -11,7 +11,7 @@ Used by both FreeEntityDef and UpdateEntityDef
 Does not actually free the entityDef.
 ===================
 */
-void R_FreeEntityDefDerivedData(std::shared_ptr<idRenderEntityLocal> def, bool keepDecals, bool keepCachedDynamicModel) {
+void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) {
 	// free the entityRefs from the areas
 	for (auto ref = def->entityRefs; ref;) {
 		auto next = ref->ownerNext;
@@ -74,7 +74,7 @@ void R_FreeDerivedData() {
 			if (!def) {
 				continue;
 			}
-			R_FreeEntityDefDerivedData(def, false, false);
+			R_FreeEntityDefDerivedData(def.get(), false, false);
 		}
 	}
 }
@@ -95,7 +95,7 @@ void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) {
 			if (def->parms.hModel == model) {
 				//assert( 0 );
 				// this should never happen but Radiant messes it up all the time so just free the derived data
-				R_FreeEntityDefDerivedData(def, false, false);
+				R_FreeEntityDefDerivedData(def.get(), false, false);
 			}
 		}
 	}

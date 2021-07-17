@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
@@ -456,11 +456,7 @@ void idEvent::Init() {
 
 	EventPool.resize(MAX_EVENTS);
 	for (size_t i = 0; i < MAX_EVENTS; ++i) {
-#ifdef DEBUG
-		EventPool[i] = std::shared_ptr<idEvent>(DBG_NEW idEvent());
-#else
 		EventPool[i] = std::make_shared<idEvent>();
-#endif
 	}
 
 	ClearEventList();

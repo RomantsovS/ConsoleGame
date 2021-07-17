@@ -236,8 +236,6 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 		}
 	}
 
-	//fileSystem->FreeFile(buf);
-
 	auto max_x = surfaces.back().origin.x + 1;
 	auto max_y = surfaces.back().origin.y + 1;
 

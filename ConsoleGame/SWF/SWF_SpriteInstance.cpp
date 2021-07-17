@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 /*
 ========================
@@ -21,11 +21,7 @@ idSWFSpriteInstance::Init
 ========================
 */
 void idSWFSpriteInstance::Init() {
-#ifdef DEBUG
-	scriptObject = std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject);
-#else
 	scriptObject = std::make_shared<idSWFScriptObject>();
-#endif
 
 	scriptObject->SetSprite(shared_from_this());
 }
@@ -108,19 +104,13 @@ swfDisplayEntry_t* idSWFSpriteInstance::AddDisplayEntry(int depth, bool isSprite
 	display.depth = depth;
 
 	if (isSprite) {
-#ifdef DEBUG
-		display.spriteInstance = std::shared_ptr<idSWFSpriteInstance>(DBG_NEW idSWFSpriteInstance(GetSWF()));
-#else
 		display.spriteInstance = std::make_shared<idSWFSpriteInstance>(GetSWF());
-#endif
+
 		display.spriteInstance->Init();
 	}
 	else {
-#ifdef DEBUG
-		display.textInstance = std::shared_ptr<idSWFTextInstance>(DBG_NEW idSWFTextInstance());
-#else
 		display.textInstance = std::make_shared<idSWFTextInstance>();
-#endif
+
 		display.textInstance->Init(GetSWF());
 	}
 

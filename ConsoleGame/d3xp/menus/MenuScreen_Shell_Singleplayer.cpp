@@ -71,7 +71,7 @@ void idMenuScreen_Shell_Singleplayer::Update() {
 	}
 
 	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
-	if (BindSprite(root)) {
+	if (BindSprite(root.get())) {
 		std::shared_ptr<idSWFTextInstance> heading = GetSprite()->GetScriptObject()->GetNestedText("info", "txtHeading");
 		if (heading) {
 			heading->SetText("CAMPAIGN");
@@ -79,7 +79,7 @@ void idMenuScreen_Shell_Singleplayer::Update() {
 	}
 
 	if (btnBack) {
-		btnBack->BindSprite(root);
+		btnBack->BindSprite(root.get());
 	}
 
 	idMenuScreen::Update();
@@ -200,7 +200,7 @@ void idMenuScreen_Shell_Singleplayer::ContinueGame() {
 idMenuScreen_Shell_Singleplayer::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuScreen_Shell_Singleplayer::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 	if (!spMenuData) {

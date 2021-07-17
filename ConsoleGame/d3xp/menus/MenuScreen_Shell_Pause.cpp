@@ -167,7 +167,7 @@ void idMenuScreen_Shell_Pause::HandleRestartBtn() {
 idMenuScreen_Shell_Pause::HandleAction
 ========================
 */
-bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidgetEvent& event, std::shared_ptr<idMenuWidget>& widget, bool forceHandled) {
+bool idMenuScreen_Shell_Pause::HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled) {
 
 	auto spMenuData = menuData.lock();
 

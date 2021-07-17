@@ -34,7 +34,7 @@ public:
 	virtual	void FreeEntityDef(int entityHandle) override;
 	virtual const renderEntity_t* GetRenderEntity(int entityHandle) const override;
 
-	virtual void RenderScene(const std::shared_ptr<renderView_t> renderView);
+	virtual void RenderScene(const renderView_t* renderView);
 
 	virtual bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
 		const float radius) const override;

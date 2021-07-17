@@ -74,7 +74,7 @@ private:
 	pos_type height, width;
 	Pixel backgroundPixel;
 	//std::vector<char> buffer;
-	CHAR_INFO* buffer;
+	std::vector<CHAR_INFO> buffer;
 	HANDLE h_console_std_in;
 	HANDLE h_console_std_out;
 	SMALL_RECT window_rect;

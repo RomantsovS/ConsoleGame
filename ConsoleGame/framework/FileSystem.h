@@ -52,8 +52,7 @@ public:
 	// A 0 byte will always be appended at the end, so string ops are safe.
 	// The buffer should be considered read-only, because it may be cached for other uses.
 	virtual std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) = 0;
-	// Frees the memory allocated by ReadFile.
-	virtual void FreeFile(void* buffer) = 0;
+
 	// Opens a file for reading.
 	virtual std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") = 0;
 	// Opens a file for reading, reads the file completely in memory and returns an idFile_Memory obj.

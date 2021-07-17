@@ -25,7 +25,7 @@ idProjectile::Spawn
 void idProjectile::Spawn() {
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
 	physicsObj->SetSelf(shared_from_this());
-	physicsObj->SetClipModel(std::make_shared<idClipModel>(GetPhysics()->GetClipModel()), 1.0f);
+	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), 1.0f);
 	//physicsObj->SetContents(0);
 	physicsObj->SetClipMask(0);
 	//physicsObj.PutToRest();
@@ -129,7 +129,7 @@ idProjectile::Collide
 =================
 */
 bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) {
-	std::shared_ptr<idEntity> ignore;
+	idEntity* ignore;
 	std::string damageDefName;
 	Vector2		dir{};
 	float		damageScale{};
@@ -158,7 +158,7 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) {
 
 	damageDefName = spawnArgs.GetString("def_damage");
 
-	ignore = NULL;
+	ignore = nullptr;
 
 	// if the hit entity takes damage
 	if (ent->fl.takedamage) {
@@ -170,9 +170,9 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) {
 		}*/
 
 		if (!damageDefName.empty()) {
-			ent->Damage(shared_from_this(), owner.lock(), dir, damageDefName, damageScale);
+			ent->Damage(this, owner.lock().get(), dir, damageDefName, damageScale);
 
-			ignore = ent;
+			ignore = ent.get();
 		}
 	}
 
@@ -186,7 +186,7 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) {
 idProjectile::Explode
 ================
 */
-void idProjectile::Explode(const trace_t& collision, std::shared_ptr<idEntity> ignore) {
+void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 	int removeTime;
 
 	if (state == projectileState_t::EXPLODED || state == projectileState_t::FIZZLED) {

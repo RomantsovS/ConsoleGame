@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 /*
 ===================
@@ -34,17 +34,11 @@ idSWF::Init
 ===================
 */
 void idSWF::Init() {
-#ifdef DEBUG
-	globals = std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject);
-#else
-	globals = std::make_shared<idSWFScriptObject>();
-#endif
 
-#ifdef DEBUG
-	mainspriteInstance = std::shared_ptr<idSWFSpriteInstance>(DBG_NEW idSWFSpriteInstance(shared_from_this()));
-#else
+	globals = std::make_shared<idSWFScriptObject>();
+
 	mainspriteInstance = std::make_shared<idSWFSpriteInstance>(shared_from_this());
-#endif
+
 	mainspriteInstance->Init();
 	
 	mainspriteInstance->name = "mainspriteInstance";
