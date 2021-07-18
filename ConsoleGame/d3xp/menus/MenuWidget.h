@@ -309,7 +309,7 @@ public:
 
 	// actually binds the sprite. this must be called after setting sprite path!
 	std::shared_ptr<idSWFSpriteInstance> GetSprite() { return boundSprite; }
-	bool BindSprite(idSWFScriptObject* root);
+	bool BindSprite(gsl::not_null<idSWFScriptObject*> root);
 	void ClearSprite();
 
 	void SetSpritePath(const char* arg1, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL);

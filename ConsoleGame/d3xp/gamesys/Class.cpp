@@ -9,7 +9,7 @@ static idHierarchy<idTypeInfo> classHierarchy;
 idTypeInfo::idTypeInfo(const std::string& classname, const std::string& superclass,
 	idEventFunc<idClass>* eventCallbacks, std::shared_ptr<idClass> (*CreateInstance)(), void(idClass::* Spawn)()) {
 	idTypeInfo *type;
-	idTypeInfo **insert;
+	idTypeInfo** insert;
 
 	this->classname = classname;
 	this->superclass = superclass;
@@ -29,9 +29,9 @@ idTypeInfo::idTypeInfo(const std::string& classname, const std::string& supercla
 	}
 
 	// Insert sorted
-	for (insert = &typelist; *insert; insert = &(*insert)->next) {
-		//assert(idStr::Cmp(classname, (*insert)->classname));
-		
+	for (insert = &typelist; insert && *insert; insert = &(*insert)->next) {
+		assert(classname != (*insert)->classname);
+
 		if (classname < (*insert)->classname) {
 			next = *insert;
 			*insert = this;
@@ -39,7 +39,7 @@ idTypeInfo::idTypeInfo(const std::string& classname, const std::string& supercla
 		}
 	}
 
-	if (!*insert) {
+	if (insert && !*insert) {
 		*insert = this;
 		next = NULL;
 	}
@@ -279,7 +279,7 @@ idClass::PostEventArgs
 bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {
 	va_list		args;
 
-	//assert(ev);
+	assert(ev);
 
 	if (!idEvent::initialized) {
 		return false;
@@ -326,7 +326,7 @@ bool idClass::PostEventSec(const idEventDef* ev, float time) {
 }
 
 
-classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo* cls) {
+classSpawnFunc_t idClass::CallSpawnFunc(gsl::not_null<idTypeInfo*> cls) {
 	classSpawnFunc_t func;
 
 	if (cls->super) {
@@ -349,8 +349,8 @@ idClass::ProcessEventArgPtr
 ================
 */
 bool idClass::ProcessEventArgPtr(const idEventDef* ev, int* data) {
-	//assert(ev);
-	//assert(idEvent::initialized);
+	assert(ev);
+	assert(idEvent::initialized);
 
 	/*SetTimeState ts;
 
@@ -371,7 +371,7 @@ bool idClass::ProcessEventArgPtr(const idEventDef* ev, int* data) {
 		return false;
 	}
 
-	auto callback = c->eventMap->operator[](num);
+	gsl::not_null<eventCallback_t> callback = c->eventMap->operator[](num);
 
 	/*
 	on ppc architecture, floats are passed in a seperate set of registers

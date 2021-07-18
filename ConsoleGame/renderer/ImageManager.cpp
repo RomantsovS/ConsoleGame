@@ -39,7 +39,7 @@ with a callback which must work at any time, allowing the OpenGL
 system to be completely regenerated if needed.
 ==================
 */
-std::shared_ptr<idImage> idImageManager::ImageFromFunction(const std::string& _name, void (*generatorFunction)(idImage* image)) {
+std::shared_ptr<idImage> idImageManager::ImageFromFunction(const std::string& _name, void (*generatorFunction)(gsl::not_null<idImage*> image)) {
 	std::string name = _name;
 
 	// see if the image already exists

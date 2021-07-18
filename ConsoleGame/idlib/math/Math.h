@@ -102,9 +102,8 @@ idMath::FloatHash
 */
 inline int idMath::FloatHash(const float* array, const int numFloats) {
 	int i, hash = 0;
-	const int* ptr;
 
-	ptr = reinterpret_cast<const int*>(array);
+	auto ptr = reinterpret_cast<const int*>(array);
 	for (i = 0; i < numFloats; i++) {
 		hash ^= ptr[i];
 	}

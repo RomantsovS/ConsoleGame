@@ -234,7 +234,6 @@
     <ClCompile Include="cm\CollisionModel.cpp" />
     <ClCompile Include="cm\CollisionModel_contacts.cpp" />
     <ClCompile Include="cm\CollisionModel_contents.cpp" />
-    <ClCompile Include="cm\CollisionModel_files.cpp" />
     <ClCompile Include="cm\CollisionModel_load.cpp" />
     <ClCompile Include="cm\CollisionModel_trace.cpp" />
     <ClCompile Include="cm\CollisionModel_translate.cpp" />

@@ -50,7 +50,7 @@ int idDict::GetInt(const std::string& key, const std::string& defaultString) con
 	return atoi(GetString(key, defaultString).c_str());
 }
 
-bool idDict::GetString(const std::string& key, const std::string& defaultString, std::string* out) const {
+bool idDict::GetString(const std::string& key, const std::string& defaultString, gsl::not_null<std::string*> out) const {
 	auto iter = args.find(key);
 
 	if (iter != args.end()) {

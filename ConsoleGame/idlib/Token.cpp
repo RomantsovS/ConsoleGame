@@ -8,11 +8,10 @@ idToken::NumberValue
 */
 void idToken::NumberValue() {
 	int i, pow, div, c;
-	const char* p;
 	double m;
 
 	assert(type == TT_NUMBER);
-	p = c_str();
+	gsl::czstring<> p = c_str();
 	floatvalue = 0;
 	intvalue = 0;
 	// floating point number

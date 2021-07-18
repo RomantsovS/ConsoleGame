@@ -228,9 +228,9 @@ This is setup in this manner, because we can't resolve from path -> sprite immed
 SWFs aren't necessarily loaded at the time widgets are instantiated.
 ========================
 */
-bool idMenuWidget::BindSprite(idSWFScriptObject* root) {
+bool idMenuWidget::BindSprite(gsl::not_null<idSWFScriptObject*> root) {
 	const char* args[6] = { NULL };
-	//assert(GetSpritePath().Num() > 0);
+	assert(GetSpritePath().size() > 0);
 	for (size_t i = 0; i < GetSpritePath().size(); ++i) {
 		args[i] = GetSpritePath()[i].c_str();
 	}

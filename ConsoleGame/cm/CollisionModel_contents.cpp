@@ -44,7 +44,7 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 	}
 
 	for (j = 0; j < numVerts; j++) {
-		Vector2* p = &tw->vertices[j].p;
+		Vector2& p = tw->vertices[j].p;
 
 		// see if the point is inside the brush
 		/*bestPlane = 0;
@@ -60,14 +60,14 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 			}
 		}*/
 		//if (i >= b->numPlanes) {
-		if(b->bounds.LineIntersection(*p, tw->vertices[j].endp)) {
+		if(b->bounds.LineIntersection(p, tw->vertices[j].endp)) {
 			tw->trace.fraction = 0.0f;
 			tw->trace.c.type = CONTACT_TRMVERTEX;
 			//tw->trace.c.normal = b->planes[bestPlane].Normal();
 			//tw->trace.c.dist = b->planes[bestPlane].Dist();
 			tw->trace.c.contents = b->contents;
 			//tw->trace.c.material = b->material;
-			tw->trace.c.point = *p;
+			tw->trace.c.point = p;
 			tw->trace.c.modelFeature = 0;
 			tw->trace.c.trmFeature = j;
 

@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "../Game_local.h"
 
@@ -11,9 +11,9 @@ END_CLASS
 RigidBodyDerivatives
 ================
 */
-void RigidBodyDerivatives(const float t, const void* clientData, const float* state, float* derivatives) {
+void RigidBodyDerivatives(const float t, const void* clientData, gsl::span<const float> state, float* derivatives) {
 	const idPhysics_RigidBody* p = (idPhysics_RigidBody*)clientData;
-	rigidBodyIState_t* s = (rigidBodyIState_t*)state;
+	rigidBodyIState_t* s = (rigidBodyIState_t*)state.data();
 	// NOTE: this struct should be build conform rigidBodyIState_t
 	struct rigidBodyDerivatives_s {		
 		Vector2 linearVelocity;
@@ -345,7 +345,7 @@ bool idPhysics_RigidBody::EvaluateContacts() {
 	dir.SubVec3(1).Normalize();*/
 	dir = current.i.linearMomentum;
 	dir.Normalize();
-	auto num = gameLocal.clip.Contacts(&contacts[0], 10, clipModel->GetOrigin(),
+	auto num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(),
 		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self.lock().get());
 	contacts.resize(num);
 
@@ -370,7 +370,8 @@ void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& ne
 
 	//current.i.orientation.TransposeSelf();
 
-	integrator->Evaluate((float*)&current.i, (float*)&next_.i, 0, deltaTime);
+	integrator->Evaluate(gsl::span<float>{(float*)&current.i, integrator->GetDimension()},
+		gsl::span<float>{(float*)&next_.i, integrator->GetDimension()}, 0, deltaTime);
 	//next_.i.orientation.OrthoNormalizeSelf();
 
 	// apply gravity

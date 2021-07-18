@@ -19,7 +19,7 @@ public:
 	virtual void MapShutdown() = 0;
 
 	// Caches media referenced from in key/value pairs in the given dictionary.
-	virtual void CacheDictionaryMedia(const idDict* dict) = 0;
+	virtual void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) = 0;
 
 	// Runs a game frame, may return a session command for level changing, etc
 	virtual void RunFrame() = 0;
@@ -52,7 +52,7 @@ class idGameEdit
 public:
 	virtual ~idGameEdit() {}
 
-	virtual void ParseSpawnArgsToRenderEntity(const idDict *args, renderEntity_t *renderEntity);
+	virtual void ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args, renderEntity_t *renderEntity);
 };
 
 extern idGameEdit *gameEdit;

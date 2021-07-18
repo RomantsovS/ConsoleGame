@@ -16,7 +16,7 @@ to allow you to see the mapping coordinates on a surface
 void idImage::MakeDefault() {
 }
 
-static void R_DefaultImage(idImage* image) {
+static void R_DefaultImage(gsl::not_null<idImage*> image) {
 	image->MakeDefault();
 }
 

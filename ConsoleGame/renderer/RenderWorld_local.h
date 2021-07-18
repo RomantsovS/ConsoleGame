@@ -30,7 +30,7 @@ public:
 	virtual	bool InitFromMap(const std::string &mapName) override;
 
 	virtual	int AddEntityDef(const renderEntity_t *re) override;
-	virtual	void UpdateEntityDef(int entityHandle, const renderEntity_t *re) override;
+	virtual	void UpdateEntityDef(int entityHandle, gsl::not_null<const renderEntity_t*> re) override;
 	virtual	void FreeEntityDef(int entityHandle) override;
 	virtual const renderEntity_t* GetRenderEntity(int entityHandle) const override;
 

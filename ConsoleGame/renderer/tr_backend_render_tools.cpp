@@ -28,7 +28,7 @@ struct debugText_t {
 	int lifeTime;
 };
 
-debugText_t rb_debugText[MAX_DEBUG_TEXT];
+std::vector<debugText_t> rb_debugText(MAX_DEBUG_TEXT);
 int rb_numDebugText = 0;
 int rb_debugTextTime = 0;
 
@@ -38,17 +38,15 @@ RB_ClearDebugText
 ================
 */
 void RB_ClearDebugText(int time) {
-	int			i;
+	int			i{ 0 };
 	int			num;
-	debugText_t	*text;
 
 	rb_debugTextTime = time;
 
 	if (!time) {
 		// free up our strings
-		text = rb_debugText;
-		for (i = 0; i < max_debug_text.GetInteger(); i++, text++) {
-			text->text.clear();
+		for (auto& text : rb_debugText) {
+			text.text.clear();
 		}
 		rb_numDebugText = 0;
 		return;
@@ -56,14 +54,15 @@ void RB_ClearDebugText(int time) {
 
 	// copy any text that still needs to be drawn
 	num = 0;
-	text = rb_debugText;
-	for (i = 0; i < rb_numDebugText; i++, text++) {
-		if (text->lifeTime > time) {
+
+	for(auto& text : rb_debugText) {
+		if (text.lifeTime > time) {
 			if (num != i) {
-				rb_debugText[num] = *text;
+				rb_debugText[num] = text;
 			}
 			num++;
 		}
+		++i;
 	}
 	rb_numDebugText = num;
 }
@@ -104,16 +103,15 @@ RB_ShowDebugText
 ================
 */
 void RB_ShowDebugText() {
-	int			i;
-	debugText_t	*text;
+	int i{ 0 };
 
 	if (!rb_numDebugText) {
 		return;
 	}
 
-	text = rb_debugText;
-	for (i = 0; i < rb_numDebugText; i++, text++) {
-		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text->text, text->color, true);
+	for (auto& text : rb_debugText) {
+		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text.text, text.color, true);
+		++i;
 	}
 }
 

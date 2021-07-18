@@ -120,7 +120,7 @@ public:
 	virtual bool			IsInitialized() const = 0;
 
 	// Registers a CVar.
-	virtual void			Register(idCVar* cvar) = 0;
+	virtual void			Register(gsl::not_null<idCVar*> cvar) = 0;
 
 	// Called by the command system when argv(0) doesn't match a known command.
 	// Returns true if argv(0) is a variable reference and prints or changes the CVar.

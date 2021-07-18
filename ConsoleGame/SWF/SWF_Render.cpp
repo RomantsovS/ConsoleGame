@@ -56,7 +56,7 @@ void idSWF::RenderSprite(idRenderSystem* gui, idSWFSpriteInstance* spriteInstanc
 idSWF::RenderEditText
 ========================
 */
-void idSWF::RenderEditText(idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time) {
+void idSWF::RenderEditText(gsl::not_null<idRenderSystem*> gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time) {
 	if (!textInstance) {
 		common->Warning("%s: RenderEditText: textInstance == NULL", filename.c_str());
 		return;

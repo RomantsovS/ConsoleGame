@@ -52,7 +52,7 @@ public:
 	virtual bool InitFromMap(const std::string &mapName) = 0;
 
 	virtual	int AddEntityDef(const renderEntity_t *re) = 0;
-	virtual	void UpdateEntityDef(int entityHandle, const renderEntity_t *re) = 0;
+	virtual	void UpdateEntityDef(int entityHandle, gsl::not_null<const renderEntity_t*> re) = 0;
 	virtual	void FreeEntityDef(int entityHandle) = 0;
 	virtual const renderEntity_t* GetRenderEntity(int entityHandle) const = 0;
 

@@ -33,14 +33,14 @@ idODE_Euler::~idODE_Euler() {
 idODE_Euler::Evaluate
 =============
 */
-float idODE_Euler::Evaluate(const float* state, float* newState, float t0, float t1) {
+float idODE_Euler::Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) {
 	float delta;
-	int i;
+	int i{0};
 
 	derive(t0, userData, state, derivatives.data());
 	delta = t1 - t0;
-	for (i = 0; i < dimension; i++) {
-		newState[i] = state[i] + delta * derivatives[i];
+	for (auto& ns : newState) {
+		ns = state[i] + delta * derivatives[i];
 	}
 	return delta;
 }

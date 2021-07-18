@@ -47,7 +47,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	const auto modelNumSurfaces = model->NumSurfaces();
 
 	auto rEntSp = vEntity.entityDef.lock();
-	auto modelRawPtr = model.get();
+	gsl::not_null<idRenderModel*> modelRawPtr = model.get();
 
 	if (rEntSp) {
 		const auto curPos = Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +

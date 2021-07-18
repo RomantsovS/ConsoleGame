@@ -16,18 +16,19 @@
 //
 //===============================================================
 
-typedef void (*deriveFunction_t)(const float t, const void* userData, const float* state, float* derivatives);
+typedef void (*deriveFunction_t)(const float t, const void* userData, gsl::span<const float> state, float* derivatives);
 
 class idODE {
 
 public:
-	virtual				~idODE() {}
+	virtual ~idODE() {}
 
-	virtual float		Evaluate(const float* state, float* newState, float t0, float t1) = 0;
+	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) = 0;
 
+	size_t GetDimension() { return dimension; }
 protected:
-	int					dimension;		// dimension in floats allocated for
-	deriveFunction_t	derive;			// derive function
+	int dimension;		// dimension in floats allocated for
+	deriveFunction_t derive;			// derive function
 	const void* userData;		// client data
 };
 
@@ -41,9 +42,9 @@ class idODE_Euler : public idODE {
 
 public:
 	idODE_Euler(const int dim, const deriveFunction_t dr, const void* ud);
-	virtual				~idODE_Euler();
+	virtual ~idODE_Euler();
 
-	virtual float		Evaluate(const float* state, float* newState, float t0, float t1);
+	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1);
 
 protected:
 	std::vector<float> derivatives;	// space to store derivatives

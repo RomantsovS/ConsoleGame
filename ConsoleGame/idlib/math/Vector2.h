@@ -9,10 +9,8 @@ struct Vector2 {
 		if (il.size() != 2)
 			throw std::invalid_argument("expected list with 2 members");
 
-		auto iter = il.begin();
-
-		x = *iter++;
-		y = *iter;
+		gsl::span<float> ptr{ &x, 2 };
+		std::copy(il.begin(), il.end(), ptr.begin());
 	}
 
 	void Set(const float x, const float y);

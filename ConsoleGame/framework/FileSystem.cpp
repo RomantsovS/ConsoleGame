@@ -123,8 +123,6 @@ Creates any directories needed to store the given filename
 ============
 */
 void idFileSystemLocal::CreateOSPath(const std::string &OSPath) {
-	char* ofs;
-
 	// make absolutely sure that it can't back up the path
 	// FIXME: what about c: ?
 	if (OSPath.find("..") != std::string::npos || OSPath.find("::") != std::string::npos) {
@@ -136,7 +134,7 @@ void idFileSystemLocal::CreateOSPath(const std::string &OSPath) {
 
 	auto path(OSPath);
 	idStr::SlashesToBackSlashes(path);
-	for (ofs = &path[1]; *ofs; ofs++) {
+	for (auto ofs = &path[1]; *ofs; ofs++) {
 		if (*ofs == PATHSEPARATOR_CHAR) {
 			// create the directory
 			*ofs = 0;

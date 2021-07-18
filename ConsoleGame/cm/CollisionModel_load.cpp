@@ -553,7 +553,7 @@ void idCollisionModelManagerLocal::ConvertBrushSides(std::shared_ptr<cm_model_t>
 	}*/
 }
 
-void idCollisionModelManagerLocal::ConvertBrush(cm_model_t* model, const idMapBrush* mapBrush, int primitiveNum) {
+void idCollisionModelManagerLocal::ConvertBrush(cm_model_t* model, gsl::not_null<const idMapBrush*> mapBrush, int primitiveNum) {
 	int i, contents;
 	idBounds bounds;
 
@@ -609,7 +609,7 @@ static int CM_CountNodeBrushes(const cm_node_t* node) {
 CM_R_GetModelBounds
 ================
 */
-static void CM_R_GetNodeBounds(idBounds* bounds, std::shared_ptr<cm_node_t> node) {
+static void CM_R_GetNodeBounds(gsl::not_null<idBounds*> bounds, std::shared_ptr<cm_node_t> node) {
 	while (1) {
 		for (auto bref = node->brushes; bref; bref = bref->next) {
 			bounds->AddPoint(bref->b->bounds[0]);
@@ -628,7 +628,7 @@ static void CM_R_GetNodeBounds(idBounds* bounds, std::shared_ptr<cm_node_t> node
 CM_GetNodeBounds
 ================
 */
-void CM_GetNodeBounds(idBounds* bounds, std::shared_ptr<cm_node_t> node) {
+void CM_GetNodeBounds(gsl::not_null<idBounds*> bounds, std::shared_ptr<cm_node_t> node) {
 	bounds->Clear();
 	CM_R_GetNodeBounds(bounds, node);
 	if (bounds->IsCleared()) {
@@ -674,7 +674,7 @@ void idCollisionModelManagerLocal::FinishModel(cm_model_t* model) {
 	model->usedMemory = model->numVertices * sizeof(cm_vertex_t);
 }
 
-void idCollisionModelManagerLocal::BuildModels(const idMapFile* mapFile) {
+void idCollisionModelManagerLocal::BuildModels(gsl::not_null<const idMapFile*> mapFile) {
 	int i;
 
 	/*idTimer timer;
@@ -790,7 +790,7 @@ void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t* model) {
 CM_EstimateVertsAndEdges
 =================
 */
-static void CM_EstimateVertsAndEdges(const idMapEntity* mapEnt, int* numVerts/*, int* numEdges*/) {
+static void CM_EstimateVertsAndEdges(gsl::not_null<const idMapEntity*> mapEnt, gsl::not_null<int*> numVerts/*, int* numEdges*/) {
 	int j;
 
 	*numVerts = /**numEdges =*/ 0;

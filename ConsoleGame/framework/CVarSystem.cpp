@@ -16,11 +16,11 @@ class idInternalCVar : public idCVar {
 public:
 	idInternalCVar();
 	idInternalCVar(const std::string& newName, const std::string& newValue, int newFlags);
-	idInternalCVar(const idCVar* cvar);
+	idInternalCVar(gsl::not_null<const idCVar*> cvar);
 	virtual ~idInternalCVar();
 
 	//const char** CopyValueStrings(const char** strings);
-	void Update(const idCVar* cvar);
+	void Update(gsl::not_null<const idCVar*> cvar);
 	void UpdateValue();
 	//void					UpdateCheat();
 	void Set(std::string newValue, bool force, bool fromServer);
@@ -77,7 +77,7 @@ idInternalCVar::idInternalCVar(const std::string& newName, const std::string& ne
 idInternalCVar::idInternalCVar
 ============
 */
-idInternalCVar::idInternalCVar(const idCVar* cvar) {
+idInternalCVar::idInternalCVar(gsl::not_null<const idCVar*> cvar) {
 	nameString = cvar->GetName();
 	name = nameString;
 	valueString = cvar->GetString();
@@ -110,7 +110,7 @@ idInternalCVar::~idInternalCVar() {
 idInternalCVar::Update
 ============
 */
-void idInternalCVar::Update(const idCVar* cvar) {
+void idInternalCVar::Update(gsl::not_null<const idCVar*> cvar) {
 
 	// if this is a statically declared variable
 	if (cvar->GetFlags() & CVAR_STATIC) {
@@ -346,7 +346,7 @@ public:
 	void Shutdown() override;
 	bool IsInitialized() const override;
 
-	void Register(idCVar* cvar) override;
+	void Register(gsl::not_null<idCVar*> cvar) override;
 
 	virtual void SetCVarString(const std::string& name, const std::string& value, int flags = 0) override;
 
@@ -461,7 +461,7 @@ bool idCVarSystemLocal::IsInitialized() const {
 idCVarSystemLocal::Register
 ============
 */
-void idCVarSystemLocal::Register(idCVar* cvar) {
+void idCVarSystemLocal::Register(gsl::not_null<idCVar*> cvar) {
 	cvar->SetInternalVar(cvar);
 
 	auto internalVar = FindInternal(cvar->GetName());

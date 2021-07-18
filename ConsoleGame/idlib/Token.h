@@ -40,7 +40,7 @@ public:
 	int				linesCrossed;						// number of lines crossed in white space before token
 public:
 	idToken();
-	idToken(const idToken* token);
+	idToken(const idToken& token);
 	~idToken();
 
 	double			GetDoubleValue();				// double value of TT_NUMBER
@@ -57,8 +57,8 @@ private:
 inline idToken::idToken() : type(), subtype(), line(), linesCrossed() {
 }
 
-inline idToken::idToken(const idToken* token) {
-	*this = *token;
+inline idToken::idToken(const idToken& token) {
+	*this = token;
 }
 
 inline idToken::~idToken() {

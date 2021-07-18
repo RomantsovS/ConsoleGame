@@ -248,11 +248,11 @@ private:			// CollisionMap_load.cpp
 	
 	// creation of raw polygons
 	void ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum);
-	void ConvertBrush(cm_model_t* model, const idMapBrush* mapBrush, int primitiveNum);
+	void ConvertBrush(cm_model_t* model, gsl::not_null<const idMapBrush*> mapBrush, int primitiveNum);
 	void			PrintModelInfo(const cm_model_t* model);
 	void			AccumulateModelInfo(cm_model_t* model);
 	void FinishModel(cm_model_t* model);
-	void BuildModels(const idMapFile* mapFile);
+	void BuildModels(gsl::not_null<const idMapFile*> mapFile);
 	int FindModel(const std::string& name);
 	std::shared_ptr<cm_model_t> CollisionModelForMapEntity(const std::shared_ptr<idMapEntity> mapEnt);	// brush/patch model from .map
 	std::shared_ptr<cm_model_t> LoadBinaryModel(const std::string& fileName);
@@ -275,4 +275,4 @@ private:			// collision map data
 	int				numContacts;
 };
 
-void CM_AddContact(cm_traceWork_t* tw);
+void CM_AddContact(gsl::not_null<cm_traceWork_t*> tw);

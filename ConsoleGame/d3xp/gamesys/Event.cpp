@@ -167,7 +167,7 @@ idEvent::~idEvent() {
 idEvent::Alloc
 ================
 */
-std::shared_ptr<idEvent> idEvent::Alloc(const idEventDef* evdef, int numargs, va_list args) {
+std::shared_ptr<idEvent> idEvent::Alloc(gsl::not_null<const idEventDef*> evdef, int numargs, va_list args) {
 	idEventArg* arg;
 
 	if (FreeEvents.IsListEmpty()) {
@@ -372,7 +372,7 @@ void idEvent::ServiceEvents() {
 		}
 
 		// copy the data into the local args array and set up pointers
-		auto ev = event->eventdef;
+		gsl::not_null<const idEventDef*> ev = event->eventdef;
 		std::string formatspec = ev->GetArgFormat();
 		int numargs = ev->GetNumArgs();
 		for (auto i = 0; i < numargs; i++) {

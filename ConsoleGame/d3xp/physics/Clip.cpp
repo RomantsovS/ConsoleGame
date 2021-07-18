@@ -629,7 +629,7 @@ bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 	return false;
 }
 
-int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
+int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
 	const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask,
 	const idEntity* passEntity) {
 	int i, j, num, n, numContacts;
@@ -642,7 +642,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 	if (!passEntity || passEntity->entityNumber != ENTITYNUM_WORLD) {
 		// test world
 		idClip::numContacts++;
-		numContacts = collisionModelManager->Contacts(contacts, maxContacts, start, dir, depth, trm,
+		numContacts = collisionModelManager->Contacts(contacts.data(), maxContacts, start, dir, depth, trm,
 			contentMask, 0, vec2_origin);
 	}
 	else {
@@ -681,7 +681,7 @@ int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vecto
 		}
 
 		idClip::numContacts++;
-		n = collisionModelManager->Contacts(contacts + numContacts, maxContacts - numContacts,
+		n = collisionModelManager->Contacts(contacts.data() + numContacts, maxContacts - numContacts,
 			start, dir, depth, trm, contentMask, touch->Handle(), touch->origin);
 
 		for (j = 0; j < n; j++) {
@@ -947,14 +947,13 @@ void idClip::DrawClipModels(const Vector2& eye, const float radius, const std::s
 	int				i, num;
 	idBounds		bounds;
 	std::vector<idClipModel*> clipModelList(1);
-	idClipModel* clipModel;
 
 	bounds = idBounds(eye).Expand(radius);
 
 	num = idClip::ClipModelsTouchingBounds(bounds, -1, clipModelList, MAX_GENTITIES);
 
 	for (i = 0; i < num; i++) {
-		clipModel = clipModelList[i];
+		gsl::not_null<idClipModel*> clipModel = clipModelList[i];
 		if (clipModel->GetEntity() == passEntity) {
 			continue;
 		}

@@ -29,7 +29,7 @@ public:
 	// SWF_Render.cpp
 	//----------------------------------
 	void RenderSprite(idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time);
-	void RenderEditText(idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time);
+	void RenderEditText(gsl::not_null<idRenderSystem*> gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time);
 private:
 	std::string filename;
 	bool isActive;

@@ -92,31 +92,31 @@ public:
 	// returns true if a script is loaded
 	int				IsLoaded() { return idLexer::loaded; };
 	// read a token
-	int				ReadToken(idToken* token);
+	int				ReadToken(gsl::not_null<idToken*> token);
 	// expect a certain token, reads the token when available
 	int				ExpectTokenString(const std::string& string);
 	// expect a certain token type
-	int				ExpectTokenType(int type, int subtype, idToken* token);
+	int				ExpectTokenType(int type, int subtype, gsl::not_null<idToken*> token);
 	// returns true when the token is available
 	int				CheckTokenString(const std::string& string);
 	// returns true an reads the token when a token with the given type is available
-	int				CheckTokenType(int type, int subtype, idToken* token);
+	int				CheckTokenType(int type, int subtype, gsl::not_null<idToken*> token);
 	// skip tokens until the given token string is read
 	int				SkipUntilString(const std::string& string);
 	// skip the braced section
 	int				SkipBracedSection(bool parseFirstBrace = true);
 	// unread the given token
-	void			UnreadToken(const idToken* token);
+	void			UnreadToken(gsl::not_null<const idToken*> token);
 	// read a token only if on the same line
-	int				ReadTokenOnLine(idToken* token);
+	int				ReadTokenOnLine(gsl::not_null<idToken*> token);
 
 	// read a floating point number.  If errorFlag is NULL, a non-numeric token will
 	// issue an Error().  If it isn't NULL, it will issue a Warning() and set *errorFlag = true
 	float			ParseFloat(bool* errorFlag = nullptr);
 	// parse matrices with floats
-	int				Parse1DMatrix(int x, float* m);
+	int				Parse1DMatrix(int x, gsl::span<float> m);
 	// set an array with punctuations, NULL restores default C/C++ set, see default_punctuations for an example
-	void			SetPunctuations(const punctuation_t* p);
+	void			SetPunctuations(const std::vector<punctuation_t>* p);
 	// get offset in script
 	const int		GetFileOffset();
 	// get file time
@@ -141,17 +141,17 @@ private:
 	int				line;					// current line in script
 	int				lastline;				// line before reading token
 	int				tokenavailable;			// set by unreadToken
-	const punctuation_t* punctuations;		// the punctuations used in the script
-	int* punctuationtable;		// ASCII table with punctuations
-	int* nextpunctuation;		// next punctuation in chain
+	const std::vector<punctuation_t>* punctuations;		// the punctuations used in the script
+	std::vector<int>* punctuationtable;		// ASCII table with punctuations
+	std::vector<int>* nextpunctuation;		// next punctuation in chain
 	idToken			token;					// available token
 private:
-	void			CreatePunctuationTable(const punctuation_t* punctuations);
+	void			CreatePunctuationTable(const std::vector<punctuation_t>& punctuations);
 	int				ReadWhiteSpace();
-	int				ReadString(idToken* token, int quote);
-	int				ReadName(idToken* token);
-	int				ReadNumber(idToken* token);
-	int				ReadPunctuation(idToken* token);
+	int				ReadString(gsl::not_null<idToken*> token, int quote);
+	int				ReadName(gsl::not_null<idToken*> token);
+	int				ReadNumber(gsl::not_null<idToken*> token);
+	int				ReadPunctuation(gsl::not_null<idToken*> token);
 };
 
 inline const int idLexer::GetFileOffset() {

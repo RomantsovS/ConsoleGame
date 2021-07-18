@@ -6,7 +6,7 @@
 ABSTRACT_DECLARATION(idClass, idEntity)
 END_CLASS
 
-void idGameEdit::ParseSpawnArgsToRenderEntity(const idDict* args, renderEntity_t* renderEntity) {
+void idGameEdit::ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args, renderEntity_t* renderEntity) {
 	memset(renderEntity, 0, sizeof(*renderEntity));
 
 	auto temp = args->GetString("model");
@@ -318,7 +318,6 @@ void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys) {
 }
 
 bool idEntity::RunPhysics() {
-	idEntity *part = nullptr;
 	bool moved;
 
 	// don't run physics if not enabled
@@ -333,7 +332,7 @@ bool idEntity::RunPhysics() {
 	const int startTime = gameLocal.previousTime;
 	const int endTime = gameLocal.time;
 
-	part = this;
+	gsl::not_null<idEntity*> part{ this };
 
 	// save the physics state of the whole team and disable the team for collision detection
 	if (part->physics) {

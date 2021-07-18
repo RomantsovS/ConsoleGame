@@ -195,14 +195,13 @@ Removes the node from the hierarchy and adds it's children to the parent.
 template< class type >
 void idHierarchy<type>::RemoveFromHierarchy() {
 	idHierarchy<type>* parentNode;
-	idHierarchy<type>* node;
 
 	parentNode = parent;
 	RemoveFromParent();
 
 	if (parentNode) {
 		while (child) {
-			node = child;
+			gsl::not_null<idHierarchy<type>*> node = child;
 			node->RemoveFromParent();
 			node->ParentTo(*parentNode);
 		}

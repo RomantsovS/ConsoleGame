@@ -138,7 +138,7 @@ idSWF::idSWFScriptFunction_shortcutKeys_clear::Call
 ===================
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_shortcutKeys_clear::Call(idSWFScriptObject* thisObject, const idSWFParmList& parms) {
-	idSWFScriptObject* object = pThis->shortcutKeys.get();
+	gsl::not_null<idSWFScriptObject*> object = pThis->shortcutKeys.get();
 	object->Clear();
 	//object->Set("clear", shared_from_this());
 	object->Set("JOY1", "ENTER");

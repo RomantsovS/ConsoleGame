@@ -63,7 +63,7 @@ std::shared_ptr<idMapBrush> idMapBrush::Parse(idLexer& src, const Vector2& origi
 		sides.push_back(side);
 
 		if (newFormat) {
-			if (!src.Parse1DMatrix(4, side->points.at(0).ToFloatPtr())) {
+			if (!src.Parse1DMatrix(4, gsl::span<float>{ side->points.at(0).ToFloatPtr(), 4 })) {
 				src.Error("idMapBrush::Parse: unable to read brush side definition");
 				sides.clear();
 				return nullptr;

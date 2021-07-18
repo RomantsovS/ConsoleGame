@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "tr_local.h"
 
@@ -27,8 +27,7 @@ idRenderWorldLocal::~idRenderWorldLocal() {
 	RB_ClearDebugText(0);
 }
 
-int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re)
-{
+int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re) {
 	// try and reuse a free spot
 	int entityHandle;
 
@@ -46,8 +45,7 @@ int idRenderWorldLocal::AddEntityDef(const renderEntity_t * re)
 	return entityHandle;
 }
 
-void idRenderWorldLocal::UpdateEntityDef(int entityHandle, const renderEntity_t * re)
-{
+void idRenderWorldLocal::UpdateEntityDef(int entityHandle, gsl::not_null<const renderEntity_t*> re) {
 	if (!re->hModel /*&& !re->callback*/) {
 		common->Error("idRenderWorld::UpdateEntityDef: NULL hModel");
 	}
@@ -118,8 +116,7 @@ void idRenderWorldLocal::FreeEntityDef(int entityHandle) {
 	entityDefs[entityHandle] = nullptr;
 }
 
-const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) const
-{
+const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) const {
 	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
 		common->Printf("idRenderWorld::GetRenderEntity: invalid handle %i [0, %i]\n" , entityHandle, entityDefs.size());
 		return nullptr;
@@ -146,8 +143,7 @@ void idRenderWorldLocal::RenderScene(const renderView_t* renderView)
 }
 
 bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start,
-	const Vector2& end, const float radius) const
-{
+	const Vector2& end, const float radius) const {
 	memset(&trace, 0, sizeof(trace));
 	trace.fraction = 1.0f;
 	trace.point = end;
@@ -171,8 +167,7 @@ bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const
 	return true;
 }
 
-void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t* area)
-{
+void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t* area) {
 	if (!def) {
 		common->Error("idRenderWorldLocal::AddEntityRefToArea: NULL def");
 		return;
@@ -200,8 +195,7 @@ void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal>
 	ref->areaPrev->areaNext = ref;
 }
 
-void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum)
-{
+void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum) {
 	if (nodeNum < 0) {
 		int areaNum = -1 - nodeNum;
 		auto area = &portalAreas[areaNum];
@@ -231,8 +225,7 @@ void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLoc
 	}
 }
 
-void idRenderWorldLocal::PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def)
-{
+void idRenderWorldLocal::PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def) {
 	if (areaNodes.empty())
 	{
 		return;

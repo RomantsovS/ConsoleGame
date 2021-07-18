@@ -34,7 +34,7 @@ public:
 	bool GetBool(const std::string& key, const bool defaultBool = false) const;
 	Vector2 GetVector(const std::string key, const std::string defaultString = "") const;
 
-	bool GetString(const std::string& key, const std::string& defaultString, std::string *out) const;
+	bool GetString(const std::string& key, const std::string& defaultString, gsl::not_null<std::string*> out) const;
 	bool GetInt(const std::string key, const std::string defaultString, int &out) const;
 	bool GetVector(const std::string key, std::string defaultString, Vector2 &out) const;
 

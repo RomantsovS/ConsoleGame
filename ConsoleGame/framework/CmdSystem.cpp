@@ -369,7 +369,6 @@ idCmdSystemLocal::ExecuteCommandBuffer
 */
 void idCmdSystemLocal::ExecuteCommandBuffer() {
 	int i;
-	char* text;
 	int quotes;
 
 	while (textLength) {
@@ -381,22 +380,22 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 		}*/
 
 		// find a \n or ; line break
-		text = (char*)textBuf;
+		gsl::not_null<gsl::zstring<>> text{ (char*)textBuf };
 
 		quotes = 0;
 		for (i = 0; i < textLength; i++) {
-			if (text[i] == '"') {
+			if (text.operator->()[i] == '"') {
 				quotes++;
 			}
-			if (!(quotes & 1) && text[i] == ';') {
+			if (!(quotes & 1) && text.operator->()[i] == ';') {
 				break;	// don't break if inside a quoted string
 			}
-			if (text[i] == '\n' || text[i] == '\r') {
+			if (text.operator->()[i] == '\n' || text.operator->()[i] == '\r') {
 				break;
 			}
 		}
 
-		text[i] = 0;
+		text.operator->()[i] = 0;
 
 		idCmdArgs args;
 
@@ -405,7 +404,7 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 			tokenizedCmds.RemoveIndex(0);
 		}
 		else {*/
-			args.TokenizeString(text, false);
+			args.TokenizeString(text.operator->(), false);
 		//}
 
 		// delete the text from the command buffer and move remaining commands down
@@ -418,7 +417,7 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 		else {
 			i++;
 			textLength -= i;
-			memmove(text, text + i, textLength);
+			memmove(text.operator->(), text.operator->() + i, textLength);
 		}
 
 		// execute the command line that we have already tokenized

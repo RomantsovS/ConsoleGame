@@ -476,9 +476,6 @@
     <ClCompile Include="cm\CollisionModel_contents.cpp">
       <Filter>CM</Filter>
     </ClCompile>
-    <ClCompile Include="cm\CollisionModel_files.cpp">
-      <Filter>CM</Filter>
-    </ClCompile>
     <ClCompile Include="cm\CollisionModel.cpp">
       <Filter>CM</Filter>
     </ClCompile>

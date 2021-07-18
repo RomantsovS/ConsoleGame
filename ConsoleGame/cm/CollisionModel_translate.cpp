@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "CollisionModel_local.h"
 
@@ -8,7 +8,7 @@
 CM_AddContact
 ================
 */
-void CM_AddContact(cm_traceWork_t* tw) {
+void CM_AddContact(gsl::not_null<cm_traceWork_t*> tw) {
 
 	if (tw->numContacts >= tw->maxContacts) {
 		return;

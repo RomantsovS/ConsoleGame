@@ -58,7 +58,7 @@ public:
 	idEvent();
 	~idEvent();
 
-	static std::shared_ptr<idEvent> Alloc(const idEventDef* evdef, int numargs, va_list args);
+	static std::shared_ptr<idEvent> Alloc(gsl::not_null<const idEventDef*> evdef, int numargs, va_list args);
 	//static void CopyArgs(const idEventDef* evdef, int numargs, va_list args, int data[D_EVENT_MAXARGS]);
 
 	void Free(bool setOwner = true);

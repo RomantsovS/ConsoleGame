@@ -146,7 +146,7 @@ public:
 	static void	Shutdown();
 	static idTypeInfo * GetClass(const std::string& name);
 private:
-	classSpawnFunc_t CallSpawnFunc(idTypeInfo *cls);
+	classSpawnFunc_t CallSpawnFunc(gsl::not_null<idTypeInfo*> cls);
 
 	bool PostEventArgs(const idEventDef* ev, int time, int numargs, ...);
 
@@ -204,9 +204,7 @@ passed in idTypeInfo.
 ================
 */
 inline bool idClass::IsType(const idTypeInfo& superclass) const {
-	idTypeInfo* subclass;
-
-	subclass = GetType();
+	gsl::not_null<idTypeInfo*> subclass = GetType();
 	return subclass->IsType(superclass);
 }
 

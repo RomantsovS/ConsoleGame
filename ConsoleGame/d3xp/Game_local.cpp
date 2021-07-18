@@ -180,7 +180,7 @@ merging the entitydef.  It could be done post-merge, but that would
 avoid the fast pre-cache check associated with each entityDef
 ===================
 */
-void idGameLocal::CacheDictionaryMedia(const idDict* dict) {
+void idGameLocal::CacheDictionaryMedia(gsl::not_null<const idDict*> dict) {
 	auto kv = dict->MatchPrefix("model");
 	//while (kv) {
 	if(kv) {
@@ -348,7 +348,7 @@ Runs a Think or a ClientThink for a player. Will write the client's
 position and firecount to the usercmd.
 ====================
 */
-void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, idPlayer* player) {
+void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> player) {
 
 	player->HandleUserCmds(cmd);
 

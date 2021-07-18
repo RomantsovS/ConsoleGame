@@ -21,7 +21,7 @@ private:
 
 	// parameters that define this image
 	std::string imgName; // game path, including extension (except for cube maps), may be an image program
-	void (*generatorFunction)(idImage* image) = nullptr;	// NULL for files
+	void (*generatorFunction)(gsl::not_null<idImage*> image) = nullptr;	// NULL for files
 
 	std::vector<ModelPixel> pixels;
 	int texnum = -1;
@@ -50,7 +50,7 @@ public:
 
 	// The callback will be issued immediately, and later if images are reloaded or vid_restart
 	// The callback function should call one of the idImage::Generate* functions to fill in the data
-	std::shared_ptr<idImage> ImageFromFunction(const std::string& name, void (*generatorFunction)(idImage* image));
+	std::shared_ptr<idImage> ImageFromFunction(const std::string& name, void (*generatorFunction)(gsl::not_null<idImage*> image));
 
 	// built-in images
 	void CreateIntrinsicImages();
