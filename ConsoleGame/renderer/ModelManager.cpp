@@ -7,7 +7,11 @@
 class idRenderModelManagerLocal : public idRenderModelManager {
 public:
 	idRenderModelManagerLocal();
-	virtual ~idRenderModelManagerLocal() {}
+	~idRenderModelManagerLocal() = default;
+	idRenderModelManagerLocal(const idRenderModelManagerLocal&) = default;
+	idRenderModelManagerLocal& operator=(const idRenderModelManagerLocal&) = default;
+	idRenderModelManagerLocal(idRenderModelManagerLocal&&) = default;
+	idRenderModelManagerLocal& operator=(idRenderModelManagerLocal&&) = default;
 
 	// registers console commands and clears the list
 	virtual void Init() override;

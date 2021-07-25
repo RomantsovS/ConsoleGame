@@ -11,13 +11,17 @@ public:
 	idSWFScriptFunction() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "idSWFScriptFunction");
-#endif // DEBUG_PRINT_Ctor_Dtor
+#endif // DEBUG_PRINT_Ctor_Dtor;
 	}
 	virtual ~idSWFScriptFunction() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "idSWFScriptFunction");
-#endif // DEBUG_PRINT_Ctor_Dtor
+#endif // DEBUG_PRINT_Ctor_Dtor;
 	};
+	idSWFScriptFunction(const idSWFScriptFunction&) = default;
+	idSWFScriptFunction& operator=(const idSWFScriptFunction&) = default;
+	idSWFScriptFunction(idSWFScriptFunction&&) = default;
+	idSWFScriptFunction& operator=(idSWFScriptFunction&&) = default;
 
 	virtual idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parm) { return idSWFScriptVar(); }; // this should never be hit
 };

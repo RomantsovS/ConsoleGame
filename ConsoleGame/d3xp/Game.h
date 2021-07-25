@@ -4,7 +4,12 @@
 class idGame
 {
 public:
-	virtual ~idGame() {}
+	idGame() = default;
+	virtual ~idGame() = default;
+	idGame(const idGame&) = default;
+	idGame& operator=(const idGame&) = default;
+	idGame(idGame&&) = default;
+	idGame& operator=(idGame&&) = default;
 
 	// Initialize the game for the first time.
 	virtual void Init() = 0;
@@ -47,10 +52,14 @@ public:
 
 extern idGame *game;
 
-class idGameEdit
-{
+class idGameEdit {
 public:
-	virtual ~idGameEdit() {}
+	idGameEdit() = default;
+	virtual ~idGameEdit() = default;
+	idGameEdit(const idGameEdit&) = default;
+	idGameEdit& operator=(const idGameEdit&) = default;
+	idGameEdit(idGameEdit&&) = default;
+	idGameEdit& operator=(idGameEdit&&) = default;
 
 	virtual void ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args, renderEntity_t *renderEntity);
 };

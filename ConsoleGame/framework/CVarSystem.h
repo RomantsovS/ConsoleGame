@@ -34,14 +34,18 @@ enum cvarFlags_t {
 class idCVar {
 public:
 	// Never use the default constructor.
-	idCVar() { /*assert(typeid(this) != typeid(idCVar));*/ }
+	idCVar() { assert(typeid(this) != typeid(idCVar)); }
 
 	// Always use one of the following constructors.
 	idCVar(const std::string &name, const std::string &value, int flags, const std::string &description);
 	idCVar(const std::string& name, const std::string& value, int flags, const std::string& description,
 		float valueMin, float valueMax);
 
-	virtual					~idCVar() {}
+	virtual ~idCVar() = default;
+	idCVar(const idCVar&) = default;
+	idCVar& operator=(const idCVar&) = default;
+	idCVar(idCVar&&) = default;
+	idCVar& operator=(idCVar&&) = default;
 
 	const std::string& GetName() const { return internalVar->name; }
 	std::string GetName() { return internalVar->name; }
@@ -113,7 +117,12 @@ inline idCVar::idCVar(const std::string& name, const std::string& value, int fla
 
 class idCVarSystem {
 public:
-	virtual					~idCVarSystem() {}
+	idCVarSystem() = default;
+	virtual ~idCVarSystem() = default;
+	idCVarSystem(const idCVarSystem&) = default;
+	idCVarSystem& operator=(const idCVarSystem&) = default;
+	idCVarSystem(idCVarSystem&&) = default;
+	idCVarSystem& operator=(idCVarSystem&&) = default;
 
 	virtual void			Init() = 0;
 	virtual void			Shutdown() = 0;

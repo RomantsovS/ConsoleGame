@@ -33,9 +33,13 @@ public:
 	bool isConvex; // true when model is convex
 public:
 	idTraceModel();
+	idTraceModel(const idTraceModel&) = default;
 	// axial bounding box
 	idTraceModel(const idBounds& boxBounds);
 	~idTraceModel();
+	idTraceModel& operator=(const idTraceModel&) = default;
+	idTraceModel(idTraceModel&&) = default;
+	idTraceModel& operator=(idTraceModel&&) = default;
 
 	// axial box
 	void SetupBox(const idBounds& boxBounds);
@@ -55,17 +59,14 @@ inline idTraceModel::idTraceModel() {
 }
 
 inline idTraceModel::idTraceModel(const idBounds& boxBounds) {
-
 	InitBox();
 	SetupBox(boxBounds);
 }
 
-inline idTraceModel::~idTraceModel()
-{
+inline idTraceModel::~idTraceModel() {
 }
 
-inline void idTraceModel::SetupBox(const idBounds& boxBounds)
-{
+inline void idTraceModel::SetupBox(const idBounds& boxBounds) {
 	int i;
 
 	if (type != TRM_BOX) {
@@ -100,8 +101,7 @@ inline void idTraceModel::SetupBox(const idBounds& boxBounds)
 	bounds = boxBounds;
 }
 
-inline bool idTraceModel::Compare(const idTraceModel& trm) const
-{
+inline bool idTraceModel::Compare(const idTraceModel& trm) const {
 	int i;
 
 	if (type != trm.type || numVerts != trm.numVerts) {
@@ -141,8 +141,7 @@ inline bool idTraceModel::operator!=(const idTraceModel& trm) const {
 	return !Compare(trm);
 }
 
-inline void idTraceModel::InitBox()
-{
+inline void idTraceModel::InitBox() {
 	//int i;
 
 	type = TRM_BOX;
@@ -206,6 +205,5 @@ inline void idTraceModel::InitBox()
 
 	//GenerateEdgeNormals();
 }
-
 
 #endif // ! TRACEMODEL_H

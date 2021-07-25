@@ -18,6 +18,9 @@ public:
 	explicit idClipModel(const idTraceModel& trm);
 	explicit idClipModel(const idClipModel& model);
 	~idClipModel();
+	idClipModel& operator=(const idClipModel&) = default;
+	idClipModel(idClipModel&&) = default;
+	idClipModel& operator=(idClipModel&&) = default;
 
 	bool LoadModel(const std::string&  name);
 	void LoadModel(const idTraceModel& trm, bool persistantThroughSave = true);
@@ -151,6 +154,10 @@ class idClip {
 public:
 	idClip();
 	~idClip();
+	idClip(const idClip&) = default;
+	idClip& operator=(const idClip&) = default;
+	idClip(idClip&&) = default;
+	idClip& operator=(idClip&&) = default;
 
 	void Init();
 	void Shutdown();

@@ -13,6 +13,10 @@ class idSWF : public std::enable_shared_from_this<idSWF> {
 public:
 	idSWF(const std::string& filename_);
 	~idSWF();
+	idSWF(const idSWF&) = default;
+	idSWF& operator=(const idSWF&) = default;
+	idSWF(idSWF&&) = default;
+	idSWF& operator=(idSWF&&) = default;
 
 	void Init();
 

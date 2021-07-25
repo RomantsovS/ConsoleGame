@@ -5,6 +5,10 @@ class idEditField {
 public:
 	idEditField();
 	~idEditField();
+	idEditField(const idEditField&) = default;
+	idEditField& operator=(const idEditField&) = default;
+	idEditField(idEditField&&) = default;
+	idEditField& operator=(idEditField&&) = default;
 
 	void Clear();
 	void CharEvent(int c);

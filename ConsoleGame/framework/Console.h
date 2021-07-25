@@ -16,7 +16,12 @@
 
 class idConsole {
 public:
-	virtual			~idConsole() {}
+	idConsole() = default;
+	virtual ~idConsole() = default;
+	idConsole(const idConsole&) = default;
+	idConsole& operator=(const idConsole&) = default;
+	idConsole(idConsole&&) = default;
+	idConsole& operator=(idConsole&&) = default;
 
 	virtual void	Init() = 0;
 	virtual void	Shutdown() = 0;

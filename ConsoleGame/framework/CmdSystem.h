@@ -24,7 +24,12 @@ using cmdFunction_t = void(*)(const idCmdArgs &args);
 
 class idCmdSystem {
 public:
-	virtual				~idCmdSystem() {}
+	idCmdSystem() = default;
+	virtual ~idCmdSystem() = default;
+	idCmdSystem(const idCmdSystem&) = default;
+	idCmdSystem& operator=(const idCmdSystem&) = default;
+	idCmdSystem(idCmdSystem&&) = default;
+	idCmdSystem& operator=(idCmdSystem&&) = default;
 
 	virtual void		Init() = 0;
 	virtual void		Shutdown() = 0;

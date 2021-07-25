@@ -18,6 +18,10 @@ struct clipSector_t {
 		common->DPrintf("%s dtor\n", "clipSector_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	clipSector_t(const clipSector_t&) = default;
+	clipSector_t& operator=(const clipSector_t&) = default;
+	clipSector_t(clipSector_t&&) = default;
+	clipSector_t& operator=(clipSector_t&&) = default;
 
 	int axis;		// -1 = leaf node
 	float dist;
@@ -37,6 +41,10 @@ struct clipLink_t {
 		common->DPrintf("%s dtor\n", "clipLink_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	clipLink_t(const clipLink_t&) = default;
+	clipLink_t& operator=(const clipLink_t&) = default;
+	clipLink_t(clipLink_t&&) = default;
+	clipLink_t& operator=(clipLink_t&&) = default;
 
 	idClipModel* clipModel;
 	clipSector_t* sector;
@@ -51,12 +59,15 @@ struct trmCache_t {
 		common->DPrintf("%s ctor\n", "trmCache_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
-
 	~trmCache_t() 	{
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "trmCache_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	trmCache_t(const trmCache_t&) = default;
+	trmCache_t& operator=(const trmCache_t&) = default;
+	trmCache_t(trmCache_t&&) = default;
+	trmCache_t& operator=(trmCache_t&&) = default;
 
 	std::shared_ptr<idTraceModel> trm;
 	int						refCount;
@@ -76,7 +87,8 @@ const static int TRACE_MODEL_SAVED = BIT(16);
 
 idClipModel::idClipModel() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s ctor\n", "idClipModel");
+	if (isCommonExists)
+		common->DPrintf("%s ctor\n", "idClipModel");
 #endif // DEBUG_PRINT_Ctor_Dtor
 
 	Init();
@@ -425,7 +437,8 @@ int idClipModel::GetTraceModelHashKey(const idTraceModel& trm)
 
 idClip::idClip() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s ctor\n", "idClip");
+	if(isCommonExists)
+		common->DPrintf("%s ctor\n", "idClip");
 #endif // DEBUG_PRINT_Ctor_Dtor
 
 	numClipSectors = 0;
@@ -434,16 +447,14 @@ idClip::idClip() {
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
-idClip::~idClip()
-{
+idClip::~idClip() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	if(isCommonExists)
 		common->DPrintf("%s dtor\n", "idClip");
 #endif // DEBUG_PRINT_Ctor_Dtor
 }
 
-void idClip::Init()
-{
+void idClip::Init() {
 	Vector2 size, maxSector = vec2_origin;
 
 	// clear clip sectors

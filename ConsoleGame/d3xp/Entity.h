@@ -47,8 +47,11 @@ public:
 	ABSTRACT_PROTOTYPE(idEntity);
 
 	idEntity();
-
 	virtual ~idEntity();
+	idEntity(const idEntity&) = default;
+	idEntity& operator=(const idEntity&) = default;
+	idEntity(idEntity&&) = default;
+	idEntity& operator=(idEntity&&) = default;
 
 	void Spawn();
 	
@@ -135,6 +138,10 @@ public:
 
 	idAnimatedEntity();
 	~idAnimatedEntity();
+	idAnimatedEntity(const idAnimatedEntity&) = default;
+	idAnimatedEntity& operator=(const idAnimatedEntity&) = default;
+	idAnimatedEntity(idAnimatedEntity&&) = default;
+	idAnimatedEntity& operator=(idAnimatedEntity&&) = default;
 
 	void Think() override;
 

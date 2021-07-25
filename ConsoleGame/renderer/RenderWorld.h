@@ -42,10 +42,14 @@ struct modelTrace_t {
 	int						jointNumber;		// md5 joint nearest to the hit triangle
 };
 
-class idRenderWorld
-{
+class idRenderWorld {
 public:
+	idRenderWorld() = default;
 	virtual ~idRenderWorld() = 0 {}
+	idRenderWorld(const idRenderWorld&) = default;
+	idRenderWorld& operator=(const idRenderWorld&) = default;
+	idRenderWorld(idRenderWorld&&) = default;
+	idRenderWorld& operator=(idRenderWorld&&) = default;
 
 	// The same render world can be reinitialized as often as desired
 	// a NULL or empty mapName will create an empty, single area world

@@ -18,6 +18,10 @@ public:
 
 	idWeapon();
 	virtual ~idWeapon();
+	idWeapon(const idWeapon&) = default;
+	idWeapon& operator=(const idWeapon&) = default;
+	idWeapon(idWeapon&&) = default;
+	idWeapon& operator=(idWeapon&&) = default;
 
 	// Init
 	void Spawn();

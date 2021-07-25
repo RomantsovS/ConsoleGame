@@ -5,6 +5,10 @@ class idEventLoop {
 public:
 	idEventLoop();
 	~idEventLoop();
+	idEventLoop(const idEventLoop&) = default;
+	idEventLoop& operator=(const idEventLoop&) = default;
+	idEventLoop(idEventLoop&&) = default;
+	idEventLoop& operator=(idEventLoop&&) = default;
 
 	void			Init();
 

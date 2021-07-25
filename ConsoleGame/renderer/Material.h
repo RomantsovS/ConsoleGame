@@ -11,6 +11,10 @@ class idMaterial : public idDecl {
 public:
 	idMaterial();
 	virtual ~idMaterial();
+	idMaterial(const idMaterial&) = default;
+	idMaterial& operator=(const idMaterial&) = default;
+	idMaterial(idMaterial&&) = default;
+	idMaterial& operator=(idMaterial&&) = default;
 
 	bool SetDefaultText() override;
 	std::string DefaultDefinition() const override;

@@ -17,6 +17,10 @@ class idCommonLocal : public idCommon
 public:
 	idCommonLocal();
 	~idCommonLocal();
+	idCommonLocal(const idCommonLocal&) = default;
+	idCommonLocal& operator=(const idCommonLocal&) = default;
+	idCommonLocal(idCommonLocal&&) = default;
+	idCommonLocal& operator=(idCommonLocal&&) = default;
 
 	void Init(int argc, const char * const * argv, const char *cmdline) override;
 	void Shutdown() override;

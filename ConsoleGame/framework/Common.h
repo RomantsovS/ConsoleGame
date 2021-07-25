@@ -13,10 +13,14 @@ inline int FRAME_TO_MSEC(long long frame) {
 extern idCVar com_allowConsole;
 extern idCVar com_showFPS;
 
-class idCommon
-{
+class idCommon {
 public:
-	virtual ~idCommon() {}
+	idCommon() = default;
+	virtual ~idCommon() = default;
+	idCommon(const idCommon&) = default;
+	idCommon& operator=(const idCommon&) = default;
+	idCommon(idCommon&&) = default;
+	idCommon& operator=(idCommon&&) = default;
 
 	// Initialize everything.
 	// if the OS allows, pass argc/argv directly (without executable name)

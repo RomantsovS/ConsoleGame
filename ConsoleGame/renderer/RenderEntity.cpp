@@ -3,9 +3,6 @@
 
 #include "tr_local.h"
 
-idRenderEntity::~idRenderEntity() {
-}
-
 idRenderEntityLocal::idRenderEntityLocal() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 	common->DPrintf("%s ctor\n", "idRenderEntityLocal");

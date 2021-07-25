@@ -6,6 +6,10 @@ class idRenderModelStatic : public idRenderModel
 public:
 	idRenderModelStatic();
 	virtual ~idRenderModelStatic();
+	idRenderModelStatic(const idRenderModelStatic&) = default;
+	idRenderModelStatic& operator=(const idRenderModelStatic&) = default;
+	idRenderModelStatic(idRenderModelStatic&&) = default;
+	idRenderModelStatic& operator=(idRenderModelStatic&&) = default;
 
 	void InitFromFile(std::string fileName) override;
 	bool LoadBinaryModel(idFile* file) override;

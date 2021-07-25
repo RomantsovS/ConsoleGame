@@ -31,7 +31,13 @@ enum class declState_t {
 
 class idDeclBase {
 public:
-	virtual ~idDeclBase() {};
+	idDeclBase() = default;
+	virtual ~idDeclBase() = default;
+	idDeclBase(const idDeclBase&) = default;
+	idDeclBase& operator=(const idDeclBase&) = default;
+	idDeclBase(idDeclBase&&) = default;
+	idDeclBase& operator=(idDeclBase&&) = default;
+
 	virtual const std::string& GetName() const = 0;
 	virtual int GetLineNum() const = 0;
 	virtual std::string GetFileName() const = 0;
@@ -48,8 +54,12 @@ class idDecl {
 public:
 	// The constructor should initialize variables such that
 	// an immediate call to FreeData() does no harm.
-	idDecl() { base.reset(); }
-	virtual ~idDecl() {};
+	idDecl() = default;
+	virtual ~idDecl() = default;
+	idDecl(const idDecl&) = default;
+	idDecl& operator=(const idDecl&) = default;
+	idDecl(idDecl&&) = default;
+	idDecl& operator=(idDecl&&) = default;
 
 	// Returns the name of the decl.
 	const std::string& GetName() const { return base.lock()->GetName(); }
@@ -102,7 +112,12 @@ class idMaterial;
 
 class idDeclManager {
 public:
-	virtual ~idDeclManager() {}
+	idDeclManager() = default;
+	virtual ~idDeclManager() = default;
+	idDeclManager(const idDeclManager&) = default;
+	idDeclManager& operator=(const idDeclManager&) = default;
+	idDeclManager(idDeclManager&&) = default;
+	idDeclManager& operator=(idDeclManager&&) = default;
 
 	virtual void Init() = 0;
 	virtual void Shutdown() = 0;

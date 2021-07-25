@@ -16,6 +16,9 @@ public:
 	idDict();
 	idDict(const idDict &other);
 	~idDict();
+	idDict& operator=(const idDict&) = default;
+	idDict(idDict&&) = default;
+	idDict& operator=(idDict&&) = default;
 
 	// copy key/value pairs from other dict not present in this dict
 	void SetDefaults(const idDict* dict);

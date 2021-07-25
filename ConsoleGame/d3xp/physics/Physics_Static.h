@@ -17,8 +17,12 @@ public:
 	CLASS_PROTOTYPE(idPhysics_Static);
 
 	idPhysics_Static();
-	
 	~idPhysics_Static();
+	idPhysics_Static(const idPhysics_Static&) = default;
+	idPhysics_Static& operator=(const idPhysics_Static&) = default;
+	idPhysics_Static(idPhysics_Static&&) = default;
+	idPhysics_Static& operator=(idPhysics_Static&&) = default;
+
 public:	// common physics interface
 	void SetSelf(std::shared_ptr<idEntity> e) override;
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;

@@ -1,10 +1,14 @@
 #ifndef MODEL_MANAGER_H
 #define MODEL_MANAGER_H
 
-class idRenderModelManager
-{
+class idRenderModelManager {
 public:
-	virtual ~idRenderModelManager() {}
+	idRenderModelManager() = default;
+	virtual ~idRenderModelManager() = default;
+	idRenderModelManager(const idRenderModelManager&) = default;
+	idRenderModelManager& operator=(const idRenderModelManager&) = default;
+	idRenderModelManager(idRenderModelManager&&) = default;
+	idRenderModelManager& operator=(idRenderModelManager&&) = default;
 
 	// registers console commands and clears the list
 	virtual	void Init() = 0;

@@ -13,11 +13,16 @@ struct searchpath_t {
 		common->DPrintf("%s ctor\n", "searchpath_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+
 	~searchpath_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		idLib::Printf("%s dtor\n", "searchpath_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	searchpath_t(const searchpath_t&) = default;
+	searchpath_t& operator=(const searchpath_t&) = default;
+	searchpath_t(searchpath_t&&) = default;
+	searchpath_t& operator=(searchpath_t&&) = default;
 
 	std::string	path;		// c:\doom
 	std::string gamedir;	// base
@@ -29,6 +34,10 @@ public:
 	~idFileSystemLocal() {
 		isFileSystemExists = false;
 	}
+	idFileSystemLocal(const idFileSystemLocal&) = default;
+	idFileSystemLocal& operator=(const idFileSystemLocal&) = default;
+	idFileSystemLocal(idFileSystemLocal&&) = default;
+	idFileSystemLocal& operator=(idFileSystemLocal&&) = default;
 
 	virtual void Init() override;
 	void Shutdown(bool reloading) override;

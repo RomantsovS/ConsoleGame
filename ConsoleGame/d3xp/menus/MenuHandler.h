@@ -56,13 +56,17 @@ struct actionRepeater_t {
 	actionRepeater_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "actionRepeater_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
+#endif DEBUG_PRINT_Ctor_Dtor
 	}
 	~actionRepeater_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "actionRepeater_t");
-#endif // DEBUG_PRINT_Ctor_Dtor
+#endif DEBUG_PRINT_Ctor_Dtor
 	}
+	actionRepeater_t(const actionRepeater_t&) = default;
+	actionRepeater_t& operator=(const actionRepeater_t&) = default;
+	actionRepeater_t(actionRepeater_t&&) = default;
+	actionRepeater_t& operator=(actionRepeater_t&&) = default;
 
 	idMenuWidget* widget = nullptr;
 	idWidgetEvent		event;
@@ -85,6 +89,11 @@ class idMenuHandler : public std::enable_shared_from_this<idMenuHandler> {
 public:
 	idMenuHandler();
 	virtual ~idMenuHandler();
+	idMenuHandler(const idMenuHandler&) = default;
+	idMenuHandler& operator=(const idMenuHandler&) = default;
+	idMenuHandler(idMenuHandler&&) = default;
+	idMenuHandler& operator=(idMenuHandler&&) = default;
+
 	virtual void Initialize(const std::string& filename);
 	virtual void Cleanup();
 	virtual void Update();

@@ -9,8 +9,11 @@ public:
 	CLASS_PROTOTYPE(idPhysics_Base);
 
 	idPhysics_Base();
-
 	~idPhysics_Base();
+	idPhysics_Base(const idPhysics_Base&) = default;
+	idPhysics_Base& operator=(const idPhysics_Base&) = default;
+	idPhysics_Base(idPhysics_Base&&) = default;
+	idPhysics_Base& operator=(idPhysics_Base&&) = default;
 
 public:	// common physics interface
 

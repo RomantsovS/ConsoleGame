@@ -8,6 +8,10 @@ public:
 
 	PlayerChain();
 	virtual ~PlayerChain();
+	PlayerChain(const PlayerChain&) = default;
+	PlayerChain& operator=(const PlayerChain&) = default;
+	PlayerChain(PlayerChain&&) = default;
+	PlayerChain& operator=(PlayerChain&&) = default;
 
 	void Spawn();
 	void Think() override;

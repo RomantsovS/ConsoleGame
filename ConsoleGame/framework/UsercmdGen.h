@@ -160,7 +160,12 @@ struct userCmdString_t {
 
 class idUsercmdGen {
 public:
-	virtual				~idUsercmdGen() {}
+	idUsercmdGen() = default;
+	virtual ~idUsercmdGen() = default;
+	idUsercmdGen(const idUsercmdGen&) = default;
+	idUsercmdGen& operator=(const idUsercmdGen&) = default;
+	idUsercmdGen(idUsercmdGen&&) = default;
+	idUsercmdGen& operator=(idUsercmdGen&&) = default;
 
 	// Sets up all the cvars and console commands.
 	virtual	void		Init() = 0;

@@ -24,8 +24,11 @@ class idRenderWorldLocal : public idRenderWorld, public std::enable_shared_from_
 {
 public:
 	idRenderWorldLocal();
-
 	virtual ~idRenderWorldLocal();
+	idRenderWorldLocal(const idRenderWorldLocal&) = default;
+	idRenderWorldLocal& operator=(const idRenderWorldLocal&) = default;
+	idRenderWorldLocal(idRenderWorldLocal&&) = default;
+	idRenderWorldLocal& operator=(idRenderWorldLocal&&) = default;
 
 	virtual	bool InitFromMap(const std::string &mapName) override;
 

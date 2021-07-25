@@ -42,6 +42,9 @@ public:
 	idToken();
 	idToken(const idToken& token);
 	~idToken();
+	idToken& operator=(const idToken&) = default;
+	idToken(idToken&&) = default;
+	idToken& operator=(idToken&&) = default;
 
 	double			GetDoubleValue();				// double value of TT_NUMBER
 	float			GetFloatValue();				// float value of TT_NUMBER

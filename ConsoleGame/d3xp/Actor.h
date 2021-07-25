@@ -11,8 +11,11 @@ public:
 	CLASS_PROTOTYPE(idActor);
 
 	idActor();
-
 	virtual ~idActor() override;
+	idActor(const idActor&) = default;
+	idActor& operator=(const idActor&) = default;
+	idActor(idActor&&) = default;
+	idActor& operator=(idActor&&) = default;
 
 	void Spawn();
 	

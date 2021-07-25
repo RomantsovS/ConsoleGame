@@ -7,8 +7,11 @@ public:
 	CLASS_PROTOTYPE(idAI);
 
 	idAI();
-
 	virtual ~idAI() override;
+	idAI(const idAI&) = default;
+	idAI& operator=(const idAI&) = default;
+	idAI(idAI&&) = default;
+	idAI& operator=(idAI&&) = default;
 
 	void Spawn();
 	virtual void Think() override;
@@ -26,8 +29,11 @@ public:
 	CLASS_PROTOTYPE(AISimple);
 
 	AISimple();
-
 	virtual ~AISimple() override;
+	AISimple(const AISimple&) = default;
+	AISimple& operator=(const AISimple&) = default;
+	AISimple(AISimple&&) = default;
+	AISimple& operator=(AISimple&&) = default;
 
 	void Spawn();
 	virtual void Think() override;

@@ -17,11 +17,16 @@ public:
 	idDict					epairs;
 
 	idMapPrimitive() { type = TYPE_INVALID; }
-	virtual					~idMapPrimitive() { }
-	int						GetType() const { return type; }
+	virtual ~idMapPrimitive() = default;
+	idMapPrimitive(const idMapPrimitive&) = default;
+	idMapPrimitive& operator=(const idMapPrimitive&) = default;
+	idMapPrimitive(idMapPrimitive&&) = default;
+	idMapPrimitive& operator=(idMapPrimitive&&) = default;
+
+	int GetType() const { return type; }
 
 protected:
-	int						type;
+	int type;
 };
 
 class idMapBrushSide {
@@ -29,7 +34,12 @@ class idMapBrushSide {
 
 public:
 	idMapBrushSide();
-	~idMapBrushSide() { }
+	virtual ~idMapBrushSide() = default;
+	idMapBrushSide(const idMapBrushSide&) = default;
+	idMapBrushSide& operator=(const idMapBrushSide&) = default;
+	idMapBrushSide(idMapBrushSide&&) = default;
+	idMapBrushSide& operator=(idMapBrushSide&&) = default;
+
 	/*const char* GetMaterial() const { return material; }
 	void					SetMaterial(const char* p) { material = p; }
 	const idPlane& GetPlane() const { return plane; }
@@ -60,6 +70,11 @@ class idMapBrush : public idMapPrimitive {
 public:
 	idMapBrush() { type = TYPE_BRUSH; sides.reserve(8); }
 	~idMapBrush() { sides.clear(); }
+	idMapBrush(const idMapBrush&) = default;
+	idMapBrush& operator=(const idMapBrush&) = default;
+	idMapBrush(idMapBrush&&) = default;
+	idMapBrush& operator=(idMapBrush&&) = default;
+
 	static std::shared_ptr<idMapBrush> Parse(idLexer& src, const Vector2& origin, bool newFormat = true, float version = CURRENT_MAP_VERSION);
 	//bool					Write(idFile* fp, int primitiveNum, const Vector2& origin) const;
 	int						GetNumSides() const { return sides.size(); }
@@ -79,8 +94,13 @@ public:
 	idDict					epairs;
 
 public:
-	idMapEntity() {  }
+	idMapEntity() = default;
 	~idMapEntity() { primitives.clear(); }
+	idMapEntity(const idMapEntity&) = default;
+	idMapEntity& operator=(const idMapEntity&) = default;
+	idMapEntity(idMapEntity&&) = default;
+	idMapEntity& operator=(idMapEntity&&) = default;
+
 	static std::shared_ptr<idMapEntity> Parse(idLexer& src, bool worldSpawn = false, float version = CURRENT_MAP_VERSION);
 	//bool					Write(idFile* fp, int entityNum) const;
 	int						GetNumPrimitives() const { return primitives.size(); }
@@ -97,6 +117,10 @@ class idMapFile {
 public:
 	idMapFile();
 	~idMapFile() { entities.clear(); }
+	idMapFile(const idMapFile&) = default;
+	idMapFile& operator=(const idMapFile&) = default;
+	idMapFile(idMapFile&&) = default;
+	idMapFile& operator=(idMapFile&&) = default;
 
 	// filename does not require an extension
 	// normally this will use a .reg file instead of a .map file if it exists,

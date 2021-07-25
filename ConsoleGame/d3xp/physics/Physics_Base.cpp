@@ -19,17 +19,14 @@ void idPhysics_Base::SetSelf(std::shared_ptr<idEntity> e) {
 	self = e;
 }
 
-void idPhysics_Base::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
-{
+void idPhysics_Base::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) {
 }
 
-std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const
-{
+std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const {
 	return nullptr;
 }
 
-int idPhysics_Base::GetNumClipModels() const
-{
+int idPhysics_Base::GetNumClipModels() const {
 	return 0;
 }
 

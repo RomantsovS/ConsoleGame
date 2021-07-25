@@ -11,9 +11,6 @@ idSessionLocalWin::idSessionLocalWin
 */
 class idSessionLocalWin : public idSessionLocal {
 public:
-	idSessionLocalWin() {}
-	virtual ~idSessionLocalWin() {}
-
 	// idSessionLocal interface
 	virtual void Initialize() override;
 	virtual void Shutdown() override;

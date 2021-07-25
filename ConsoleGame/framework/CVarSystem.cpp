@@ -18,6 +18,10 @@ public:
 	idInternalCVar(const std::string& newName, const std::string& newValue, int newFlags);
 	idInternalCVar(gsl::not_null<const idCVar*> cvar);
 	virtual ~idInternalCVar();
+	idInternalCVar(const idInternalCVar&) = default;
+	idInternalCVar& operator=(const idInternalCVar&) = default;
+	idInternalCVar(idInternalCVar&&) = default;
+	idInternalCVar& operator=(idInternalCVar&&) = default;
 
 	//const char** CopyValueStrings(const char** strings);
 	void Update(gsl::not_null<const idCVar*> cvar);
@@ -339,8 +343,11 @@ void idInternalCVar::InternalSetFloat(const float newValue) {
 class idCVarSystemLocal : public idCVarSystem {
 public:
 	idCVarSystemLocal();
-
-	virtual ~idCVarSystemLocal() {}
+	virtual ~idCVarSystemLocal() = default;
+	idCVarSystemLocal(const idCVarSystemLocal&) = default;
+	idCVarSystemLocal& operator=(const idCVarSystemLocal&) = default;
+	idCVarSystemLocal(idCVarSystemLocal&&) = default;
+	idCVarSystemLocal& operator=(idCVarSystemLocal&&) = default;
 
 	void Init() override;
 	void Shutdown() override;

@@ -7,6 +7,10 @@ class idSWFSpriteInstance : public std::enable_shared_from_this<idSWFSpriteInsta
 public:
 	idSWFSpriteInstance(std::shared_ptr<idSWF> _swf);
 	~idSWFSpriteInstance();
+	idSWFSpriteInstance(const idSWFSpriteInstance&) = default;
+	idSWFSpriteInstance& operator=(const idSWFSpriteInstance&) = default;
+	idSWFSpriteInstance(idSWFSpriteInstance&&) = default;
+	idSWFSpriteInstance& operator=(idSWFSpriteInstance&&) = default;
 
 	void Init();
 

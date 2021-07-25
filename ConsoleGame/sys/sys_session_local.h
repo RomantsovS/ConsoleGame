@@ -35,7 +35,11 @@ protected:
 
 public:
 	idSessionLocal();
-	virtual ~idSessionLocal();
+	virtual ~idSessionLocal() = default;
+	idSessionLocal(const idSessionLocal&) = default;
+	idSessionLocal& operator=(const idSessionLocal&) = default;
+	idSessionLocal(idSessionLocal&&) = default;
+	idSessionLocal& operator=(idSessionLocal&&) = default;
 
 	void InitBaseState();
 

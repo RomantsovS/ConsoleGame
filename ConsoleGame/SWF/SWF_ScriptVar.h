@@ -23,6 +23,8 @@ public:
 	~idSWFScriptVar();
 
 	idSWFScriptVar& operator=(const idSWFScriptVar& other);
+	idSWFScriptVar(idSWFScriptVar&&) = default;
+	idSWFScriptVar& operator=(idSWFScriptVar&&) = default;
 
 	void SetString(const std::string& s) {
 		Free();
@@ -82,6 +84,10 @@ private:
 				function = other.function;
 			}return *this;
 		}
+
+		idSWFScriptVarValue_t(const idSWFScriptVarValue_t&) = default;
+		idSWFScriptVarValue_t(idSWFScriptVarValue_t&&) = default;
+		idSWFScriptVarValue_t& operator=(idSWFScriptVarValue_t&&) = default;
 
 		float f;
 		int i;

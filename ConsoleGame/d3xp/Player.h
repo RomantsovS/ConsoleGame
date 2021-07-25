@@ -11,6 +11,10 @@ public:
 
 	idPlayer();
 	virtual ~idPlayer();
+	idPlayer(const idPlayer&) = default;
+	idPlayer& operator=(const idPlayer&) = default;
+	idPlayer(idPlayer&&) = default;
+	idPlayer& operator=(idPlayer&&) = default;
 
 	void Spawn();
 	void Think() override;

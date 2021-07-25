@@ -124,7 +124,12 @@ class idClass
 public:
 	ABSTRACT_PROTOTYPE(idClass);
 	
+	idClass() = default;
 	virtual ~idClass();
+	idClass(const idClass&) = default;
+	idClass& operator=(const idClass&) = default;
+	idClass(idClass&&) = default;
+	idClass& operator=(idClass&&) = default;
 
 	void Spawn();
 	void CallSpawn();
@@ -176,6 +181,11 @@ public:
 		std::shared_ptr<idClass> (*CreateInstance)(), void (idClass::*Spawn)());
 	
 	~idTypeInfo();
+	idTypeInfo(const idTypeInfo&) = default;
+	idTypeInfo& operator=(const idTypeInfo&) = default;
+	idTypeInfo(idTypeInfo&&) = default;
+	idTypeInfo& operator=(idTypeInfo&&) = default;
+
 
 	void Init();
 	void Shutdown();

@@ -20,7 +20,12 @@ enum dynamicModel_t {
 
 class idRenderModel {
 public:	
-	virtual ~idRenderModel() {}
+	idRenderModel() = default;
+	virtual ~idRenderModel() = default;
+	idRenderModel(const idRenderModel&) = default;
+	idRenderModel& operator=(const idRenderModel&) = default;
+	idRenderModel(idRenderModel&&) = default;
+	idRenderModel& operator=(idRenderModel&&) = default;
 
 	// Loads static models only, dynamic models must be loaded by the modelManager
 	virtual void				InitFromFile(std::string fileName) = 0;

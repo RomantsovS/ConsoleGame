@@ -31,9 +31,6 @@ void idRenderSystemLocal::RenderCommandBuffers() {
 	}
 }
 
-idRenderSystem::idRenderSystem() {
-}
-
 idRenderSystem::~idRenderSystem() {
 }
 

@@ -12,7 +12,12 @@ public:
 
 	enum directions { LEFT, RIGHT, UP, DOWN };
 
+	idPhysics() = default;
 	virtual ~idPhysics() = 0;
+	idPhysics(const idPhysics&) = default;
+	idPhysics& operator=(const idPhysics&) = default;
+	idPhysics(idPhysics&&) = default;
+	idPhysics& operator=(idPhysics&&) = default;
 public: // common physics interface
 	// set pointer to entity using physics
 	virtual void SetSelf(std::shared_ptr<idEntity> e) = 0;

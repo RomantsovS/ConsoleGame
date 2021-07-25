@@ -14,9 +14,6 @@ Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
 
-Screen::~Screen() {
-}
-
 void Screen::init() {
 	if (h_console_std_out == INVALID_HANDLE_VALUE)
 		common->FatalError("Bad h_console_std_out");

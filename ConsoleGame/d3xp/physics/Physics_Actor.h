@@ -20,7 +20,11 @@ public:
 
 	idPhysics_Actor();
 	~idPhysics_Actor();
-	
+	idPhysics_Actor(const idPhysics_Actor&) = default;
+	idPhysics_Actor& operator=(const idPhysics_Actor&) = default;
+	idPhysics_Actor(idPhysics_Actor&&) = default;
+	idPhysics_Actor& operator=(idPhysics_Actor&&) = default;
+
 	// align the clip model with the gravity direction
 	void SetClipModelAxis();
 public:	// common physics interface

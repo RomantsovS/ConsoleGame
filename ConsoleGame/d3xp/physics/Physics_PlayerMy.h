@@ -30,6 +30,10 @@ public:
 
 	Physics_PlayerMy();
 	~Physics_PlayerMy();
+	Physics_PlayerMy(const Physics_PlayerMy&) = default;
+	Physics_PlayerMy& operator=(const Physics_PlayerMy&) = default;
+	Physics_PlayerMy(Physics_PlayerMy&&) = default;
+	Physics_PlayerMy& operator=(Physics_PlayerMy&&) = default;
 
 	// initialisation
 	const Vector2& PlayerGetOrigin() const;	// != GetOrigin

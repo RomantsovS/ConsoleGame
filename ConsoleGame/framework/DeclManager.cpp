@@ -23,7 +23,12 @@ class idDeclLocal : public idDeclBase, public std::enable_shared_from_this<idDec
 
 public:
 	idDeclLocal();
-	virtual ~idDeclLocal() {};
+	virtual ~idDeclLocal() = default;
+	idDeclLocal(const idDeclLocal&) = default;
+	idDeclLocal& operator=(const idDeclLocal&) = default;
+	idDeclLocal(idDeclLocal&&) = default;
+	idDeclLocal& operator=(idDeclLocal&&) = default;
+
 	const std::string& GetName() const override;
 	int GetLineNum() const override;
 	std::string GetFileName() const override;

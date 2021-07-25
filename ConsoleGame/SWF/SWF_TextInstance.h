@@ -14,7 +14,11 @@ public:
 		visible(false) {
 		swf.reset();
 	}
-	~idSWFTextInstance() {}
+	~idSWFTextInstance() = default;
+	idSWFTextInstance(const idSWFTextInstance&) = default;
+	idSWFTextInstance& operator=(const idSWFTextInstance&) = default;
+	idSWFTextInstance(idSWFTextInstance&&) = default;
+	idSWFTextInstance& operator=(idSWFTextInstance&&) = default;
 
 	void Init(std::shared_ptr<idSWF> _gui);
 

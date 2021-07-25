@@ -15,7 +15,11 @@ A controller user references an input device (which is a gamepad, keyboard, etc)
 class idLocalUser {
 public:
 	idLocalUser();
-	virtual ~idLocalUser() {}
+	virtual ~idLocalUser() = default;
+	idLocalUser(const idLocalUser&) = default;
+	idLocalUser& operator=(const idLocalUser&) = default;
+	idLocalUser(idLocalUser&&) = default;
+	idLocalUser& operator=(idLocalUser&&) = default;
 
 	void Pump();
 

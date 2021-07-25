@@ -40,8 +40,11 @@ public:
 
 	Screen() = default;
 	Screen(pos_type ht, pos_type wd, Pixel back);
-
-	~Screen();
+	~Screen() = default;
+	Screen(const Screen&) = default;
+	Screen& operator=(const Screen&) = default;
+	Screen(Screen&&) = default;
+	Screen& operator=(Screen&&) = default;
 
 	void init();
 

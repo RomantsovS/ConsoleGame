@@ -18,8 +18,14 @@ class idMultiModelAF : public idEntity {
 public:
 	CLASS_PROTOTYPE(idMultiModelAF);
 
-	void Spawn();
+	idMultiModelAF() = default;
 	~idMultiModelAF();
+	idMultiModelAF(const idMultiModelAF&) = default;
+	idMultiModelAF& operator=(const idMultiModelAF&) = default;
+	idMultiModelAF(idMultiModelAF&&) = default;
+	idMultiModelAF& operator=(idMultiModelAF&&) = default;
+
+	void Spawn();
 
 	virtual void Think() override;
 	virtual void Present() override;

@@ -13,6 +13,10 @@ public:
 
 	idMenuScreen();
 	virtual ~idMenuScreen();
+	idMenuScreen(const idMenuScreen&) = default;
+	idMenuScreen& operator=(const idMenuScreen&) = default;
+	idMenuScreen(idMenuScreen&&) = default;
+	idMenuScreen& operator=(idMenuScreen&&) = default;
 
 	virtual void Update() override;
 	virtual void UpdateCmds();

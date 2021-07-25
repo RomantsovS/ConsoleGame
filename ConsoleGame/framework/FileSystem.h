@@ -29,7 +29,13 @@ class idFile;
 
 class idFileSystem {
 public:
-	virtual ~idFileSystem() {}
+	idFileSystem() = default;
+	virtual ~idFileSystem() = default;
+	idFileSystem(const idFileSystem&) = default;
+	idFileSystem& operator=(const idFileSystem&) = default;
+	idFileSystem(idFileSystem&&) = default;
+	idFileSystem& operator=(idFileSystem&&) = default;
+
 	// Initializes the file system.
 	virtual void Init() = 0;
 	// Shutdown the file system.

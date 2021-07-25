@@ -13,7 +13,12 @@ class idWorldspawn : public idEntity {
 public:
 	CLASS_PROTOTYPE(idWorldspawn);
 
+	idWorldspawn() = default;
 	~idWorldspawn();
+	idWorldspawn(const idWorldspawn&) = default;
+	idWorldspawn& operator=(const idWorldspawn&) = default;
+	idWorldspawn(idWorldspawn&&) = default;
+	idWorldspawn& operator=(idWorldspawn&&) = default;
 
 	void Spawn();
 

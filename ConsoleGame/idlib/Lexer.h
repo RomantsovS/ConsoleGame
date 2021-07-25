@@ -81,6 +81,11 @@ public:
 	idLexer(int flags);
 	// destructor
 	~idLexer();
+	idLexer(const idLexer&) = default;
+	idLexer& operator=(const idLexer&) = default;
+	idLexer(idLexer&&) = default;
+	idLexer& operator=(idLexer&&) = default;
+
 	// load a script from the given file at the given offset with the given length
 	int LoadFile(const std::string& filename, bool OSPath = false);
 	// load a script from the given memory with the given length and a specified line offset,

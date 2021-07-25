@@ -41,7 +41,12 @@ extern Vector2 vec2_point_size;
 
 class idCollisionModelManager {
 public:
-	virtual ~idCollisionModelManager() {}
+	idCollisionModelManager() = default;
+	virtual ~idCollisionModelManager() = default;
+	idCollisionModelManager(const idCollisionModelManager&) = default;
+	idCollisionModelManager& operator=(const idCollisionModelManager&) = default;
+	idCollisionModelManager(idCollisionModelManager&&) = default;
+	idCollisionModelManager& operator=(idCollisionModelManager&&) = default;
 
 	// Loads collision models from a map file.
 	virtual void			LoadMap(const idMapFile* mapFile) = 0;

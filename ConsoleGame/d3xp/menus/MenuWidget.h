@@ -185,6 +185,9 @@ public:
 		scriptFunction = src.scriptFunction;
 	}
 
+	idWidgetAction(idWidgetAction&&) = default;
+	idWidgetAction& operator=(idWidgetAction&&) = default;
+
 	bool operator==(const idWidgetAction& otherAction) const {
 		if (GetType() != otherAction.GetType()
 			|| GetParms().size() != otherAction.GetParms().size()) {
@@ -269,6 +272,11 @@ public:
 #endif // DEBUG_PRINT_Ctor_Dtor
 		}
 
+		WrapWidgetSWFEvent(const WrapWidgetSWFEvent&) = default;
+		WrapWidgetSWFEvent& operator=(const WrapWidgetSWFEvent&) = default;
+		WrapWidgetSWFEvent(WrapWidgetSWFEvent&&) = default;
+		WrapWidgetSWFEvent& operator=(WrapWidgetSWFEvent&&) = default;
+
 		idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parms) override {
 			targetWidget.lock()->ReceiveEvent(idWidgetEvent(targetEvent, targetEventArg, thisObject, parms));
 			return idSWFScriptVar();
@@ -290,8 +298,11 @@ public:
 	};
 
 	idMenuWidget();
-
 	virtual ~idMenuWidget();
+	idMenuWidget(const idMenuWidget&) = default;
+	idMenuWidget& operator=(const idMenuWidget&) = default;
+	idMenuWidget(idMenuWidget&&) = default;
+	idMenuWidget& operator=(idMenuWidget&&) = default;
 
 	void Cleanup();
 
@@ -389,10 +400,13 @@ with standard button behavior.
 */
 class idMenuWidget_Button : public idMenuWidget {
 public:
-	idMenuWidget_Button() {
-	}
+	idMenuWidget_Button() = default;
+	~idMenuWidget_Button() = default;
+	idMenuWidget_Button(const idMenuWidget_Button&) = default;
+	idMenuWidget_Button& operator=(const idMenuWidget_Button&) = default;
+	idMenuWidget_Button(idMenuWidget_Button&&) = default;
+	idMenuWidget_Button& operator=(idMenuWidget_Button&&) = default;
 
-	virtual ~idMenuWidget_Button() {}
 	virtual bool ExecuteEvent(const idWidgetEvent& event);
 	virtual void Update() override;
 
@@ -593,6 +607,10 @@ public:
 		common->DPrintf("%s dtor\n", "idWidgetActionHandler");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	idWidgetActionHandler(const idWidgetActionHandler&) = default;
+	idWidgetActionHandler& operator=(const idWidgetActionHandler&) = default;
+	idWidgetActionHandler(idWidgetActionHandler&&) = default;
+	idWidgetActionHandler& operator=(idWidgetActionHandler&&) = default;
 
 	idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parms) {
 

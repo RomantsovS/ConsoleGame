@@ -16,6 +16,10 @@ struct commandDef_t {
 			common->DPrintf("%s dtor\n", "commandDef_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	commandDef_t(const commandDef_t&) = default;
+	commandDef_t& operator=(const commandDef_t&) = default;
+	commandDef_t(commandDef_t&&) = default;
+	commandDef_t& operator=(commandDef_t&&) = default;
 
 	std::shared_ptr<commandDef_t> next;
 	std::string name;

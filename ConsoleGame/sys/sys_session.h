@@ -35,9 +35,12 @@ public:
 		MAX_STATES
 	};
 
-	idSession() {}
-
-	virtual ~idSession();
+	idSession() = default;
+	virtual ~idSession() {}
+	idSession(const idSession&) = default;
+	idSession& operator=(const idSession&) = default;
+	idSession(idSession&&) = default;
+	idSession& operator=(idSession&&) = default;
 
 	virtual void Initialize() = 0;
 	virtual void Shutdown() = 0;

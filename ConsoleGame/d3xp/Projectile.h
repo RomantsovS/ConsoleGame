@@ -7,6 +7,10 @@ public:
 
 	idProjectile();
 	virtual ~idProjectile();
+	idProjectile(const idProjectile&) = default;
+	idProjectile& operator=(const idProjectile&) = default;
+	idProjectile(idProjectile&&) = default;
+	idProjectile& operator=(idProjectile&&) = default;
 
 	void Spawn();
 

@@ -41,6 +41,10 @@ public:
 
 	Physics_PlayerChain();
 	~Physics_PlayerChain();
+	Physics_PlayerChain(const Physics_PlayerChain&) = default;
+	Physics_PlayerChain& operator=(const Physics_PlayerChain&) = default;
+	Physics_PlayerChain(Physics_PlayerChain&&) = default;
+	Physics_PlayerChain& operator=(Physics_PlayerChain&&) = default;
 
 	// initialisation
 	const Vector2& PlayerGetOrigin() const;	// != GetOrigin

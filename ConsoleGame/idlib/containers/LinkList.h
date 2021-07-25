@@ -44,6 +44,10 @@ class idLinkList {
 public:
 	idLinkList();
 	virtual ~idLinkList();
+	idLinkList(const idLinkList&) = default;
+	idLinkList& operator=(const idLinkList&) = default;
+	idLinkList(idLinkList&&) = default;
+	idLinkList& operator=(idLinkList&&) = default;
 
 	bool				IsListEmpty() const;
 	bool				InList() const;

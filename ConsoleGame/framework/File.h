@@ -8,6 +8,11 @@ class idFile {
 public:
 	idFile();
 	virtual ~idFile();
+	idFile(const idFile&) = default;
+	idFile& operator=(const idFile&) = default;
+	idFile(idFile&&) = default;
+	idFile& operator=(idFile&&) = default;
+
 	// Get the full file path.
 	virtual const std::string GetFullPath() const;
 	// Read data from the file to the buffer.
@@ -37,6 +42,10 @@ class idFile_Permanent : public idFile {
 public:
 	idFile_Permanent(const std::string &file_name, std::ios_base::openmode ios_mode);
 	virtual ~idFile_Permanent();
+	idFile_Permanent(const idFile_Permanent&) = default;
+	idFile_Permanent& operator=(const idFile_Permanent&) = default;
+	idFile_Permanent(idFile_Permanent&&) = default;
+	idFile_Permanent& operator=(idFile_Permanent&&) = default;
 
 	virtual int Read(void* buffer, int len) override;
 	virtual int Write(const void* buffer, int len) override;
@@ -71,6 +80,10 @@ public:
 
 	// Destructor that will destroy (close) the file when this wrapper class goes out of scope.
 	~idFileLocal();
+	idFileLocal(const idFileLocal&) = default;
+	idFileLocal& operator=(const idFileLocal&) = default;
+	idFileLocal(idFileLocal&&) = default;
+	idFileLocal& operator=(idFileLocal&&) = default;
 
 	// Cast to a file pointer.
 	operator idFile* () const {

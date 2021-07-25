@@ -43,6 +43,10 @@ public:
 
 	idHierarchy();
 	~idHierarchy();
+	idHierarchy(const idHierarchy&) = default;
+	idHierarchy& operator=(const idHierarchy&) = default;
+	idHierarchy(idHierarchy&&) = default;
+	idHierarchy& operator=(idHierarchy&&) = default;
 
 	void				SetOwner(type* object);
 	type* Owner() const;

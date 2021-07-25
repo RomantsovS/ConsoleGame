@@ -74,6 +74,10 @@ struct cm_model_t {
 			common->DPrintf("%s dtor\n", "cm_model_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	cm_model_t(const cm_model_t&) = default;
+	cm_model_t& operator=(const cm_model_t&) = default;
+	cm_model_t(cm_model_t&&) = default;
+	cm_model_t& operator=(cm_model_t&&) = default;
 
 	std::string					name{};				// model name
 	idBounds				bounds{};				// model bounds
@@ -139,6 +143,10 @@ struct cm_traceWork_t {
 			common->DPrintf("%s ctor\n", "cm_traceWork_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	cm_traceWork_t(const cm_traceWork_t&) = default;
+	cm_traceWork_t& operator=(const cm_traceWork_t&) = default;
+	cm_traceWork_t(cm_traceWork_t&&) = default;
+	cm_traceWork_t& operator=(cm_traceWork_t&&) = default;
 
 	int numVerts;
 	cm_trmVertex_t vertices[MAX_TRACEMODEL_VERTS];	// trm vertices

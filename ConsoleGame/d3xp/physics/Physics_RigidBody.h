@@ -45,6 +45,10 @@ public:
 
 	idPhysics_RigidBody();
 	~idPhysics_RigidBody();
+	idPhysics_RigidBody(const idPhysics_RigidBody&) = default;
+	idPhysics_RigidBody& operator=(const idPhysics_RigidBody&) = default;
+	idPhysics_RigidBody(idPhysics_RigidBody&&) = default;
+	idPhysics_RigidBody& operator=(idPhysics_RigidBody&&) = default;
 
 public:	// common physics interface
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;

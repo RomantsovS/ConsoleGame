@@ -9,8 +9,7 @@ struct viewEntity_t;
 struct portalArea_t;
 
 // areas have references to hold all the lights and entities in them
-struct areaReference_t
-{
+struct areaReference_t {
 	areaReference_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		idLib::Printf("%s ctor\n", "areaReference_t");
@@ -21,6 +20,10 @@ struct areaReference_t
 		idLib::Printf("%s dtor\n", "areaReference_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	areaReference_t(const areaReference_t&) = default;
+	areaReference_t& operator=(const areaReference_t&) = default;
+	areaReference_t(areaReference_t&&) = default;
+	areaReference_t& operator=(areaReference_t&&) = default;
 
 	std::shared_ptr<areaReference_t> areaNext;				// chain in the area
 	std::shared_ptr<areaReference_t> areaPrev;
@@ -32,7 +35,12 @@ struct areaReference_t
 class idRenderEntity
 {
 public:
-	virtual ~idRenderEntity();
+	idRenderEntity() = default;
+	virtual ~idRenderEntity() = default;
+	idRenderEntity(const idRenderEntity&) = default;
+	idRenderEntity& operator=(const idRenderEntity&) = default;
+	idRenderEntity(idRenderEntity&&) = default;
+	idRenderEntity& operator=(idRenderEntity&&) = default;
 
 	/*virtual void FreeRenderEntity() = 0;
 	virtual void UpdateRenderEntity(const renderEntity_s *re, bool forceUpdate = false) = 0;
@@ -45,8 +53,11 @@ class idRenderEntityLocal : public idRenderEntity
 {
 public:
 	idRenderEntityLocal();
-
 	~idRenderEntityLocal();
+	idRenderEntityLocal(const idRenderEntityLocal&) = default;
+	idRenderEntityLocal& operator=(const idRenderEntityLocal&) = default;
+	idRenderEntityLocal(idRenderEntityLocal&&) = default;
+	idRenderEntityLocal& operator=(idRenderEntityLocal&&) = default;
 
 	/*virtual void FreeRenderEntity();
 	virtual void UpdateRenderEntity(const renderEntity_t *re, bool forceUpdate = false);
@@ -76,22 +87,23 @@ public:
 // a viewEntity contains everything that the back end needs out of a idRenderEntityLocal,
 // which the front end may be modifying simultaneously if running in SMP mode.
 // A single entityDef can generate multiple viewEntity_t in a single frame, as when seen in a mirror
-struct viewEntity_t
-{
-	viewEntity_t()
-	{
+struct viewEntity_t {
+	viewEntity_t() 	{
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "viewEntity_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	~viewEntity_t()
-	{
+	~viewEntity_t() 	{
 		clean();
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "viewEntity_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	viewEntity_t(const viewEntity_t&) = default;
+	viewEntity_t& operator=(const viewEntity_t&) = default;
+	viewEntity_t(viewEntity_t&&) = default;
+	viewEntity_t& operator=(viewEntity_t&&) = default;
 
 	void clean() {
 		while (next) {
@@ -117,21 +129,22 @@ struct viewEntity_t
 };
 
 // viewDefs are allocated on the frame temporary stack memory
-struct viewDef_t
-{
-	viewDef_t()
-	{
+struct viewDef_t {
+	viewDef_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "viewDef_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
 
-	~viewDef_t()
-	{
+	~viewDef_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "viewDef_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 	}
+	viewDef_t(const viewDef_t&) = default;
+	viewDef_t& operator=(const viewDef_t&) = default;
+	viewDef_t(viewDef_t&&) = default;
+	viewDef_t& operator=(viewDef_t&&) = default;
 
 	// specified in the call to DrawScene()
 	//renderView_t		renderView;
@@ -160,11 +173,14 @@ struct viewDef_t
 	int					areaNum;				// -1 = not in a valid area
 };
 
-class idRenderSystemLocal : public idRenderSystem
-{
+class idRenderSystemLocal : public idRenderSystem {
 public:
 	idRenderSystemLocal();
 	~idRenderSystemLocal();
+	idRenderSystemLocal(const idRenderSystemLocal&) = default;
+	idRenderSystemLocal& operator=(const idRenderSystemLocal&) = default;
+	idRenderSystemLocal(idRenderSystemLocal&&) = default;
+	idRenderSystemLocal& operator=(idRenderSystemLocal&&) = default;
 
 	void Clear();
 

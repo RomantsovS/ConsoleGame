@@ -13,14 +13,6 @@ idSessionLocal::idSessionLocal() {
 
 /*
 ========================
-idSessionLocal::idSessionLocal
-========================
-*/
-idSessionLocal::~idSessionLocal() {
-}
-
-/*
-========================
 idSessionLocal::InitBaseState
 ========================
 */
@@ -85,14 +77,6 @@ idSessionLocal::MoveToMainMenu
 */
 void idSessionLocal::MoveToMainMenu() {
 	SetState(state_t::STATE_IDLE);
-}
-
-/*
-========================
-idSessionLocal::~idSession
-========================
-*/
-idSession::~idSession() {
 }
 
 /*

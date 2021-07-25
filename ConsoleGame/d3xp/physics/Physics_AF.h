@@ -27,6 +27,10 @@ public:
 	idAFBody();
 	idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipModel, float density);
 	~idAFBody();
+	idAFBody(const idAFBody&) = default;
+	idAFBody& operator=(const idAFBody&) = default;
+	idAFBody(idAFBody&&) = default;
+	idAFBody& operator=(idAFBody&&) = default;
 
 	void Init();
 	void SetClipModel(std::shared_ptr<idClipModel> clipModel);
@@ -79,6 +83,10 @@ public:
 
 	idPhysics_AF();
 	~idPhysics_AF();
+	idPhysics_AF(const idPhysics_AF&) = default;
+	idPhysics_AF& operator=(const idPhysics_AF&) = default;
+	idPhysics_AF(idPhysics_AF&&) = default;
+	idPhysics_AF& operator=(idPhysics_AF&&) = default;
 
 	// initialisation
 	int AddBody(const std::shared_ptr<idAFBody>& body);	// returns body id

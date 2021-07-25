@@ -83,6 +83,10 @@ public:
 
 	idGameLocal();
 	~idGameLocal();
+	idGameLocal(const idGameLocal&) = default;
+	idGameLocal& operator=(const idGameLocal&) = default;
+	idGameLocal(idGameLocal&&) = default;
+	idGameLocal& operator=(idGameLocal&&) = default;
 
 	virtual void Init() override;
 	void Shutdown() override;

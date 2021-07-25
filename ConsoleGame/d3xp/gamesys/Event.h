@@ -57,6 +57,10 @@ public:
 	
 	idEvent();
 	~idEvent();
+	idEvent(const idEvent&) = default;
+	idEvent& operator=(const idEvent&) = default;
+	idEvent(idEvent&&) = default;
+	idEvent& operator=(idEvent&&) = default;
 
 	static std::shared_ptr<idEvent> Alloc(gsl::not_null<const idEventDef*> evdef, int numargs, va_list args);
 	//static void CopyArgs(const idEventDef* evdef, int numargs, va_list args, int data[D_EVENT_MAXARGS]);

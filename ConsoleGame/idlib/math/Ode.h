@@ -21,7 +21,12 @@ typedef void (*deriveFunction_t)(const float t, const void* userData, gsl::span<
 class idODE {
 
 public:
-	virtual ~idODE() {}
+	idODE() = default;
+	virtual ~idODE() = default;
+	idODE(const idODE&) = default;
+	idODE& operator=(const idODE&) = default;
+	idODE(idODE&&) = default;
+	idODE& operator=(idODE&&) = default;
 
 	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) = 0;
 
@@ -43,6 +48,10 @@ class idODE_Euler : public idODE {
 public:
 	idODE_Euler(const int dim, const deriveFunction_t dr, const void* ud);
 	virtual ~idODE_Euler();
+	idODE_Euler(const idODE_Euler&) = default;
+	idODE_Euler& operator=(const idODE_Euler&) = default;
+	idODE_Euler(idODE_Euler&&) = default;
+	idODE_Euler& operator=(idODE_Euler&&) = default;
 
 	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1);
 

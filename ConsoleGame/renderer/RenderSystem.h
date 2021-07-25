@@ -5,12 +5,14 @@ bool R_IsInitialized();
 
 class idRenderWorld;
 
-class idRenderSystem
-{
+class idRenderSystem {
 public:	
-	idRenderSystem();
-
+	idRenderSystem() = default;
 	virtual ~idRenderSystem() = 0;
+	idRenderSystem(const idRenderSystem&) = default;
+	idRenderSystem& operator=(const idRenderSystem&) = default;
+	idRenderSystem(idRenderSystem&&) = default;
+	idRenderSystem& operator=(idRenderSystem&&) = default;
 
 	virtual void Init() = 0;
 

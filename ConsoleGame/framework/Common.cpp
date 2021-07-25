@@ -14,7 +14,7 @@ long long com_engineHz_denominator = 100LL * 60LL;
 idCommonLocal commonLocal;
 idCommon * common = &commonLocal;
 
-bool isCommonExists = true;
+bool isCommonExists = false;
 
 idCommonLocal::idCommonLocal() {
 	com_errorEntered = ERP_NONE;
@@ -26,6 +26,8 @@ idCommonLocal::idCommonLocal() {
 
 	gameFrame = 0;
 	gameTimeResidual = 0;
+
+	isCommonExists = true;
 }
 
 idCommonLocal::~idCommonLocal() {

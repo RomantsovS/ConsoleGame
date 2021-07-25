@@ -12,6 +12,10 @@ class idSWFScriptObject : public std::enable_shared_from_this<idSWFScriptObject>
 public:
 	idSWFScriptObject();
 	~idSWFScriptObject();
+	idSWFScriptObject(const idSWFScriptObject&) = default;
+	idSWFScriptObject& operator=(const idSWFScriptObject&) = default;
+	idSWFScriptObject(idSWFScriptObject&&) = default;
+	idSWFScriptObject& operator=(idSWFScriptObject&&) = default;
 
 	void Clear();
 
@@ -44,7 +48,10 @@ private:
 				common->DPrintf("%s dtor\n", "guiNamedVar_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
 		}
-		//guiNamedVar_t& operator=(const guiNamedVar_t& other);
+		guiNamedVar_t(const guiNamedVar_t&) = default;
+		guiNamedVar_t& operator=(const guiNamedVar_t&) = default;
+		guiNamedVar_t(guiNamedVar_t&&) = default;
+		guiNamedVar_t& operator=(guiNamedVar_t&&) = default;
 
 		int index{ -1 };
 		std::string name;

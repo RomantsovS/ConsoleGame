@@ -3,10 +3,13 @@
 
 class idCmdArgs {
 public:
-	idCmdArgs() { }
+	idCmdArgs() = default;
 	idCmdArgs(const std::string &text, bool keepAsStrings) { TokenizeString(text, keepAsStrings); }
-
+	~idCmdArgs() = default;
 	void operator=(const idCmdArgs& args);
+	idCmdArgs(const idCmdArgs&) = default;
+	idCmdArgs(idCmdArgs&&) = default;
+	idCmdArgs& operator=(idCmdArgs&&) = default;
 
 	// The functions that execute commands get their parameters with these functions.
 	int Argc() const { return argv.size(); }
