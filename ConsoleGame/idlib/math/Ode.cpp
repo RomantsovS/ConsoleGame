@@ -41,6 +41,7 @@ float idODE_Euler::Evaluate(gsl::span<const float> state, gsl::span<float> newSt
 	delta = t1 - t0;
 	for (auto& ns : newState) {
 		ns = state[i] + delta * derivatives[i];
+		++i;
 	}
 	return delta;
 }
