@@ -32,14 +32,14 @@ public:
 	const std::string& GetName() const override;
 	int GetLineNum() const override;
 	std::string GetFileName() const override;
-	virtual void GetText(char* text) const override;
+	void GetText(char* text) const override;
 	int GetTextLength() const override;
 	void MakeDefault() override;
 protected:
 	bool SetDefaultText() override;
 	std::string DefaultDefinition() const override;
 	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
-	virtual void FreeData() override;
+	void FreeData() override;
 protected:
 	void AllocateSelf();
 
@@ -93,15 +93,15 @@ public:
 	idDeclManagerLocal() { linearLists.resize(static_cast<int>(declType_t::DECL_MAX_TYPES)); }
 
 	void Init() override;
-	virtual void Shutdown() override;
+	void Shutdown() override;
 	void RegisterDeclType(const std::string& typeName, declType_t type, std::shared_ptr<idDecl>(*allocator)()) override;
 	void RegisterDeclFolder(const std::string& folder, const std::string& extension, declType_t defaultType) override;
-	virtual int GetNumDeclTypes() const override;
-	virtual const std::string& GetDeclNameFromType(declType_t type) const override;
-	virtual const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) override;
+	int GetNumDeclTypes() const override;
+	const std::string& GetDeclNameFromType(declType_t type) const override;
+	const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) override;
 
-	virtual void ListType(const idCmdArgs& args, declType_t type) override;
-	virtual void PrintType(const idCmdArgs& args, declType_t type) override;
+	void ListType(const idCmdArgs& args, declType_t type) override;
+	void PrintType(const idCmdArgs& args, declType_t type) override;
 
 	const std::shared_ptr<idMaterial> FindMaterial(const std::string& name, bool makeDefault = true) override;
 public:

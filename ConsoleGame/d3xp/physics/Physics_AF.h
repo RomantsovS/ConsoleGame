@@ -127,7 +127,7 @@ public:	// common physics interface
 	//const Vector2& GetAxis(int id = 0) const override;
 
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
+	const Vector2& GetLinearVelocity(int id = 0) const override;
 
 	void DisableClip() override;
 	void EnableClip() override;

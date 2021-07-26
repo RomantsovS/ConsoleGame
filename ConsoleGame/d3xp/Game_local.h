@@ -88,21 +88,21 @@ public:
 	idGameLocal(idGameLocal&&) = default;
 	idGameLocal& operator=(idGameLocal&&) = default;
 
-	virtual void Init() override;
+	void Init() override;
 	void Shutdown() override;
 
 	void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
-	virtual void MapShutdown() override;
-	virtual void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) override;
-	virtual void RunFrame() override;
+	void MapShutdown() override;
+	void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) override;
+	void RunFrame() override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
 	void RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> player);
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	bool Draw(int clientNum) override;
 
-	virtual bool IsInGame() const override  { return GameState() == GAMESTATE_ACTIVE; }
+	bool IsInGame() const override  { return GameState() == GAMESTATE_ACTIVE; }
 
-	virtual int GetLocalClientNum() const override;
+	int GetLocalClientNum() const override;
 
 	// ---------------------- Public idGameLocal Interface -------------------
 

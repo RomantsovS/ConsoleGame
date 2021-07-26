@@ -460,7 +460,7 @@ public:
 	}
 
 	void Update() override;
-	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
+	bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 	//virtual void				ObserveEvent(const idMenuWidget& widget, const idWidgetEvent& event);
 	virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
 	virtual void				ScrollOffset(const int scrollIndexAmount);
@@ -574,9 +574,9 @@ public:
 	void Update() override;
 	void Initialize(std::shared_ptr<idMenuHandler> data) override;
 	virtual void				SetButtonSpacing(float rSpace) { rightSpacer = rSpace; }
-	virtual bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex) override;
+	bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex) override;
 	virtual void				SetListHeadings(std::vector<std::string>& list);
-	virtual size_t				GetTotalNumberOfOptions() const override;
+	size_t				GetTotalNumberOfOptions() const override;
 
 private:
 

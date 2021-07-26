@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "../../framework/Common_local.h"
 #include "../sys_session_local.h"
 #include "win_local.h"
@@ -12,8 +13,8 @@ idSessionLocalWin::idSessionLocalWin
 class idSessionLocalWin : public idSessionLocal {
 public:
 	// idSessionLocal interface
-	virtual void Initialize() override;
-	virtual void Shutdown() override;
+	void Initialize() override;
+	void Shutdown() override;
 };
 
 idSessionLocalWin sessionLocalWin;

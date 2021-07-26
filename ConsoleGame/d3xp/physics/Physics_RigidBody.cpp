@@ -143,8 +143,7 @@ idPhysics_RigidBody::Evaluate
   the remaining time after the collision is ignored.
 ================
 */
-bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec)
-{
+bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) {
 	rigidBodyPState_t next_step;
 	trace_t collision;
 	Vector2 impulse;
@@ -245,19 +244,16 @@ int idPhysics_RigidBody::GetTime() const {
 	return gameLocal.time;
 }
 
-void idPhysics_RigidBody::Activate()
-{
+void idPhysics_RigidBody::Activate() {
 	current.atRest = -1;
 	self.lock()->BecomeActive(TH_PHYSICS);
 }
 
-void idPhysics_RigidBody::PutToRest()
-{
+void idPhysics_RigidBody::PutToRest() {
 	Rest();
 }
 
-bool idPhysics_RigidBody::IsAtRest() const
-{
+bool idPhysics_RigidBody::IsAtRest() const {
 	return current.atRest >= 0;
 }
 
@@ -283,14 +279,12 @@ void idPhysics_RigidBody::RestoreState() {
 	EvaluateContacts();
 }
 
-void idPhysics_RigidBody::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
-{
+void idPhysics_RigidBody::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
 	current.i.linearMomentum = newLinearVelocity;
 	Activate();
 }
 
-const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const
-{
+const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const {
 	static Vector2 curLinearVelocity;
 	curLinearVelocity = current.i.linearMomentum;// *inverseMass;
 	return curLinearVelocity;
@@ -361,11 +355,10 @@ idPhysics_RigidBody::Integrate
   Calculate next state from the current state using an integrator.
 ================
 */
-void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& next_)
-{
-	Vector2 position;
+void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& next_) {
+	//Vector2 position;
 
-	position = current.i.position;
+	//position = current.i.position;
 	//current.i.position += centerOfMass * current.i.orientation;
 
 	//current.i.orientation.TransposeSelf();
@@ -380,7 +373,7 @@ void idPhysics_RigidBody::Integrate(const float deltaTime, rigidBodyPState_t& ne
 	//current.i.orientation.TransposeSelf();
 	//next_.i.orientation.TransposeSelf();
 
-	current.i.position = position;
+	//current.i.position = position;
 	//next_.i.position -= centerOfMass * next_.i.orientation;
 
 	next_.atRest = current.atRest;
@@ -394,8 +387,7 @@ idPhysics_RigidBody::CheckForCollisions
   If there is a collision the next state is set to the state at the moment of impact.
 ================
 */
-bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPState_t& next_, trace_t& collision)
-{
+bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPState_t& next_, trace_t& collision) {
 	bool collided = false;
 
 	// if there was a collision
@@ -419,8 +411,7 @@ bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& im
 	return self.lock()->Collide(collision, velocity);
 }
 
-bool idPhysics_RigidBody::TestIfAtRest() const
-{
+bool idPhysics_RigidBody::TestIfAtRest() const {
 	if (current.atRest >= 0) {
 		return true;
 	}

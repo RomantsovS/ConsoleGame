@@ -39,20 +39,20 @@ public:
 	idFileSystemLocal(idFileSystemLocal&&) = default;
 	idFileSystemLocal& operator=(idFileSystemLocal&&) = default;
 
-	virtual void Init() override;
+	void Init() override;
 	void Shutdown(bool reloading) override;
 	bool IsInitialized() const override;
-	virtual std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
-	virtual void FreeFileList(std::shared_ptr<idFileList> fileList) override;
+	std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
+	void FreeFileList(std::shared_ptr<idFileList> fileList) override;
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
 	virtual void CreateOSPath(const std::string &OSPath);
 	std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
 	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
-	virtual std::shared_ptr<idFile> OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles = true, const std::string& gamedir = "") override;
-	virtual std::shared_ptr<idFile> OpenFileWrite(const std::string &relativePath, const std::string &basePath) override;
+	std::shared_ptr<idFile> OpenFileReadMemory(const std::string& relativePath, bool allowCopyFiles = true, const std::string& gamedir = "") override;
+	std::shared_ptr<idFile> OpenFileWrite(const std::string &relativePath, const std::string &basePath) override;
 
-	virtual void CloseFile(std::shared_ptr<idFile> f) override;
+	void CloseFile(std::shared_ptr<idFile> f) override;
 private:
 	std::vector<searchpath_t> searchPaths;
 	std::string gameFolder;
@@ -153,8 +153,7 @@ void idFileSystemLocal::CreateOSPath(const std::string &OSPath) {
 	}
 }
 
-void idFileSystemLocal::Init()
-{
+void idFileSystemLocal::Init() {
 	if (fs_basepath.GetString().empty()) {
 		fs_basepath.SetString(Sys_DefaultBasePath());
 	}
@@ -528,8 +527,7 @@ int	idFileSystemLocal::ListOSFiles(const std::string& directory, const std::stri
 	return Sys_ListFiles(directory, extension, list);
 }
 
-std::shared_ptr<idFile> idFileSystemLocal::OpenFileWrite(const std::string& relativePath, const std::string& basePath)
-{
+std::shared_ptr<idFile> idFileSystemLocal::OpenFileWrite(const std::string& relativePath, const std::string& basePath) {
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
 	}
@@ -556,8 +554,7 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenFileWrite(const std::string& rela
 	return f;
 }
 
-void idFileSystemLocal::CloseFile(std::shared_ptr<idFile> f)
-{
+void idFileSystemLocal::CloseFile(std::shared_ptr<idFile> f) {
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
 	}
@@ -600,8 +597,7 @@ void idFileSystemLocal::SetupGameDirectories(const std::string &gameName) {
 	AddGameDirectory(fs_basepath.GetString(), gameName);
 }
 
-void idFileSystemLocal::Startup()
-{
+void idFileSystemLocal::Startup() {
 	common->Printf("------ Initializing File System ------\n");
 
 	SetupGameDirectories(BASE_GAMEDIR);

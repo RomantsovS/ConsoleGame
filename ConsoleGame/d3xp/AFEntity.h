@@ -27,12 +27,12 @@ public:
 
 	void Spawn();
 
-	virtual void Think() override;
-	virtual void Present() override;
+	void Think() override;
+	void Present() override;
 
-	virtual void Remove() override;
+	void Remove() override;
 
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 protected:
 	std::shared_ptr<idPhysics_AF> physicsObj;
 

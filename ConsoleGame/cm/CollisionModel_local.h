@@ -206,7 +206,7 @@ public:
 	// sets up a trace model for collision with other trace models
 	int SetupTrmModel(const idTraceModel& trm/*, const idMaterial* material*/) override;
 	// Creates a trace model from a collision model, returns true if succesfull.
-	virtual bool TrmFromModel(const std::string& modelName, idTraceModel& trm) override;
+	bool TrmFromModel(const std::string& modelName, idTraceModel& trm) override;
 
 	// bounds of the model
 	bool GetModelBounds(int model, idBounds& bounds) const override;

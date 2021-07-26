@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "Common_local.h"
 
 // the console will query the cvar and command systems for
@@ -7,12 +8,12 @@
 
 class idConsoleLocal : public idConsole {
 public:
-	virtual	void		Init() override;
-	virtual void		Shutdown() override;
-	virtual	bool		ProcessEvent(const sysEvent_t* event, bool forceAccept) override;
-	virtual	bool		Active() override;
+	void		Init() override;
+	void		Shutdown() override;
+	bool		ProcessEvent(const sysEvent_t* event, bool forceAccept) override;
+	bool		Active() override;
 	//virtual	void		ClearNotifyLines();
-	virtual	void		Close() override;
+	void		Close() override;
 	//virtual	void		Print(const char* text);
 	void Draw(bool forceFullScreen) override;
 

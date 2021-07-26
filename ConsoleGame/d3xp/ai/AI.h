@@ -14,7 +14,7 @@ public:
 	idAI& operator=(idAI&&) = default;
 
 	void Spawn();
-	virtual void Think() override;
+	void Think() override;
 protected:
 	void Hide() override;
 
@@ -36,7 +36,7 @@ public:
 	AISimple& operator=(AISimple&&) = default;
 
 	void Spawn();
-	virtual void Think() override;
+	void Think() override;
 	
 	void Remove() override;
 

@@ -34,7 +34,7 @@ public:	// common physics interface
 
 	void Activate() override;
 	void PutToRest() override;
-	virtual bool IsAtRest() const override;
+	bool IsAtRest() const override;
 
 	void SaveState() override;
 	void RestoreState() override;
@@ -49,7 +49,7 @@ public:	// common physics interface
 	const Vector2 &	GetAxis(int id = 0) const override;
 
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
+	const Vector2& GetLinearVelocity(int id = 0) const override;
 
 	void DisableClip() override;
 	void EnableClip() override;
@@ -59,8 +59,8 @@ public:	// common physics interface
 
 	bool EvaluateContacts() override;
 	void ClearContacts() override;
-	virtual void AddContactEntity(std::shared_ptr<idEntity> e) override;
-	virtual void RemoveContactEntity(std::shared_ptr<idEntity> e) override;
+	void AddContactEntity(std::shared_ptr<idEntity> e) override;
+	void RemoveContactEntity(std::shared_ptr<idEntity> e) override;
 protected:
 	std::weak_ptr<idEntity> self; // entity using this physics object
 	int clipMask; // contents the physics object collides with

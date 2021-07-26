@@ -14,7 +14,7 @@ public:
 	idStaticEntity& operator=(idStaticEntity&&) = default;
 
 	void Spawn();
-	virtual void Think() override;
+	void Think() override;
 private:
 	//int spawnTime;
 protected:

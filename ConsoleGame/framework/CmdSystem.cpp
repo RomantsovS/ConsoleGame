@@ -36,18 +36,18 @@ idCmdSystemLocal
 */
 class idCmdSystemLocal : public idCmdSystem {
 public:
-	virtual void			Init() override;
-	virtual void			Shutdown() override;
+	void			Init() override;
+	void			Shutdown() override;
 
-	virtual void AddCommand(const std::string& cmdName, cmdFunction_t function, int flags,
+	void AddCommand(const std::string& cmdName, cmdFunction_t function, int flags,
 		const std::string& description/*, argCompletion_t argCompletion = NULL*/) override;
 	void RemoveFlaggedCommands(int flags) override;
 
 	//virtual void			ExecuteCommandText(const char* text);
-	virtual void			AppendCommandText(const std::string& text) override;
+	void			AppendCommandText(const std::string& text) override;
 
-	virtual void			BufferCommandText(cmdExecution_t exec, const std::string &text) override;
-	virtual void			ExecuteCommandBuffer() override;
+	void			BufferCommandText(cmdExecution_t exec, const std::string &text) override;
+	void			ExecuteCommandBuffer() override;
 
 	std::list<std::shared_ptr<commandDef_t>>& GetCommands() { return commands; }
 

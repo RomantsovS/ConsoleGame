@@ -29,15 +29,15 @@ public:
 
 	void Frame() override;
 	void UpdateScreen(bool captureToImage) override;
-	virtual void Printf(const char* fmt, ...) override;
-	virtual void VPrintf(const char* fmt, va_list arg) override;
-	virtual void DPrintf(const char* fmt, ...) override;
-	virtual void Warning(const char* fmt, ...) override;
-	virtual void DWarning(const char* fmt, ...) override;
-	virtual void Error(const char* fmt, ...) override;
-	virtual void FatalError(const char* fmt, ...) override;
+	void Printf(const char* fmt, ...) override;
+	void VPrintf(const char* fmt, va_list arg) override;
+	void DPrintf(const char* fmt, ...) override;
+	void Warning(const char* fmt, ...) override;
+	void DWarning(const char* fmt, ...) override;
+	void Error(const char* fmt, ...) override;
+	void FatalError(const char* fmt, ...) override;
 
-	virtual bool ProcessEvent(const sysEvent_t* event) override;
+	bool ProcessEvent(const sysEvent_t* event) override;
 public:
 	void RunGameAndDraw(size_t numGameFrames_);
 	void Draw(); // called by gameThread

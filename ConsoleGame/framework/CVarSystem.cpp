@@ -40,9 +40,9 @@ private:
 
 	void InternalSetString(const std::string& newValue) override;
 	virtual void InternalServerSetString(const std::string& newValue);
-	virtual void InternalSetBool(const bool newValue) override;
-	virtual void InternalSetInteger(const int newValue) override;
-	virtual void InternalSetFloat(const float newValue) override;
+	void InternalSetBool(const bool newValue) override;
+	void InternalSetInteger(const int newValue) override;
+	void InternalSetFloat(const float newValue) override;
 };
 
 /*
@@ -355,11 +355,11 @@ public:
 
 	void Register(gsl::not_null<idCVar*> cvar) override;
 
-	virtual void SetCVarString(const std::string& name, const std::string& value, int flags = 0) override;
+	void SetCVarString(const std::string& name, const std::string& value, int flags = 0) override;
 
-	virtual bool Command(const idCmdArgs& args) override;
+	bool Command(const idCmdArgs& args) override;
 
-	virtual void SetModifiedFlags(int flags) override;
+	void SetModifiedFlags(int flags) override;
 
 	idInternalCVar* FindInternal(const std::string& name) const;
 	void SetInternal(const std::string& name, const std::string& value, int flags);

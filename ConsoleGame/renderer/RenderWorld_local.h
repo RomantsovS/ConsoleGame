@@ -30,23 +30,23 @@ public:
 	idRenderWorldLocal(idRenderWorldLocal&&) = default;
 	idRenderWorldLocal& operator=(idRenderWorldLocal&&) = default;
 
-	virtual	bool InitFromMap(const std::string &mapName) override;
+	bool InitFromMap(const std::string &mapName) override;
 
-	virtual	int AddEntityDef(const renderEntity_t *re) override;
-	virtual	void UpdateEntityDef(int entityHandle, gsl::not_null<const renderEntity_t*> re) override;
-	virtual	void FreeEntityDef(int entityHandle) override;
-	virtual const renderEntity_t* GetRenderEntity(int entityHandle) const override;
+	int AddEntityDef(const renderEntity_t *re) override;
+	void UpdateEntityDef(int entityHandle, gsl::not_null<const renderEntity_t*> re) override;
+	void FreeEntityDef(int entityHandle) override;
+	const renderEntity_t* GetRenderEntity(int entityHandle) const override;
 
 	void RenderScene(const renderView_t* renderView) override;
 
-	virtual bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
+	bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
 		const float radius) const override;
 
-	virtual void DebugClearLines(int time) override;
+	void DebugClearLines(int time) override;
 
-	virtual void DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime) override;
-	virtual void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) override;
-	virtual void DebugBounds(const int color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
+	void DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime) override;
+	void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) override;
+	void DebugBounds(const int color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
 
 	std::string mapName; // ie: maps/tim_dm2.proc, written to demoFile
 
@@ -81,7 +81,7 @@ public:
 	void PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum);
 	void PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def);
 
-	virtual std::shared_ptr<idRenderWorld> getptr() override;
+	std::shared_ptr<idRenderWorld> getptr() override;
 };
 
 #endif

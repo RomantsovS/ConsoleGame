@@ -44,26 +44,26 @@ public:
 	void InitBaseState();
 
 	// Lobby management
-	virtual void CreateMatch(const idMatchParameters& parms_) override;
+	void CreateMatch(const idMatchParameters& parms_) override;
 
-	virtual void StartMatch() override;
-	virtual void MoveToPressStart() override;
+	void StartMatch() override;
+	void MoveToPressStart() override;
 	void FinishDisconnect() override;
 
 	const idMatchParameters& GetMatchParms() const override  { return parms; }
 
 	// Misc
 	void QuitMatchToTitle() override; // Will forcefully quit the match and return to the title screen.
-	virtual void LoadingFinished() override;
+	void LoadingFinished() override;
 
-	virtual sessionState_t	GetState() const override;
+	sessionState_t	GetState() const override;
 
 	void UpdateSignInManager() override;
-	virtual void RegisterLocalUser() override { localUserRegistered = true; }
-	virtual bool IsLocalUserRegistered() override { return localUserRegistered; }
+	void RegisterLocalUser() override { localUserRegistered = true; }
+	bool IsLocalUserRegistered() override { return localUserRegistered; }
 
-	virtual void Initialize() override = 0;
-	virtual void Shutdown() override = 0;
+	void Initialize() override = 0;
+	void Shutdown() override = 0;
 protected:
 	//=====================================================================================================
 	// Common functions (sys_session_local.cpp)

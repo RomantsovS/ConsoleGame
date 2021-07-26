@@ -88,8 +88,7 @@ idPhysics_Base::PutToRest
 void idPhysics_Base::PutToRest() {
 }
 
-bool idPhysics_Base::IsAtRest() const
-{
+bool idPhysics_Base::IsAtRest() const {
 	return true;
 }
 
@@ -119,8 +118,7 @@ const Vector2 & idPhysics_Base::GetAxis(int id) const {
 	return vec2_origin;
 }
 
-void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
-{
+void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
 }
 
 /*
@@ -184,8 +182,7 @@ void idPhysics_Base::ClearContacts()
 	contacts.clear();
 }
 
-void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e)
-{
+void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e) {
 	bool found = false;
 
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
@@ -202,8 +199,7 @@ void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e)
 	}
 }
 
-void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e)
-{
+void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e) {
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (!ent) {
@@ -217,8 +213,7 @@ void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e)
 	}
 }
 
-void idPhysics_Base::AddContactEntitiesForContacts()
-{
+void idPhysics_Base::AddContactEntitiesForContacts() {
 	for (size_t i = 0; i < contacts.size(); i++) {
 		auto ent = gameLocal.entities[contacts[i].entityNum];
 		if (ent && ent != self.lock()) {
@@ -227,8 +222,7 @@ void idPhysics_Base::AddContactEntitiesForContacts()
 	}
 }
 
-void idPhysics_Base::ActivateContactEntities()
-{
+void idPhysics_Base::ActivateContactEntities() {
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (ent) {
@@ -240,8 +234,7 @@ void idPhysics_Base::ActivateContactEntities()
 	}
 }
 
-bool idPhysics_Base::IsOutsideWorld() const
-{
+bool idPhysics_Base::IsOutsideWorld() const {
 	if (!gameLocal.clip.GetWorldBounds().Expand(1.0f).IntersectsBounds(GetAbsBounds())) {
 		return true;
 	}

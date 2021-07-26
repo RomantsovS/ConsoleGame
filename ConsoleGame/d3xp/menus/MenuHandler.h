@@ -139,12 +139,12 @@ public:
 		menuBar(nullptr)
 	{ }
 
-	virtual void Update() override;
-	virtual void ActivateMenu(bool show) override;
-	virtual void Initialize(const std::string& filename) override;
-	virtual void Cleanup() override;
+	void Update() override;
+	void ActivateMenu(bool show) override;
+	void Initialize(const std::string& filename) override;
+	void Cleanup() override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
-	virtual bool HandleGuiEvent(const sysEvent_t* sev) override;
+	bool HandleGuiEvent(const sysEvent_t* sev) override;
 
 	void SetShellState(shellState_t s) { nextState = s; }
 

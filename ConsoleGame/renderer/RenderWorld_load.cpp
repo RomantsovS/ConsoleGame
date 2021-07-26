@@ -56,8 +56,7 @@ A NULL or empty name will make a world without a map model, which
 is still useful for displaying a bare model
 ================ =
 */
-bool idRenderWorldLocal::InitFromMap(const std::string &name)
-{
+bool idRenderWorldLocal::InitFromMap(const std::string &name) {
 	// if this is an empty world, initialize manually
 	if (name.empty()) {
 		FreeWorld();
@@ -100,8 +99,7 @@ bool idRenderWorldLocal::InitFromMap(const std::string &name)
 idRenderWorldLocal::SetupAreaRefs
 ================
 */
-void idRenderWorldLocal::SetupAreaRefs()
-{
+void idRenderWorldLocal::SetupAreaRefs() {
 	for (int i = 0; i < numPortalAreas; i++) {
 		portalAreas[i].areaNum = i;
 
@@ -110,8 +108,7 @@ void idRenderWorldLocal::SetupAreaRefs()
 	}
 }
 
-void idRenderWorldLocal::AddWorldModelEntities()
-{
+void idRenderWorldLocal::AddWorldModelEntities() {
 	// add the world model for each portal area
 	// we can't just call AddEntityDef, because that would place the references
 	// based on the bounding box, rather than explicitly into the correct area
@@ -125,8 +122,7 @@ void idRenderWorldLocal::AddWorldModelEntities()
 	}*/
 }
 
-void idRenderWorldLocal::ReadBinaryAreaPortals()
-{
+void idRenderWorldLocal::ReadBinaryAreaPortals() {
 	numPortalAreas = 1;
 
 	portalAreas.resize(numPortalAreas);
@@ -135,8 +131,7 @@ void idRenderWorldLocal::ReadBinaryAreaPortals()
 	SetupAreaRefs();
 }
 
-void idRenderWorldLocal::ReadBinaryNodes()
-{
+void idRenderWorldLocal::ReadBinaryNodes() {
 	numAreaNodes = 1;
 
 	areaNodes.resize(numAreaNodes);
@@ -157,8 +152,7 @@ idRenderWorldLocal::ClearWorld
 Sets up for a single area world
 =================
 */
-void idRenderWorldLocal::ClearWorld()
-{
+void idRenderWorldLocal::ClearWorld() {
 	numPortalAreas = 1;
 	portalAreas.clear();
 	portalAreas.resize(1);
@@ -181,8 +175,7 @@ idRenderWorldLocal::FreeDefs
 dump all the interactions
 =================
 */
-void idRenderWorldLocal::FreeDefs()
-{
+void idRenderWorldLocal::FreeDefs() {
 	// free all entityDefs
 	for (size_t i = 0; i < entityDefs.size(); i++) {
 		auto mod = entityDefs[i];

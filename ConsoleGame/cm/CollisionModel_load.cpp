@@ -304,8 +304,7 @@ Trace models (item boxes, etc) are converted to collision models on the fly, usi
 as a reusable temporary buffer
 ================
 */
-int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm)
-{
+int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm) {
 	int i;
 	const traceModelVert_t* trmVert;
 
@@ -340,8 +339,7 @@ int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm)
 	return TRACE_MODEL_HANDLE;
 }
 
-bool idCollisionModelManagerLocal::TrmFromModel(const std::string& modelName, idTraceModel& trm)
-{
+bool idCollisionModelManagerLocal::TrmFromModel(const std::string& modelName, idTraceModel& trm) {
 	int handle;
 
 	handle = LoadModel(modelName);
@@ -353,8 +351,7 @@ bool idCollisionModelManagerLocal::TrmFromModel(const std::string& modelName, id
 	return TrmFromModel(models[handle].get(), trm);
 }
 
-bool idCollisionModelManagerLocal::GetModelBounds(int model, idBounds& bounds) const
-{
+bool idCollisionModelManagerLocal::GetModelBounds(int model, idBounds& bounds) const {
 	if (model < 0 || model > MAX_SUBMODELS || model >= numModels || !models[model]) {
 		common->Printf("idCollisionModelManagerLocal::GetModelBounds: invalid model handle\n");
 		return false;
@@ -434,8 +431,7 @@ std::shared_ptr<cm_node_t> idCollisionModelManagerLocal::AllocNode(cm_model_t* m
 	return node;
 }
 
-std::shared_ptr<cm_brushRef_t> idCollisionModelManagerLocal::AllocBrushReference(cm_model_t* model, int blockSize)
-{
+std::shared_ptr<cm_brushRef_t> idCollisionModelManagerLocal::AllocBrushReference(cm_model_t* model, int blockSize) {
 	int i;
 	std::shared_ptr<cm_brushRef_t> bref;
 	std::shared_ptr<cm_brushRefBlock_t> brefBlock;
@@ -459,8 +455,7 @@ std::shared_ptr<cm_brushRef_t> idCollisionModelManagerLocal::AllocBrushReference
 	return bref;
 }
 
-std::shared_ptr<cm_brush_t> idCollisionModelManagerLocal::AllocBrush(cm_model_t* model)
-{
+std::shared_ptr<cm_brush_t> idCollisionModelManagerLocal::AllocBrush(cm_model_t* model) {
 	int size;
 
 	size = sizeof(cm_brush_t);
@@ -472,8 +467,7 @@ std::shared_ptr<cm_brush_t> idCollisionModelManagerLocal::AllocBrush(cm_model_t*
 	return brush;
 }
 
-void idCollisionModelManagerLocal::AddBrushToNode(cm_model_t* model, cm_node_t* node, std::shared_ptr<cm_brush_t> b)
-{
+void idCollisionModelManagerLocal::AddBrushToNode(cm_model_t* model, cm_node_t* node, std::shared_ptr<cm_brush_t> b) {
 	auto bref = AllocBrushReference(model, 1);
 	bref->b = b;
 	bref->next = node->brushes;
@@ -481,8 +475,7 @@ void idCollisionModelManagerLocal::AddBrushToNode(cm_model_t* model, cm_node_t* 
 	model->numBrushRefs++;
 }
 
-void idCollisionModelManagerLocal::SetupTrmModelStructure()
-{
+void idCollisionModelManagerLocal::SetupTrmModelStructure() {
 	//int i;
 	std::shared_ptr<cm_node_t> node;
 	std::shared_ptr<cm_model_t> model;

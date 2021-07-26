@@ -47,11 +47,11 @@ public:
 	idFile_Permanent(idFile_Permanent&&) = default;
 	idFile_Permanent& operator=(idFile_Permanent&&) = default;
 
-	virtual int Read(void* buffer, int len) override;
-	virtual int Write(const void* buffer, int len) override;
-	virtual int Length() const override;
-	virtual void ForceFlush() override;
-	virtual void Flush() override;
+	int Read(void* buffer, int len) override;
+	int Write(const void* buffer, int len) override;
+	int Length() const override;
+	void ForceFlush() override;
+	void Flush() override;
 
 	// returns file pointer
 	idFileHandle &GetFilePtr() { return o; }
