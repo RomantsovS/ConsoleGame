@@ -16,10 +16,10 @@ public:
 	// registers console commands and clears the list
 	virtual void Init() override;
 	virtual void Shutdown() override;
-	virtual void FreeModel(std::shared_ptr<idRenderModel> model);
+	void FreeModel(std::shared_ptr<idRenderModel> model) override;
 	virtual std::shared_ptr<idRenderModel> FindModel(const std::string &modelName) override;
 	virtual std::shared_ptr<idRenderModel> DefaultModel() override;
-	virtual void AddModel(std::shared_ptr<idRenderModel> model);
+	void AddModel(std::shared_ptr<idRenderModel> model) override;
 	virtual void BeginLevelLoad() override;
 	virtual void EndLevelLoad() override;
 private:

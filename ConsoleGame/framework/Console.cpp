@@ -14,7 +14,7 @@ public:
 	//virtual	void		ClearNotifyLines();
 	virtual	void		Close() override;
 	//virtual	void		Print(const char* text);
-	virtual	void		Draw(bool forceFullScreen);
+	void Draw(bool forceFullScreen) override;
 
 	//void				Dump(const char* toFile);
 	void				Clear();

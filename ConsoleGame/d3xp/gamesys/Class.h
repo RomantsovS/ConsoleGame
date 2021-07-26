@@ -52,8 +52,8 @@ Use this on single inheritance concrete classes only.
 public:																	\
 	static idTypeInfo Type;						\
 	static std::shared_ptr<idClass> CreateInstance();	\
-	virtual idTypeInfo *GetType() const;		\
-	static	idEventFunc<nameofclass>		eventCallbacks[]
+	idTypeInfo *GetType() const override;		\
+	static	idEventFunc<nameofclass> eventCallbacks[]
 
 /*
 ================
@@ -92,7 +92,7 @@ public:																	\
 	static idTypeInfo Type;						\
 	static std::shared_ptr<idClass> CreateInstance();	\
 	virtual idTypeInfo *GetType() const;		\
-	static	idEventFunc<nameofclass>		eventCallbacks[]
+	static idEventFunc<nameofclass> eventCallbacks[]
 
 /*
 ================

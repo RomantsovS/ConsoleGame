@@ -198,7 +198,7 @@ public:
 	// load collision models from a map file
 	void LoadMap(const idMapFile* mapFile) override;
 	// frees all the collision models
-	void FreeMap();
+	void FreeMap() override;
 
 	//void Preload(const char* mapName);
 	// get clip handle for model

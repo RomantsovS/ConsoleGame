@@ -44,7 +44,7 @@ public:
 		bool				skipReplication : 1; // don't replicate this entity over the network.
 	} fl = { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
 
-	ABSTRACT_PROTOTYPE(idEntity);
+	CLASS_PROTOTYPE(idEntity);
 
 	idEntity();
 	virtual ~idEntity();
@@ -55,7 +55,7 @@ public:
 
 	void Spawn();
 	
-	virtual void Remove();
+	void Remove() override;
 
 	void SetName(const std::string name);
 	const std::string& GetName() const;

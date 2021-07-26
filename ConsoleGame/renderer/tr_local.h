@@ -194,13 +194,13 @@ public:
 
 	void SetColor(const int color) override;
 
-	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material);
+	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) override;
 	void DrawBigChar(int x, int y, int ch) override;
 	void DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) override;
 
 	void DrawPositionedString(Vector2 pos, const std::string& str, int color) override;
 	void DrawString(const std::string& text, const int color) override;
-	virtual void RenderCommandBuffers();
+	void RenderCommandBuffers() override;
 
 	void SetHeight(int h) override { height = h; }
 	void SetWidth(int w) override { width = w; }

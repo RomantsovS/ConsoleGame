@@ -131,8 +131,7 @@ const renderEntity_t* idRenderWorldLocal::GetRenderEntity(int entityHandle) cons
 	return &def->parms;
 }
 
-void idRenderWorldLocal::RenderScene(const renderView_t* renderView)
-{
+void idRenderWorldLocal::RenderScene(const renderView_t* renderView) {
 	if (!tr.update_frame)
 		return;
 

@@ -112,7 +112,7 @@ public:
 
 	void			InhibitUsercmd(inhibit_t subsystem, bool inhibit);
 	*/
-	int				CommandStringUsercmdData(const std::string& cmdString);
+	int CommandStringUsercmdData(const std::string& cmdString) override;
 
 	void			BuildCurrentUsercmd(int deviceNum) override;
 

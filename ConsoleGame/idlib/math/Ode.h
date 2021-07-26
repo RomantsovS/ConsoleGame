@@ -53,7 +53,7 @@ public:
 	idODE_Euler(idODE_Euler&&) = default;
 	idODE_Euler& operator=(idODE_Euler&&) = default;
 
-	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1);
+	float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) override;
 
 protected:
 	std::vector<float> derivatives;	// space to store derivatives

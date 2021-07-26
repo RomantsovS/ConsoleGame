@@ -17,9 +17,9 @@ public:
 	void Create(std::shared_ptr<idEntity> owner, const Vector2& start, const Vector2& dir);
 	virtual void Launch(const Vector2& start, const Vector2& dir, const Vector2& pushVelocity, const float timeSinceFire = 0.0f, const float launchPower = 1.0f, const float dmgPower = 1.0f);
 
-	virtual void Think();
+	void Think() override;
 
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 	virtual void Explode(const trace_t& collision, idEntity* ignore);
 protected:
 	std::weak_ptr<idEntity>	owner;

@@ -46,7 +46,7 @@ private:
 #define SWF_NATIVE_FUNCTION_SWF_DECLARE( x ) \
 	class idSWFScriptFunction_##x : public idSWFScriptFunction_Nested< idSWF > { \
 	public: \
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ); \
+		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ) override;\
 	} scriptFunction_##x;
 
 	SWF_NATIVE_FUNCTION_SWF_DECLARE(shortcutKeys_clear);

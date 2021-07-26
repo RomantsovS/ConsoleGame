@@ -231,8 +231,7 @@ void idCollisionModelManagerLocal::LoadMap(const idMapFile* mapFile)
 	//ShutdownHash();
 }
 
-void idCollisionModelManagerLocal::FreeMap()
-{
+void idCollisionModelManagerLocal::FreeMap() {
 	int i;
 
 	if (!loaded) {

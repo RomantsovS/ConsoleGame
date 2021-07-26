@@ -8,7 +8,7 @@ class idEntity;
 class idPhysics : public idClass
 {
 public:
-	ABSTRACT_PROTOTYPE(idPhysics);
+	CLASS_PROTOTYPE(idPhysics);
 
 	enum directions { LEFT, RIGHT, UP, DOWN };
 

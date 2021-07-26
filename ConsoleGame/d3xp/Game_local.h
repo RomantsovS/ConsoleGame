@@ -142,7 +142,7 @@ public:
 	void Shell_Init(const std::string& filename) override;
 	void Shell_Cleanup() override;
 	void Shell_Show(bool show) override;
-	void Shell_CreateMenu(bool inGame);
+	void Shell_CreateMenu(bool inGame) override;
 	bool Shell_IsActive() const override;
 	bool Shell_HandleGuiEvent(const sysEvent_t* sev) override;
 	void Shell_Render() override;

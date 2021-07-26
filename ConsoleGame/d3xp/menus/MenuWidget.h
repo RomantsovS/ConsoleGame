@@ -407,8 +407,8 @@ public:
 	idMenuWidget_Button(idMenuWidget_Button&&) = default;
 	idMenuWidget_Button& operator=(idMenuWidget_Button&&) = default;
 
-	virtual bool ExecuteEvent(const idWidgetEvent& event);
-	virtual void Update() override;
+	bool ExecuteEvent(const idWidgetEvent& event) override;
+	void Update() override;
 
 	//---------------
 	// Model
@@ -433,7 +433,7 @@ public:
 		xPos(0) {
 	}
 
-	virtual void Update();
+	void Update() override;
 	void SetPosition(float pos) { xPos = pos; }
 
 private:
@@ -459,7 +459,7 @@ public:
 
 	}
 
-	virtual void				Update();
+	void Update() override;
 	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 	//virtual void				ObserveEvent(const idMenuWidget& widget, const idWidgetEvent& event);
 	virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
@@ -515,8 +515,8 @@ public:
 		buttons.resize(MAX_BUTTONS);
 	}
 
-	virtual void Update() override;
-	virtual bool ExecuteEvent(const idWidgetEvent& event);
+	void Update() override;
+	bool ExecuteEvent(const idWidgetEvent& event) override;
 
 	buttonInfo_t* GetButton(const button_t button) { return &buttons[button]; }
 	void ClearAllButtons();
@@ -538,9 +538,9 @@ public:
 		ignoreColor(false) {
 	}
 
-	virtual void				Update();
-	virtual void				Initialize(std::shared_ptr<idMenuHandler> data);
-	virtual size_t				GetTotalNumberOfOptions() const;
+	void Update() override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) override;
+	size_t GetTotalNumberOfOptions() const override;
 	virtual bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex);
 
 	//virtual void				Recalculate();
@@ -571,8 +571,8 @@ public:
 		rightSpacer(0.0f) {
 	}
 
-	virtual void				Update();
-	virtual void				Initialize(std::shared_ptr<idMenuHandler> data);
+	void Update() override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) override;
 	virtual void				SetButtonSpacing(float rSpace) { rightSpacer = rSpace; }
 	virtual bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex) override;
 	virtual void				SetListHeadings(std::vector<std::string>& list);
@@ -612,7 +612,7 @@ public:
 	idWidgetActionHandler(idWidgetActionHandler&&) = default;
 	idWidgetActionHandler& operator=(idWidgetActionHandler&&) = default;
 
-	idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parms) {
+	idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parms) override {
 
 		idWidgetAction action;
 		bool handled = false;

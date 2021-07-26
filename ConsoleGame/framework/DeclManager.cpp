@@ -33,12 +33,12 @@ public:
 	int GetLineNum() const override;
 	std::string GetFileName() const override;
 	virtual void GetText(char* text) const override;
-	virtual int GetTextLength() const;
+	int GetTextLength() const override;
 	void MakeDefault() override;
 protected:
 	bool SetDefaultText() override;
 	std::string DefaultDefinition() const override;
-	virtual bool Parse(const char* text, const int textLength, bool allowBinaryVersion);
+	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
 	virtual void FreeData() override;
 protected:
 	void AllocateSelf();
@@ -95,7 +95,7 @@ public:
 	void Init() override;
 	virtual void Shutdown() override;
 	void RegisterDeclType(const std::string& typeName, declType_t type, std::shared_ptr<idDecl>(*allocator)()) override;
-	virtual void RegisterDeclFolder(const std::string& folder, const std::string& extension, declType_t defaultType);
+	void RegisterDeclFolder(const std::string& folder, const std::string& extension, declType_t defaultType) override;
 	virtual int GetNumDeclTypes() const override;
 	virtual const std::string& GetDeclNameFromType(declType_t type) const override;
 	virtual const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) override;

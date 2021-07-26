@@ -133,11 +133,11 @@ public:
 		options(nullptr),
 		btnBack(nullptr) {
 	}
-	virtual void				Initialize(std::shared_ptr<idMenuHandler> data);
-	virtual void				Update();
-	virtual void				ShowScreen();
-	virtual void				HideScreen();
-	virtual bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) override;
+	void Update() override;
+	void ShowScreen() override;
+	void HideScreen() override;
+	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 private:
 	std::shared_ptr<idMenuWidget_DynamicList> options;
 	std::shared_ptr<idMenuWidget_Button> btnBack;

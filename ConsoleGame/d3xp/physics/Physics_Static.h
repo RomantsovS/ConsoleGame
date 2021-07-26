@@ -29,11 +29,11 @@ public:	// common physics interface
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
 	int GetNumClipModels() const override;
 
-	void SetClipMask(int mask, int id = -1);
-	int GetClipMask(int id = -1) const;
+	void SetClipMask(int mask, int id = -1) override;
+	int GetClipMask(int id = -1) const override;
 
-	const idBounds& GetBounds(int id = -1) const;
-	const idBounds& GetAbsBounds(int id = -1) const;
+	const idBounds& GetBounds(int id = -1) const override;
+	const idBounds& GetAbsBounds(int id = -1) const override;
 
 	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
 	void UpdateTime(int endTimeMSec) override;
@@ -58,13 +58,13 @@ public:	// common physics interface
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
 	virtual const Vector2& GetLinearVelocity(int id = 0) const override;
 
-	void DisableClip();
-	void EnableClip();
+	void DisableClip() override;
+	void EnableClip() override;
 
-	void UnlinkClip();
-	void LinkClip();
+	void UnlinkClip() override;
+	void LinkClip() override;
 
-	bool EvaluateContacts();
+	bool EvaluateContacts() override;
 
 	void ClearContacts() override;
 	void AddContactEntity(std::shared_ptr<idEntity> e) override;

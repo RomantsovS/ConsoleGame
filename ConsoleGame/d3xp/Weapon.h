@@ -34,7 +34,7 @@ public:
 	void GetWeaponDef(const std::string& objectname, int ammoinclip);
 
 	// State control/player interface
-	void Think();
+	void Think() override;
 	void BeginAttack();
 	void EndAttack();
 	bool IsReady() const;

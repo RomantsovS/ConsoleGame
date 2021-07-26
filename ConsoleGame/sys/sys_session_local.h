@@ -48,22 +48,22 @@ public:
 
 	virtual void StartMatch() override;
 	virtual void MoveToPressStart() override;
-	virtual void FinishDisconnect();
+	void FinishDisconnect() override;
 
-	virtual const idMatchParameters& GetMatchParms() const { return parms; }
+	const idMatchParameters& GetMatchParms() const override  { return parms; }
 
 	// Misc
-	virtual void QuitMatchToTitle(); // Will forcefully quit the match and return to the title screen.
+	void QuitMatchToTitle() override; // Will forcefully quit the match and return to the title screen.
 	virtual void LoadingFinished() override;
 
 	virtual sessionState_t	GetState() const override;
 
-	virtual void UpdateSignInManager();
+	void UpdateSignInManager() override;
 	virtual void RegisterLocalUser() override { localUserRegistered = true; }
 	virtual bool IsLocalUserRegistered() override { return localUserRegistered; }
 
-	virtual void Initialize() = 0;
-	virtual void Shutdown() = 0;
+	virtual void Initialize() override = 0;
+	virtual void Shutdown() override = 0;
 protected:
 	//=====================================================================================================
 	// Common functions (sys_session_local.cpp)

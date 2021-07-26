@@ -41,7 +41,7 @@ public:
 
 	virtual void AddCommand(const std::string& cmdName, cmdFunction_t function, int flags,
 		const std::string& description/*, argCompletion_t argCompletion = NULL*/) override;
-	virtual void			RemoveFlaggedCommands(int flags);
+	void RemoveFlaggedCommands(int flags) override;
 
 	//virtual void			ExecuteCommandText(const char* text);
 	virtual void			AppendCommandText(const std::string& text) override;

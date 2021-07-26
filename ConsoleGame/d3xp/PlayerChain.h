@@ -22,7 +22,7 @@ public:
 	void SpawnFromSpawnSpot();
 	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
 
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+	bool Collide(const trace_t& collision, const Vector2& velocity) override;
 protected:
 	void SetModelForId(int id, const std::string& modelName);
 private:
