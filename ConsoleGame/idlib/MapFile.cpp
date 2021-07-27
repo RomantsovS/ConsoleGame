@@ -198,7 +198,7 @@ std::shared_ptr<idMapEntity> idMapEntity::Parse(idLexer& src, bool worldSpawn, f
 idMapEntity::RemovePrimitiveData
 ===============
 */
-void idMapEntity::RemovePrimitiveData() {
+void idMapEntity::RemovePrimitiveData() noexcept {
 	primitives.clear();
 }
 
@@ -255,7 +255,7 @@ bool idMapFile::Parse(const std::string& filename, bool ignoreRegion, bool osPat
 idMapFile::RemovePrimitiveData
 ===============
 */
-void idMapFile::RemovePrimitiveData() {
+void idMapFile::RemovePrimitiveData() noexcept {
 	for (size_t i = 0; i < entities.size(); i++) {
 		std::shared_ptr<idMapEntity> ent = entities[i];
 		ent->RemovePrimitiveData();

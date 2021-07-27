@@ -13,7 +13,7 @@ Physics_PlayerChain::Friction
 Handles both ground friction and water friction
 ==================
 */
-void Physics_PlayerChain::Friction() {
+void Physics_PlayerChain::Friction() noexcept {
 }
 
 /*
@@ -21,7 +21,7 @@ void Physics_PlayerChain::Friction() {
 Physics_PlayerChain::WalkMove
 ===================
 */
-void Physics_PlayerChain::WalkMove() {
+void Physics_PlayerChain::WalkMove() noexcept {
 	Physics_PlayerChain::Friction();
 
 	if (GetUserCmd().forwardmove > 0) {
@@ -58,7 +58,7 @@ void Physics_PlayerChain::WalkMove() {
 Physics_PlayerChain::MovePlayer
 ================
 */
-void Physics_PlayerChain::MovePlayer(int msec) {
+void Physics_PlayerChain::MovePlayer(int msec) noexcept {
 
 	idPhysics_PlayerBase::MovePlayer(msec);
 
@@ -170,7 +170,7 @@ int Physics_PlayerChain::GetBodyId(const std::shared_ptr<idAFBody>& body) const 
 Physics_PlayerChain::GetBody
 ================
 */
-std::shared_ptr<idAFBody> Physics_PlayerChain::GetBody(const std::string& bodyName) const {
+std::shared_ptr<idAFBody> Physics_PlayerChain::GetBody(const std::string& bodyName) const noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		if (bodies[i]->name == bodyName) {
 			return bodies[i];
@@ -220,7 +220,7 @@ void Physics_PlayerChain::DeleteBody(const int id) {
 Physics_PlayerChain::Evaluate
 ================
 */
-bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	Physics_PlayerChain::MovePlayer(timeStepMSec);
 
@@ -259,7 +259,7 @@ bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) {
 Physics_PlayerChain::Evolve
 ================
 */
-void Physics_PlayerChain::Evolve(float timeStep) {
+void Physics_PlayerChain::Evolve(float timeStep) noexcept {
 	// calculate the position of the bodies for the next physics state
 
 	if (!bodies.empty()) {
@@ -292,7 +292,7 @@ Physics_PlayerChain::CollisionImpulse
   this is silly as it doesn't take the AF structure into account
 ================
 */
-bool Physics_PlayerChain::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) {
+bool Physics_PlayerChain::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept {
 	auto ent = gameLocal.entities[collision.c.entityNum];
 	if (ent == self.lock()) {
 		return false;
@@ -309,7 +309,7 @@ bool Physics_PlayerChain::CollisionImpulse(float timeStep, idAFBody* body, trace
 Physics_PlayerChain::ApplyCollisions
 ================
 */
-bool Physics_PlayerChain::ApplyCollisions(float timeStep) {
+bool Physics_PlayerChain::ApplyCollisions(float timeStep) noexcept {
 	for (size_t i = 0; i < collisions.size(); i++) {
 		if (CollisionImpulse(timeStep, collisions[i].body.get(), collisions[i].trace)) {
 			return true;
@@ -323,7 +323,7 @@ bool Physics_PlayerChain::ApplyCollisions(float timeStep) {
 Physics_PlayerChain::SetupCollisionForBody
 ================
 */
-std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(idAFBody* body) const {
+std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(idAFBody* body) const noexcept {
 	size_t i;
 	std::shared_ptr<idEntity> passEntity;
 
@@ -427,7 +427,7 @@ void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
 Physics_PlayerChain::SwapStates
 ================
 */
-void Physics_PlayerChain::SwapStates() {
+void Physics_PlayerChain::SwapStates() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 
 		auto body = bodies[i];
@@ -456,7 +456,7 @@ void Physics_PlayerChain::UpdateClipModels() {
 Physics_PlayerChain::IsAtRest
 ================
 */
-bool Physics_PlayerChain::IsAtRest() const {
+bool Physics_PlayerChain::IsAtRest() const noexcept {
 	return false;
 }
 
@@ -465,7 +465,7 @@ bool Physics_PlayerChain::IsAtRest() const {
 Physics_PlayerChain::GetNumClipModels
 ================
 */
-int Physics_PlayerChain::GetNumClipModels() const {
+int Physics_PlayerChain::GetNumClipModels() const noexcept {
 	return bodies.size();
 }
 
@@ -474,7 +474,7 @@ int Physics_PlayerChain::GetNumClipModels() const {
 Physics_PlayerChain::GetBounds
 ================
 */
-const idBounds& Physics_PlayerChain::GetBounds(int id) const {
+const idBounds& Physics_PlayerChain::GetBounds(int id) const noexcept {
 	static idBounds relBounds;
 
 	if (id >= 0 && id < static_cast<int>(bodies.size())) {
@@ -505,7 +505,7 @@ const idBounds& Physics_PlayerChain::GetBounds(int id) const {
 Physics_PlayerChain::GetAbsBounds
 ================
 */
-const idBounds& Physics_PlayerChain::GetAbsBounds(int id) const {
+const idBounds& Physics_PlayerChain::GetAbsBounds(int id) const noexcept {
 	static idBounds absBounds;
 
 	if (id >= 0 && id < static_cast<int>(bodies.size())) {
@@ -529,7 +529,7 @@ const idBounds& Physics_PlayerChain::GetAbsBounds(int id) const {
 Physics_PlayerChain::SaveState
 ================
 */
-void Physics_PlayerChain::SaveState() {
+void Physics_PlayerChain::SaveState() noexcept {
 	saved = current;
 
 	for (size_t i = 0; i < bodies.size(); i++) {
@@ -542,7 +542,7 @@ void Physics_PlayerChain::SaveState() {
 Physics_PlayerChain::RestoreState
 ================
 */
-void Physics_PlayerChain::RestoreState() {
+void Physics_PlayerChain::RestoreState() noexcept {
 	current = saved;
 
 	for (size_t i = 0; i < bodies.size(); i++) {
@@ -557,7 +557,7 @@ void Physics_PlayerChain::RestoreState() {
 Physics_PlayerChain::SetOrigin
 ================
 */
-void Physics_PlayerChain::SetOrigin(const Vector2& newOrigin, int id) {
+void Physics_PlayerChain::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 	Translate(newOrigin - bodies[0]->current->worldOrigin);
 }
 
@@ -566,7 +566,7 @@ void Physics_PlayerChain::SetOrigin(const Vector2& newOrigin, int id) {
 Physics_PlayerChain::GetOrigin
 ================
 */
-const Vector2& Physics_PlayerChain::PlayerGetOrigin() const {
+const Vector2& Physics_PlayerChain::PlayerGetOrigin() const noexcept {
 	return current.origin;
 }
 
@@ -575,7 +575,7 @@ const Vector2& Physics_PlayerChain::PlayerGetOrigin() const {
 Physics_PlayerChain::Translate
 ================
 */
-void Physics_PlayerChain::Translate(const Vector2& translation, int id) {
+void Physics_PlayerChain::Translate(const Vector2& translation, int id) noexcept {
 	// translate all the bodies
 	for (size_t i = 0; i < bodies.size(); i++) {
 
@@ -593,7 +593,7 @@ void Physics_PlayerChain::Translate(const Vector2& translation, int id) {
 idPhysics_AF::GetOrigin
 ================
 */
-const Vector2& Physics_PlayerChain::GetOrigin(int id) const {
+const Vector2& Physics_PlayerChain::GetOrigin(int id) const noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return vec2_origin;
 	}
@@ -607,7 +607,7 @@ const Vector2& Physics_PlayerChain::GetOrigin(int id) const {
 Physics_PlayerChain::SetLinearVelocity
 ================
 */
-void Physics_PlayerChain::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void Physics_PlayerChain::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return;
 	}
@@ -620,7 +620,7 @@ void Physics_PlayerChain::SetLinearVelocity(const Vector2& newLinearVelocity, in
 Physics_PlayerChain::GetLinearVelocity
 ================
 */
-const Vector2& Physics_PlayerChain::GetLinearVelocity(int id) const {
+const Vector2& Physics_PlayerChain::GetLinearVelocity(int id) const noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return vec2_origin;
 	}
@@ -634,7 +634,7 @@ const Vector2& Physics_PlayerChain::GetLinearVelocity(int id) const {
 Physics_PlayerChain::DisableClip
 ================
 */
-void Physics_PlayerChain::DisableClip() {
+void Physics_PlayerChain::DisableClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Disable();
 	}
@@ -645,7 +645,7 @@ void Physics_PlayerChain::DisableClip() {
 Physics_PlayerChain::EnableClip
 ================
 */
-void Physics_PlayerChain::EnableClip() {
+void Physics_PlayerChain::EnableClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Enable();
 	}
@@ -656,7 +656,7 @@ void Physics_PlayerChain::EnableClip() {
 Physics_PlayerChain::UnlinkClip
 ================
 */
-void Physics_PlayerChain::UnlinkClip() {
+void Physics_PlayerChain::UnlinkClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Unlink();
 	}
@@ -667,6 +667,6 @@ void Physics_PlayerChain::UnlinkClip() {
 Physics_PlayerChain::LinkClip
 ================
 */
-void Physics_PlayerChain::LinkClip() {
+void Physics_PlayerChain::LinkClip() noexcept {
 	UpdateClipModels();
 }

@@ -25,7 +25,7 @@ idDeclModelDef::~idDeclModelDef() {
 idDeclModelDef::FreeData
 =====================
 */
-void idDeclModelDef::FreeData() {
+void idDeclModelDef::FreeData() noexcept {
 }
 
 /*
@@ -42,7 +42,7 @@ std::string idDeclModelDef::DefaultDefinition() const {
 idDeclModelDef::ModelHandle
 =====================
 */
-std::weak_ptr<idRenderModel> idDeclModelDef::ModelHandle() const {
+std::weak_ptr<idRenderModel> idDeclModelDef::ModelHandle() const noexcept {
 	return modelHandle;
 }
 

@@ -8,7 +8,7 @@
 idMenuScreen_Shell_PressStart::Initialize
 ========================
 */
-void idMenuScreen_Shell_PressStart::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuScreen_Shell_PressStart::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuScreen::Initialize(data);
 
 	if (data) {
@@ -27,7 +27,7 @@ void idMenuScreen_Shell_PressStart::Initialize(std::shared_ptr<idMenuHandler> da
 idMenuScreen_Shell_Root::Update
 ========================
 */
-void idMenuScreen_Shell_PressStart::Update() {
+void idMenuScreen_Shell_PressStart::Update() noexcept {
 	if (auto spMenuData = menuData.lock()) {
 		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
 		if (cmdBar) {

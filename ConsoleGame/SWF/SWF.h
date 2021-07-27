@@ -20,14 +20,14 @@ public:
 
 	void Init();
 
-	bool IsActive() { return isActive; }
-	void Activate(bool b);
+	bool IsActive() noexcept { return isActive; }
+	void Activate(bool b) noexcept;
 
 	void Render(idRenderSystem* gui, int time);
 	bool HandleEvent(const sysEvent_t* event);
 
 	idSWFScriptVar GetGlobal(const std::string& name) { return globals->Get(name); }
-	std::shared_ptr<idSWFScriptObject> GetRootObject() { return mainspriteInstance->GetScriptObject(); }
+	std::shared_ptr<idSWFScriptObject> GetRootObject() noexcept { return mainspriteInstance->GetScriptObject(); }
 
 	//----------------------------------
 	// SWF_Render.cpp

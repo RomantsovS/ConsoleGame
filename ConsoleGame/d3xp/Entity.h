@@ -11,8 +11,7 @@ enum {
 	TH_UPDATEPARTICLES = 16
 };
 
-class idEntity : public idClass, public std::enable_shared_from_this<idEntity>
-{
+class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
 public:
 	int entityNumber;			// index into the entity list
 	//int entityDefNumber;		// index into the entity def list
@@ -55,20 +54,20 @@ public:
 
 	void Spawn();
 	
-	void Remove() override;
+	void Remove() noexcept override;
 
 	void SetName(const std::string name);
-	const std::string& GetName() const;
+	const std::string& GetName() const noexcept;
 
 	// thinking
 	virtual void Think();
-	bool IsActive() const;
-	void BecomeActive(int flags);
-	void BecomeInactive(int flags);
+	bool IsActive() const noexcept;
+	void BecomeActive(int flags) noexcept;
+	void BecomeInactive(int flags) noexcept;
 
 	// visuals
 	virtual void Present();
-	virtual renderEntity_t *GetRenderEntity();
+	virtual renderEntity_t *GetRenderEntity() noexcept;
 	virtual void SetModel(const std::string& modelname);
 	void UpdateVisuals();
 	void UpdateModel();
@@ -76,18 +75,18 @@ public:
 	virtual void SetColor(const int color);
 	virtual void FreeModelDef();
 	virtual void Hide();
-	bool IsHidden() const;
+	bool IsHidden() const noexcept;
 
 	// animation
-	virtual bool UpdateAnimationControllers();
+	virtual bool UpdateAnimationControllers() noexcept;
 
 	// physics
 	// set a new physics object to be used by this entity
 	void SetPhysics(std::shared_ptr<idPhysics> phys);
 	// get the physics object used by this entity
-	std::shared_ptr<idPhysics> GetPhysics() const;
+	std::shared_ptr<idPhysics> GetPhysics() const noexcept;
 	// restore physics pointer for save games
-	void RestorePhysics(std::shared_ptr<idPhysics> phys);
+	void RestorePhysics(std::shared_ptr<idPhysics> phys) noexcept;
 	// run the physics for this entity
 	bool RunPhysics();
 	// set the origin of the physics object (relative to bindMaster if not NULL)
@@ -95,9 +94,9 @@ public:
 	// set the axis of the physics object (relative to bindMaster if not NULL)
 	void SetAxis(const Vector2 &axis);
 	// retrieves the transformation going from the physics origin/axis to the visual origin/axis
-	virtual bool GetPhysicsToVisualTransform(Vector2 &origin, Vector2 &axis);
+	virtual bool GetPhysicsToVisualTransform(Vector2 &origin, Vector2 &axis) noexcept;
 	// called from the physics object when colliding, should return true if the physics simulation should stop
-	virtual bool Collide(const trace_t& collision, const Vector2& velocity);
+	virtual bool Collide(const trace_t& collision, const Vector2& velocity) noexcept;
 	// activate the physics object, 'ent' is the entity activating this entity
 	virtual void ActivatePhysics(idEntity* ent);
 	// add a contact entity
@@ -109,7 +108,7 @@ public:
 	// applies damage to this entity
 	virtual	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName, const float damageScale);
 	// notifies this entity that is has been killed
-	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir);
+	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept;
 
 protected:
 	renderEntity_t renderEntity;
@@ -129,7 +128,7 @@ private:
 	// update visual position from the physics
 	void UpdateFromPhysics(bool moveBack);
 	// get physics timestep
-	virtual int GetPhysicsTimeStep() const;
+	virtual int GetPhysicsTimeStep() const noexcept;
 };
 
 class idAnimatedEntity : public idEntity {

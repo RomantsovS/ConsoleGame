@@ -8,7 +8,7 @@
 idMenuWidget_NavButton::Update
 ========================
 */
-void idMenuWidget_MenuButton::Update() {
+void idMenuWidget_MenuButton::Update() noexcept {
 
 	if (!GetSprite()) {
 		return;

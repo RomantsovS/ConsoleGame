@@ -11,7 +11,7 @@ END_CLASS
 RigidBodyDerivatives
 ================
 */
-void RigidBodyDerivatives(const float t, const void* clientData, gsl::span<const float> state, float* derivatives) {
+void RigidBodyDerivatives(const float t, const void* clientData, gsl::span<const float> state, float* derivatives) noexcept {
 	const idPhysics_RigidBody* p = (idPhysics_RigidBody*)clientData;
 	rigidBodyIState_t* s = (rigidBodyIState_t*)state.data();
 	// NOTE: this struct should be build conform rigidBodyIState_t
@@ -84,8 +84,7 @@ idPhysics_RigidBody::~idPhysics_RigidBody() {
 	integrator = nullptr;
 }
 
-void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld)
-{
+void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) noexcept {
 	if (clipModel && clipModel != model && freeOld) {
 		clipModel = nullptr;
 	}
@@ -102,7 +101,7 @@ void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float
 idPhysics_RigidBody::GetClipModel
 ================
 */
-std::shared_ptr<idClipModel> idPhysics_RigidBody::GetClipModel(int id) const {
+std::shared_ptr<idClipModel> idPhysics_RigidBody::GetClipModel(int id) const noexcept {
 	return clipModel;
 }
 
@@ -111,8 +110,7 @@ std::shared_ptr<idClipModel> idPhysics_RigidBody::GetClipModel(int id) const {
 idPhysics_RigidBody::GetNumClipModels
 ================
 */
-int idPhysics_RigidBody::GetNumClipModels() const
-{
+int idPhysics_RigidBody::GetNumClipModels() const noexcept {
 	return 1;
 }
 
@@ -121,7 +119,7 @@ int idPhysics_RigidBody::GetNumClipModels() const
 idPhysics_RigidBody::GetBounds
 ================
 */
-const idBounds& idPhysics_RigidBody::GetBounds(int id) const {
+const idBounds& idPhysics_RigidBody::GetBounds(int id) const noexcept {
 	return clipModel->GetBounds();
 }
 
@@ -130,7 +128,7 @@ const idBounds& idPhysics_RigidBody::GetBounds(int id) const {
 idPhysics_RigidBody::GetAbsBounds
 ================
 */
-const idBounds& idPhysics_RigidBody::GetAbsBounds(int id) const {
+const idBounds& idPhysics_RigidBody::GetAbsBounds(int id) const noexcept {
 	return clipModel->GetAbsBounds();
 }
 
@@ -143,7 +141,7 @@ idPhysics_RigidBody::Evaluate
   the remaining time after the collision is ignored.
 ================
 */
-bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	rigidBodyPState_t next_step;
 	trace_t collision;
 	Vector2 impulse;
@@ -237,23 +235,23 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) {
 	return true;
 }
 
-void idPhysics_RigidBody::UpdateTime(int endTimeMSec) {
+void idPhysics_RigidBody::UpdateTime(int endTimeMSec) noexcept {
 }
 
-int idPhysics_RigidBody::GetTime() const {
+int idPhysics_RigidBody::GetTime() const noexcept {
 	return gameLocal.time;
 }
 
-void idPhysics_RigidBody::Activate() {
+void idPhysics_RigidBody::Activate() noexcept {
 	current.atRest = -1;
 	self.lock()->BecomeActive(TH_PHYSICS);
 }
 
-void idPhysics_RigidBody::PutToRest() {
+void idPhysics_RigidBody::PutToRest() noexcept {
 	Rest();
 }
 
-bool idPhysics_RigidBody::IsAtRest() const {
+bool idPhysics_RigidBody::IsAtRest() const noexcept {
 	return current.atRest >= 0;
 }
 
@@ -262,7 +260,7 @@ bool idPhysics_RigidBody::IsAtRest() const {
 idPhysics_RigidBody::SaveState
 ================
 */
-void idPhysics_RigidBody::SaveState() {
+void idPhysics_RigidBody::SaveState() noexcept {
 	saved = current;
 }
 
@@ -271,7 +269,7 @@ void idPhysics_RigidBody::SaveState() {
 idPhysics_RigidBody::RestoreState
 ================
 */
-void idPhysics_RigidBody::RestoreState() {
+void idPhysics_RigidBody::RestoreState() noexcept {
 	current = saved;
 
 	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
@@ -279,12 +277,12 @@ void idPhysics_RigidBody::RestoreState() {
 	EvaluateContacts();
 }
 
-void idPhysics_RigidBody::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void idPhysics_RigidBody::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 	current.i.linearMomentum = newLinearVelocity;
 	Activate();
 }
 
-const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const {
+const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const noexcept {
 	static Vector2 curLinearVelocity;
 	curLinearVelocity = current.i.linearMomentum;// *inverseMass;
 	return curLinearVelocity;
@@ -295,7 +293,7 @@ const Vector2& idPhysics_RigidBody::GetLinearVelocity(int id) const {
 idPhysics_RigidBody::DisableClip
 ================
 */
-void idPhysics_RigidBody::DisableClip() {
+void idPhysics_RigidBody::DisableClip() noexcept {
 	clipModel->Disable();
 }
 
@@ -304,7 +302,7 @@ void idPhysics_RigidBody::DisableClip() {
 idPhysics_RigidBody::EnableClip
 ================
 */
-void idPhysics_RigidBody::EnableClip() {
+void idPhysics_RigidBody::EnableClip() noexcept {
 	clipModel->Enable();
 }
 
@@ -313,7 +311,7 @@ void idPhysics_RigidBody::EnableClip() {
 idPhysics_RigidBody::UnlinkClip
 ================
 */
-void idPhysics_RigidBody::UnlinkClip() {
+void idPhysics_RigidBody::UnlinkClip() noexcept {
 	clipModel->Unlink();
 }
 
@@ -322,11 +320,11 @@ void idPhysics_RigidBody::UnlinkClip() {
 idPhysics_RigidBody::LinkClip
 ================
 */
-void idPhysics_RigidBody::LinkClip() {
+void idPhysics_RigidBody::LinkClip() noexcept {
 	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
 }
 
-bool idPhysics_RigidBody::EvaluateContacts() {
+bool idPhysics_RigidBody::EvaluateContacts() noexcept {
 	Vector2 dir;
 
 	ClearContacts();
@@ -403,15 +401,14 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPSt
 	return collided;
 }
 
-bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& impulse)
-{
+bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& impulse) noexcept {
 	Vector2 velocity;
 
 	// callback to self to let the entity know about the collision
 	return self.lock()->Collide(collision, velocity);
 }
 
-bool idPhysics_RigidBody::TestIfAtRest() const {
+bool idPhysics_RigidBody::TestIfAtRest() const noexcept {
 	if (current.atRest >= 0) {
 		return true;
 	}
@@ -424,15 +421,14 @@ bool idPhysics_RigidBody::TestIfAtRest() const {
 	return true;
 }
 
-void idPhysics_RigidBody::Rest()
-{
+void idPhysics_RigidBody::Rest() noexcept {
 	current.atRest = gameLocal.time;
 	current.i.linearMomentum.Zero();
 	//current.i.angularMomentum.Zero();
 	self.lock()->BecomeInactive(TH_PHYSICS);
 }
 
-void idPhysics_RigidBody::DebugDraw() {
+void idPhysics_RigidBody::DebugDraw() noexcept {
 }
 
 /*
@@ -440,7 +436,7 @@ void idPhysics_RigidBody::DebugDraw() {
 idPhysics::SetOrigin
 ================
 */
-void idPhysics_RigidBody::SetOrigin(const Vector2 &newOrigin, int id) {
+void idPhysics_RigidBody::SetOrigin(const Vector2 &newOrigin, int id) noexcept {
 	current.localOrigin = newOrigin;
 	/*if (hasMaster) {
 		self->GetMasterPosition(masterOrigin, masterAxis);
@@ -460,7 +456,7 @@ void idPhysics_RigidBody::SetOrigin(const Vector2 &newOrigin, int id) {
 idPhysics::SetAxis
 ================
 */
-void idPhysics_RigidBody::SetAxis(const Vector2& newAxis, int id) {
+void idPhysics_RigidBody::SetAxis(const Vector2& newAxis, int id) noexcept {
 	/*idVec3 masterOrigin;
 	idMat3 masterAxis;
 
@@ -478,8 +474,7 @@ void idPhysics_RigidBody::SetAxis(const Vector2& newAxis, int id) {
 	Activate();*/
 }
 
-void idPhysics_RigidBody::Translate(const Vector2& translation, int id)
-{
+void idPhysics_RigidBody::Translate(const Vector2& translation, int id) noexcept {
 	current.localOrigin += translation;
 	current.i.position += translation;
 
@@ -493,6 +488,6 @@ void idPhysics_RigidBody::Translate(const Vector2& translation, int id)
 idPhysics_RigidBody::GetOrigin
 ================
 */
-const Vector2& idPhysics_RigidBody::GetOrigin(int id) const {
+const Vector2& idPhysics_RigidBody::GetOrigin(int id) const noexcept {
 	return current.i.position;
 }

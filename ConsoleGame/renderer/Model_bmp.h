@@ -59,7 +59,7 @@ private:
 	void check_color_header(BMPColorHeader& bmp_color_header);
 
 	// Add 1 to the row_stride until it is divisible with align_stride
-	uint32_t make_stride_aligned(uint32_t align_stride);
+	uint32_t make_stride_aligned(uint32_t align_stride) noexcept;
 };
 
 class ModelPixel;

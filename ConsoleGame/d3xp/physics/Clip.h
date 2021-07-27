@@ -27,26 +27,26 @@ public:
 
 	void Link(idClip& clp);				// must have been linked with an entity and id before
 	void Link(idClip& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
-	void Unlink(); // unlink from sectors
+	void Unlink() noexcept; // unlink from sectors
 	//void					SetPosition(const idVec3& newOrigin, const idMat3& newAxis);	// unlinks the clip model
-	void Translate(const Vector2& translation);							// unlinks the clip model
+	void Translate(const Vector2& translation) noexcept;							// unlinks the clip model
 	//void					Rotate(const idRotation& rotation);							// unlinks the clip model
-	void Enable();						// enable for clipping
-	void Disable();					// keep linked but disable for clipping
-	void SetEntity(std::shared_ptr<idEntity> newEntity);
-	std::shared_ptr<idEntity> GetEntity() const;
-	void SetId(int newId);
-	int GetId() const;
-	void SetOwner(std::shared_ptr<idEntity> newOwner);
-	std::weak_ptr<idEntity> GetOwner() const;
-	const idBounds& GetBounds() const;
-	const idBounds& GetAbsBounds() const;
-	const Vector2& GetOrigin() const;
-	bool IsTraceModel() const; // returns true if this is a trace model
+	void Enable() noexcept;						// enable for clipping
+	void Disable() noexcept;					// keep linked but disable for clipping
+	void SetEntity(std::shared_ptr<idEntity> newEntity) noexcept;
+	std::shared_ptr<idEntity> GetEntity() const noexcept;
+	void SetId(int newId) noexcept;
+	int GetId() const noexcept;
+	void SetOwner(std::shared_ptr<idEntity> newOwner) noexcept;
+	std::weak_ptr<idEntity> GetOwner() const noexcept;
+	const idBounds& GetBounds() const noexcept;
+	const idBounds& GetAbsBounds() const noexcept;
+	const Vector2& GetOrigin() const noexcept;
+	bool IsTraceModel() const noexcept; // returns true if this is a trace model
 	int Handle() const; // returns handle used to collide vs this model
 
 	static int CheckModel(const std::string& name);
-	static void ClearTraceModelCache();
+	static void ClearTraceModelCache() noexcept;
 private:
 	bool enabled; // true if this clip model is used for clipping
 	std::weak_ptr<idEntity> entity; // entity using this clip model
@@ -71,60 +71,59 @@ private:
 	static int AllocTraceModel(const idTraceModel& trm, bool persistantThroughSaves = true);
 	static void FreeTraceModel(int traceModelIndex);
 	static idTraceModel* GetCachedTraceModel(int traceModelIndex);
-	static int GetTraceModelHashKey(const idTraceModel& trm);
+	static int GetTraceModelHashKey(const idTraceModel& trm) noexcept;
 };
 
-inline void idClipModel::SetEntity(std::shared_ptr<idEntity> newEntity) {
+inline void idClipModel::SetEntity(std::shared_ptr<idEntity> newEntity) noexcept {
 	entity = newEntity;
 }
 
-inline void idClipModel::SetOwner(std::shared_ptr<idEntity> newOwner) {
+inline void idClipModel::SetOwner(std::shared_ptr<idEntity> newOwner) noexcept {
 	owner = newOwner;
 }
 
-inline std::shared_ptr<idEntity> idClipModel::GetEntity() const {
+inline std::shared_ptr<idEntity> idClipModel::GetEntity() const noexcept {
 	return entity.lock();
 }
 
-inline std::weak_ptr<idEntity> idClipModel::GetOwner() const
-{
+inline std::weak_ptr<idEntity> idClipModel::GetOwner() const noexcept {
 	return owner;
 }
 
-inline const idBounds& idClipModel::GetBounds() const {
+inline const idBounds& idClipModel::GetBounds() const noexcept {
 	return bounds;
 }
 
-inline const idBounds& idClipModel::GetAbsBounds() const {
+inline const idBounds& idClipModel::GetAbsBounds() const noexcept {
 	return absBounds;
 }
 
-inline const Vector2& idClipModel::GetOrigin() const {
+inline const Vector2& idClipModel::GetOrigin() const noexcept {
 	return origin;
 }
 
-inline bool idClipModel::IsTraceModel() const {
+inline bool idClipModel::IsTraceModel() const noexcept {
 	return (traceModelIndex != -1);
 }
 
-inline void idClipModel::Translate(const Vector2& translation) {
+inline void idClipModel::Translate(const Vector2& translation) noexcept {
 	Unlink();
 	origin += translation;
 }
 
-inline void idClipModel::Enable() {
+inline void idClipModel::Enable() noexcept {
 	enabled = true;
 }
 
-inline void idClipModel::Disable() {
+inline void idClipModel::Disable() noexcept {
 	enabled = false;
 }
 
-inline void idClipModel::SetId(int newId) {
+inline void idClipModel::SetId(int newId) noexcept {
 	id = newId;
 }
 
-inline int idClipModel::GetId() const {
+inline int idClipModel::GetId() const noexcept {
 	return id;
 }
 
@@ -175,11 +174,11 @@ public:
 	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
 		int maxCount) const;
 
-	const idBounds& GetWorldBounds() const;
-	std::shared_ptr<idClipModel> DefaultClipModel();
+	const idBounds& GetWorldBounds() const noexcept;
+	std::shared_ptr<idClipModel> DefaultClipModel() noexcept;
 
 	// stats and debug drawing
-	void PrintStatistics();
+	void PrintStatistics() noexcept;
 	void DrawClipModels(const Vector2& eye, const float radius, const std::shared_ptr<idEntity>& passEntity);
 	void DrawClipSectors();
 private:
@@ -208,11 +207,11 @@ private:
 	bool DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds);
 };
 
-inline const idBounds& idClip::GetWorldBounds() const {
+inline const idBounds& idClip::GetWorldBounds() const noexcept {
 	return worldBounds;
 }
 
-inline std::shared_ptr<idClipModel> idClip::DefaultClipModel() {
+inline std::shared_ptr<idClipModel> idClip::DefaultClipModel() noexcept {
 	return defaultClipModel;
 }
 

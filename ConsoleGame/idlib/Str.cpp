@@ -134,7 +134,7 @@ idStr::IsNumeric
 Checks a string to see if it contains only numerical values.
 ============
 */
-bool idStr::IsNumeric(const std::string& s) {
+bool idStr::IsNumeric(const std::string& s) noexcept {
 	if (s.empty())
 		return true;
 
@@ -161,7 +161,7 @@ bool idStr::IsNumeric(const std::string& s) {
 bool idStr::caseInSensStringCompareCpp11(const std::string& str1, const std::string& str2)
 {
 	return ((str1.size() == str2.size()) && std::equal(str1.begin(), str1.end(), str2.begin(),
-		[](auto& c1, auto& c2) { return (c1 == c2 || std::toupper(c1) == std::toupper(c2)); }
+		[](auto& c1, auto& c2) noexcept { return (c1 == c2 || std::toupper(c1) == std::toupper(c2)); }
 	));
 }
 

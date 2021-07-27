@@ -42,7 +42,7 @@ int idFile::Write(const void* buffer, int len) {
 idFile::Length
 =================
 */
-int idFile::Length() const {
+int idFile::Length() const noexcept {
 	return 0;
 }
 
@@ -51,7 +51,7 @@ int idFile::Length() const {
 idFile::Timestamp
 =================
 */
-ID_TIME_T idFile::Timestamp() const {
+ID_TIME_T idFile::Timestamp() const noexcept {
 	return 0;
 }
 
@@ -60,10 +60,10 @@ ID_TIME_T idFile::Timestamp() const {
 idFile::ForceFlush
 =================
 */
-void idFile::ForceFlush() {
+void idFile::ForceFlush() noexcept {
 }
 
-void idFile::Flush() {
+void idFile::Flush() noexcept {
 }
 
 int idFile::WriteString(const std::string& str) {
@@ -218,7 +218,7 @@ int idFile_Permanent::Write(const void* buffer, int len) {
 idFile_Permanent::ForceFlush
 =================
 */
-void idFile_Permanent::ForceFlush() {
+void idFile_Permanent::ForceFlush() noexcept {
 	o.flush();
 }
 
@@ -227,7 +227,7 @@ void idFile_Permanent::ForceFlush() {
 idFile_Permanent::Flush
 =================
 */
-void idFile_Permanent::Flush() {
+void idFile_Permanent::Flush() noexcept {
 	o.flush();
 }
 
@@ -236,7 +236,7 @@ void idFile_Permanent::Flush() {
 idFile_Permanent::Length
 ================
 */
-int idFile_Permanent::Length() const {
+int idFile_Permanent::Length() const noexcept {
 	return fileSize;
 }
 

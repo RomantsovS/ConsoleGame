@@ -20,7 +20,7 @@ Free map
 idCollisionModelManagerLocal::Clear
 ================
 */
-void idCollisionModelManagerLocal::Clear() {
+void idCollisionModelManagerLocal::Clear() noexcept {
 	mapName.clear();
 	mapFileTime = 0;
 	loaded = 0;
@@ -44,7 +44,7 @@ void idCollisionModelManagerLocal::Clear() {
 idCollisionModelManagerLocal::RemoveBrushReferences_r
 ================
 */
-void idCollisionModelManagerLocal::RemoveBrushReferences_r(cm_node_t* node, const cm_brush_t* b) {
+void idCollisionModelManagerLocal::RemoveBrushReferences_r(cm_node_t* node, const cm_brush_t* b) noexcept {
 	while (node) {
 		for (std::shared_ptr<cm_brushRef_t> bref = node->brushes; bref; bref = bref->next) {
 			if (bref->b.get() == b) {
@@ -74,7 +74,7 @@ void idCollisionModelManagerLocal::RemoveBrushReferences_r(cm_node_t* node, cons
 idCollisionModelManagerLocal::FreeNode
 ================
 */
-void idCollisionModelManagerLocal::FreeNode(std::shared_ptr<cm_node_t> node) {
+void idCollisionModelManagerLocal::FreeNode(std::shared_ptr<cm_node_t> node) noexcept {
 	// don't free the node here
 	// the nodes are allocated in blocks which are freed when the model is freed
 }
@@ -84,7 +84,7 @@ void idCollisionModelManagerLocal::FreeNode(std::shared_ptr<cm_node_t> node) {
 idCollisionModelManagerLocal::FreeBrushReference
 ================
 */
-void idCollisionModelManagerLocal::FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref) {
+void idCollisionModelManagerLocal::FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref) noexcept {
 	// don't free the brush reference here
 	// the brush references are allocated in blocks which are freed when the model is freed
 }
@@ -108,7 +108,7 @@ void idCollisionModelManagerLocal::FreeTrmModelStructure() {
 	FreeModel(models[MAX_SUBMODELS]);
 }
 
-void idCollisionModelManagerLocal::FreeBrush(cm_model_t* model, cm_brush_t* brush) {
+void idCollisionModelManagerLocal::FreeBrush(cm_model_t* model, cm_brush_t* brush) noexcept {
 	model->numBrushes--;
 	model->brushMemory -= sizeof(cm_brush_t);
 	/*if (model->brushBlock == NULL) {
@@ -304,7 +304,7 @@ Trace models (item boxes, etc) are converted to collision models on the fly, usi
 as a reusable temporary buffer
 ================
 */
-int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm) {
+int idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel& trm) noexcept {
 	int i;
 	const traceModelVert_t* trmVert;
 
@@ -510,7 +510,7 @@ void idCollisionModelManagerLocal::SetupTrmModelStructure() {
 idCollisionModelManagerLocal::ConvertBrushSides
 ================
 */
-void idCollisionModelManagerLocal::ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum) {
+void idCollisionModelManagerLocal::ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum) noexcept {
 	/*int i, j;
 	idMapBrushSide* mapSide;
 	idFixedWinding w;
@@ -586,7 +586,7 @@ void idCollisionModelManagerLocal::ConvertBrush(cm_model_t* model, gsl::not_null
 CM_CountNodeBrushes
 ================
 */
-static int CM_CountNodeBrushes(const cm_node_t* node) {
+static int CM_CountNodeBrushes(const cm_node_t* node) noexcept {
 	int count;
 
 	count = 0;
@@ -714,7 +714,7 @@ void idCollisionModelManagerLocal::BuildModels(gsl::not_null<const idMapFile*> m
 	//common->Printf("%.0f msec to load collision data.\n", timer.Milliseconds());
 }
 
-int idCollisionModelManagerLocal::FindModel(const std::string& name) {
+int idCollisionModelManagerLocal::FindModel(const std::string& name) noexcept {
 	int i;
 
 	// check if this model is already loaded
@@ -755,7 +755,7 @@ void idCollisionModelManagerLocal::PrintModelInfo(const cm_model_t* model) {
 idCollisionModelManagerLocal::AccumulateModelInfo
 ================
 */
-void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t* model) {
+void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t* model) noexcept {
 	int i;
 
 	// accumulate statistics of all loaded models

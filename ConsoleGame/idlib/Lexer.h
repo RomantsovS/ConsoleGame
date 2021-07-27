@@ -93,9 +93,9 @@ public:
 	// NOTE: the ptr is expected to point at a valid C string: ptr[length] == '\0'
 	int				LoadMemory(const char* ptr, int length, const std::string& name, int startLine = 1);
 	// free the script
-	void			FreeSource();
+	void			FreeSource() noexcept;
 	// returns true if a script is loaded
-	int				IsLoaded() { return idLexer::loaded; };
+	int				IsLoaded() noexcept { return idLexer::loaded; };
 	// read a token
 	int				ReadToken(gsl::not_null<idToken*> token);
 	// expect a certain token, reads the token when available
@@ -123,11 +123,11 @@ public:
 	// set an array with punctuations, NULL restores default C/C++ set, see default_punctuations for an example
 	void			SetPunctuations(const std::vector<punctuation_t>* p);
 	// get offset in script
-	const int		GetFileOffset();
+	const int		GetFileOffset() noexcept;
 	// get file time
-	const ID_TIME_T	GetFileTime();
+	const ID_TIME_T	GetFileTime() noexcept;
 	// returns the current line number
-	const int		GetLineNum();
+	const int		GetLineNum() noexcept;
 	// print an error message
 	void			Error(const char* str, ...);
 	// print a warning message
@@ -159,15 +159,15 @@ private:
 	int				ReadPunctuation(gsl::not_null<idToken*> token);
 };
 
-inline const int idLexer::GetFileOffset() {
+inline const int idLexer::GetFileOffset() noexcept {
 	return idLexer::script_p - idLexer::buffer;
 }
 
-inline const ID_TIME_T idLexer::GetFileTime() {
+inline const ID_TIME_T idLexer::GetFileTime() noexcept {
 	return idLexer::fileTime;
 }
 
-inline const int idLexer::GetLineNum() {
+inline const int idLexer::GetLineNum() noexcept {
 	return idLexer::line;
 }
 

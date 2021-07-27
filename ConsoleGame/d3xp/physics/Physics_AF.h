@@ -33,8 +33,8 @@ public:
 	idAFBody& operator=(idAFBody&&) = default;
 
 	void Init();
-	void SetClipModel(std::shared_ptr<idClipModel> clipModel);
-	std::shared_ptr<idClipModel> GetClipModel() const { return clipModel; }
+	void SetClipModel(std::shared_ptr<idClipModel> clipModel) noexcept;
+	std::shared_ptr<idClipModel> GetClipModel() const noexcept { return clipModel; }
 private:
 	// properties
 	std::string name; // name of body
@@ -93,49 +93,49 @@ public:
 							// get body or constraint id
 	int GetBodyId(const std::shared_ptr<idAFBody>& body) const;
 	// retrieve body or constraint
-	std::shared_ptr<idAFBody> GetBody(const std::string& bodyName) const;
+	std::shared_ptr<idAFBody> GetBody(const std::string& bodyName) const noexcept;
 	// delete body or constraint
 	void DeleteBody(const int id);
 
 	void UpdateClipModels();
 public:	// common physics interface
-	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
-	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
-	int GetNumClipModels() const override;
+	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) noexcept override;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
+	int GetNumClipModels() const noexcept override;
 
-	const idBounds& GetBounds(int id = -1) const override;
-	const idBounds& GetAbsBounds(int id = -1) const override;
+	const idBounds& GetBounds(int id = -1) const noexcept override;
+	const idBounds& GetAbsBounds(int id = -1) const noexcept override;
 
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
-	void UpdateTime(int endTimeMSec) override;
-	int GetTime() const override;
+	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
+	void UpdateTime(int endTimeMSec) noexcept override;
+	int GetTime() const noexcept override;
 
-	bool IsAtRest() const override;
-	void Activate() override;
-	void PutToRest() override;
+	bool IsAtRest() const noexcept override;
+	void Activate() noexcept override;
+	void PutToRest() noexcept override;
 
-	void SaveState() override;
-	void RestoreState() override;
+	void SaveState() noexcept override;
+	void RestoreState() noexcept override;
 
-	void SetOrigin(const Vector2& newOrigin, int id = -1) override;
-	void SetAxis(const Vector2& newAxis, int id = -1) override;
+	void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
+	void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
-	void Translate(const Vector2& translation, int id = -1) override;
+	void Translate(const Vector2& translation, int id = -1) noexcept override;
 	//void Rotate(const Vector2& rotation, int id = -1) override;
 
-	const Vector2& GetOrigin(int id = 0) const override;
+	const Vector2& GetOrigin(int id = 0) const noexcept override;
 	//const Vector2& GetAxis(int id = 0) const override;
 
-	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	const Vector2& GetLinearVelocity(int id = 0) const override;
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
+	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
 
-	void DisableClip() override;
-	void EnableClip() override;
+	void DisableClip() noexcept override;
+	void EnableClip() noexcept override;
 
-	void UnlinkClip() override;
-	void LinkClip() override;
+	void UnlinkClip() noexcept override;
+	void LinkClip() noexcept override;
 
-	bool EvaluateContacts() override;
+	bool EvaluateContacts() noexcept override;
 private:
 	std::vector<std::shared_ptr<idAFBody>> bodies; // all bodies
 	std::vector<AFCollision_t> collisions; // collisions
@@ -149,15 +149,15 @@ private:
 	AFPState_t saved;
 
 private:
-	void Evolve(float timeStep);
-	idEntity* SetupCollisionForBody(idAFBody* body) const;
-	bool CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision);
-	bool ApplyCollisions(float timeStep);
+	void Evolve(float timeStep) noexcept;
+	idEntity* SetupCollisionForBody(idAFBody* body) const noexcept;
+	bool CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept;
+	bool ApplyCollisions(float timeStep) noexcept;
 	void CheckForCollisions(float timeStep);
-	void SwapStates();
-	bool TestIfAtRest(float timeStep);
-	void Rest();
-	void DebugDraw();
+	void SwapStates() noexcept;
+	bool TestIfAtRest(float timeStep) noexcept;
+	void Rest() noexcept;
+	void DebugDraw() noexcept;
 	void MoveEachBodiesToPrevOne();
 };
 

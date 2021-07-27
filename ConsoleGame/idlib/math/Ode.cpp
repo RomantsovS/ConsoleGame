@@ -33,7 +33,7 @@ idODE_Euler::~idODE_Euler() {
 idODE_Euler::Evaluate
 =============
 */
-float idODE_Euler::Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) {
+float idODE_Euler::Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) noexcept {
 	float delta;
 	int i{0};
 

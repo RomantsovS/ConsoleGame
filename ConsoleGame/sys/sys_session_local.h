@@ -41,44 +41,44 @@ public:
 	idSessionLocal(idSessionLocal&&) = default;
 	idSessionLocal& operator=(idSessionLocal&&) = default;
 
-	void InitBaseState();
+	void InitBaseState() noexcept;
 
 	// Lobby management
 	void CreateMatch(const idMatchParameters& parms_) override;
 
-	void StartMatch() override;
+	void StartMatch() noexcept override;
 	void MoveToPressStart() override;
-	void FinishDisconnect() override;
+	void FinishDisconnect() noexcept override;
 
-	const idMatchParameters& GetMatchParms() const override  { return parms; }
+	const idMatchParameters& GetMatchParms() const noexcept override  { return parms; }
 
 	// Misc
-	void QuitMatchToTitle() override; // Will forcefully quit the match and return to the title screen.
-	void LoadingFinished() override;
+	void QuitMatchToTitle() noexcept override; // Will forcefully quit the match and return to the title screen.
+	void LoadingFinished() noexcept override;
 
 	sessionState_t	GetState() const override;
 
 	void UpdateSignInManager() override;
-	void RegisterLocalUser() override { localUserRegistered = true; }
-	bool IsLocalUserRegistered() override { return localUserRegistered; }
+	void RegisterLocalUser() noexcept override { localUserRegistered = true; }
+	bool IsLocalUserRegistered() noexcept override { return localUserRegistered; }
 
-	void Initialize() override = 0;
-	void Shutdown() override = 0;
+	void Initialize() noexcept override = 0;
+	void Shutdown() noexcept override = 0;
 protected:
 	//=====================================================================================================
 	// Common functions (sys_session_local.cpp)
 	//=====================================================================================================
 
-	void SetState(state_t newState);
+	void SetState(state_t newState) noexcept;
 protected:
 	state_t localState;
 
-	void MoveToMainMenu(); // End all session (async), and return to IDLE state
+	void MoveToMainMenu() noexcept; // End all session (async), and return to IDLE state
 private:
 	bool localUserRegistered;
 	idMatchParameters parms;
 
-	void StartLoading();
+	void StartLoading() noexcept;
 };
 
 #endif

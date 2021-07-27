@@ -28,22 +28,22 @@ public:
 	// align the clip model with the gravity direction
 	void SetClipModelAxis();
 public:	// common physics interface
-	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
-	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
-	int GetNumClipModels() const override;
+	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) noexcept override;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
+	int GetNumClipModels() const noexcept override;
 
-	const idBounds& GetBounds(int id = -1) const override;
-	const idBounds& GetAbsBounds(int id = -1) const override;
+	const idBounds& GetBounds(int id = -1) const noexcept override;
+	const idBounds& GetAbsBounds(int id = -1) const noexcept override;
 
-	const Vector2& GetOrigin(int id = 0) const override;
+	const Vector2& GetOrigin(int id = 0) const noexcept override;
 
-	void DisableClip() override;
-	void EnableClip() override;
+	void DisableClip() noexcept override;
+	void EnableClip() noexcept override;
 
-	void UnlinkClip() override;
-	void LinkClip() override;
+	void UnlinkClip() noexcept override;
+	void LinkClip() noexcept override;
 
-	bool EvaluateContacts() override;
+	bool EvaluateContacts() noexcept override;
 
 protected:
 	std::shared_ptr<idClipModel> clipModel;			// clip model used for collision detection

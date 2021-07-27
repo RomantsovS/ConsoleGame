@@ -38,7 +38,7 @@ idMenuWidget::~idMenuWidget() {
 	Cleanup();
 }
 
-void idMenuWidget::Cleanup() {
+void idMenuWidget::Cleanup() noexcept {
 	// free all children
 	for (size_t i = 0; i < children.size(); ++i) {
 		children[i] = nullptr;
@@ -141,7 +141,7 @@ bool idMenuWidget::ExecuteEvent(const idWidgetEvent& event) {
 idMenuWidget::ClearSprite
 ========================
 */
-void idMenuWidget::ClearSprite() {
+void idMenuWidget::ClearSprite() noexcept {
 	if (!GetSprite()) {
 		return;
 	}
@@ -279,7 +279,7 @@ idMenuWidget_Button::SetState
 Transitioning from the current button state to the new button state
 ========================
 */
-void idMenuWidget::SetState(const widgetState_t state) {
+void idMenuWidget::SetState(const widgetState_t state) noexcept {
 	if (GetSprite()) {
 		// FIXME: will need some more intelligence in the transitions to go from, say,
 		// selected_up -> up ... but this should work fine for now.
@@ -353,7 +353,7 @@ bool idMenuWidget::HandleAction(idWidgetAction& action, const idWidgetEvent& eve
 idMenuWidget::GetEventActions
 ========================
 */
-std::vector<idWidgetAction>* idMenuWidget::GetEventActions(const widgetEvent_t eventType) {
+std::vector<idWidgetAction>* idMenuWidget::GetEventActions(const widgetEvent_t eventType) noexcept {
 	if (eventActionLookup[static_cast<int>(eventType)] == INVALID_ACTION_INDEX) {
 		return nullptr;
 	}

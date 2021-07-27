@@ -5,7 +5,7 @@
 
 class ModelPixel {
 public:
-	ModelPixel(Vector2 pos, Screen::Pixel pixel);
+	ModelPixel(Vector2 pos, Screen::Pixel pixel) noexcept;
 
 	Vector2 origin;
 

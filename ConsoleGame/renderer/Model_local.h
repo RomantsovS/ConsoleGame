@@ -12,31 +12,31 @@ public:
 	idRenderModelStatic& operator=(idRenderModelStatic&&) = default;
 
 	void InitFromFile(std::string fileName) override;
-	bool LoadBinaryModel(idFile* file) override;
-	bool SupportsBinaryModel() override { return false; }
+	bool LoadBinaryModel(idFile* file) noexcept override;
+	bool SupportsBinaryModel() noexcept override { return false; }
 
-	void PurgeModel() override;
+	void PurgeModel() noexcept override;
 	void LoadModel() override;
-	bool IsLoaded() override;
-	void SetLevelLoadReferenced(bool referenced) override;
-	bool IsLevelLoadReferenced() override;
+	bool IsLoaded() noexcept override;
+	void SetLevelLoadReferenced(bool referenced) noexcept override;
+	bool IsLevelLoadReferenced() noexcept override;
 
 	void InitEmpty(const std::string fileName) override;
 	const std::string Name() const override;
-	int NumSurfaces() const override;
-	const ModelPixel &Surface(int surfaceNum) const override;
+	int NumSurfaces() const noexcept override;
+	const ModelPixel &Surface(int surfaceNum) const noexcept override;
 
-	dynamicModel_t IsDynamicModel() const override;
-	bool IsDefaultModel() const override;
-	bool IsReloadable() const override;
+	dynamicModel_t IsDynamicModel() const noexcept override;
+	bool IsDefaultModel() const noexcept override;
+	bool IsReloadable() const noexcept override;
 
 	void MakeDefaultModel();
 
 	bool LoadTextModel(const std::string& fileName);
 	bool LoadBMPModel(const std::string& fileName);
 
-	int GetColor() const override;
-	void SetColor(int col) override;
+	int GetColor() const noexcept override;
+	void SetColor(int col) noexcept override;
 public:
 	std::vector<ModelPixel> surfaces;
 

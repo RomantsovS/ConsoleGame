@@ -1,5 +1,6 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
+
 #include "sys_session_local.h"
 
 /*
@@ -16,7 +17,7 @@ idSessionLocal::idSessionLocal() {
 idSessionLocal::InitBaseState
 ========================
 */
-void idSessionLocal::InitBaseState() {
+void idSessionLocal::InitBaseState() noexcept {
 	localState = state_t::STATE_PRESS_START;
 }
 
@@ -25,7 +26,7 @@ void idSessionLocal::InitBaseState() {
 idSessionLocal::FinishDisconnect
 ========================
 */
-void idSessionLocal::FinishDisconnect() {
+void idSessionLocal::FinishDisconnect() noexcept {
 }
 
 /*
@@ -43,7 +44,7 @@ void idSessionLocal::CreateMatch(const idMatchParameters& p) {
 idSessionLocal::StartLoading
 ========================
 */
-void idSessionLocal::StartLoading() {
+void idSessionLocal::StartLoading() noexcept {
 	SetState(state_t::STATE_LOADING);
 }
 
@@ -52,7 +53,7 @@ void idSessionLocal::StartLoading() {
 idSessionLocal::StartMatch
 ========================
 */
-void idSessionLocal::StartMatch() {
+void idSessionLocal::StartMatch() noexcept {
 	// Start loading
 	StartLoading();
 }
@@ -75,7 +76,7 @@ void idSessionLocal::MoveToPressStart() {
 idSessionLocal::MoveToMainMenu
 ========================
 */
-void idSessionLocal::MoveToMainMenu() {
+void idSessionLocal::MoveToMainMenu() noexcept {
 	SetState(state_t::STATE_IDLE);
 }
 
@@ -84,7 +85,7 @@ void idSessionLocal::MoveToMainMenu() {
 idSessionLocal::Initialize
 ========================
 */
-void idSessionLocal::Initialize() {
+void idSessionLocal::Initialize() noexcept {
 }
 
 /*
@@ -92,7 +93,7 @@ void idSessionLocal::Initialize() {
 idSessionLocal::Shutdown
 ========================
 */
-void idSessionLocal::Shutdown() {
+void idSessionLocal::Shutdown() noexcept {
 }
 
 /*
@@ -101,7 +102,7 @@ idSessionLocal::QuitMatchToTitle
 QuitMatchToTitle will forcefully quit the match and return to the title screen.
 ========================
 */
-void idSessionLocal::QuitMatchToTitle() {
+void idSessionLocal::QuitMatchToTitle() noexcept {
 	MoveToMainMenu();
 }
 
@@ -165,8 +166,8 @@ idSessionLocal::LoadingFinished
 Only called by idCommonLocal::FinalizeMapChange
 ========================
 */
-void idSessionLocal::LoadingFinished() {
-	//assert(GetState() == idSession::LOADING);
+void idSessionLocal::LoadingFinished() noexcept {
+	assert(GetState() == idSession::sessionState_t::LOADING);
 
 	SetState(state_t::STATE_INGAME);
 }
@@ -176,7 +177,7 @@ void idSessionLocal::LoadingFinished() {
 idSessionLocal::SetState
 ========================
 */
-void idSessionLocal::SetState(state_t newState) {
+void idSessionLocal::SetState(state_t newState) noexcept {
 	//assert(newState < NUM_STATES);
 	//assert(localState < NUM_STATES);
 

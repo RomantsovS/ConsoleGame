@@ -30,9 +30,9 @@ public:
 	void Think() override;
 	void Present() override;
 
-	void Remove() override;
+	void Remove() noexcept override;
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 protected:
 	std::shared_ptr<idPhysics_AF> physicsObj;
 

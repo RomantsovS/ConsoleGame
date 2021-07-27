@@ -45,7 +45,7 @@ idSWFScriptObject::~idSWFScriptObject() {
 idSWFScriptObject::Clear
 ========================
 */
-void idSWFScriptObject::Clear() {
+void idSWFScriptObject::Clear() noexcept {
 	variables.clear();
 }
 

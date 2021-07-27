@@ -40,12 +40,12 @@ public:
 	void RenderScene(const renderView_t* renderView) override;
 
 	bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
-		const float radius) const override;
+		const float radius) const noexcept override;
 
 	void DebugClearLines(int time) override;
 
 	void DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime) override;
-	void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) override;
+	void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) noexcept override;
 	void DebugBounds(const int color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
 
 	std::string mapName; // ie: maps/tim_dm2.proc, written to demoFile
@@ -64,7 +64,7 @@ public:
 	void FreeWorld();
 	void ClearWorld();
 	void FreeDefs();
-	void AddWorldModelEntities();
+	void AddWorldModelEntities() noexcept;
 	void ReadBinaryAreaPortals();
 	void ReadBinaryNodes();
 

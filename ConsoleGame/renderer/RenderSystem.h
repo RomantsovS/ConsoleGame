@@ -1,7 +1,7 @@
 #ifndef RENDER_SYSTEM_H
 #define RENDER_SYSTEM_H
 
-bool R_IsInitialized();
+bool R_IsInitialized() noexcept;
 
 class idRenderWorld;
 

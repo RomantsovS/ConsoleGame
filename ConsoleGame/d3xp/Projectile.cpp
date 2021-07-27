@@ -128,7 +128,7 @@ void idProjectile::Think() {
 idProjectile::Collide
 =================
 */
-bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) {
+bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	idEntity* ignore;
 	std::string damageDefName;
 	Vector2		dir{};

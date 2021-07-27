@@ -16,16 +16,16 @@ public:
 	idMaterial(idMaterial&&) = default;
 	idMaterial& operator=(idMaterial&&) = default;
 
-	bool SetDefaultText() override;
+	bool SetDefaultText() noexcept override;
 	std::string DefaultDefinition() const override;
 	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
 
 	// get a specific stage
-	const textureStage_t* GetStage() const { return stage.get(); }
+	const textureStage_t* GetStage() const noexcept { return stage.get(); }
 
 private:
 	// parse the entire material
-	void CommonInit();
+	void CommonInit() noexcept;
 	void ParseMaterial(idLexer& src);
 	void ParseStage(idLexer& src);
 private:

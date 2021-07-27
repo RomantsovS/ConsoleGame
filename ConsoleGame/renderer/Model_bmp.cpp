@@ -89,7 +89,7 @@ void BMP::check_color_header(BMPColorHeader & bmp_color_header) {
 	}
 }
 
-uint32_t BMP::make_stride_aligned(uint32_t align_stride) {
+uint32_t BMP::make_stride_aligned(uint32_t align_stride) noexcept {
 	uint32_t  new_stride = row_stride;
 	while (new_stride % align_stride != 0) {
 		new_stride++;

@@ -8,7 +8,7 @@
 Sys_GetClockTicks
 ================
 */
-double Sys_GetClockTicks() {
+double Sys_GetClockTicks() noexcept {
 //#if 0
 
 	LARGE_INTEGER li;
@@ -39,7 +39,7 @@ double Sys_GetClockTicks() {
 Sys_ClockTicksPerSecond
 ================
 */
-long long Sys_ClockTicksPerSecond() {
+long long Sys_ClockTicksPerSecond() noexcept {
 	static long long ticks = 0;
 
 	if (!ticks) {

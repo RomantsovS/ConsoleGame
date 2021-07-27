@@ -13,7 +13,7 @@ the default image will be grey with a white box outline
 to allow you to see the mapping coordinates on a surface
 ==================
 */
-void idImage::MakeDefault() {
+void idImage::MakeDefault() noexcept {
 }
 
 static void R_DefaultImage(gsl::not_null<idImage*> image) {

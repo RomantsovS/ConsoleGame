@@ -6,7 +6,7 @@
 idSWFSpriteInstance::idSWFSpriteInstance
 ========================
 */
-idSWFSpriteInstance::idSWFSpriteInstance(std::shared_ptr<idSWF> _swf) :
+idSWFSpriteInstance::idSWFSpriteInstance(std::shared_ptr<idSWF> _swf) noexcept :
 	swf(_swf),
 	isVisible(false),
 	scriptObject(nullptr) {
@@ -66,7 +66,7 @@ void idSWFSpriteInstance::Clear() {
 idSWFSpriteInstance::FindDisplayEntry
 ========================
 */
-swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry(int depth) {
+swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry(int depth) noexcept {
 	int len = displayList.size();
 	int mid = len;
 	int offset = 0;
@@ -131,7 +131,7 @@ void idSWFSpriteInstance::RunTo(int targetFrame) {
 idSWFSpriteInstance::SetVisible
 ========================
 */
-void idSWFSpriteInstance::SetVisible(bool visible) {
+void idSWFSpriteInstance::SetVisible(bool visible) noexcept {
 	isVisible = visible;
 }
 
@@ -140,7 +140,7 @@ void idSWFSpriteInstance::SetVisible(bool visible) {
 idSWFSpriteInstance::SetColor
 ========================
 */
-void idSWFSpriteInstance::SetColor(const int color) {
+void idSWFSpriteInstance::SetColor(const int color) noexcept {
 	for (auto& display : displayList) {
 		if (display.textInstance) {
 			display.textInstance->color = color;
@@ -153,7 +153,7 @@ void idSWFSpriteInstance::SetColor(const int color) {
 idSWFSpriteInstance::SetXPos
 ========================
 */
-void idSWFSpriteInstance::SetXPos(float xPos) {
+void idSWFSpriteInstance::SetXPos(float xPos) noexcept {
 	/*if (parent == NULL) {
 		return;
 	}

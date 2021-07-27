@@ -49,23 +49,23 @@ public:
 	idLinkList(idLinkList&&) = default;
 	idLinkList& operator=(idLinkList&&) = default;
 
-	bool				IsListEmpty() const;
-	bool				InList() const;
-	int					Num() const;
-	void				Clear();
+	bool IsListEmpty() const noexcept;
+	bool InList() const noexcept;
+	int Num() const;
+	void Clear() noexcept;
 
-	void				InsertBefore(idLinkList &node);
-	void				InsertAfter(idLinkList &node);
-	void				AddToEnd(idLinkList &node);
-	void				AddToFront(idLinkList &node);
+	void InsertBefore(idLinkList &node) noexcept;
+	void InsertAfter(idLinkList &node);
+	void AddToEnd(idLinkList &node) noexcept;
+	void AddToFront(idLinkList &node);
 
-	void				Remove();
+	void Remove() noexcept;
 
-	std::shared_ptr<type> Next() const;
-	std::shared_ptr<type> Prev() const;
+	std::shared_ptr<type> Next() const noexcept;
+	std::shared_ptr<type> Prev() const noexcept;
 
 	std::shared_ptr<type> Owner() const;
-	void				SetOwner(std::shared_ptr<type> object);
+	void SetOwner(std::shared_ptr<type> object) noexcept;
 
 	idLinkList *		ListHead() const;
 	idLinkList *		NextNode() const;
@@ -114,7 +114,7 @@ Returns true if the list is empty.
 ================
 */
 template< class type >
-bool idLinkList<type>::IsListEmpty() const {
+bool idLinkList<type>::IsListEmpty() const noexcept {
 	return head->next == head;
 }
 
@@ -126,7 +126,7 @@ Returns true if the node is in a list.  If called on the head of a list, will al
 ================
 */
 template< class type >
-bool idLinkList<type>::InList() const {
+bool idLinkList<type>::InList() const noexcept {
 	return head != this;
 }
 
@@ -158,7 +158,7 @@ If node is the head of the list, clears the list.  Otherwise it just removes the
 ================
 */
 template< class type >
-void idLinkList<type>::Clear() {
+void idLinkList<type>::Clear() noexcept {
 	if (head == this) {
 		while (next != this) {
 			next->Remove();
@@ -177,7 +177,7 @@ Removes node from list
 ================
 */
 template< class type >
-void idLinkList<type>::Remove() {
+void idLinkList<type>::Remove() noexcept {
 	prev->next = next;
 	next->prev = prev;
 
@@ -195,7 +195,7 @@ then the new node is placed at the end of the list.
 ================
 */
 template< class type >
-void idLinkList<type>::InsertBefore(idLinkList &node) {
+void idLinkList<type>::InsertBefore(idLinkList &node) noexcept {
 	Remove();
 
 	next = &node;
@@ -232,7 +232,7 @@ Adds node at the end of the list
 ================
 */
 template< class type >
-void idLinkList<type>::AddToEnd(idLinkList &node) {
+void idLinkList<type>::AddToEnd(idLinkList &node) noexcept {
 	InsertBefore(*node.head);
 }
 
@@ -269,7 +269,7 @@ Returns the next object in the list, or NULL if at the end.
 ================
 */
 template< class type >
-std::shared_ptr<type> idLinkList<type>::Next() const {
+std::shared_ptr<type> idLinkList<type>::Next() const noexcept {
 	if (!next || (next == head)) {
 		return nullptr;
 	}
@@ -284,7 +284,7 @@ Returns the previous object in the list, or NULL if at the beginning.
 ================
 */
 template< class type >
-std::shared_ptr<type> idLinkList<type>::Prev() const {
+std::shared_ptr<type> idLinkList<type>::Prev() const noexcept {
 	if (!prev || (prev == head)) {
 		return nullptr;
 	}
@@ -341,7 +341,7 @@ Sets the object that this node is associated with.
 ================
 */
 template< class type >
-void idLinkList<type>::SetOwner(std::shared_ptr<type> object) {
+void idLinkList<type>::SetOwner(std::shared_ptr<type> object) noexcept {
 	owner = object;
 }
 

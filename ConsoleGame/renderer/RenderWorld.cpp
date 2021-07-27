@@ -142,7 +142,7 @@ void idRenderWorldLocal::RenderScene(const renderView_t* renderView) {
 }
 
 bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start,
-	const Vector2& end, const float radius) const {
+	const Vector2& end, const float radius) const noexcept {
 	memset(&trace, 0, sizeof(trace));
 	trace.fraction = 1.0f;
 	trace.point = end;
@@ -255,7 +255,7 @@ void idRenderWorldLocal::DrawTextToScreen(const std::string &text, const Vector2
 	RB_AddDebugText(text, origin, color, lifetime);
 }
 
-void idRenderWorldLocal::DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) {
+void idRenderWorldLocal::DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) noexcept {
 	RB_AddDebugLine(color, start, end, lifetime, depthTest);
 }
 

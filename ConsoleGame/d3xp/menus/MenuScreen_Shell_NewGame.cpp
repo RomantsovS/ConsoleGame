@@ -8,7 +8,7 @@ const static int NUM_NEW_GAME_OPTIONS = 8;
 idMenuScreen_Shell_NewGame::Initialize
 ========================
 */
-void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuScreen::Initialize(data);
 
 	if (data != NULL) {
@@ -64,7 +64,7 @@ void idMenuScreen_Shell_NewGame::Initialize(std::shared_ptr<idMenuHandler> data)
 idMenuScreen_Shell_NewGame::Update
 ========================
 */
-void idMenuScreen_Shell_NewGame::Update() {
+void idMenuScreen_Shell_NewGame::Update() noexcept {
 
 	if (auto spMenuData = menuData.lock()) {
 		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();

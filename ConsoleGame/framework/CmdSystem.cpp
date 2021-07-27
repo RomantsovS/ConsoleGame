@@ -37,7 +37,7 @@ idCmdSystemLocal
 class idCmdSystemLocal : public idCmdSystem {
 public:
 	void			Init() override;
-	void			Shutdown() override;
+	void			Shutdown() noexcept override;
 
 	void AddCommand(const std::string& cmdName, cmdFunction_t function, int flags,
 		const std::string& description/*, argCompletion_t argCompletion = NULL*/) override;
@@ -49,7 +49,7 @@ public:
 	void			BufferCommandText(cmdExecution_t exec, const std::string &text) override;
 	void			ExecuteCommandBuffer() override;
 
-	std::list<std::shared_ptr<commandDef_t>>& GetCommands() { return commands; }
+	std::list<std::shared_ptr<commandDef_t>>& GetCommands() noexcept { return commands; }
 
 private:
 	static const int		MAX_CMD_BUFFER = 0x10000;
@@ -110,7 +110,7 @@ void idCmdSystemLocal::ListByFlags(const idCmdArgs& args, cmdFlags_t flags) {
 		cmdList.push_back(cmd);
 	}*/
 
-	std::copy_if(cmdSystemLocal.GetCommands().begin(), cmdSystemLocal.GetCommands().end(), cmd_list.begin(), [&](auto& cmd) {return cmd->flags& flags; });
+	std::copy_if(cmdSystemLocal.GetCommands().begin(), cmdSystemLocal.GetCommands().end(), cmd_list.begin(), [&](auto& cmd) noexcept {return cmd->flags& flags; });
 
 	//cmdList.SortWithTemplate( idSort_CommandDef() );
 
@@ -200,7 +200,7 @@ void idCmdSystemLocal::Init() {
 idCmdSystemLocal::Shutdown
 ============
 */
-void idCmdSystemLocal::Shutdown() {
+void idCmdSystemLocal::Shutdown() noexcept {
 	commands.clear();
 
 	/*completionString.Clear();
@@ -218,7 +218,7 @@ void idCmdSystemLocal::AddCommand(const std::string& cmdName, cmdFunction_t func
 	const std::string& description/*, argCompletion_t argCompletion = NULL*/) {
 
 	// fail if the command already exists
-	auto iter = std::find_if(commands.begin(), commands.end(), [&](auto cmd) {return cmd->name == cmdName; });
+	auto iter = std::find_if(commands.begin(), commands.end(), [&](auto cmd) noexcept {return cmd->name == cmdName; });
 	
 	if (iter != commands.end()) {
 		if (function != (*iter)->function) {
@@ -243,7 +243,7 @@ idCmdSystemLocal::RemoveFlaggedCommands
 ============
 */
 void idCmdSystemLocal::RemoveFlaggedCommands(int flags) {
-	commands.erase(std::remove_if(commands.begin(), commands.end(), [&](auto cmd) {return cmd->flags & flags; }), commands.end());
+	commands.erase(std::remove_if(commands.begin(), commands.end(), [&](auto cmd) noexcept {return cmd->flags & flags; }), commands.end());
 }
 
 /*

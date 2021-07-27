@@ -116,7 +116,7 @@ void idTypeInfo::Init() {
 	}
 }
 
-void idTypeInfo::Shutdown() {
+void idTypeInfo::Shutdown() noexcept {
 	// free up the memory used for event lookups
 	if (eventMap) {
 		if (freeEventMap) {
@@ -146,7 +146,7 @@ void idClass::CallSpawn() {
 	CallSpawnFunc(type);
 }
 
-void idClass::Spawn() {
+void idClass::Spawn() noexcept {
 }
 
 /*
@@ -195,7 +195,7 @@ void idClass::Init() {
 	gameLocal.Printf("...%i classes\n", types.size());
 }
 
-void idClass::Shutdown() {
+void idClass::Shutdown() noexcept {
 	idTypeInfo* c;
 
 	for (c = typelist; c != NULL; c = c->next) {
@@ -206,7 +206,7 @@ void idClass::Shutdown() {
 	initialized = false;
 }
 
-idTypeInfo* idClass::GetClass(const std::string& name) {
+idTypeInfo* idClass::GetClass(const std::string& name) noexcept {
 	idTypeInfo* c;
 	int			order;
 	int			mid;
@@ -398,13 +398,13 @@ bool idClass::ProcessEventArgPtr(const idEventDef* ev, int* data) {
 idClass::Event_Remove
 ================
 */
-void idClass::Event_Remove() {
+void idClass::Event_Remove() noexcept {
 	Remove();
 
 	//delete this;
 }
 
-void idClass::Remove() {
+void idClass::Remove() noexcept {
 }
 
 bool idClass::initialized = false;

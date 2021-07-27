@@ -12,7 +12,7 @@ public:
 	idCmdArgs& operator=(idCmdArgs&&) = default;
 
 	// The functions that execute commands get their parameters with these functions.
-	int Argc() const { return argv.size(); }
+	int Argc() const noexcept { return argv.size(); }
 	// Argv() will return an empty string, not NULL if arg >= argc.
 	const std::string Argv(size_t arg) const { return (arg >= 0 && arg < argv.size()) ? argv[arg] : std::string(); }
 	// Returns a single string containing argv(start) to argv(end)
@@ -25,7 +25,7 @@ public:
 	void TokenizeString(const std::string &text, bool keepAsStrings);
 
 	//void AppendArg(std::string &text);
-	void Clear() { argv.clear(); }
+	void Clear() noexcept { argv.clear(); }
 	//const std::vector<std::string>& GetArgs();
 
 private:

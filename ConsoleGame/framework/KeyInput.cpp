@@ -49,7 +49,7 @@ keyNum_t idKeyInput::StringToKeyNum(const std::string& str) {
 	}
 
 	// scan for a text match
-	auto iter = std::find_if(keynames.begin(), keynames.end(), [&str](auto& kn) {return kn.name == str; });
+	auto iter = std::find_if(keynames.begin(), keynames.end(), [&str](auto& kn) noexcept {return kn.name == str; });
 
 	if (iter != keynames.end())
 		return iter->keynum;
@@ -64,7 +64,7 @@ idKeyInput::KeyNumToString
 */
 const std::string idKeyInput::KeyNumToString(keyNum_t keynum) {
 	// check for a key string
-	auto iter = std::find_if(keynames.begin(), keynames.end(), [&keynum](auto& kn) {return kn.keynum == keynum; });
+	auto iter = std::find_if(keynames.begin(), keynames.end(), [&keynum](auto& kn) noexcept {return kn.keynum == keynum; });
 
 	if (iter != keynames.end())
 		return iter->name;
@@ -161,7 +161,7 @@ Tracks global key up/down state
 Called by the system for both key up and key down events
 ===================
 */
-void idKeyInput::PreliminaryKeyEvent(int keynum, bool down) {
+void idKeyInput::PreliminaryKeyEvent(int keynum, bool down) noexcept {
 	keys[keynum].down = down;
 }
 
@@ -204,7 +204,7 @@ void idKeyInput::Init() {
 idKeyInput::Shutdown
 ===================
 */
-void idKeyInput::Shutdown() {
+void idKeyInput::Shutdown() noexcept {
 	keys.clear();
 }
 
@@ -213,7 +213,7 @@ void idKeyInput::Shutdown() {
 idKeyInput::IsDown
 ===================
 */
-bool idKeyInput::IsDown(int keynum) {
+bool idKeyInput::IsDown(int keynum) noexcept {
 	if (keynum == -1) {
 		return false;
 	}
@@ -226,6 +226,6 @@ bool idKeyInput::IsDown(int keynum) {
 idKeyInput::GetUsercmdAction
 ===================
 */
-int idKeyInput::GetUsercmdAction(int keynum) {
+int idKeyInput::GetUsercmdAction(int keynum) noexcept {
 	return keys[keynum].usercmdAction;
 }

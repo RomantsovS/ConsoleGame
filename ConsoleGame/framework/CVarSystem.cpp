@@ -38,11 +38,11 @@ private:
 
 	//virtual const std::string& InternalGetResetString() const;
 
-	void InternalSetString(const std::string& newValue) override;
+	void InternalSetString(const std::string& newValue) noexcept override;
 	virtual void InternalServerSetString(const std::string& newValue);
-	void InternalSetBool(const bool newValue) override;
-	void InternalSetInteger(const int newValue) override;
-	void InternalSetFloat(const float newValue) override;
+	void InternalSetBool(const bool newValue) noexcept override;
+	void InternalSetInteger(const int newValue) noexcept override;
+	void InternalSetFloat(const float newValue) noexcept override;
 };
 
 /*
@@ -292,7 +292,7 @@ void idInternalCVar::Set(std::string newValue, bool force, bool fromServer) {
 idInternalCVar::InternalSetString
 ============
 */
-void idInternalCVar::InternalSetString(const std::string& newValue) {
+void idInternalCVar::InternalSetString(const std::string& newValue) noexcept {
 	Set(newValue.c_str(), true, false);
 }
 
@@ -310,7 +310,7 @@ void idInternalCVar::InternalServerSetString(const std::string& newValue) {
 idInternalCVar::InternalSetBool
 ============
 */
-void idInternalCVar::InternalSetBool(const bool newValue) {
+void idInternalCVar::InternalSetBool(const bool newValue) noexcept {
 	Set(std::to_string(newValue), true, false);
 }
 
@@ -319,7 +319,7 @@ void idInternalCVar::InternalSetBool(const bool newValue) {
 idInternalCVar::InternalSetInteger
 ============
 */
-void idInternalCVar::InternalSetInteger(const int newValue) {
+void idInternalCVar::InternalSetInteger(const int newValue) noexcept {
 	Set(std::to_string(newValue).c_str(), true, false);
 }
 
@@ -328,7 +328,7 @@ void idInternalCVar::InternalSetInteger(const int newValue) {
 idInternalCVar::InternalSetFloat
 ============
 */
-void idInternalCVar::InternalSetFloat(const float newValue) {
+void idInternalCVar::InternalSetFloat(const float newValue) noexcept {
 	Set(std::to_string(newValue).c_str(), true, false);
 }
 
@@ -350,8 +350,8 @@ public:
 	idCVarSystemLocal& operator=(idCVarSystemLocal&&) = default;
 
 	void Init() override;
-	void Shutdown() override;
-	bool IsInitialized() const override;
+	void Shutdown() noexcept override;
+	bool IsInitialized() const noexcept override;
 
 	void Register(gsl::not_null<idCVar*> cvar) override;
 
@@ -359,7 +359,7 @@ public:
 
 	bool Command(const idCmdArgs& args) override;
 
-	void SetModifiedFlags(int flags) override;
+	void SetModifiedFlags(int flags) noexcept override;
 
 	idInternalCVar* FindInternal(const std::string& name) const;
 	void SetInternal(const std::string& name, const std::string& value, int flags);
@@ -444,7 +444,7 @@ void idCVarSystemLocal::Init() {
 idCVarSystemLocal::Shutdown
 ============
 */
-void idCVarSystemLocal::Shutdown() {
+void idCVarSystemLocal::Shutdown() noexcept {
 	
 	for (auto iter = cvars.begin(); iter != cvars.end(); ++iter) {
 		iter->second = nullptr;
@@ -459,7 +459,7 @@ void idCVarSystemLocal::Shutdown() {
 idCVarSystemLocal::IsInitialized
 ============
 */
-bool idCVarSystemLocal::IsInitialized() const {
+bool idCVarSystemLocal::IsInitialized() const noexcept {
 	return initialized;
 }
 
@@ -525,7 +525,7 @@ bool idCVarSystemLocal::Command(const idCmdArgs& args) {
 idCVarSystemLocal::SetModifiedFlags
 ============
 */
-void idCVarSystemLocal::SetModifiedFlags(int flags) {
+void idCVarSystemLocal::SetModifiedFlags(int flags) noexcept {
 	modifiedFlags |= flags;
 }
 

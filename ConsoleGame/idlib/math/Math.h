@@ -18,19 +18,19 @@
 
 const size_t IEEE_FLT_MANTISSA_BITS = 23;
 
-template<class T> inline T	Square(T x) { return x * x; }
+template<class T> inline T	Square(T x) noexcept { return x * x; }
 
 class idMath {
 public:
-	static float InvSqrt(float x); // inverse square root with 32 bits precision, returns huge number when x == 0.0
+	static float InvSqrt(float x) noexcept; // inverse square root with 32 bits precision, returns huge number when x == 0.0
 
-	static float Sqrt(float x); // square root with 32 bits precision
+	static float Sqrt(float x) noexcept; // square root with 32 bits precision
 
-	static float Fabs(float f); // returns the absolute value of the floating point value
+	static float Fabs(float f) noexcept; // returns the absolute value of the floating point value
 
-	static signed char ClampChar(int i);
+	static signed char ClampChar(int i) noexcept;
 
-	static int FloatHash(const float* array, const int numFloats);
+	static int FloatHash(const float* array, const int numFloats) noexcept;
 
 	template<typename T>
 	static int ValueInRange(T val, T min, T max);
@@ -46,7 +46,7 @@ public:
 idMath::InvSqrt
 ========================
 */
-inline float idMath::InvSqrt(float x) {
+inline float idMath::InvSqrt(float x) noexcept {
 #ifdef ID_WIN_X86_SSE_INTRIN
 
 	return (x > FLT_SMALLEST_NON_DENORMAL) ? sqrtf(1.0f / x) : INFINITY;
@@ -63,7 +63,7 @@ inline float idMath::InvSqrt(float x) {
 idMath::Sqrt
 ========================
 */
-inline float idMath::Sqrt(float x) {
+inline float idMath::Sqrt(float x) noexcept {
 #ifdef ID_WIN_X86_SSE_INTRIN
 	return (x >= 0.0f) ? x * InvSqrt(x) : 0.0f;
 #else
@@ -76,7 +76,7 @@ inline float idMath::Sqrt(float x) {
 idMath::Fabs
 ========================
 */
-inline float idMath::Fabs(float f) {
+inline float idMath::Fabs(float f) noexcept {
 	return fabsf(f);
 }
 
@@ -85,7 +85,7 @@ inline float idMath::Fabs(float f) {
 idMath::ClampChar
 ========================
 */
-inline signed char idMath::ClampChar(int i) {
+inline signed char idMath::ClampChar(int i) noexcept {
 	if (i < -128) {
 		return -128;
 	}
@@ -100,7 +100,7 @@ inline signed char idMath::ClampChar(int i) {
 idMath::FloatHash
 ========================
 */
-inline int idMath::FloatHash(const float* array, const int numFloats) {
+inline int idMath::FloatHash(const float* array, const int numFloats) noexcept {
 	int i, hash = 0;
 
 	auto ptr = reinterpret_cast<const int*>(array);

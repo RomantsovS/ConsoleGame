@@ -105,7 +105,7 @@ struct viewEntity_t {
 	viewEntity_t(viewEntity_t&&) = default;
 	viewEntity_t& operator=(viewEntity_t&&) = default;
 
-	void clean() {
+	void clean() noexcept {
 		while (next) {
 			next = std::move(next->next);
 		}
@@ -192,7 +192,7 @@ public:
 	void BeginLevelLoad() override;
 	void EndLevelLoad() override;
 
-	void SetColor(const int color) override;
+	void SetColor(const int color) noexcept override;
 
 	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) override;
 	void DrawBigChar(int x, int y, int ch) override;
@@ -202,12 +202,12 @@ public:
 	void DrawString(const std::string& text, const int color) override;
 	void RenderCommandBuffers() override;
 
-	void SetHeight(int h) override { height = h; }
-	void SetWidth(int w) override { width = w; }
-	int GetWidth() const override { return width; }
-	int GetHeight() const override { return height; }
+	void SetHeight(int h) noexcept override { height = h; }
+	void SetWidth(int w) noexcept override { width = w; }
+	int GetWidth() const noexcept override { return width; }
+	int GetHeight() const noexcept override { return height; }
 
-	void Display();
+	void Display() noexcept;
 
 	void FillBorder();
 	void ClearScreen();
@@ -251,10 +251,10 @@ RENDERWORLD_DEFS
 */
 
 void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> def);
-void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel);
+void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept;
 
-void R_FreeDerivedData();
-void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model);
+void R_FreeDerivedData() noexcept;
+void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) noexcept;
 
 /*
 ============================================================
@@ -319,8 +319,8 @@ void DrawFPS();
 
 void RB_AddDebugText(const std::string &text, const Vector2 &origin, const int color, const int lifetime = 0);
 void RB_ClearDebugText(int time);
-void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest);
-void RB_ClearDebugLines(int time);
+void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept;
+void RB_ClearDebugLines(int time) noexcept;
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
 void RB_DrawText(const std::string& text, const Vector2& origin, const int color);

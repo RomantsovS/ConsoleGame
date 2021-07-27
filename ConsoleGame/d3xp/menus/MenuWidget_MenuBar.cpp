@@ -8,7 +8,7 @@
 idMenuWidget_MenuBar::Initialize
 ========================
 */
-void idMenuWidget_MenuBar::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuWidget_MenuBar::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuWidget::Initialize(data);
 }
 
@@ -17,7 +17,7 @@ void idMenuWidget_MenuBar::Initialize(std::shared_ptr<idMenuHandler> data) {
 idMenuWidget_MenuBar::Update
 ========================
 */
-void idMenuWidget_MenuBar::Update() {
+void idMenuWidget_MenuBar::Update() noexcept {
 
 	if (!GetSWFObject()) {
 		return;
@@ -73,7 +73,7 @@ void idMenuWidget_MenuBar::SetListHeadings(std::vector<std::string>& list) {
 idMenuWidget_MenuBar::GetTotalNumberOfOptions
 ========================
 */
-size_t idMenuWidget_MenuBar::GetTotalNumberOfOptions() const {
+size_t idMenuWidget_MenuBar::GetTotalNumberOfOptions() const noexcept {
 	//return GetChildren().size();
 	return headings.size();
 }

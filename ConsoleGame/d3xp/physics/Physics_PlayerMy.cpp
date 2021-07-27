@@ -15,7 +15,7 @@ This allows the clients to use axial -127 to 127 values for all directions
 without getting a sqrt(2) distortion in speed.
 ============
 */
-float Physics_PlayerMy::CmdScale(const usercmd_t& cmd) const {
+float Physics_PlayerMy::CmdScale(const usercmd_t& cmd) const noexcept {
 	int		max;
 	float	total;
 	float	scale;
@@ -88,7 +88,7 @@ Physics_PlayerMy::Friction
 Handles both ground friction and water friction
 ==================
 */
-void Physics_PlayerMy::Friction() {
+void Physics_PlayerMy::Friction() noexcept {
 }
 
 /*
@@ -174,7 +174,7 @@ Physics_PlayerMy::~Physics_PlayerMy() {
 Physics_PlayerMy::Evaluate
 ================
 */
-bool Physics_PlayerMy::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool Physics_PlayerMy::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	clipModel->Unlink();
 
@@ -198,7 +198,7 @@ bool Physics_PlayerMy::Evaluate(int timeStepMSec, int endTimeMSec) {
 Physics_PlayerMy::IsAtRest
 ================
 */
-bool Physics_PlayerMy::IsAtRest() const {
+bool Physics_PlayerMy::IsAtRest() const noexcept {
 	return false;
 }
 
@@ -207,7 +207,7 @@ bool Physics_PlayerMy::IsAtRest() const {
 Physics_PlayerMy::SaveState
 ================
 */
-void Physics_PlayerMy::SaveState() {
+void Physics_PlayerMy::SaveState() noexcept {
 	saved = current;
 }
 
@@ -216,7 +216,7 @@ void Physics_PlayerMy::SaveState() {
 Physics_PlayerMy::RestoreState
 ================
 */
-void Physics_PlayerMy::RestoreState() {
+void Physics_PlayerMy::RestoreState() noexcept {
 	current = saved;
 
 	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
@@ -229,7 +229,7 @@ void Physics_PlayerMy::RestoreState() {
 Physics_PlayerMy::SetOrigin
 ================
 */
-void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) {
+void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 	current.localOrigin = newOrigin;
 	/*if (masterEntity) {
 		self->GetMasterPosition(masterOrigin, masterAxis);
@@ -247,7 +247,7 @@ void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) {
 Physics_PlayerMy::GetOrigin
 ================
 */
-const Vector2& Physics_PlayerMy::PlayerGetOrigin() const {
+const Vector2& Physics_PlayerMy::PlayerGetOrigin() const noexcept {
 	return current.origin;
 }
 
@@ -256,7 +256,7 @@ const Vector2& Physics_PlayerMy::PlayerGetOrigin() const {
 Physics_PlayerMy::Translate
 ================
 */
-void Physics_PlayerMy::Translate(const Vector2& translation, int id) {
+void Physics_PlayerMy::Translate(const Vector2& translation, int id) noexcept {
 	current.localOrigin += translation;
 	current.origin += translation;
 
@@ -268,7 +268,7 @@ void Physics_PlayerMy::Translate(const Vector2& translation, int id) {
 Physics_PlayerMy::SetLinearVelocity
 ================
 */
-void Physics_PlayerMy::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void Physics_PlayerMy::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 	current.velocity = newLinearVelocity;
 }
 
@@ -277,6 +277,6 @@ void Physics_PlayerMy::SetLinearVelocity(const Vector2& newLinearVelocity, int i
 Physics_PlayerMy::GetLinearVelocity
 ================
 */
-const Vector2& Physics_PlayerMy::GetLinearVelocity(int id) const {
+const Vector2& Physics_PlayerMy::GetLinearVelocity(int id) const noexcept {
 	return current.velocity;
 }

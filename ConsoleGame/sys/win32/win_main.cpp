@@ -165,7 +165,7 @@ void Sys_Error(const char* error, ...) {
 Sys_Quit
 ==============
 */
-void Sys_Quit() {
+void Sys_Quit() noexcept {
 	exit(EXIT_SUCCESS);
 }
 
@@ -192,7 +192,7 @@ void Sys_Printf(const char* fmt, ...) {
 Sys_Sleep
 ==============
 */
-void Sys_Sleep(int msec) {
+void Sys_Sleep(int msec) noexcept {
 	Sleep(msec);
 }
 
@@ -201,7 +201,7 @@ void Sys_Sleep(int msec) {
 Sys_Mkdir
 ==============
 */
-void Sys_Mkdir(const std::string &path) {
+void Sys_Mkdir(const std::string &path) noexcept {
 	_mkdir(path.c_str());
 }
 
@@ -210,7 +210,7 @@ void Sys_Mkdir(const std::string &path) {
 Sys_Cwd
 ==============
 */
-const char* Sys_Cwd() {
+const char* Sys_Cwd() noexcept {
 	static char cwd[MAX_OSPATH];
 
 	_getcwd(cwd, sizeof(cwd) - 1);
@@ -224,7 +224,7 @@ const char* Sys_Cwd() {
 Sys_DefaultBasePath
 ==============
 */
-const char* Sys_DefaultBasePath() {
+const char* Sys_DefaultBasePath() noexcept {
 	return Sys_Cwd();
 }
 
@@ -323,7 +323,7 @@ void Sys_QueEvent(sysEventType_t type, int value, int value2, int ptrLength, voi
 Sys_ClearEvents
 ================
 */
-void Sys_ClearEvents() {
+void Sys_ClearEvents() noexcept {
 	eventHead = eventTail = 0;
 }
 
@@ -332,7 +332,7 @@ void Sys_ClearEvents() {
 Sys_GetEvent
 ================
 */
-sysEvent_t Sys_GetEvent() {
+sysEvent_t Sys_GetEvent() noexcept {
 	sysEvent_t	ev;
 
 	// return if we have data
@@ -347,7 +347,7 @@ sysEvent_t Sys_GetEvent() {
 	return ev;
 }
 
-BOOL WINAPI ConsoleHandler(DWORD CEvent) {
+BOOL WINAPI ConsoleHandler(DWORD CEvent) noexcept {
 	switch (CEvent)
 	{
 	case CTRL_C_EVENT:

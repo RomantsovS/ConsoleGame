@@ -33,7 +33,7 @@ idWeapon::~idWeapon() {
 idWeapon::Spawn
 ================
 */
-void idWeapon::Spawn() {
+void idWeapon::Spawn() noexcept {
 }
 
 /*
@@ -66,7 +66,7 @@ void idWeapon::CacheWeapon(const std::string& weaponName) {
 idWeapon::Clear
 ================
 */
-void idWeapon::Clear() {
+void idWeapon::Clear() noexcept {
 	status = weaponStatus_t::WP_HOLSTERED;
 
 	projectileDict.Clear();
@@ -120,7 +120,7 @@ void idWeapon::GetWeaponDef(const std::string& objectname, int ammoinclip) {
 idWeapon::Think
 ================
 */
-void idWeapon::Think() {
+void idWeapon::Think() noexcept {
 	// do nothing because the present is called from the player through PresentWeapon
 }
 
@@ -129,7 +129,7 @@ void idWeapon::Think() {
 idWeapon::BeginAttack
 ================
 */
-void idWeapon::BeginAttack() {
+void idWeapon::BeginAttack() noexcept {
 	if (status != weaponStatus_t::WP_OUTOFAMMO) {
 		lastAttack = gameLocal.time;
 	}
@@ -142,7 +142,7 @@ void idWeapon::BeginAttack() {
 idWeapon::EndAttack
 ================
 */
-void idWeapon::EndAttack() {
+void idWeapon::EndAttack() noexcept {
 	if (WEAPON_ATTACK) {
 		WEAPON_ATTACK = false;
 	}
@@ -153,7 +153,7 @@ void idWeapon::EndAttack() {
 idWeapon::isReady
 ================
 */
-bool idWeapon::IsReady() const {
+bool idWeapon::IsReady() const noexcept {
 	return !IsHidden() && ((status == weaponStatus_t::WP_RELOAD) || (status == weaponStatus_t::WP_READY) ||
 		(status == weaponStatus_t::WP_OUTOFAMMO));
 }
@@ -163,7 +163,7 @@ bool idWeapon::IsReady() const {
 idWeapon::IsHolstered
 ================
 */
-bool idWeapon::IsHolstered() const {
+bool idWeapon::IsHolstered() const noexcept {
 	return (status == weaponStatus_t::WP_HOLSTERED);
 }
 
@@ -211,6 +211,6 @@ void idWeapon::PresentWeapon() {
 idWeapon::Event_WeaponReady
 ===============
 */
-void idWeapon::Event_WeaponReady() {
+void idWeapon::Event_WeaponReady() noexcept {
   	status = weaponStatus_t::WP_READY;
 }

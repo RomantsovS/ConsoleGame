@@ -36,33 +36,33 @@ public:
 	Physics_PlayerMy& operator=(Physics_PlayerMy&&) = default;
 
 	// initialisation
-	const Vector2& PlayerGetOrigin() const;	// != GetOrigin
+	const Vector2& PlayerGetOrigin() const noexcept;	// != GetOrigin
 public:	// common physics interface
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
+	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
 
-	bool IsAtRest() const override;
+	bool IsAtRest() const noexcept override;
 
-	void SaveState() override;
-	void RestoreState() override;
+	void SaveState() noexcept override;
+	void RestoreState() noexcept override;
 
-	void SetOrigin(const Vector2& newOrigin, int id = -1) override;
+	void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
 	//void SetAxis(const Vector2& newAxis, int id = -1) override;
 
-	void Translate(const Vector2& translation, int id = -1) override;
+	void Translate(const Vector2& translation, int id = -1) noexcept override;
 	//void Rotate(const Vector2& rotation, int id = -1) override;
 
-	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	const Vector2& GetLinearVelocity(int id = 0) const override;
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
+	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
 private:
 	// player physics state
 	playerMyPState_t current;
 	playerMyPState_t saved;
 private:
-	float CmdScale(const usercmd_t& cmd) const;
+	float CmdScale(const usercmd_t& cmd) const noexcept;
 	bool SlideMove(bool gravity, bool stepUp, bool stepDown, bool push);
 	void CheckForCollisions(float timeStep);
 
-	void Friction();
+	void Friction() noexcept;
 	void WalkMove();
 	void MovePlayer(int msec);
 };

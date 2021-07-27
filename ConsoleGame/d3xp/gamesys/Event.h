@@ -33,12 +33,12 @@ public:
 
 	const std::string GetName() const;
 	const std::string GetArgFormat() const;
-	unsigned int GetFormatspecIndex() const;
-	int GetEventNum() const;
-	int GetNumArgs() const;
-	size_t GetArgSize() const;
+	unsigned int GetFormatspecIndex() const noexcept;
+	int GetEventNum() const noexcept;
+	int GetNumArgs() const noexcept;
+	size_t GetArgSize() const noexcept;
 
-	static int NumEventCommands();
+	static int NumEventCommands() noexcept;
 };
 
 class idEvent : public std::enable_shared_from_this<idEvent>  {
@@ -66,8 +66,8 @@ public:
 	//static void CopyArgs(const idEventDef* evdef, int numargs, va_list args, int data[D_EVENT_MAXARGS]);
 
 	void Free(bool setOwner = true);
-	void Schedule(idClass* object, const idTypeInfo* cls, int time);
-	unsigned char* GetData();
+	void Schedule(idClass* object, const idTypeInfo* cls, int time) noexcept;
+	unsigned char* GetData() noexcept;
 
 	static void CancelEvents(const idClass* obj, const idEventDef* evdef = NULL);
 	static void ClearEventList();
@@ -82,7 +82,7 @@ public:
 idEvent::GetData
 ================
 */
-inline unsigned char* idEvent::GetData() {
+inline unsigned char* idEvent::GetData() noexcept {
 	return data;
 }
 
@@ -109,7 +109,7 @@ inline const std::string idEventDef::GetArgFormat() const {
 idEventDef::GetFormatspecIndex
 ================
 */
-inline unsigned int idEventDef::GetFormatspecIndex() const {
+inline unsigned int idEventDef::GetFormatspecIndex() const noexcept {
 	return formatspecIndex;
 }
 
@@ -118,7 +118,7 @@ inline unsigned int idEventDef::GetFormatspecIndex() const {
 idEventDef::GetNumArgs
 ================
 */
-inline int idEventDef::GetNumArgs() const {
+inline int idEventDef::GetNumArgs() const noexcept {
 	return numargs;
 }
 
@@ -127,7 +127,7 @@ inline int idEventDef::GetNumArgs() const {
 idEventDef::GetArgSize
 ================
 */
-inline size_t idEventDef::GetArgSize() const {
+inline size_t idEventDef::GetArgSize() const noexcept {
 	return argsize;
 }
 
@@ -136,7 +136,7 @@ inline size_t idEventDef::GetArgSize() const {
 idEventDef::GetEventNum
 ================
 */
-inline int idEventDef::GetEventNum() const {
+inline int idEventDef::GetEventNum() const noexcept {
 	return eventnum;
 }
 

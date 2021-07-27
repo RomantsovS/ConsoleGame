@@ -8,7 +8,7 @@
 idMaterial::CommonInit
 =============
 */
-void idMaterial::CommonInit() {
+void idMaterial::CommonInit() noexcept {
 }
 
 /*
@@ -151,7 +151,7 @@ bool idMaterial::Parse(const char* text, const int textLength, bool allowBinaryV
 idMaterial::SetDefaultText
 ===================
 */
-bool idMaterial::SetDefaultText() {
+bool idMaterial::SetDefaultText() noexcept {
 	// if there exists an image with the same name
 	if (1) {
 		return true;

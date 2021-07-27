@@ -21,7 +21,7 @@ void idStaticEntity::Think() {
 	idEntity::Think();
 }
 
-void idStaticEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
+void idStaticEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
 	PostEventMS(&EV_Remove, 0);
 }
 
@@ -69,14 +69,14 @@ void idSimpleObject::Think() {
 	idEntity::Think();
 }
 
-void idSimpleObject::Remove() {
+void idSimpleObject::Remove() noexcept {
 	physicsObj->SetClipModel(nullptr, 0.0f);
 
 	physicsObj = nullptr;
 	idEntity::Remove();
 }
 
-bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity) {
+bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	if (collision.c.entityNum == ENTITYNUM_WORLD) {
 		return true;
 	}

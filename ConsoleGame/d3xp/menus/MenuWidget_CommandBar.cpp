@@ -16,7 +16,7 @@ static const std::string BUTTON_NAMES[] = {
 idMenuWidget_CommandBar::ClearAllButtons
 ========================
 */
-void idMenuWidget_CommandBar::ClearAllButtons() {
+void idMenuWidget_CommandBar::ClearAllButtons() noexcept {
 	for (int index = 0; index < MAX_BUTTONS; ++index) {
 		buttons[index].label.clear();
 		buttons[index].action.Set(widgetAction_t::WIDGET_ACTION_NONE);
@@ -28,7 +28,7 @@ void idMenuWidget_CommandBar::ClearAllButtons() {
 idMenuWidget_CommandBar::Update
 ========================
 */
-void idMenuWidget_CommandBar::Update() {
+void idMenuWidget_CommandBar::Update() noexcept {
 
 	if (!GetSWFObject()) {
 		return;

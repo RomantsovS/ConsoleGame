@@ -15,18 +15,18 @@ idPhysics_Base::idPhysics_Base() {
 idPhysics_Base::~idPhysics_Base() {
 }
 
-void idPhysics_Base::SetSelf(std::shared_ptr<idEntity> e) {
+void idPhysics_Base::SetSelf(std::shared_ptr<idEntity> e) noexcept {
 	self = e;
 }
 
-void idPhysics_Base::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) {
+void idPhysics_Base::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) noexcept {
 }
 
-std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const {
+std::shared_ptr<idClipModel> idPhysics_Base::GetClipModel(int id) const noexcept {
 	return nullptr;
 }
 
-int idPhysics_Base::GetNumClipModels() const {
+int idPhysics_Base::GetNumClipModels() const noexcept {
 	return 0;
 }
 
@@ -35,7 +35,7 @@ int idPhysics_Base::GetNumClipModels() const {
 idPhysics_Base::SetClipMask
 ================
 */
-void idPhysics_Base::SetClipMask(int mask, int id) {
+void idPhysics_Base::SetClipMask(int mask, int id) noexcept {
 	clipMask = mask;
 }
 
@@ -44,7 +44,7 @@ void idPhysics_Base::SetClipMask(int mask, int id) {
 idPhysics_Base::GetClipMask
 ================
 */
-int idPhysics_Base::GetClipMask(int id) const {
+int idPhysics_Base::GetClipMask(int id) const noexcept {
 	return clipMask;
 }
 
@@ -53,7 +53,7 @@ int idPhysics_Base::GetClipMask(int id) const {
 idPhysics_Base::GetBounds
 ================
 */
-const idBounds& idPhysics_Base::GetBounds(int id) const {
+const idBounds& idPhysics_Base::GetBounds(int id) const noexcept {
 	return idBounds::GetBoundsZero();
 }
 
@@ -62,22 +62,22 @@ const idBounds& idPhysics_Base::GetBounds(int id) const {
 idPhysics_Base::GetAbsBounds
 ================
 */
-const idBounds& idPhysics_Base::GetAbsBounds(int id) const {
+const idBounds& idPhysics_Base::GetAbsBounds(int id) const noexcept {
 	return idBounds::GetBoundsZero();
 }
 
-bool idPhysics_Base::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool idPhysics_Base::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	return false;
 }
 
-void idPhysics_Base::UpdateTime(int endTimeMSec) {
+void idPhysics_Base::UpdateTime(int endTimeMSec) noexcept {
 }
 
-int idPhysics_Base::GetTime() const {
+int idPhysics_Base::GetTime() const noexcept {
 	return 0;
 }
 
-void idPhysics_Base::Activate() {
+void idPhysics_Base::Activate() noexcept {
 }
 
 /*
@@ -85,40 +85,40 @@ void idPhysics_Base::Activate() {
 idPhysics_Base::PutToRest
 ================
 */
-void idPhysics_Base::PutToRest() {
+void idPhysics_Base::PutToRest() noexcept {
 }
 
-bool idPhysics_Base::IsAtRest() const {
+bool idPhysics_Base::IsAtRest() const noexcept {
 	return true;
 }
 
-void idPhysics_Base::SaveState() {
+void idPhysics_Base::SaveState() noexcept {
 }
 
-void idPhysics_Base::RestoreState() {
+void idPhysics_Base::RestoreState() noexcept {
 }
 
-void idPhysics_Base::SetOrigin(const Vector2 & newOrigin, int id) {
+void idPhysics_Base::SetOrigin(const Vector2 & newOrigin, int id) noexcept {
 }
 
-void idPhysics_Base::SetAxis(const Vector2 & newAxis, int id) {
+void idPhysics_Base::SetAxis(const Vector2 & newAxis, int id) noexcept {
 }
 
-void idPhysics_Base::Translate(const Vector2 & translation, int id) {
+void idPhysics_Base::Translate(const Vector2 & translation, int id) noexcept {
 }
 
-void idPhysics_Base::Rotate(const Vector2 & rotation, int id) {
+void idPhysics_Base::Rotate(const Vector2 & rotation, int id) noexcept {
 }
 
-const Vector2 & idPhysics_Base::GetOrigin(int id) const {
+const Vector2 & idPhysics_Base::GetOrigin(int id) const noexcept {
 	return vec2_origin;
 }
 
-const Vector2 & idPhysics_Base::GetAxis(int id) const {
+const Vector2 & idPhysics_Base::GetAxis(int id) const noexcept {
 	return vec2_origin;
 }
 
-void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 }
 
 /*
@@ -126,7 +126,7 @@ void idPhysics_Base::SetLinearVelocity(const Vector2& newLinearVelocity, int id)
 idPhysics_Base::GetLinearVelocity
 ================
 */
-const Vector2& idPhysics_Base::GetLinearVelocity(int id) const {
+const Vector2& idPhysics_Base::GetLinearVelocity(int id) const noexcept {
 	return vec2_origin;
 }
 
@@ -135,7 +135,7 @@ const Vector2& idPhysics_Base::GetLinearVelocity(int id) const {
 idPhysics_Base::DisableClip
 ================
 */
-void idPhysics_Base::DisableClip() {
+void idPhysics_Base::DisableClip() noexcept {
 }
 
 /*
@@ -143,7 +143,7 @@ void idPhysics_Base::DisableClip() {
 idPhysics_Base::EnableClip
 ================
 */
-void idPhysics_Base::EnableClip() {
+void idPhysics_Base::EnableClip() noexcept {
 }
 
 /*
@@ -151,7 +151,7 @@ void idPhysics_Base::EnableClip() {
 idPhysics_Base::UnlinkClip
 ================
 */
-void idPhysics_Base::UnlinkClip() {
+void idPhysics_Base::UnlinkClip() noexcept {
 }
 
 /*
@@ -159,7 +159,7 @@ void idPhysics_Base::UnlinkClip() {
 idPhysics_Base::LinkClip
 ================
 */
-void idPhysics_Base::LinkClip() {
+void idPhysics_Base::LinkClip() noexcept {
 }
 
 /*
@@ -167,7 +167,7 @@ void idPhysics_Base::LinkClip() {
 idPhysics_Base::EvaluateContacts
 ================
 */
-bool idPhysics_Base::EvaluateContacts() {
+bool idPhysics_Base::EvaluateContacts() noexcept {
 	return false;
 }
 
@@ -199,7 +199,7 @@ void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e) {
 	}
 }
 
-void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e) {
+void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept {
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (!ent) {

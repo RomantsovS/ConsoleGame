@@ -91,7 +91,7 @@ void idMultiModelAF::Think() {
 	Present();
 }
 
-void idMultiModelAF::Remove() {
+void idMultiModelAF::Remove() noexcept {
 	for (size_t i = physicsObj->GetNumClipModels(); i > 0;  --i) {
 		physicsObj->DeleteBody(i - 1);
 	}
@@ -100,7 +100,7 @@ void idMultiModelAF::Remove() {
 	idEntity::Remove();
 }
 
-bool idMultiModelAF::Collide(const trace_t& collision, const Vector2& velocity) {
+bool idMultiModelAF::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	if (collision.c.entityNum == ENTITYNUM_WORLD) {
 		return true;
 	}

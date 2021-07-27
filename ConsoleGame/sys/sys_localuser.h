@@ -25,7 +25,7 @@ public:
 
 	virtual int GetInputDevice() const = 0; // Input device of controller
 
-	idProfileMgr& GetProfileMgr() { return profileMgr; }
+	idProfileMgr& GetProfileMgr() noexcept { return profileMgr; }
 
 private:
 	idProfileMgr profileMgr;

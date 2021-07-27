@@ -46,7 +46,7 @@ public:
 	void StartNewGame(const std::string& mapName, bool devmap, int gameMode);
 	//void LeaveGame();
 
-	void QuitRequest() override { quit_requested = true; }
+	void QuitRequest() noexcept override { quit_requested = true; }
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;

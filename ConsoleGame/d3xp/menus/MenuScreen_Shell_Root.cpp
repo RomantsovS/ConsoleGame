@@ -9,7 +9,7 @@ const static int NUM_MAIN_OPTIONS = 6;
 idMenuScreen_Shell_Root::Initialize
 ========================
 */
-void idMenuScreen_Shell_Root::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuScreen_Shell_Root::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuScreen::Initialize(data);
 
 	if (data) {
@@ -60,7 +60,7 @@ void idMenuScreen_Shell_Root::Initialize(std::shared_ptr<idMenuHandler> data) {
 idMenuScreen_Shell_Root::Update
 ========================
 */
-void idMenuScreen_Shell_Root::Update() {
+void idMenuScreen_Shell_Root::Update() noexcept {
 
 	if (auto spMenuData = menuData.lock()) {
 		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
@@ -141,7 +141,7 @@ void idMenuScreen_Shell_Root::HandleExitGameBtn() {
 idMenuScreen_Shell_Root::GetRootIndex
 ========================
 */
-int idMenuScreen_Shell_Root::GetRootIndex() {
+int idMenuScreen_Shell_Root::GetRootIndex() noexcept {
 	if (options) {
 		return options->GetFocusIndex();
 	}

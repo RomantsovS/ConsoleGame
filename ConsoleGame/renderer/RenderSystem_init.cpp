@@ -121,6 +121,6 @@ bool r_initialized = false;
 R_IsInitialized
 =============================
 */
-bool R_IsInitialized() {
+bool R_IsInitialized() noexcept {
 	return r_initialized;
 }

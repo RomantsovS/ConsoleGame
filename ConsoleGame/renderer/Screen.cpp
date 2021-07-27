@@ -7,7 +7,7 @@ idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar text_info_max_height("text_info_max_height", "10", CVAR_SYSTEM | CVAR_INIT, "");
 
-Screen::Screen(pos_type ht, pos_type wd, Pixel back) :
+Screen::Screen(pos_type ht, pos_type wd, Pixel back) noexcept :
 	height(ht), width(wd), backgroundPixel(back), cur_write_coord({0, 0}),
 	window_rect({ 0, 0, 1, 1 }) {
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -100,12 +100,12 @@ void Screen::clear() {
 	//clearContents();
 }
 
-void Screen::clearTextInfo() {
+void Screen::clearTextInfo() noexcept {
 	DWORD written;
 	FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
 }
 
-void Screen::display() {
+void Screen::display() noexcept {
 	cur_write_coord = { 0, 0 };
 
 	/*for (pos_type y = 0; y < height; ++y) {
@@ -119,7 +119,7 @@ void Screen::display() {
 	cur_write_coord.Y += height;
 }
 
-void Screen::clearContents() {
+void Screen::clearContents() noexcept {
 	for(auto & pix : contents) {
 		pix = backgroundPixel;
 	}
@@ -149,7 +149,7 @@ void Screen::writeInColor(const std::string& text, int color_text, int color_bac
 	cur_write_coord.X = 0;
 }
 
-bool Screen::readInput(unsigned& key) {
+bool Screen::readInput(unsigned& key) noexcept {
 	/*DWORD events;
 	INPUT_RECORD input_record;
 
@@ -217,12 +217,12 @@ std::string Screen::waitConsoleInput() {
 	return "";
 }
 
-void Screen::writeConsoleOutput(const std::string& text) {
+void Screen::writeConsoleOutput(const std::string& text) noexcept {
 	DWORD written;
 	WriteConsole(h_console_std_out, text.c_str(), text.size(), &written, NULL);
 }
 
-void Screen::clearConsoleOutut() {
+void Screen::clearConsoleOutut() noexcept {
 	DWORD written;
 	COORD coord({ 0, 0 });
 

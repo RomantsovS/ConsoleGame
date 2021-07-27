@@ -8,7 +8,7 @@ const static int NUM_SINGLEPLAYER_OPTIONS = 8;
 idMenuScreen_Shell_Singleplayer::Initialize
 ========================
 */
-void idMenuScreen_Shell_Singleplayer::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuScreen_Shell_Singleplayer::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuScreen::Initialize(data);
 
 	if (data) {
@@ -55,7 +55,7 @@ void idMenuScreen_Shell_Singleplayer::Initialize(std::shared_ptr<idMenuHandler> 
 idMenuScreen_Shell_Singleplayer::Update
 ========================
 */
-void idMenuScreen_Shell_Singleplayer::Update() {
+void idMenuScreen_Shell_Singleplayer::Update() noexcept {
 
 	if (auto spMenuData = menuData.lock()) {
 		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();
@@ -168,7 +168,7 @@ void idMenuScreen_Shell_Singleplayer::HideScreen() {
 idMenuScreen_Shell_Singleplayer::ContinueGame
 ========================
 */
-void idMenuScreen_Shell_Singleplayer::ContinueGame() {
+void idMenuScreen_Shell_Singleplayer::ContinueGame() noexcept {
 	/*const saveGameDetailsList_t& saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
 	saveGameDetailsList_t sortedSaves = saveGameInfo;
 	sortedSaves.Sort(idSort_SavesByDate());

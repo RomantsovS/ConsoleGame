@@ -120,7 +120,7 @@ idEventDef::idEventDef(const std::string& command, const std::string& formatspec
 idEventDef::NumEventCommands
 ================
 */
-int	idEventDef::NumEventCommands() {
+int	idEventDef::NumEventCommands() noexcept {
 	return numEventDefs;
 }
 
@@ -281,7 +281,7 @@ void idEvent::Free(bool setOwner) {
 idEvent::Schedule
 ================
 */
-void idEvent::Schedule(idClass* obj, const idTypeInfo* type, int time) {
+void idEvent::Schedule(idClass* obj, const idTypeInfo* type, int time) noexcept {
 	//assert(initialized);
 	if (!initialized) {
 		return;

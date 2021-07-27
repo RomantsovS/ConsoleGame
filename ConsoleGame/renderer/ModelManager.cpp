@@ -15,10 +15,10 @@ public:
 
 	// registers console commands and clears the list
 	void Init() override;
-	void Shutdown() override;
+	void Shutdown() noexcept override;
 	void FreeModel(std::shared_ptr<idRenderModel> model) override;
 	std::shared_ptr<idRenderModel> FindModel(const std::string &modelName) override;
-	std::shared_ptr<idRenderModel> DefaultModel() override;
+	std::shared_ptr<idRenderModel> DefaultModel() noexcept override;
 	void AddModel(std::shared_ptr<idRenderModel> model) override;
 	void BeginLevelLoad() override;
 	void EndLevelLoad() override;
@@ -39,7 +39,7 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::FindModel(const std::s
 	return GetModel(modelName, true);
 }
 
-std::shared_ptr<idRenderModel> idRenderModelManagerLocal::DefaultModel() {
+std::shared_ptr<idRenderModel> idRenderModelManagerLocal::DefaultModel() noexcept {
 	return defaultModel;
 }
 
@@ -65,7 +65,7 @@ void idRenderModelManagerLocal::Init() {
 idRenderModelManagerLocal::Shutdown
 =================
 */
-void idRenderModelManagerLocal::Shutdown() {
+void idRenderModelManagerLocal::Shutdown() noexcept {
 	defaultModel = nullptr;
 	models.clear();
 	hash.clear();

@@ -174,18 +174,18 @@ struct sysEvent_t {
 	void* evPtr;				// this must be manually freed if not NULL
 
 	int				inputDevice;
-	bool			IsKeyEvent() const { return evType == SE_KEY; }
-	bool			IsMouseEvent() const { return evType == SE_MOUSE; }
-	bool			IsCharEvent() const { return evType == SE_CHAR; }
-	bool			IsJoystickEvent() const { return evType == SE_JOYSTICK; }
-	bool			IsKeyDown() const { return evValue2 != 0; }
-	keyNum_t		GetKey() const { return static_cast<keyNum_t>(evValue); }
-	int				GetXCoord() const { return evValue; }
-	int				GetYCoord() const { return evValue2; }
+	bool			IsKeyEvent() const noexcept { return evType == SE_KEY; }
+	bool			IsMouseEvent() const noexcept { return evType == SE_MOUSE; }
+	bool			IsCharEvent() const noexcept { return evType == SE_CHAR; }
+	bool			IsJoystickEvent() const noexcept { return evType == SE_JOYSTICK; }
+	bool			IsKeyDown() const noexcept { return evValue2 != 0; }
+	keyNum_t		GetKey() const noexcept { return static_cast<keyNum_t>(evValue); }
+	int				GetXCoord() const noexcept { return evValue; }
+	int				GetYCoord() const noexcept { return evValue2; }
 };
 
 void Sys_Error(const char* error, ...);
-void Sys_Quit();
+void Sys_Quit() noexcept;
 
 // will go to the various text consoles
 // NOT thread safe - never use in the async paths
@@ -193,34 +193,34 @@ void Sys_Printf(const char* msg, ...);
 
 // allow game to yield CPU time
 // NOTE: due to SYS_MINSLEEP this is very bad portability karma, and should be completely removed
-void Sys_Sleep(int msec);
+void Sys_Sleep(int msec) noexcept;
 
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
-int Sys_Milliseconds();
+int Sys_Milliseconds() noexcept;
 long long Sys_Microseconds();
 
-long Sys_Time();
+long Sys_Time() noexcept;
 
 // for accurate performance testing
-double Sys_GetClockTicks();
-long long Sys_ClockTicksPerSecond();
+double Sys_GetClockTicks() noexcept;
+long long Sys_ClockTicksPerSecond() noexcept;
 
 // event generation
-sysEvent_t Sys_GetEvent();
-void Sys_ClearEvents();
+sysEvent_t Sys_GetEvent() noexcept;
+void Sys_ClearEvents() noexcept;
 
 // input is tied to windows, so it needs to be started up and shut down whenever 
 // the main window is recreated
 void Sys_InitInput();
-void Sys_ShutdownInput();
+void Sys_ShutdownInput() noexcept;
 
 // keyboard input polling
-int Sys_PollKeyboardInputEvents();
+int Sys_PollKeyboardInputEvents() noexcept;
 int Sys_ReturnKeyboardInputEvent(const int n, int& ch, bool& state);
-void Sys_EndKeyboardInputEvents();
+void Sys_EndKeyboardInputEvents() noexcept;
 
-const char* Sys_DefaultBasePath();
+const char* Sys_DefaultBasePath() noexcept;
 
 // This really isn't the right place to have this, but since this is the 'top level' include
 // and has a function signature with 'FILE' in it, it kinda needs to be here =/

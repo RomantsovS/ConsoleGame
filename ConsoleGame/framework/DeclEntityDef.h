@@ -16,7 +16,7 @@ public:
 	//virtual size_t Size() const;
 	std::string DefaultDefinition() const override;
 	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
-	void FreeData() override;
+	void FreeData() noexcept override;
 	//virtual void Print();
 };
 

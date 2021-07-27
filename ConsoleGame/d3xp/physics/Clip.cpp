@@ -246,8 +246,7 @@ int idClipModel::CheckModel(const std::string& name) {
 	return collisionModelManager->LoadModel(name);
 }
 
-void idClipModel::Unlink()
-{
+void idClipModel::Unlink() noexcept  {
 	for (auto link = clipLinks; link; link = clipLinks) {
 		clipLinks = link->nextLink;
 		if (link->prevInSector) {
@@ -263,8 +262,7 @@ void idClipModel::Unlink()
 	}
 }
 
-void idClipModel::Init()
-{
+void idClipModel::Init() {
 	enabled = true;
 	entity.reset();
 	id = 0;
@@ -282,8 +280,7 @@ void idClipModel::Init()
 	touchCount = -1;
 }
 
-void idClipModel::Link_r(clipSector_t* node)
-{
+void idClipModel::Link_r(clipSector_t* node) {
 	while (node->axis != -1) {
 		if (absBounds[0][node->axis] > node->dist) {
 			node = node->children[0].get();
@@ -311,8 +308,7 @@ void idClipModel::Link_r(clipSector_t* node)
 	clipLinks = link;
 }
 
-int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThroughSaves)
-{
+int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThroughSaves) {
 	int traceModelIndex;
 
 	auto hashKey = GetTraceModelHashKey(trm);
@@ -361,8 +357,7 @@ int idClipModel::AllocTraceModel(const idTraceModel& trm, bool persistantThrough
 	return traceModelIndex;
 }
 
-void idClipModel::FreeTraceModel(int traceModelIndex)
-{
+void idClipModel::FreeTraceModel(int traceModelIndex) {
 	size_t realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
 
 	// Check which cache we are using.
@@ -411,7 +406,7 @@ int idClipModel::Handle() const {
 idClipModel::ClearTraceModelCache
 ===============
 */
-void idClipModel::ClearTraceModelCache() {
+void idClipModel::ClearTraceModelCache() noexcept {
 	traceModelCache.clear();
 	traceModelCache_Unsaved.clear();
 	traceModelHash.clear();
@@ -429,8 +424,7 @@ idTraceModel* idClipModel::GetCachedTraceModel(int traceModelIndex) {
 	}
 }
 
-int idClipModel::GetTraceModelHashKey(const idTraceModel& trm)
-{
+int idClipModel::GetTraceModelHashKey(const idTraceModel& trm) noexcept {
 	const auto v = trm.bounds[0];
 	return (trm.type << 8) ^ (trm.numVerts << 4) ^ idMath::FloatHash(v.ToFloatPtr(), v.GetDimension());
 }
@@ -938,7 +932,7 @@ void idClip::TraceRenderModel(trace_t& trace, const Vector2& start, const Vector
 idClip::PrintStatistics
 ============
 */
-void idClip::PrintStatistics() {
+void idClip::PrintStatistics() noexcept {
 	static char buf[256];
 
 	//sprintf_s(buf, "t = %3d, r = %3d, m = %3d, render = %3d, contents = %3d, contacts = %3d",

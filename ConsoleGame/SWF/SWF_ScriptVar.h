@@ -22,7 +22,7 @@ public:
 	idSWFScriptVar(std::shared_ptr<idSWFScriptFunction> nf) : type(swfScriptVarType::SWF_VAR_UNDEF) { SetFunction(nf); }
 	~idSWFScriptVar();
 
-	idSWFScriptVar& operator=(const idSWFScriptVar& other);
+	idSWFScriptVar& operator=(const idSWFScriptVar& other) noexcept;
 	idSWFScriptVar(idSWFScriptVar&&) = default;
 	idSWFScriptVar& operator=(idSWFScriptVar&&) = default;
 
@@ -31,26 +31,26 @@ public:
 		type = swfScriptVarType::SWF_VAR_STRING;
 		value.string = std::make_shared<std::string>(s);
 	}
-	void SetFloat(float f) { Free(); type = swfScriptVarType::SWF_VAR_FLOAT; value.f = f; }
-	void SetBool(bool b) { Free(); type = swfScriptVarType::SWF_VAR_BOOL; value.b = b; }
-	void SetInteger(int i) { Free(); type = swfScriptVarType::SWF_VAR_INTEGER; value.i = i; }
+	void SetFloat(float f) noexcept { Free(); type = swfScriptVarType::SWF_VAR_FLOAT; value.f = f; }
+	void SetBool(bool b) noexcept { Free(); type = swfScriptVarType::SWF_VAR_BOOL; value.b = b; }
+	void SetInteger(int i) noexcept { Free(); type = swfScriptVarType::SWF_VAR_INTEGER; value.i = i; }
 
-	void SetObject(std::shared_ptr<idSWFScriptObject> o);
-	void SetFunction(std::shared_ptr<idSWFScriptFunction> f);
+	void SetObject(std::shared_ptr<idSWFScriptObject> o) noexcept;
+	void SetFunction(std::shared_ptr<idSWFScriptFunction> f) noexcept;
 
 	std::string ToString() const;
 	bool ToBool() const;
 	int ToInteger() const;
 
-	std::shared_ptr<idSWFScriptObject> GetObjectScript() { return value.object.lock(); }
-	std::shared_ptr<idSWFScriptObject> GetObjectScript() const { return value.object.lock(); }
-	std::shared_ptr<idSWFScriptFunction> GetFunction() { return value.function; }
-	std::shared_ptr<idSWFSpriteInstance> ToSprite();
-	std::shared_ptr<idSWFTextInstance> ToText();
+	std::shared_ptr<idSWFScriptObject> GetObjectScript() noexcept { return value.object.lock(); }
+	std::shared_ptr<idSWFScriptObject> GetObjectScript() const noexcept { return value.object.lock(); }
+	std::shared_ptr<idSWFScriptFunction> GetFunction() noexcept { return value.function; }
+	std::shared_ptr<idSWFSpriteInstance> ToSprite() noexcept;
+	std::shared_ptr<idSWFTextInstance> ToText() noexcept;
 
-	bool IsString() const { return (type == swfScriptVarType::SWF_VAR_STRING) || (type == swfScriptVarType::SWF_VAR_STRINGID); }
-	bool IsFunction() const { return (type == swfScriptVarType::SWF_VAR_FUNCTION); }
-	bool IsObject() const { return (type == swfScriptVarType::SWF_VAR_OBJECT); }
+	bool IsString() const noexcept { return (type == swfScriptVarType::SWF_VAR_STRING) || (type == swfScriptVarType::SWF_VAR_STRINGID); }
+	bool IsFunction() const noexcept { return (type == swfScriptVarType::SWF_VAR_FUNCTION); }
+	bool IsObject() const noexcept { return (type == swfScriptVarType::SWF_VAR_OBJECT); }
 
 	enum class swfScriptVarType {
 		SWF_VAR_STRINGID,
@@ -64,17 +64,17 @@ public:
 		SWF_VAR_OBJECT
 	};
 
-	swfScriptVarType GetType() const { return type; }
+	swfScriptVarType GetType() const noexcept { return type; }
 
 private:
-	void Free();
+	void Free() noexcept;
 	swfScriptVarType type;
 
 	struct idSWFScriptVarValue_t {
 		idSWFScriptVarValue_t() {}
 		~idSWFScriptVarValue_t() {}
 
-		idSWFScriptVarValue_t& operator=(const idSWFScriptVarValue_t& other) {
+		idSWFScriptVarValue_t& operator=(const idSWFScriptVarValue_t& other) noexcept {
 			if (this != &other) {
 				f = other.f;
 				i = other.i;

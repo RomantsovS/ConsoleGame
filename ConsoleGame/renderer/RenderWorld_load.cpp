@@ -108,7 +108,7 @@ void idRenderWorldLocal::SetupAreaRefs() {
 	}
 }
 
-void idRenderWorldLocal::AddWorldModelEntities() {
+void idRenderWorldLocal::AddWorldModelEntities() noexcept {
 	// add the world model for each portal area
 	// we can't just call AddEntityDef, because that would place the references
 	// based on the bounding box, rather than explicitly into the correct area

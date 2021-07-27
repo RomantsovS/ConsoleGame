@@ -16,7 +16,7 @@ void idAI::Spawn() {
 	fl.takedamage = !spawnArgs.GetBool("noDamage");
 }
 
-void idAI::Think() {
+void idAI::Think() noexcept {
 }
 
 /*
@@ -34,7 +34,7 @@ void idAI::Hide() {
 idAI::Killed
 =====================
 */
-void idAI::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
+void idAI::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
 
 	//const std::string modelDeath;
 
@@ -87,18 +87,18 @@ void AISimple::Spawn() {
 	physicsObj->SetLinearVelocity(linearVelocity);
 }
 
-void AISimple::Think() {
+void AISimple::Think() noexcept {
 	idEntity::Think();
 }
 
-void AISimple::Remove() {
+void AISimple::Remove() noexcept {
 	physicsObj->SetClipModel(nullptr, 0.0f);
 
 	physicsObj = nullptr;
 	idEntity::Remove();
 }
 
-bool AISimple::Collide(const trace_t& collision, const Vector2& velocity) {
+bool AISimple::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
 		if (collision.c.entityNum == ENTITYNUM_WORLD || other->IsType(AISimple::Type) ||
@@ -118,7 +118,7 @@ void AISimple::Hide() {
 	physicsObj->GetClipModel()->Unlink();
 }
 
-void AISimple::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
+void AISimple::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
 
 	// make monster nonsolid
 	//physicsObj.SetContents(0);

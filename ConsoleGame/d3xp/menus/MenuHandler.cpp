@@ -61,7 +61,7 @@ void idMenuHandler::AddChild(std::shared_ptr<idMenuWidget> widget) {
 idMenuHandler::Cleanup
 ================================================
 */
-void idMenuHandler::Cleanup() {
+void idMenuHandler::Cleanup() noexcept {
 	for (size_t index = 0; index < children.size(); ++index) {
 		children[index] = nullptr;
 	}
@@ -81,7 +81,7 @@ void idMenuHandler::Cleanup() {
 idMenuHandler::IsActive
 ================================================
 */
-bool idMenuHandler::IsActive() {
+bool idMenuHandler::IsActive() noexcept {
 	if (!gui) {
 		return false;
 	}
@@ -94,7 +94,7 @@ bool idMenuHandler::IsActive() {
 idMenuHandler::ActivateMenu
 ================================================
 */
-void idMenuHandler::ActivateMenu(bool show) {
+void idMenuHandler::ActivateMenu(bool show) noexcept {
 
 	if (!gui)
 		return;
@@ -125,7 +125,7 @@ void idMenuHandler::Update() {
 idMenuHandler::UpdateChildren
 ================================================
 */
-void idMenuHandler::UpdateChildren() {
+void idMenuHandler::UpdateChildren() noexcept {
 	for (size_t index = 0; index < children.size(); ++index) {
 		if (children[index]) {
 			children[index]->Update();
@@ -277,6 +277,6 @@ void idMenuHandler::PumpWidgetActionRepeater() {
 idMenuHandler::ClearWidgetActionRepeater
 ========================
 */
-void idMenuHandler::ClearWidgetActionRepeater() {
+void idMenuHandler::ClearWidgetActionRepeater() noexcept {
 	actionRepeater.isActive = false;
 }

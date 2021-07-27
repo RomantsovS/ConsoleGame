@@ -246,7 +246,7 @@ void PlayerChain::SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn
 PlayerChain::Collide
 ==============
 */
-bool PlayerChain::Collide(const trace_t& collision, const Vector2& velocity) {
+bool PlayerChain::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
 		if (other->IsType(idSimpleObject::Type) || other->IsType(idChain::Type)) {
@@ -316,7 +316,7 @@ void PlayerChain::Think() {
 PlayerChain::EvaluateControls
 ==============
 */
-void PlayerChain::EvaluateControls() {
+void PlayerChain::EvaluateControls() noexcept {
 	/*if (usercmd.impulseSequence != oldImpulseSequence) {
 		PerformImpulse(usercmd.impulse);
 	}
@@ -331,7 +331,7 @@ void PlayerChain::EvaluateControls() {
 PlayerChain::AdjustSpeed
 ==============
 */
-void PlayerChain::AdjustSpeed() {
+void PlayerChain::AdjustSpeed() noexcept {
 	float speed{};
 
 	if (usercmd.buttons & BUTTON_RUN) {

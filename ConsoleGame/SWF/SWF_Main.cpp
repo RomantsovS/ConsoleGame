@@ -125,7 +125,7 @@ void idSWF::Init() {
 idSWF::Activate
 ===================
 */
-void idSWF::Activate(bool b) {
+void idSWF::Activate(bool b) noexcept {
 	if (!isActive && b) {
 		//mainspriteInstance->FreeDisplayList();
 	}

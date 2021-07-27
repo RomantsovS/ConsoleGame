@@ -24,24 +24,24 @@ public:
 	idWeapon& operator=(idWeapon&&) = default;
 
 	// Init
-	void Spawn();
+	void Spawn() noexcept;
 	void SetOwner(std::shared_ptr<idPlayer> owner);
 
 	static void CacheWeapon(const std::string& weaponName);
 
 	// Weapon definition management
-	void Clear();
+	void Clear() noexcept;
 	void GetWeaponDef(const std::string& objectname, int ammoinclip);
 
 	// State control/player interface
-	void Think() override;
-	void BeginAttack();
-	void EndAttack();
-	bool IsReady() const;
-	bool IsHolstered() const;
+	void Think() noexcept override;
+	void BeginAttack() noexcept;
+	void EndAttack() noexcept;
+	bool IsReady() const noexcept;
+	bool IsHolstered() const noexcept;
 
-	weaponStatus_t GetStatus() { return status; };
-	void SetStatus(weaponStatus_t _status) { status = _status; }
+	weaponStatus_t GetStatus() noexcept { return status; };
+	void SetStatus(weaponStatus_t _status) noexcept { status = _status; }
 
 	// Script state management
 	void UpdateScript();
@@ -66,7 +66,7 @@ private:
 	int lastAttack{};			// last time an attack occured
 
 	// script events
-	void Event_WeaponReady();
+	void Event_WeaponReady() noexcept;
 };
 
 #endif

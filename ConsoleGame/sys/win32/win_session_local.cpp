@@ -13,8 +13,8 @@ idSessionLocalWin::idSessionLocalWin
 class idSessionLocalWin : public idSessionLocal {
 public:
 	// idSessionLocal interface
-	void Initialize() override;
-	void Shutdown() override;
+	void Initialize() noexcept override;
+	void Shutdown() noexcept override;
 };
 
 idSessionLocalWin sessionLocalWin;
@@ -25,7 +25,7 @@ idSession* session = &sessionLocalWin;
 idSessionLocalWin::Initialize
 ========================
 */
-void idSessionLocalWin::Initialize() {
+void idSessionLocalWin::Initialize() noexcept {
 	idSessionLocal::Initialize();
 }
 
@@ -34,6 +34,6 @@ void idSessionLocalWin::Initialize() {
 idSessionLocalWin::Shutdown
 ========================
 */
-void idSessionLocalWin::Shutdown() {
+void idSessionLocalWin::Shutdown() noexcept {
 	idSessionLocal::Shutdown();
 }

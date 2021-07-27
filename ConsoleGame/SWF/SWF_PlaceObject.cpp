@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 /*
 ========================
@@ -38,7 +38,7 @@ swfDisplayEntry_t* idSWFSpriteInstance::PlaceObject(size_t depth, bool isSprite,
 idSWFSpriteInstance::RemoveObject
 ========================
 */
-void idSWFSpriteInstance::RemoveObject() {
+void idSWFSpriteInstance::RemoveObject() noexcept {
 	//RemoveDisplayEntry();
 }
 

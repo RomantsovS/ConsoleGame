@@ -18,7 +18,7 @@ public:
 	idMenuScreen(idMenuScreen&&) = default;
 	idMenuScreen& operator=(idMenuScreen&&) = default;
 
-	void Update() override;
+	void Update() noexcept override;
 	virtual void UpdateCmds();
 
 	virtual void ShowScreen();
@@ -38,15 +38,15 @@ public:
 	idMenuScreen_Shell_Root() :
 		options(nullptr) {
 	}
-	void				Initialize(std::shared_ptr<idMenuHandler> data) override;
-	void				Update() override;
-	void				ShowScreen() override;
-	void				HideScreen() override;
-	bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
+	void ShowScreen() override;
+	void HideScreen() override;
+	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 
-	void						HandleExitGameBtn();
-	int							GetRootIndex();
-	void						SetRootIndex(int index);
+	void HandleExitGameBtn();
+	int GetRootIndex() noexcept;
+	void SetRootIndex(int index);
 
 private:
 	std::shared_ptr<idMenuWidget_DynamicList> options;
@@ -63,8 +63,8 @@ public:
 		options(nullptr),
 		isMpPause(false) {
 	}
-	void Initialize(std::shared_ptr<idMenuHandler> data) override;
-	void Update() override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
 	void ShowScreen() override;
 	void HideScreen() override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
@@ -87,8 +87,8 @@ public:
 	idMenuScreen_Shell_PressStart() :
 	startButton(nullptr) {
 	}
-	void Initialize(std::shared_ptr<idMenuHandler> data) override;
-	void Update() override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
 	void ShowScreen() override;
 	void HideScreen() override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
@@ -108,16 +108,16 @@ public:
 		btnBack(nullptr),
 		canContinue(false) {
 	}
-	void				Initialize(std::shared_ptr<idMenuHandler> data) override;
-	void				Update() override;
-	void				ShowScreen() override;
-	void				HideScreen() override;
-	bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
+	void ShowScreen() override;
+	void HideScreen() override;
+	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 
-	void						SetCanContinue(bool valid) { canContinue = valid; }
-	void						ContinueGame();
+	void SetCanContinue(bool valid) noexcept { canContinue = valid; }
+	void ContinueGame() noexcept;
 private:
-	bool						canContinue;
+	bool canContinue;
 	std::shared_ptr<idMenuWidget_DynamicList> options;
 	std::shared_ptr<idMenuWidget_Button> btnBack;
 };
@@ -133,8 +133,8 @@ public:
 		options(nullptr),
 		btnBack(nullptr) {
 	}
-	void Initialize(std::shared_ptr<idMenuHandler> data) override;
-	void Update() override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
 	void ShowScreen() override;
 	void HideScreen() override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;

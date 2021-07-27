@@ -38,7 +38,7 @@ protected:
 public:
 	idSWFScriptFunction_Nested() : pThis(nullptr) { }
 
-	idSWFScriptFunction* Bind(T* _pThis) { pThis = _pThis; return this; }
+	idSWFScriptFunction* Bind(T* _pThis) noexcept { pThis = _pThis; return this; }
 };
 
 #endif

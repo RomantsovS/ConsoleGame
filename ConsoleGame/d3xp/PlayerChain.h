@@ -1,8 +1,7 @@
 #ifndef PLAYER_CHAIN_H
 #define PLAYER_CHAIN_H
 
-class PlayerChain : public idPlayer
-{
+class PlayerChain : public idPlayer {
 public:
 	CLASS_PROTOTYPE(PlayerChain);
 
@@ -22,7 +21,7 @@ public:
 	void SpawnFromSpawnSpot();
 	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 protected:
 	void SetModelForId(int id, const std::string& modelName);
 private:
@@ -35,8 +34,8 @@ private:
 	void AddModel(const idTraceModel& trm, const Vector2& origin, const int id, const float density);
 	void AddModel(const Vector2& origin, const int id, const float density);
 
-	void EvaluateControls();
-	void AdjustSpeed();
+	void EvaluateControls() noexcept;
+	void AdjustSpeed() noexcept;
 	void Move();
 };
 

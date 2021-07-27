@@ -4,18 +4,18 @@
 class idBounds {
 public:
 	idBounds();
-	explicit idBounds(const Vector2& mins, const Vector2& maxs);
-	explicit idBounds(const Vector2& point);
+	explicit idBounds(const Vector2& mins, const Vector2& maxs) noexcept;
+	explicit idBounds(const Vector2& point) noexcept;
 
-	const Vector2& operator[](const int index) const;
-	Vector2& operator[](const int index);
-	idBounds operator+(const Vector2& t) const;				// returns translated bounds
-	idBounds& operator+=(const Vector2& t);					// translate the bounds
+	const Vector2& operator[](const int index) const noexcept;
+	Vector2& operator[](const int index) noexcept;
+	idBounds operator+(const Vector2& t) const noexcept;				// returns translated bounds
+	idBounds& operator+=(const Vector2& t) noexcept;					// translate the bounds
 	idBounds& operator+=(const idBounds& a);
 
-	bool Compare(const idBounds& a) const;							// exact compare, no epsilon
-	bool operator==(const idBounds& a) const;						// exact compare, no epsilon
-	bool operator!=(const idBounds& a) const;						// exact compare, no epsilon
+	bool Compare(const idBounds& a) const noexcept;							// exact compare, no epsilon
+	bool operator==(const idBounds& a) const noexcept;						// exact compare, no epsilon
+	bool operator!=(const idBounds& a) const noexcept;						// exact compare, no epsilon
 
 	void Clear();									// inside out bounds
 	void Zero(); // single point at origin
@@ -34,12 +34,12 @@ public:
 	bool LineIntersection(const Vector2& start, const Vector2& end) const;
 
 					// most tight bounds for the given transformed bounds
-	void FromTransformedBounds(const idBounds& bounds, const Vector2& origin);
+	void FromTransformedBounds(const idBounds& bounds, const Vector2& origin) noexcept;
 	// most tight bounds for a translation
 	void FromPointTranslation(const Vector2& point, const Vector2& translation);
 	void FromBoundsTranslation(const idBounds& bounds, const Vector2& origin, const Vector2& translation);
 
-	static idBounds GetBoundsZero() {
+	static idBounds GetBoundsZero() noexcept {
 		return idBounds(vec2_origin, vec2_origin);
 	}
 private:
@@ -49,29 +49,29 @@ private:
 inline idBounds::idBounds() {
 }
 
-inline idBounds::idBounds(const Vector2& mins, const Vector2& maxs) {
+inline idBounds::idBounds(const Vector2& mins, const Vector2& maxs) noexcept {
 	b[0] = mins;
 	b[1] = maxs;
 }
 
-inline idBounds::idBounds(const Vector2& point) {
+inline idBounds::idBounds(const Vector2& point) noexcept {
 	b[0] = point;
 	b[1] = point;
 }
 
-inline const Vector2& idBounds::operator[](const int index) const {
+inline const Vector2& idBounds::operator[](const int index) const noexcept {
 	return b[index];
 }
 
-inline Vector2& idBounds::operator[](const int index) {
+inline Vector2& idBounds::operator[](const int index) noexcept {
 	return b[index];
 }
 
-inline idBounds idBounds::operator+(const Vector2& t) const {
+inline idBounds idBounds::operator+(const Vector2& t) const noexcept {
 	return idBounds(b[0] + t, b[1] + t);
 }
 
-inline idBounds& idBounds::operator+=(const Vector2& t) {
+inline idBounds& idBounds::operator+=(const Vector2& t) noexcept {
 	b[0] += t;
 	b[1] += t;
 	return *this;
@@ -82,16 +82,15 @@ inline idBounds& idBounds::operator+=(const idBounds& a) {
 	return *this;
 }
 
-inline bool idBounds::Compare(const idBounds& a) const {
+inline bool idBounds::Compare(const idBounds& a) const noexcept {
 	return (b[0].Compare(a.b[0]) && b[1].Compare(a.b[1]));
 }
 
-inline bool idBounds::operator==(const idBounds& a) const
-{
+inline bool idBounds::operator==(const idBounds& a) const noexcept {
 	return Compare(a);
 }
 
-inline bool idBounds::operator!=(const idBounds& a) const {
+inline bool idBounds::operator!=(const idBounds& a) const noexcept {
 	return !Compare(a);
 }
 

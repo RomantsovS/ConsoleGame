@@ -1,8 +1,7 @@
 #ifndef AI_H
 #define AI_H
 
-class idAI : public idActor
-{
+class idAI : public idActor {
 public:
 	CLASS_PROTOTYPE(idAI);
 
@@ -14,17 +13,16 @@ public:
 	idAI& operator=(idAI&&) = default;
 
 	void Spawn();
-	void Think() override;
+	void Think() noexcept override;
 protected:
 	void Hide() override;
 
 	// damage
 	//virtual bool Pain(idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location);
-	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
 };
 
-class AISimple : public idAI
-{
+class AISimple : public idAI {
 public:
 	CLASS_PROTOTYPE(AISimple);
 
@@ -36,17 +34,17 @@ public:
 	AISimple& operator=(AISimple&&) = default;
 
 	void Spawn();
-	void Think() override;
+	void Think() noexcept override;
 	
-	void Remove() override;
+	void Remove() noexcept override;
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 protected:
 	void Hide() override;
 
-	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
 };
 
 #endif

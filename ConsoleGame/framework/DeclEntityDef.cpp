@@ -6,7 +6,7 @@
 idDeclEntityDef::FreeData
 ================
 */
-void idDeclEntityDef::FreeData() {
+void idDeclEntityDef::FreeData() noexcept {
 	dict.Clear();
 }
 

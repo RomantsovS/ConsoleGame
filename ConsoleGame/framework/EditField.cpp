@@ -26,7 +26,7 @@ idEditField::~idEditField() {
 idEditField::Clear
 ===============
 */
-void idEditField::Clear() {
+void idEditField::Clear() noexcept {
 	buffer.clear();
 }
 
@@ -72,6 +72,6 @@ void idEditField::KeyDownEvent(int key) {
 idEditField::GetBuffer
 ===============
 */
-const char* idEditField::GetBuffer() {
+const char* idEditField::GetBuffer() noexcept {
 	return buffer.c_str();
 }

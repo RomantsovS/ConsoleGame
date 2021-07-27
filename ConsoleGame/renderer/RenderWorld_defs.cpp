@@ -11,7 +11,7 @@ Used by both FreeEntityDef and UpdateEntityDef
 Does not actually free the entityDef.
 ===================
 */
-void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) {
+void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept {
 	// free the entityRefs from the areas
 	for (auto ref = def->entityRefs; ref;) {
 		auto next = ref->ownerNext;
@@ -68,7 +68,7 @@ R_FreeDerivedData
 ReloadModels and RegenerateWorld call this
 ===================
 */
-void R_FreeDerivedData() {
+void R_FreeDerivedData() noexcept {
 	for(auto &rw : tr.worlds) {
 		for (auto &def : rw->entityDefs) {
 			if (!def) {
@@ -84,7 +84,7 @@ void R_FreeDerivedData() {
 R_CheckForEntityDefsUsingModel
 ===================
 */
-void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) {
+void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) noexcept {
 	for (auto &rw : tr.worlds)
 	{
 		for (auto &def : rw->entityDefs)

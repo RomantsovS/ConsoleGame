@@ -8,17 +8,17 @@
 
 class idConsoleLocal : public idConsole {
 public:
-	void		Init() override;
-	void		Shutdown() override;
-	bool		ProcessEvent(const sysEvent_t* event, bool forceAccept) override;
-	bool		Active() override;
+	void Init() noexcept override;
+	void Shutdown() noexcept override;
+	bool ProcessEvent(const sysEvent_t* event, bool forceAccept) override;
+	bool Active() noexcept override;
 	//virtual	void		ClearNotifyLines();
-	void		Close() override;
+	void Close() noexcept override;
 	//virtual	void		Print(const char* text);
 	void Draw(bool forceFullScreen) override;
 
 	//void				Dump(const char* toFile);
-	void				Clear();
+	void Clear() noexcept;
 
 private:
 	void KeyDownEvent(int key);
@@ -77,7 +77,7 @@ int idConsoleLocal::DrawFPS(int y) {
 idConsoleLocal::Init
 ==============
 */
-void idConsoleLocal::Init() {
+void idConsoleLocal::Init() noexcept {
 	keyCatching = false;
 	consoleField.Clear();
 }
@@ -87,7 +87,7 @@ void idConsoleLocal::Init() {
 idConsoleLocal::Shutdown
 ==============
 */
-void idConsoleLocal::Shutdown() {
+void idConsoleLocal::Shutdown() noexcept {
 }
 
 /*
@@ -95,7 +95,7 @@ void idConsoleLocal::Shutdown() {
 idConsoleLocal::Active
 ================
 */
-bool idConsoleLocal::Active() {
+bool idConsoleLocal::Active() noexcept {
 	return keyCatching;
 }
 
@@ -104,7 +104,7 @@ bool idConsoleLocal::Active() {
 idConsoleLocal::Close
 ================
 */
-void idConsoleLocal::Close() {
+void idConsoleLocal::Close() noexcept {
 	keyCatching = false;
 }
 
@@ -113,7 +113,7 @@ void idConsoleLocal::Close() {
 idConsoleLocal::Clear
 ================
 */
-void idConsoleLocal::Clear() {
+void idConsoleLocal::Clear() noexcept {
 }
 
 /*

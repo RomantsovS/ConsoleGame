@@ -24,13 +24,13 @@ public:
 	int			value;
 
 	idEventArg() { type = D_EVENT_INTEGER; value = 0; };
-	idEventArg(int data) { type = D_EVENT_INTEGER; value = data; };
-	idEventArg(float data) { type = D_EVENT_FLOAT; value = *reinterpret_cast<int*>(&data); };
-	idEventArg(Vector2& data) { type = D_EVENT_VECTOR; value = reinterpret_cast<int>(&data); };
-	idEventArg(const std::string& data) { type = D_EVENT_STRING; value = reinterpret_cast<int>(data.c_str()); };
-	idEventArg(const char* data) { type = D_EVENT_STRING; value = reinterpret_cast<int>(data); };
-	idEventArg(const class idEntity* data) { type = D_EVENT_ENTITY; value = reinterpret_cast<int>(data); };
-	idEventArg(const struct trace_s* data) { type = D_EVENT_TRACE; value = reinterpret_cast<int>(data); };
+	idEventArg(int data) noexcept { type = D_EVENT_INTEGER; value = data; };
+	idEventArg(float data) noexcept { type = D_EVENT_FLOAT; value = *reinterpret_cast<int*>(&data); };
+	idEventArg(Vector2& data) noexcept { type = D_EVENT_VECTOR; value = reinterpret_cast<int>(&data); };
+	idEventArg(const std::string& data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data.c_str()); };
+	idEventArg(const char* data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data); };
+	idEventArg(const class idEntity* data) noexcept { type = D_EVENT_ENTITY; value = reinterpret_cast<int>(data); };
+	idEventArg(const struct trace_s* data) noexcept { type = D_EVENT_TRACE; value = reinterpret_cast<int>(data); };
 };
 
 /***********************************************************************
@@ -52,7 +52,7 @@ Use this on single inheritance concrete classes only.
 public:																	\
 	static idTypeInfo Type;						\
 	static std::shared_ptr<idClass> CreateInstance();	\
-	idTypeInfo *GetType() const override;		\
+	idTypeInfo *GetType() const noexcept override;		\
 	static	idEventFunc<nameofclass> eventCallbacks[]
 
 /*
@@ -73,7 +73,7 @@ incorrect.  Use this on concrete classes only.
 	std::shared_ptr<nameofclass> ptr = std::make_shared<nameofclass>();						\
 			return ptr;																				\
 	}																								\
-	idTypeInfo *nameofclass::GetType() const {														\
+	idTypeInfo *nameofclass::GetType() const noexcept {														\
 		return &( nameofclass::Type );																\
 	}																								\
 idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
@@ -91,7 +91,7 @@ Use this on single inheritance abstract classes only.
 public:																	\
 	static idTypeInfo Type;						\
 	static std::shared_ptr<idClass> CreateInstance();	\
-	virtual idTypeInfo *GetType() const;		\
+	virtual idTypeInfo *GetType() const noexcept;		\
 	static idEventFunc<nameofclass> eventCallbacks[]
 
 /*
@@ -112,7 +112,7 @@ on abstract classes only.
 		gameLocal.Error( "Cannot instanciate abstract class %s.", #nameofclass );					\
 		return nullptr;																				\
 	}																								\
-	idTypeInfo *nameofclass::GetType() const {												\
+	idTypeInfo *nameofclass::GetType() const noexcept {												\
 		return &( nameofclass::Type );																\
 	}																								\
 	idEventFunc<nameofclass> nameofclass::eventCallbacks[] = {
@@ -131,7 +131,7 @@ public:
 	idClass(idClass&&) = default;
 	idClass& operator=(idClass&&) = default;
 
-	void Spawn();
+	void Spawn() noexcept;
 	void CallSpawn();
 	bool IsType(const idTypeInfo &c) const;
 	const std::string GetClassname() const;
@@ -143,13 +143,13 @@ public:
 	bool ProcessEventArgPtr(const idEventDef* ev, int* data);
 	void CancelEvents(const idEventDef* ev);
 
-	void Event_Remove();
-	virtual void Remove();
+	void Event_Remove() noexcept;
+	virtual void Remove() noexcept;
 
 	// Static functions
 	static void Init();
-	static void	Shutdown();
-	static idTypeInfo * GetClass(const std::string& name);
+	static void	Shutdown() noexcept;
+	static idTypeInfo * GetClass(const std::string& name) noexcept;
 private:
 	classSpawnFunc_t CallSpawnFunc(gsl::not_null<idTypeInfo*> cls);
 
@@ -188,9 +188,9 @@ public:
 
 
 	void Init();
-	void Shutdown();
+	void Shutdown() noexcept;
 
-	bool IsType(const idTypeInfo &superclass) const;
+	bool IsType(const idTypeInfo &superclass) const noexcept;
 };
 
 /*
@@ -201,7 +201,7 @@ Checks if the object's class is a subclass of the class defined by the
 passed in idTypeInfo.
 ================
 */
-inline bool idTypeInfo::IsType(const idTypeInfo& type) const {
+inline bool idTypeInfo::IsType(const idTypeInfo& type) const noexcept {
 	return ((typeNum >= type.typeNum) && (typeNum <= type.lastChild));
 }
 

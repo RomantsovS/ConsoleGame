@@ -24,51 +24,51 @@ public:
 	idPhysics_Static& operator=(idPhysics_Static&&) = default;
 
 public:	// common physics interface
-	void SetSelf(std::shared_ptr<idEntity> e) override;
+	void SetSelf(std::shared_ptr<idEntity> e) noexcept override;
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
-	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
-	int GetNumClipModels() const override;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
+	int GetNumClipModels() const noexcept override;
 
-	void SetClipMask(int mask, int id = -1) override;
-	int GetClipMask(int id = -1) const override;
+	void SetClipMask(int mask, int id = -1) noexcept override;
+	int GetClipMask(int id = -1) const noexcept override;
 
-	const idBounds& GetBounds(int id = -1) const override;
+	const idBounds& GetBounds(int id = -1) const noexcept override;
 	const idBounds& GetAbsBounds(int id = -1) const override;
 
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
-	void UpdateTime(int endTimeMSec) override;
-	int	GetTime() const override;
+	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
+	void UpdateTime(int endTimeMSec) noexcept override;
+	int	GetTime() const noexcept override;
 
-	void Activate() override;
-	void PutToRest() override;
-	bool IsAtRest() const override;
+	void Activate() noexcept override;
+	void PutToRest() noexcept override;
+	bool IsAtRest() const noexcept override;
 
-	void SaveState() override;
-	void RestoreState() override;
+	void SaveState() noexcept override;
+	void RestoreState() noexcept override;
 
 	void SetOrigin(const Vector2 &newOrigin, int id = -1) override;
-	void SetAxis(const Vector2 &newAxis, int id = -1) override;
+	void SetAxis(const Vector2 &newAxis, int id = -1) noexcept override;
 
 	void Translate(const Vector2 &translation, int id = -1) override;
-	void Rotate(const Vector2 &rotation, int id = -1) override;
+	void Rotate(const Vector2 &rotation, int id = -1) noexcept override;
 
-	const Vector2 & GetOrigin(int id = 0) const override;
-	const Vector2 &	GetAxis(int id = 0) const override;
+	const Vector2 & GetOrigin(int id = 0) const noexcept override;
+	const Vector2 &	GetAxis(int id = 0) const noexcept override;
 
-	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	const Vector2& GetLinearVelocity(int id = 0) const override;
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
+	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
 
-	void DisableClip() override;
-	void EnableClip() override;
+	void DisableClip() noexcept override;
+	void EnableClip() noexcept override;
 
-	void UnlinkClip() override;
+	void UnlinkClip() noexcept override;
 	void LinkClip() override;
 
-	bool EvaluateContacts() override;
+	bool EvaluateContacts() noexcept override;
 
-	void ClearContacts() override;
-	void AddContactEntity(std::shared_ptr<idEntity> e) override;
-	void RemoveContactEntity(std::shared_ptr<idEntity> e) override;
+	void ClearContacts() noexcept override;
+	void AddContactEntity(std::shared_ptr<idEntity> e) noexcept override;
+	void RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept override;
 protected:
 	std::weak_ptr<idEntity> self; // entity using this physics object
 	staticPState_s current;			// physics state

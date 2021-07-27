@@ -23,7 +23,7 @@ public:
 	// copy key/value pairs from other dict not present in this dict
 	void SetDefaults(const idDict* dict);
 	// clear dict freeing up memory
-	void Clear();
+	void Clear() noexcept;
 
 	void Set(std::string key, std::string value);
 	void SetInt(const std::string& key, int val);

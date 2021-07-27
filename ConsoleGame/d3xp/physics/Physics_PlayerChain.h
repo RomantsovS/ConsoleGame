@@ -47,47 +47,47 @@ public:
 	Physics_PlayerChain& operator=(Physics_PlayerChain&&) = default;
 
 	// initialisation
-	const Vector2& PlayerGetOrigin() const;	// != GetOrigin
+	const Vector2& PlayerGetOrigin() const noexcept;	// != GetOrigin
 
 	int AddBody(const std::shared_ptr<idAFBody>& body);	// returns body id
 							// get body or constraint id
 	int GetBodyId(const std::shared_ptr<idAFBody>& body) const;
 	// retrieve body or constraint
-	std::shared_ptr<idAFBody> GetBody(const std::string& bodyName) const;
+	std::shared_ptr<idAFBody> GetBody(const std::string& bodyName) const noexcept;
 	std::shared_ptr<idAFBody> GetBody(const int id) const;
 	// delete body or constraint
 	void DeleteBody(const int id);
 
 	void UpdateClipModels();
 public:	// common physics interface
-	int GetNumClipModels() const override;
+	int GetNumClipModels() const noexcept override;
 
-	const idBounds& GetBounds(int id = -1) const override;
-	const idBounds& GetAbsBounds(int id = -1) const override;
+	const idBounds& GetBounds(int id = -1) const noexcept override;
+	const idBounds& GetAbsBounds(int id = -1) const noexcept override;
 
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
+	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
 
-	bool IsAtRest() const override;
+	bool IsAtRest() const noexcept override;
 
-	void SaveState() override;
-	void RestoreState() override;
+	void SaveState() noexcept override;
+	void RestoreState() noexcept override;
 
-	void SetOrigin(const Vector2& newOrigin, int id = -1) override;
+	void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
 	//void SetAxis(const Vector2& newAxis, int id = -1) override;
 
-	void Translate(const Vector2& translation, int id = -1) override;
+	void Translate(const Vector2& translation, int id = -1) noexcept override;
 	//void Rotate(const Vector2& rotation, int id = -1) override;
 
-	const Vector2& GetOrigin(int id = 0) const override;
+	const Vector2& GetOrigin(int id = 0) const noexcept override;
 
-	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	const Vector2& GetLinearVelocity(int id = 0) const override;
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
+	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
 
-	void DisableClip() override;
-	void EnableClip() override;
+	void DisableClip() noexcept override;
+	void EnableClip() noexcept override;
 
-	void UnlinkClip() override;
-	void LinkClip() override;
+	void UnlinkClip() noexcept override;
+	void LinkClip() noexcept override;
 private:
 	std::vector<std::shared_ptr<idAFBody>> bodies; // all bodies
 	std::vector<AFCollision_t> collisions; // collisions
@@ -99,17 +99,17 @@ private:
 	playerPState_t current;
 	playerPState_t saved;
 private:
-	void Evolve(float timeStep);
-	std::shared_ptr<idEntity> SetupCollisionForBody(idAFBody* body) const;
-	bool CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision);
-	bool ApplyCollisions(float timeStep);
+	void Evolve(float timeStep) noexcept;
+	std::shared_ptr<idEntity> SetupCollisionForBody(idAFBody* body) const noexcept;
+	bool CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept;
+	bool ApplyCollisions(float timeStep) noexcept;
 	void CheckForCollisions(float timeStep);
-	void SwapStates();
+	void SwapStates() noexcept;
 	void MoveEachBodiesToPrevOne();
 
-	void Friction();
-	void WalkMove();
-	void MovePlayer(int msec);
+	void Friction() noexcept;
+	void WalkMove() noexcept;
+	void MovePlayer(int msec) noexcept;
 };
 
 #endif // !PHYSICS_PHYSICS_PLAYER_H_

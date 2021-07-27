@@ -22,12 +22,12 @@ public:
 
 	void Init(std::shared_ptr<idSWF> _gui);
 
-	std::shared_ptr<idSWFScriptObject> GetScriptObject() { return scriptObject; }
-	size_t GetTextLength();
+	std::shared_ptr<idSWFScriptObject> GetScriptObject() noexcept { return scriptObject; }
+	size_t GetTextLength() noexcept;
 
 	void SetText(const std::string& val) { text = val; }
 
-	void Clear();
+	void Clear() noexcept;
 
 	std::weak_ptr<idSWF> swf;
 

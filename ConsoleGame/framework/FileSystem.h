@@ -15,10 +15,10 @@ enum fsMode_t {
 class idFileList {
 	friend class idFileSystemLocal;
 public:
-	const std::string& GetBasePath() const { return basePath; }
-	size_t GetNumFiles() const { return list.size(); }
-	const std::string& GetFile(int index) const { return list[index]; }
-	const std::vector<std::string>& GetList() const { return list; }
+	const std::string& GetBasePath() const noexcept { return basePath; }
+	size_t GetNumFiles() const noexcept { return list.size(); }
+	const std::string& GetFile(int index) const noexcept { return list[index]; }
+	const std::vector<std::string>& GetList() const noexcept { return list; }
 
 private:
 	std::string basePath;

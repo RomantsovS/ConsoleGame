@@ -30,7 +30,7 @@ idRenderModelStatic::~idRenderModelStatic() {
 idRenderModelStatic::IsDefaultModel
 ================
 */
-bool idRenderModelStatic::IsDefaultModel() const {
+bool idRenderModelStatic::IsDefaultModel() const noexcept {
 	return defaulted;
 }
 
@@ -66,7 +66,7 @@ void idRenderModelStatic::InitFromFile(std::string fileName) {
 idRenderModelStatic::LoadBinaryModel
 ========================
 */
-bool idRenderModelStatic::LoadBinaryModel(idFile* file) {
+bool idRenderModelStatic::LoadBinaryModel(idFile* file) noexcept {
 	if (file == nullptr) {
 		return false;
 	}
@@ -74,7 +74,7 @@ bool idRenderModelStatic::LoadBinaryModel(idFile* file) {
 	return false;
 }
 
-void idRenderModelStatic::PurgeModel() {
+void idRenderModelStatic::PurgeModel() noexcept {
 	surfaces.clear();
 
 	purged = true;
@@ -85,7 +85,7 @@ void idRenderModelStatic::LoadModel() {
 	InitFromFile(name);
 }
 
-bool idRenderModelStatic::IsLoaded() {
+bool idRenderModelStatic::IsLoaded() noexcept {
 	return !purged;
 }
 
@@ -94,7 +94,7 @@ bool idRenderModelStatic::IsLoaded() {
 idRenderModelStatic::SetLevelLoadReferenced
 ================
 */
-void idRenderModelStatic::SetLevelLoadReferenced(bool referenced) {
+void idRenderModelStatic::SetLevelLoadReferenced(bool referenced) noexcept {
 	levelLoadReferenced = referenced;
 }
 
@@ -103,7 +103,7 @@ void idRenderModelStatic::SetLevelLoadReferenced(bool referenced) {
 idRenderModelStatic::IsLevelLoadReferenced
 ================
 */
-bool idRenderModelStatic::IsLevelLoadReferenced() {
+bool idRenderModelStatic::IsLevelLoadReferenced() noexcept {
 	return levelLoadReferenced;
 }
 
@@ -123,15 +123,15 @@ const std::string idRenderModelStatic::Name() const {
 	return name;
 }
 
-int idRenderModelStatic::NumSurfaces() const {
+int idRenderModelStatic::NumSurfaces() const noexcept {
 	return surfaces.size();
 }
 
-const ModelPixel & idRenderModelStatic::Surface(int surfaceNum) const {
+const ModelPixel & idRenderModelStatic::Surface(int surfaceNum) const noexcept {
 	return surfaces[surfaceNum];
 }
 
-dynamicModel_t idRenderModelStatic::IsDynamicModel() const {
+dynamicModel_t idRenderModelStatic::IsDynamicModel() const noexcept {
 	// dynamic subclasses will override this
 	return DM_STATIC;
 }
@@ -141,7 +141,7 @@ dynamicModel_t idRenderModelStatic::IsDynamicModel() const {
 idRenderModelStatic::IsReloadable
 ================
 */
-bool idRenderModelStatic::IsReloadable() const {
+bool idRenderModelStatic::IsReloadable() const noexcept {
 	return reloadable;
 }
 
@@ -326,11 +326,11 @@ bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces
 	return true;
 }
 
-int idRenderModelStatic::GetColor() const {
+int idRenderModelStatic::GetColor() const noexcept {
 	return color;
 }
 
-void idRenderModelStatic::SetColor(int col) {
+void idRenderModelStatic::SetColor(int col) noexcept {
 	/*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
 	{
 		iter->screenPixel.color = col;
@@ -338,7 +338,7 @@ void idRenderModelStatic::SetColor(int col) {
 	color = col;
 }
 
-ModelPixel::ModelPixel(Vector2 origin, Screen::Pixel pixel) {
+ModelPixel::ModelPixel(Vector2 origin, Screen::Pixel pixel) noexcept {
 	this->origin = origin;
 	this->screenPixel = pixel;
 }

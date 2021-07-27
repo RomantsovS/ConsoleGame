@@ -7,7 +7,7 @@
 idMenuWidget_DynamicList::Initialize
 ========================
 */
-void idMenuWidget_DynamicList::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuWidget_DynamicList::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuWidget::Initialize(data);
 }
 
@@ -16,7 +16,7 @@ void idMenuWidget_DynamicList::Initialize(std::shared_ptr<idMenuHandler> data) {
 idMenuWidget_DynamicList::Update
 ========================
 */
-void idMenuWidget_DynamicList::Update() {
+void idMenuWidget_DynamicList::Update() noexcept {
 
 	if (!GetSWFObject()) {
 		return;
@@ -73,7 +73,7 @@ void idMenuWidget_DynamicList::Update() {
 idMenuWidget_DynamicList::GetTotalNumberOfOptions
 ========================
 */
-size_t idMenuWidget_DynamicList::GetTotalNumberOfOptions() const {
+size_t idMenuWidget_DynamicList::GetTotalNumberOfOptions() const noexcept {
 
 	if (controlList) {
 		return GetChildren().size();

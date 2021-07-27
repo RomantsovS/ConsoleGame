@@ -19,7 +19,7 @@ public:
 
 	void Think() override;
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 	virtual void Explode(const trace_t& collision, idEntity* ignore);
 protected:
 	std::weak_ptr<idEntity>	owner;

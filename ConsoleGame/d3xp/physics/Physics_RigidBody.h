@@ -51,43 +51,43 @@ public:
 	idPhysics_RigidBody& operator=(idPhysics_RigidBody&&) = default;
 
 public:	// common physics interface
-	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
-	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const override;
-	int GetNumClipModels() const override;
+	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) noexcept override;
+	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
+	int GetNumClipModels() const noexcept override;
 
-	const idBounds& GetBounds(int id = -1) const override;
-	const idBounds& GetAbsBounds(int id = -1) const override;
+	const idBounds& GetBounds(int id = -1) const noexcept override;
+	const idBounds& GetAbsBounds(int id = -1) const noexcept override;
 
-	bool Evaluate(int timeStepMSec, int endTimeMSec) override;
-	void UpdateTime(int endTimeMSec) override;
-	int GetTime() const override;
+	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
+	void UpdateTime(int endTimeMSec) noexcept override;
+	int GetTime() const noexcept override;
 
-	void Activate() override;
-	void PutToRest() override;
-	bool IsAtRest() const override;
+	void Activate() noexcept override;
+	void PutToRest() noexcept override;
+	bool IsAtRest() const noexcept override;
 
-	void SaveState() override;
-	void RestoreState() override;
+	void SaveState() noexcept override;
+	void RestoreState() noexcept override;
 
-	void SetOrigin(const Vector2 &newOrigin, int id = -1) override;
-	void SetAxis(const Vector2 &newAxis, int id = -1) override;
+	void SetOrigin(const Vector2 &newOrigin, int id = -1) noexcept override;
+	void SetAxis(const Vector2 &newAxis, int id = -1) noexcept override;
 
-	void Translate(const Vector2 &translation, int id = -1) override;
+	void Translate(const Vector2 &translation, int id = -1) noexcept override;
 	//void Rotate(const Vector2 &rotation, int id = -1) override;
 
-	const Vector2 & GetOrigin(int id = 0) const override;
+	const Vector2 & GetOrigin(int id = 0) const noexcept override;
 	//const Vector2 &	GetAxis(int id = 0) const override;
 
-	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) override;
-	const Vector2& GetLinearVelocity(int id = 0) const override;
+	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
+	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
 
-	void DisableClip() override;
-	void EnableClip() override;
+	void DisableClip() noexcept override;
+	void EnableClip() noexcept override;
 
-	void UnlinkClip() override;
-	void LinkClip() override;
+	void UnlinkClip() noexcept override;
+	void LinkClip() noexcept override;
 
-	bool EvaluateContacts() override;
+	bool EvaluateContacts() noexcept override;
 private:
 	// state of the rigid body
 	rigidBodyPState_t current;
@@ -102,10 +102,10 @@ private:
 	friend void RigidBodyDerivatives(const float t, const void* clientData, const float* state, float* derivatives);
 	void Integrate(const float deltaTime, rigidBodyPState_t& next_);
 	bool CheckForCollisions(const float deltaTime, rigidBodyPState_t& next, trace_t& collision);
-	bool CollisionImpulse(const trace_t& collision, Vector2& impulse);
-	bool TestIfAtRest() const;
-	void Rest();
-	void DebugDraw();
+	bool CollisionImpulse(const trace_t& collision, Vector2& impulse) noexcept;
+	bool TestIfAtRest() const noexcept;
+	void Rest() noexcept;
+	void DebugDraw() noexcept;
 };
 
 #endif

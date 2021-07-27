@@ -16,7 +16,7 @@ idSWFScriptVar::idSWFScriptVar(const idSWFScriptVar& other) {
 idSWFScriptVar::operator=
 ========================
 */
-idSWFScriptVar& idSWFScriptVar::operator=(const idSWFScriptVar& other) {
+idSWFScriptVar& idSWFScriptVar::operator=(const idSWFScriptVar& other) noexcept {
 	if (this != &other) {
 		Free();
 		type = other.type;
@@ -39,7 +39,7 @@ idSWFScriptVar::~idSWFScriptVar() {
 idSWFScriptVar::Free
 ========================
 */
-void idSWFScriptVar::Free() {
+void idSWFScriptVar::Free() noexcept {
 	value.string = nullptr;
 	value.function.reset();
 	value.object.reset();
@@ -51,7 +51,7 @@ void idSWFScriptVar::Free() {
 idSWFScriptVar::SetObject
 ========================
 */
-void idSWFScriptVar::SetObject(std::shared_ptr<idSWFScriptObject> o) {
+void idSWFScriptVar::SetObject(std::shared_ptr<idSWFScriptObject> o) noexcept {
 	Free();
 	if (!o) {
 		type = swfScriptVarType::SWF_VAR_NULL;
@@ -67,7 +67,7 @@ void idSWFScriptVar::SetObject(std::shared_ptr<idSWFScriptObject> o) {
 idSWFScriptVar::SetFunction
 ========================
 */
-void idSWFScriptVar::SetFunction(std::shared_ptr<idSWFScriptFunction> f) {
+void idSWFScriptVar::SetFunction(std::shared_ptr<idSWFScriptFunction> f) noexcept {
 	Free();
 	if (!f) {
 		type = swfScriptVarType::SWF_VAR_NULL;
@@ -156,7 +156,7 @@ int idSWFScriptVar::ToInteger() const {
 idSWFScriptVar::ToSprite
 ========================
 */
-std::shared_ptr<idSWFSpriteInstance> idSWFScriptVar::ToSprite() {
+std::shared_ptr<idSWFSpriteInstance> idSWFScriptVar::ToSprite() noexcept {
 	if (IsObject() && !value.object.expired()) {
 		return value.object.lock()->GetSprite();
 	}
@@ -169,7 +169,7 @@ std::shared_ptr<idSWFSpriteInstance> idSWFScriptVar::ToSprite() {
 idSWFScriptVar::ToText
 ========================
 */
-std::shared_ptr<idSWFTextInstance> idSWFScriptVar::ToText() {
+std::shared_ptr<idSWFTextInstance> idSWFScriptVar::ToText() noexcept {
 	if (IsObject() && !value.object.expired()) {
 		return value.object.lock()->GetText();
 	}

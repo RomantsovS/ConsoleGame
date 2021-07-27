@@ -28,7 +28,7 @@ void idDict::SetDefaults(const idDict* dict) {
 	}
 }
 
-void idDict::Clear() {
+void idDict::Clear() noexcept {
 	args.clear();
 }
 

@@ -20,13 +20,13 @@ public:
 	// Write data from the buffer to the file.
 	virtual int Write(const void* buffer, int len);
 	// Returns the length of the file.
-	virtual int Length() const;
+	virtual int Length() const noexcept;
 	// Return a time value for reload operations.
-	virtual ID_TIME_T Timestamp() const;
+	virtual ID_TIME_T Timestamp() const noexcept;
 	// Forces flush on files being writting to.
-	virtual void ForceFlush();
+	virtual void ForceFlush() noexcept;
 	// Causes any buffered data to be written to the file.
-	virtual void Flush();
+	virtual void Flush() noexcept;
 
 	virtual int WriteString(const std::string& str);
 
@@ -49,12 +49,12 @@ public:
 
 	int Read(void* buffer, int len) override;
 	int Write(const void* buffer, int len) override;
-	int Length() const override;
-	void ForceFlush() override;
-	void Flush() override;
+	int Length() const noexcept override;
+	void ForceFlush() noexcept override;
+	void Flush() noexcept override;
 
 	// returns file pointer
-	idFileHandle &GetFilePtr() { return o; }
+	idFileHandle &GetFilePtr() noexcept { return o; }
 
 private:
 	std::string name;		// relative path of the file - relative path
@@ -75,7 +75,7 @@ SmartPointer, as it does not keep a reference count.
 class idFileLocal {
 public:
 	// Constructor that accepts and stores the file pointer.
-	idFileLocal(std::shared_ptr<idFile> _file) : file(_file) {
+	idFileLocal(std::shared_ptr<idFile> _file) noexcept : file(_file) {
 	}
 
 	// Destructor that will destroy (close) the file when this wrapper class goes out of scope.
@@ -86,12 +86,12 @@ public:
 	idFileLocal& operator=(idFileLocal&&) = default;
 
 	// Cast to a file pointer.
-	operator idFile* () const {
+	operator idFile* () const noexcept {
 		return file.get();
 	}
 
 	// Member access operator for treating the wrapper as if it were the file, itself.
-	idFile* operator -> () const {
+	idFile* operator -> () const noexcept {
 		return file.get();
 	}
 

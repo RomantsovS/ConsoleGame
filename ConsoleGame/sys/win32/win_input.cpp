@@ -19,7 +19,7 @@ bool IN_StartupKeyboard() {
 Sys_ShutdownInput
 ===========
 */
-void Sys_ShutdownInput() {
+void Sys_ShutdownInput() noexcept {
 }
 
 /*
@@ -40,7 +40,7 @@ void Sys_InitInput() {
 Sys_PollKeyboardInputEvents
 ====================
 */
-int Sys_PollKeyboardInputEvents() {
+int Sys_PollKeyboardInputEvents() noexcept {
     DWORD events;
 
     GetNumberOfConsoleInputEvents(win32.h_console_std_in, &events);

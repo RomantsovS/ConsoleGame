@@ -27,7 +27,7 @@ idEventLoop::~idEventLoop() {
 idEventLoop::GetRealEvent
 =================
 */
-sysEvent_t	idEventLoop::GetRealEvent() {
+sysEvent_t	idEventLoop::GetRealEvent() noexcept {
 	sysEvent_t	ev;
 
 	ev = Sys_GetEvent();
@@ -40,7 +40,7 @@ sysEvent_t	idEventLoop::GetRealEvent() {
 idEventLoop::GetEvent
 =================
 */
-sysEvent_t idEventLoop::GetEvent() {
+sysEvent_t idEventLoop::GetEvent() noexcept {
 	return GetRealEvent();
 }
 
@@ -102,7 +102,7 @@ int idEventLoop::RunEventLoop(bool commandExecution) {
 idEventLoop::Init
 =============
 */
-void idEventLoop::Init() {
+void idEventLoop::Init() noexcept {
 }
 
 /*
@@ -110,5 +110,5 @@ void idEventLoop::Init() {
 idEventLoop::Shutdown
 =============
 */
-void idEventLoop::Shutdown() {
+void idEventLoop::Shutdown() noexcept {
 }

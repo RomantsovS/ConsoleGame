@@ -40,10 +40,10 @@ public:
 	idFileSystemLocal& operator=(idFileSystemLocal&&) = default;
 
 	void Init() override;
-	void Shutdown(bool reloading) override;
-	bool IsInitialized() const override;
+	void Shutdown(bool reloading) noexcept override;
+	bool IsInitialized() const noexcept override;
 	std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
-	void FreeFileList(std::shared_ptr<idFileList> fileList) override;
+	void FreeFileList(std::shared_ptr<idFileList> fileList) noexcept override;
 	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
 	virtual void CreateOSPath(const std::string &OSPath);
 	std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) override;
@@ -59,7 +59,7 @@ private:
 
 	static idCVar fs_game_base;
 private:
-	void ReplaceSeparators(std::string& path, char sep = PATHSEPARATOR_CHAR);
+	void ReplaceSeparators(std::string& path, char sep = PATHSEPARATOR_CHAR) noexcept;
 	int ListOSFiles(const std::string& directory, const std::string& extension, std::vector<std::string>& list);
 	std::shared_ptr<idFile> OpenOSFile(const std::string& name, fsMode_t mode);
 
@@ -172,10 +172,10 @@ void idFileSystemLocal::Init() {
 	}
 }
 
-void idFileSystemLocal::Shutdown(bool reloading) {
+void idFileSystemLocal::Shutdown(bool reloading) noexcept {
 }
 
-bool idFileSystemLocal::IsInitialized() const {
+bool idFileSystemLocal::IsInitialized() const noexcept {
 	return !searchPaths.empty();
 }
 
@@ -186,7 +186,7 @@ idFileSystemLocal::ReplaceSeparators
 Fix things up differently for win/unix/mac
 ====================
 */
-void idFileSystemLocal::ReplaceSeparators(std::string& path, char sep) {
+void idFileSystemLocal::ReplaceSeparators(std::string& path, char sep) noexcept {
 	for (auto iter = path.begin(); iter != path.end(); ++iter) {
 		if (*iter == '/' || *iter == '\\') {
 			*iter = sep;
@@ -199,7 +199,7 @@ void idFileSystemLocal::ReplaceSeparators(std::string& path, char sep) {
 IsOSPath
 ========================
 */
-static bool IsOSPath(const std::string path) {
+static bool IsOSPath(const std::string path) noexcept {
 	//assert(path);
 
 	if (path.size() >= 2) {
@@ -508,7 +508,7 @@ std::shared_ptr<idFileList> idFileSystemLocal::ListFiles(const std::string& rela
 idFileSystemLocal::FreeFileList
 ===============
 */
-void idFileSystemLocal::FreeFileList(std::shared_ptr<idFileList> fileList) {
+void idFileSystemLocal::FreeFileList(std::shared_ptr<idFileList> fileList) noexcept {
 	fileList = nullptr;
 }
 

@@ -21,11 +21,11 @@ void idSWFTextInstance::Init(std::shared_ptr<idSWF> _swf) {
 idSWFTextInstance::GetTextLength
 ========================
 */
-size_t idSWFTextInstance::GetTextLength() {
+size_t idSWFTextInstance::GetTextLength() noexcept {
 	return text.size();
 }
 
-void idSWFTextInstance::Clear() {
+void idSWFTextInstance::Clear() noexcept {
 	scriptObject->SetText(NULL);
 	scriptObject->Clear();
 	scriptObject = nullptr;

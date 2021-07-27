@@ -204,7 +204,7 @@ public:
 	// get clip handle for model
 	int LoadModel(const std::string& modelName) override;
 	// sets up a trace model for collision with other trace models
-	int SetupTrmModel(const idTraceModel& trm/*, const idMaterial* material*/) override;
+	int SetupTrmModel(const idTraceModel& trm/*, const idMaterial* material*/) noexcept override;
 	// Creates a trace model from a collision model, returns true if succesfull.
 	bool TrmFromModel(const std::string& modelName, idTraceModel& trm) override;
 
@@ -221,7 +221,7 @@ public:
 		int contentMask, int model, const Vector2& modelOrigin) override;
 
 private:			// CollisionMap_translate.cpp
-	void SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm);
+	void SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm) noexcept;
 	void TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
 		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin);
 private:			// CollisionMap_contents.cpp
@@ -234,15 +234,15 @@ private:			// CollisionMap_trace.cpp
 	void TraceThroughAxialBSPTree_r(cm_traceWork_t* tw, cm_node_t* node, float p1f, float p2f, Vector2& p1, Vector2& p2);
 	void TraceThroughModel(cm_traceWork_t* tw);
 private:			// CollisionMap_load.cpp
-	void Clear();
+	void Clear() noexcept;
 	void FreeTrmModelStructure();
 	// model deallocation
-	void RemoveBrushReferences_r(cm_node_t* node, const cm_brush_t* b);
-	void FreeNode(std::shared_ptr<cm_node_t> node);
-	void FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref);
+	void RemoveBrushReferences_r(cm_node_t* node, const cm_brush_t* b) noexcept;
+	void FreeNode(std::shared_ptr<cm_node_t> node) noexcept;
+	void FreeBrushReference(std::shared_ptr<cm_brushRef_t> bref) noexcept;
 
 	// model deallocation
-	void FreeBrush(cm_model_t* model, cm_brush_t* brush);
+	void FreeBrush(cm_model_t* model, cm_brush_t* brush) noexcept;
 	void FreeTree_r(std::shared_ptr<cm_model_t> model, std::shared_ptr<cm_node_t> headNode, std::shared_ptr<cm_node_t> node);
 	void FreeModel(std::shared_ptr<cm_model_t> model);
 
@@ -255,13 +255,13 @@ private:			// CollisionMap_load.cpp
 	void SetupTrmModelStructure();
 	
 	// creation of raw polygons
-	void ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum);
+	void ConvertBrushSides(std::shared_ptr<cm_model_t> model, const std::shared_ptr<idMapBrush> mapBrush, int primitiveNum) noexcept;
 	void ConvertBrush(cm_model_t* model, gsl::not_null<const idMapBrush*> mapBrush, int primitiveNum);
-	void			PrintModelInfo(const cm_model_t* model);
-	void			AccumulateModelInfo(cm_model_t* model);
+	void PrintModelInfo(const cm_model_t* model);
+	void AccumulateModelInfo(cm_model_t* model) noexcept;
 	void FinishModel(cm_model_t* model);
 	void BuildModels(gsl::not_null<const idMapFile*> mapFile);
-	int FindModel(const std::string& name);
+	int FindModel(const std::string& name) noexcept;
 	std::shared_ptr<cm_model_t> CollisionModelForMapEntity(const std::shared_ptr<idMapEntity> mapEnt);	// brush/patch model from .map
 	std::shared_ptr<cm_model_t> LoadBinaryModel(const std::string& fileName);
 	std::shared_ptr<cm_model_t> LoadBinaryModelFromFile();

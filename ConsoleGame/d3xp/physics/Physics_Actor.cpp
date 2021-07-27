@@ -43,7 +43,7 @@ void idPhysics_Actor::SetClipModelAxis() {
 idPhysics_Actor::SetClipModel
 ================
 */
-void idPhysics_Actor::SetClipModel(std::shared_ptr<idClipModel> model, const float density, int id, bool freeOld) {
+void idPhysics_Actor::SetClipModel(std::shared_ptr<idClipModel> model, const float density, int id, bool freeOld) noexcept {
 	if (clipModel && clipModel != model && freeOld) {
 		clipModel = nullptr;
 	}
@@ -56,7 +56,7 @@ void idPhysics_Actor::SetClipModel(std::shared_ptr<idClipModel> model, const flo
 idPhysics_Actor::GetClipModel
 ================
 */
-std::shared_ptr<idClipModel> idPhysics_Actor::GetClipModel(int id) const {
+std::shared_ptr<idClipModel> idPhysics_Actor::GetClipModel(int id) const noexcept {
 	return clipModel;
 }
 
@@ -65,7 +65,7 @@ std::shared_ptr<idClipModel> idPhysics_Actor::GetClipModel(int id) const {
 idPhysics_Actor::GetNumClipModels
 ================
 */
-int idPhysics_Actor::GetNumClipModels() const {
+int idPhysics_Actor::GetNumClipModels() const noexcept {
 	return 1;
 }
 
@@ -74,7 +74,7 @@ int idPhysics_Actor::GetNumClipModels() const {
 idPhysics_Actor::GetBounds
 ================
 */
-const idBounds& idPhysics_Actor::GetBounds(int id) const {
+const idBounds& idPhysics_Actor::GetBounds(int id) const noexcept {
 	return clipModel->GetBounds();
 }
 
@@ -83,7 +83,7 @@ const idBounds& idPhysics_Actor::GetBounds(int id) const {
 idPhysics_Actor::GetAbsBounds
 ================
 */
-const idBounds& idPhysics_Actor::GetAbsBounds(int id) const {
+const idBounds& idPhysics_Actor::GetAbsBounds(int id) const noexcept {
 	return clipModel->GetAbsBounds();
 }
 
@@ -92,7 +92,7 @@ const idBounds& idPhysics_Actor::GetAbsBounds(int id) const {
 idPhysics_Actor::GetOrigin
 ================
 */
-const Vector2& idPhysics_Actor::GetOrigin(int id) const {
+const Vector2& idPhysics_Actor::GetOrigin(int id) const noexcept {
 	return clipModel->GetOrigin();
 }
 
@@ -101,7 +101,7 @@ const Vector2& idPhysics_Actor::GetOrigin(int id) const {
 idPhysics_Actor::DisableClip
 ================
 */
-void idPhysics_Actor::DisableClip() {
+void idPhysics_Actor::DisableClip() noexcept {
 	clipModel->Disable();
 }
 
@@ -110,7 +110,7 @@ void idPhysics_Actor::DisableClip() {
 idPhysics_Actor::EnableClip
 ================
 */
-void idPhysics_Actor::EnableClip() {
+void idPhysics_Actor::EnableClip() noexcept {
 	clipModel->Enable();
 }
 
@@ -119,7 +119,7 @@ void idPhysics_Actor::EnableClip() {
 idPhysics_Actor::UnlinkClip
 ================
 */
-void idPhysics_Actor::UnlinkClip() {
+void idPhysics_Actor::UnlinkClip() noexcept {
 	clipModel->Unlink();
 }
 
@@ -128,7 +128,7 @@ void idPhysics_Actor::UnlinkClip() {
 idPhysics_Actor::LinkClip
 ================
 */
-void idPhysics_Actor::LinkClip() {
+void idPhysics_Actor::LinkClip() noexcept {
 	clipModel->Link(gameLocal.clip, self.lock(), 0, clipModel->GetOrigin());
 }
 
@@ -137,7 +137,7 @@ void idPhysics_Actor::LinkClip() {
 idPhysics_Actor::EvaluateContacts
 ================
 */
-bool idPhysics_Actor::EvaluateContacts() {
+bool idPhysics_Actor::EvaluateContacts() noexcept {
 
 	// get all the ground contacts
 	ClearContacts();

@@ -48,8 +48,8 @@ struct timeState_t {
 	game_time_type previousTime;
 	game_time_type realClientTime;
 
-	void Set(game_time_type t, game_time_type pt/*, int rct*/) { time = t; previousTime = pt;/* realClientTime = rct;*/ };
-	void Get(game_time_type& t, game_time_type& pt/*, int & rct*/) { t = time; pt = previousTime;/* rct = realClientTime;*/ };
+	void Set(game_time_type t, game_time_type pt/*, int rct*/) noexcept { time = t; previousTime = pt;/* realClientTime = rct;*/ };
+	void Get(game_time_type& t, game_time_type& pt/*, int & rct*/) noexcept { t = time; pt = previousTime;/* rct = realClientTime;*/ };
 	//void				Save(idSaveGame *savefile) const { savefile->WriteInt(time); savefile->WriteInt(previousTime); savefile->WriteInt(realClientTime); }
 	//void				Restore(idRestoreGame *savefile) { savefile->ReadInt(time); savefile->ReadInt(previousTime); savefile->ReadInt(realClientTime); }
 };
@@ -74,10 +74,10 @@ public:
 	timeState_t slow;
 	int						selectedGroup;
 
-	virtual void SelectTimeGroup(int timeGroup);
-	virtual int GetTimeGroupTime(int timeGroup);
+	virtual void SelectTimeGroup(int timeGroup) noexcept;
+	virtual int GetTimeGroupTime(int timeGroup) noexcept;
 
-	void ResetSlowTimeVars();
+	void ResetSlowTimeVars() noexcept;
 
 	// ---------------------- Public idGame Interface -------------------
 
@@ -100,9 +100,9 @@ public:
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	bool Draw(int clientNum) override;
 
-	bool IsInGame() const override  { return GameState() == GAMESTATE_ACTIVE; }
+	bool IsInGame() const noexcept override  { return GameState() == GAMESTATE_ACTIVE; }
 
-	int GetLocalClientNum() const override;
+	int GetLocalClientNum() const noexcept override;
 
 	// ---------------------- Public idGameLocal Interface -------------------
 
@@ -115,7 +115,7 @@ public:
 	// Initializes all map variables common to both save games and spawned games
 	void LoadMap(const std::string mapName, int randseed);
 
-	gameState_t GameState() const;
+	gameState_t GameState() const noexcept;
 	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const idDict* args = nullptr);
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
@@ -123,14 +123,14 @@ public:
 	const idDict* FindEntityDefDict(const std::string& name, bool makeDefault = true) const;
 
 	void RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy);
-	void UnregisterEntity(std::shared_ptr<idEntity> ent);
-	const idDict &GetSpawnArgs() const { return spawnArgs; }
+	void UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept;
+	const idDict &GetSpawnArgs() const noexcept { return spawnArgs; }
 
 	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
 
 	// added the following to assist licensees with merge issues
-	int GetFrameNum() const { return framenum; };
-	int GetTime() const override { return time; };
+	int GetFrameNum() const noexcept { return framenum; };
+	int GetTime() const noexcept override { return time; };
 
 	std::shared_ptr<idPlayer> GetLocalPlayer() const;
 
@@ -140,10 +140,10 @@ public:
 
 	// MAIN MENU FUNCTIONS
 	void Shell_Init(const std::string& filename) override;
-	void Shell_Cleanup() override;
-	void Shell_Show(bool show) override;
+	void Shell_Cleanup() noexcept override;
+	void Shell_Show(bool show) noexcept override;
 	void Shell_CreateMenu(bool inGame) override;
-	bool Shell_IsActive() const override;
+	bool Shell_IsActive() const noexcept override;
 	bool Shell_HandleGuiEvent(const sysEvent_t* sev) override;
 	void Shell_Render() override;
 	void Shell_ResetMenu() override;
@@ -154,13 +154,13 @@ public:
 
 	int GetRandomColor();
 
-	short GetHeight() { return height; }
-	short GetWidth() { return width; }
+	short GetHeight() noexcept { return height; }
+	short GetWidth() noexcept { return width; }
 
-	const std::vector<int>& GetColors() const { return colors; }
+	const std::vector<int>& GetColors() const noexcept { return colors; }
 	void AddRandomPoint();
 
-	int GetInfoUpdateTime() { return info_update_time; }
+	int GetInfoUpdateTime() noexcept { return info_update_time; }
 private:
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	std::shared_ptr<idMapFile> mapFile; // will be NULL during the game unless in-game editing is used
@@ -178,7 +178,7 @@ private:
 	void SpawnMapEntities();
 	// commons used by init, shutdown, and restart
 	void MapPopulate();
-	void MapClear(bool clearClients);
+	void MapClear(bool clearClients) noexcept;
 
 	void RunDebugInfo();
 	void PrintSpawnedEntities();

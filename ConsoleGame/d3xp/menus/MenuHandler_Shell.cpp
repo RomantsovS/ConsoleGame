@@ -176,7 +176,7 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 idMenuHandler_Shell::Cleanup
 ========================
 */
-void idMenuHandler_Shell::Cleanup() {
+void idMenuHandler_Shell::Cleanup() noexcept {
 	idMenuHandler::Cleanup();
 }
 
@@ -185,7 +185,7 @@ void idMenuHandler_Shell::Cleanup() {
 idMenuHandler_Shell::ActivateMenu
 ========================
 */
-void idMenuHandler_Shell::ActivateMenu(bool show) {
+void idMenuHandler_Shell::ActivateMenu(bool show) noexcept {
 
 	if (show && gui && gui->IsActive()) {
 		return;

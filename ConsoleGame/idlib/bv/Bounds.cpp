@@ -83,7 +83,7 @@ bool idBounds::LineIntersection(const Vector2& start, const Vector2& end) const 
 idBounds::FromTransformedBounds
 ============
 */
-void idBounds::FromTransformedBounds(const idBounds& bounds, const Vector2& origin) {
+void idBounds::FromTransformedBounds(const idBounds& bounds, const Vector2& origin) noexcept {
 	//int i;
 	Vector2 center, extents;// , rotatedExtents;
 

@@ -4,12 +4,12 @@
 class idKeyInput {
 public:
 	static void Init();
-	static void Shutdown();
+	static void Shutdown() noexcept;
 
 	//static void				ArgCompletion_KeyName(const idCmdArgs& args, void(*callback)(const char* s));
-	static void				PreliminaryKeyEvent(int keyNum, bool down);
-	static bool IsDown(int keyNum);
-	static int				GetUsercmdAction(int keyNum);
+	static void PreliminaryKeyEvent(int keyNum, bool down) noexcept;
+	static bool IsDown(int keyNum) noexcept;
+	static int GetUsercmdAction(int keyNum) noexcept;
 	/*static bool				GetOverstrikeMode();
 	static void				SetOverstrikeMode(bool state);
 	static void				ClearStates();*/
@@ -22,7 +22,7 @@ public:
 	/*static const char* GetBinding(int keyNum);
 	static bool				UnbindBinding(const char* bind);
 	static int				NumBinds(const char* binding);*/
-	static bool				ExecKeyBinding(int keyNum);
+	static bool ExecKeyBinding(int keyNum);
 	/*static const char* KeysFromBinding(const char* bind);
 	static const char* BindingFromKey(const char* key);
 	static bool				KeyIsBoundTo(int keyNum, const char* binding);

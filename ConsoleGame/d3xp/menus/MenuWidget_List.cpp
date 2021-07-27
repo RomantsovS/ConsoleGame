@@ -7,7 +7,7 @@
 idMenuWidget_List::Update
 ========================
 */
-void idMenuWidget_List::Update() {
+void idMenuWidget_List::Update() noexcept {
 
 	if (!GetSWFObject()) {
 		return;

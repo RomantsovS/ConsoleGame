@@ -47,29 +47,29 @@ public:
 	idCVar(idCVar&&) = default;
 	idCVar& operator=(idCVar&&) = default;
 
-	const std::string& GetName() const { return internalVar->name; }
+	const std::string& GetName() const noexcept { return internalVar->name; }
 	std::string GetName() { return internalVar->name; }
-	int						GetFlags() const { return internalVar->flags; }
-	const std::string& GetDescription() const { return internalVar->description; }
-	float					GetMinValue() const { return internalVar->valueMin; }
-	float					GetMaxValue() const { return internalVar->valueMax; }
+	int						GetFlags() const noexcept { return internalVar->flags; }
+	const std::string& GetDescription() const noexcept { return internalVar->description; }
+	float					GetMinValue() const noexcept { return internalVar->valueMin; }
+	float					GetMaxValue() const noexcept { return internalVar->valueMax; }
 
-	bool					IsModified() const { return (internalVar->flags & CVAR_MODIFIED) != 0; }
-	void					SetModified() { internalVar->flags |= CVAR_MODIFIED; }
-	void					ClearModified() { internalVar->flags &= ~CVAR_MODIFIED; }
+	bool					IsModified() const noexcept { return (internalVar->flags & CVAR_MODIFIED) != 0; }
+	void					SetModified() noexcept { internalVar->flags |= CVAR_MODIFIED; }
+	void					ClearModified() noexcept { internalVar->flags &= ~CVAR_MODIFIED; }
 
-	const std::string& GetDefaultString() const { return internalVar->InternalGetResetString(); }
-	const std::string& GetString() const { return internalVar->value; }
-	bool					GetBool() const { return (internalVar->integerValue != 0); }
-	int						GetInteger() const { return internalVar->integerValue; }
-	float					GetFloat() const { return internalVar->floatValue; }
+	const std::string& GetDefaultString() const noexcept { return internalVar->InternalGetResetString(); }
+	const std::string& GetString() const noexcept { return internalVar->value; }
+	bool					GetBool() const noexcept { return (internalVar->integerValue != 0); }
+	int						GetInteger() const noexcept { return internalVar->integerValue; }
+	float					GetFloat() const noexcept { return internalVar->floatValue; }
 
 	void					SetString(const char* value) { internalVar->InternalSetString(value); }
-	void					SetBool(const bool value) { internalVar->InternalSetBool(value); }
-	void					SetInteger(const int value) { internalVar->InternalSetInteger(value); }
-	void					SetFloat(const float value) { internalVar->InternalSetFloat(value); }
+	void					SetBool(const bool value) noexcept { internalVar->InternalSetBool(value); }
+	void					SetInteger(const int value) noexcept { internalVar->InternalSetInteger(value); }
+	void					SetFloat(const float value) noexcept { internalVar->InternalSetFloat(value); }
 
-	void					SetInternalVar(idCVar* cvar) { internalVar = cvar; }
+	void					SetInternalVar(idCVar* cvar) noexcept { internalVar = cvar; }
 
 	static void				RegisterStaticVars();
 protected:
@@ -88,12 +88,12 @@ private:
 	void Init(const std::string& name, const std::string& value, int flags, const std::string& description,
 		float valueMin, float valueMax, const char** valueStrings);
 
-	virtual void			InternalSetString(const std::string &newValue) {}
-	virtual void			InternalSetBool(const bool newValue) {}
-	virtual void			InternalSetInteger(const int newValue) {}
-	virtual void			InternalSetFloat(const float newValue) {}
+	virtual void			InternalSetString(const std::string &newValue) noexcept {}
+	virtual void			InternalSetBool(const bool newValue) noexcept {}
+	virtual void			InternalSetInteger(const int newValue) noexcept {}
+	virtual void			InternalSetFloat(const float newValue) noexcept {}
 
-	virtual const std::string& InternalGetResetString() const { return value; }
+	virtual const std::string& InternalGetResetString() const noexcept { return value; }
 
 	static idCVar* staticVars;
 };

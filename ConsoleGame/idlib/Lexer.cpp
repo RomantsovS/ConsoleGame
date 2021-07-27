@@ -1094,7 +1094,7 @@ int idLexer::LoadMemory(const char* ptr, int length, const std::string& name, in
 idLexer::FreeSource
 ================
 */
-void idLexer::FreeSource() {
+void idLexer::FreeSource() noexcept {
 	if (idLexer::allocated) {
 		idLexer::buffer = nullptr;
 		idLexer::allocated = false;

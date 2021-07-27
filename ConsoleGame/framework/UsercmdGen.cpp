@@ -63,8 +63,8 @@ public:
 	bool	held{};
 
 	buttonState_t() { };
-	void	Clear();
-	void	SetKeyState(int keystate, bool toggle);
+	void Clear() noexcept;
+	void SetKeyState(int keystate, bool toggle) noexcept;
 };
 
 /*
@@ -72,7 +72,7 @@ public:
 buttonState_t::Clear
 ================
 */
-void buttonState_t::Clear() {
+void buttonState_t::Clear() noexcept {
 	held = false;
 	on = 0;
 }
@@ -82,7 +82,7 @@ void buttonState_t::Clear() {
 buttonState_t::SetKeyState
 ================
 */
-void buttonState_t::SetKeyState(int keystate, bool toggle) {
+void buttonState_t::SetKeyState(int keystate, bool toggle) noexcept {
 	if (!toggle) {
 		held = false;
 		on = keystate;
@@ -100,13 +100,13 @@ class idUsercmdGenLocal : public idUsercmdGen {
 public:
 	idUsercmdGenLocal();
 
-	void			Init() override;
+	void Init() noexcept override;
 
-	void			InitForNewMap() override;
+	void InitForNewMap() noexcept override;
 
-	void			Shutdown() override;
+	void Shutdown() noexcept override;
 
-	void			Clear() override;
+	void Clear() noexcept override;
 
 	/*void			ClearAngles();
 
@@ -114,28 +114,28 @@ public:
 	*/
 	int CommandStringUsercmdData(const std::string& cmdString) override;
 
-	void			BuildCurrentUsercmd(int deviceNum) override;
+	void BuildCurrentUsercmd(int deviceNum) override;
 
-	usercmd_t		GetCurrentUsercmd() override { return cmd; };
+	usercmd_t GetCurrentUsercmd() noexcept override { return cmd; };
 
 	//void			MouseState(int* x, int* y, int* button, bool* down);
 
-	int				ButtonState(int key) override;
-	int				KeyState(int key) override;
+	int				ButtonState(int key) noexcept override;
+	int				KeyState(int key) noexcept override;
 
 private:
-	void			MakeCurrent();
-	void			InitCurrent();
+	void			MakeCurrent() noexcept;
+	void			InitCurrent() noexcept;
 
 	/*bool			Inhibited();
 	void			AdjustAngles();*/
-	void			KeyMove();
+	void			KeyMove() noexcept;
 	/*void			CircleToSquare(float& axis_x, float& axis_y) const;
 	void			HandleJoystickAxis(int keyNum, float unclampedValue, float threshold, bool positive);
 	void			JoystickMove();
 	void			JoystickMove2();
 	void			MouseMove();*/
-	void			CmdButtons();
+	void CmdButtons() noexcept;
 
 	/*void			AimAssist();
 
@@ -143,7 +143,7 @@ private:
 	void			Keyboard();
 	//void			Joystick(int deviceNum);
 
-	void			Key(int keyNum, bool down);
+	void Key(int keyNum, bool down) noexcept;
 
 	/*idVec3			viewangles;
 	int				impulseSequence;*/
@@ -210,7 +210,7 @@ idUsercmdGenLocal::ButtonState
 Returns (the fraction of the frame) that the key was down
 ===============
 */
-int	idUsercmdGenLocal::ButtonState(int key) {
+int	idUsercmdGenLocal::ButtonState(int key) noexcept {
 	if (key < 0 || key >= UB_MAX_BUTTONS) {
 		return -1;
 	}
@@ -225,7 +225,7 @@ Returns (the fraction of the frame) that the key was down
 bk20060111
 ===============
 */
-int	idUsercmdGenLocal::KeyState(int key) {
+int	idUsercmdGenLocal::KeyState(int key) noexcept {
 	if (key < 0 || key >= static_cast<int>(keyNum_t::K_LAST_KEY)) {
 		return -1;
 	}
@@ -239,7 +239,7 @@ idUsercmdGenLocal::KeyMove
 Sets the usercmd_t based on key states
 ================
 */
-void idUsercmdGenLocal::KeyMove() {
+void idUsercmdGenLocal::KeyMove() noexcept {
 	int forward = 0;
 	int side = 0;
 
@@ -258,7 +258,7 @@ void idUsercmdGenLocal::KeyMove() {
 idUsercmdGenLocal::CmdButtons
 ==============
 */
-void idUsercmdGenLocal::CmdButtons() {
+void idUsercmdGenLocal::CmdButtons() noexcept {
 	cmd.buttons = 0;
 
 	// check the attack button
@@ -288,7 +288,7 @@ idUsercmdGenLocal::InitCurrent
 inits the current command for this frame
 ================
 */
-void idUsercmdGenLocal::InitCurrent() {
+void idUsercmdGenLocal::InitCurrent() noexcept {
 	memset(&cmd, 0, sizeof(cmd));
 	//cmd.impulseSequence = impulseSequence;
 	cmd.impulse = impulse;
@@ -302,7 +302,7 @@ idUsercmdGenLocal::MakeCurrent
 creates the current command for this frame
 ================
 */
-void idUsercmdGenLocal::MakeCurrent() {
+void idUsercmdGenLocal::MakeCurrent() noexcept {
 	toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
 
 	// set button bits
@@ -322,7 +322,7 @@ Returns the button if the command string is used by the usercmd generator.
 ================
 */
 int	idUsercmdGenLocal::CommandStringUsercmdData(const std::string& cmdString) {
-	auto iter = std::find_if(userCmdStrings.begin(), userCmdStrings.end(), [&cmdString](auto& ucs) {return cmdString.compare(ucs.string) == 0; });
+	auto iter = std::find_if(userCmdStrings.begin(), userCmdStrings.end(), [&cmdString](auto& ucs) noexcept {return cmdString.compare(ucs.string) == 0; });
 
 	if (iter != userCmdStrings.end())
 		return iter->button;
@@ -335,7 +335,7 @@ int	idUsercmdGenLocal::CommandStringUsercmdData(const std::string& cmdString) {
 idUsercmdGenLocal::Init
 ================
 */
-void idUsercmdGenLocal::Init() {
+void idUsercmdGenLocal::Init() noexcept {
 	initialized = true;
 }
 
@@ -344,7 +344,7 @@ void idUsercmdGenLocal::Init() {
 idUsercmdGenLocal::InitForNewMap
 ================
 */
-void idUsercmdGenLocal::InitForNewMap() {
+void idUsercmdGenLocal::InitForNewMap() noexcept {
 	impulse = 0;
 
 	toggled_run.Clear();
@@ -358,7 +358,7 @@ void idUsercmdGenLocal::InitForNewMap() {
 idUsercmdGenLocal::Shutdown
 ================
 */
-void idUsercmdGenLocal::Shutdown() {
+void idUsercmdGenLocal::Shutdown() noexcept {
 	initialized = false;
 }
 
@@ -367,7 +367,7 @@ void idUsercmdGenLocal::Shutdown() {
 idUsercmdGenLocal::Clear
 ================
 */
-void idUsercmdGenLocal::Clear() {
+void idUsercmdGenLocal::Clear() noexcept {
 	// clears all key states 
 	memset(buttonState, 0, sizeof(buttonState));
 	memset(keyState, false, sizeof(keyState));
@@ -380,7 +380,7 @@ idUsercmdGenLocal::Key
 Handles mouse/keyboard button actions
 ===================
 */
-void idUsercmdGenLocal::Key(int keyNum, bool down) {
+void idUsercmdGenLocal::Key(int keyNum, bool down) noexcept {
 
 	// Sanity check, sometimes we get double message :(
 	if (keyState[keyNum] == down) {
@@ -428,7 +428,7 @@ void idUsercmdGenLocal::Keyboard() {
 	Sys_EndKeyboardInputEvents();
 }
 
-void Sys_EndKeyboardInputEvents() {
+void Sys_EndKeyboardInputEvents() noexcept {
 }
 
 /*

@@ -85,7 +85,7 @@ void idEntity::Spawn() {
 	renderEntity.color = spawnArgs.GetInt("color", 15);
 }
 
-void idEntity::Remove() {
+void idEntity::Remove() noexcept {
 	// we have to set back the default physics object before unbinding because the entity
 	// specific physics object might be an entity variable and as such could already be destroyed.
 	SetPhysics(nullptr);
@@ -111,7 +111,7 @@ void idEntity::SetName(const std::string newname) {
 idEntity::GetName
 ================
 */
-const std::string& idEntity::GetName() const {
+const std::string& idEntity::GetName() const noexcept {
 	return name;
 }
 
@@ -124,7 +124,7 @@ void idEntity::Think() {
 idEntity::IsActive
 ================
 */
-bool idEntity::IsActive() const {
+bool idEntity::IsActive() const noexcept {
 	return activeNode.InList();
 }
 
@@ -133,7 +133,7 @@ bool idEntity::IsActive() const {
 idEntity::BecomeActive
 ================
 */
-void idEntity::BecomeActive(int flags) {
+void idEntity::BecomeActive(int flags) noexcept {
 	int oldFlags = thinkFlags;
 	thinkFlags |= flags;
 	if (thinkFlags) {
@@ -152,7 +152,7 @@ void idEntity::BecomeActive(int flags) {
 idEntity::BecomeInactive
 ================
 */
-void idEntity::BecomeInactive(int flags) {
+void idEntity::BecomeInactive(int flags) noexcept {
 	if (thinkFlags) {
 		thinkFlags &= ~flags;
 		if (!thinkFlags && IsActive()) {
@@ -196,7 +196,7 @@ void idEntity::Present() {
 	}
 }
 
-renderEntity_t * idEntity::GetRenderEntity() {
+renderEntity_t * idEntity::GetRenderEntity() noexcept {
 	return &renderEntity;
 }
 
@@ -232,7 +232,7 @@ void idEntity::FreeModelDef() {
 idEntity::IsHidden
 ================
 */
-bool idEntity::IsHidden() const {
+bool idEntity::IsHidden() const noexcept {
 	return fl.hidden;
 }
 
@@ -286,7 +286,7 @@ void idEntity::SetColor(const int color) {
 idEntity::UpdateAnimationControllers
 ================
 */
-bool idEntity::UpdateAnimationControllers() {
+bool idEntity::UpdateAnimationControllers() noexcept {
 	// any ragdoll and IK animation controllers should be updated here
 	return false;
 }
@@ -309,11 +309,11 @@ void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys) {
 	//physics->SetMaster(bindMaster, fl.bindOrientated);
 }
 
-std::shared_ptr<idPhysics> idEntity::GetPhysics() const {
+std::shared_ptr<idPhysics> idEntity::GetPhysics() const noexcept {
 	return physics;
 }
 
-void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys) {
+void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys) noexcept {
 	physics = phys;
 }
 
@@ -370,11 +370,11 @@ void idEntity::SetAxis(const Vector2 & axis) {
 	UpdateVisuals();
 }
 
-bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis) {
+bool idEntity::GetPhysicsToVisualTransform(Vector2 & origin, Vector2 & axis) noexcept {
 	return false;
 }
 
-bool idEntity::Collide(const trace_t& collision, const Vector2& velocity) {
+bool idEntity::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	// this entity collides with collision.c.entityNum
 	return false;
 }
@@ -456,7 +456,7 @@ Called whenever an entity's health is reduced to 0 or less.
 This is a virtual function that subclasses are expected to implement.
 ============
 */
-void idEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) {
+void idEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
 }
 
 void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) {
@@ -544,7 +544,7 @@ void idEntity::UpdateFromPhysics(bool moveBack) {
 	UpdateVisuals();
 }
 
-int idEntity::GetPhysicsTimeStep() const {
+int idEntity::GetPhysicsTimeStep() const noexcept {
 	return gameLocal.time - gameLocal.previousTime;
 }
 

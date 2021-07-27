@@ -48,19 +48,19 @@ public:
 	idHierarchy(idHierarchy&&) = default;
 	idHierarchy& operator=(idHierarchy&&) = default;
 
-	void				SetOwner(type* object);
+	void SetOwner(type* object) noexcept;
 	type* Owner() const;
-	void				ParentTo(idHierarchy& node);
-	void				MakeSiblingAfter(idHierarchy& node);
-	bool				ParentedBy(const idHierarchy& node) const;
-	void				RemoveFromParent();
-	void				RemoveFromHierarchy();
+	void ParentTo(idHierarchy& node);
+	void MakeSiblingAfter(idHierarchy& node);
+	bool ParentedBy(const idHierarchy& node) const;
+	void RemoveFromParent();
+	void RemoveFromHierarchy();
 
 	type* GetParent() const;		// parent of this node
 	type* GetChild() const;			// first child of this node
 	type* GetSibling() const;		// next node with the same parent
 	type* GetPriorSibling() const;	// previous node with the same parent
-	type* GetNext() const;			// goes through all nodes of the hierarchy
+	type* GetNext() const noexcept;			// goes through all nodes of the hierarchy
 	type* GetNextLeaf() const;		// goes through all leaf nodes of the hierarchy
 
 private:
@@ -115,7 +115,7 @@ Sets the object that this node is associated with.
 ================
 */
 template< class type >
-void idHierarchy<type>::SetOwner(type* object) {
+void idHierarchy<type>::SetOwner(type* object) noexcept {
 	owner = object;
 }
 
@@ -313,7 +313,7 @@ Goes through all nodes of the hierarchy.
 ================
 */
 template< class type >
-type* idHierarchy<type>::GetNext() const {
+type* idHierarchy<type>::GetNext() const noexcept {
 	const idHierarchy<type>* node;
 
 	if (child) {

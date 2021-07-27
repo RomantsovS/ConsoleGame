@@ -22,7 +22,7 @@ enum class pauseMenuCmds_t {
 idMenuScreen_Shell_Pause::Initialize
 ========================
 */
-void idMenuScreen_Shell_Pause::Initialize(std::shared_ptr<idMenuHandler> data) {
+void idMenuScreen_Shell_Pause::Initialize(std::shared_ptr<idMenuHandler> data) noexcept {
 	idMenuScreen::Initialize(data);
 
 	if (data) {
@@ -60,7 +60,7 @@ void idMenuScreen_Shell_Pause::Initialize(std::shared_ptr<idMenuHandler> data) {
 idMenuScreen_Shell_Pause::Update
 ========================
 */
-void idMenuScreen_Shell_Pause::Update() {
+void idMenuScreen_Shell_Pause::Update() noexcept {
 
 	if (auto spMenuData = menuData.lock()) {
 		std::shared_ptr<idMenuWidget_CommandBar> cmdBar = spMenuData->GetCmdBar();

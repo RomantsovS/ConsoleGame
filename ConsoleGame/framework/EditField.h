@@ -10,11 +10,11 @@ public:
 	idEditField(idEditField&&) = default;
 	idEditField& operator=(idEditField&&) = default;
 
-	void Clear();
+	void Clear() noexcept;
 	void CharEvent(int c);
 	void KeyDownEvent(int key);
-	const char* GetBuffer();
-	const std::string& GetBufferString() { return buffer; }
+	const char* GetBuffer() noexcept;
+	const std::string& GetBufferString() noexcept { return buffer; }
 
 private:
 	std::string buffer;

@@ -30,7 +30,7 @@ public:
 
 	virtual float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) = 0;
 
-	size_t GetDimension() { return dimension; }
+	size_t GetDimension() noexcept { return dimension; }
 protected:
 	int dimension;		// dimension in floats allocated for
 	deriveFunction_t derive;			// derive function
@@ -53,7 +53,7 @@ public:
 	idODE_Euler(idODE_Euler&&) = default;
 	idODE_Euler& operator=(idODE_Euler&&) = default;
 
-	float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) override;
+	float Evaluate(gsl::span<const float> state, gsl::span<float> newState, float t0, float t1) noexcept override;
 
 protected:
 	std::vector<float> derivatives;	// space to store derivatives

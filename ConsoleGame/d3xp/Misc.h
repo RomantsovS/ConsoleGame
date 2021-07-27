@@ -1,8 +1,7 @@
 #ifndef MISC_H
 #define MISC_H
 
-class idStaticEntity : public idEntity
-{
+class idStaticEntity : public idEntity {
 public:
 	CLASS_PROTOTYPE(idStaticEntity);
 
@@ -18,11 +17,10 @@ public:
 private:
 	//int spawnTime;
 protected:
-	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) override;
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
 };
 
-class idSimpleObject : public idAnimatedEntity
-{
+class idSimpleObject : public idAnimatedEntity {
 public:
 	CLASS_PROTOTYPE(idSimpleObject);
 
@@ -36,9 +34,9 @@ public:
 	void Spawn();
 	void Think() override;
 
-	void Remove() override;
+	void Remove() noexcept override;
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 };

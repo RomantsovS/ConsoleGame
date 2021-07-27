@@ -45,11 +45,11 @@ public:
 	void SetupBox(const idBounds& boxBounds);
 
 	// compare
-	bool Compare(const idTraceModel& trm) const;
-	bool operator==(const idTraceModel& trm) const;
-	bool operator!=(const idTraceModel& trm) const;
+	bool Compare(const idTraceModel& trm) const noexcept;
+	bool operator==(const idTraceModel& trm) const noexcept;
+	bool operator!=(const idTraceModel& trm) const noexcept;
 private:
-	void InitBox();
+	void InitBox() noexcept;
 };
 
 inline idTraceModel::idTraceModel() {
@@ -101,7 +101,7 @@ inline void idTraceModel::SetupBox(const idBounds& boxBounds) {
 	bounds = boxBounds;
 }
 
-inline bool idTraceModel::Compare(const idTraceModel& trm) const {
+inline bool idTraceModel::Compare(const idTraceModel& trm) const noexcept {
 	int i;
 
 	if (type != trm.type || numVerts != trm.numVerts) {
@@ -133,15 +133,15 @@ inline bool idTraceModel::Compare(const idTraceModel& trm) const {
 	return true;
 }
 
-inline bool idTraceModel::operator==(const idTraceModel& trm) const {
+inline bool idTraceModel::operator==(const idTraceModel& trm) const noexcept {
 	return Compare(trm);
 }
 
-inline bool idTraceModel::operator!=(const idTraceModel& trm) const {
+inline bool idTraceModel::operator!=(const idTraceModel& trm) const noexcept {
 	return !Compare(trm);
 }
 
-inline void idTraceModel::InitBox() {
+inline void idTraceModel::InitBox() noexcept {
 	//int i;
 
 	type = TRM_BOX;

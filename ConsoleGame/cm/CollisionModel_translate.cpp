@@ -25,7 +25,7 @@ void CM_AddContact(gsl::not_null<cm_traceWork_t*> tw) {
 idCollisionModelManagerLocal::SetupTrm
 ================
 */
-void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm) {
+void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const idTraceModel* trm) noexcept {
 	int i;
 
 	// vertices

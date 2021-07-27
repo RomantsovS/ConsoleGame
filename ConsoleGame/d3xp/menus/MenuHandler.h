@@ -95,23 +95,23 @@ public:
 	idMenuHandler& operator=(idMenuHandler&&) = default;
 
 	virtual void Initialize(const std::string& filename);
-	virtual void Cleanup();
+	virtual void Cleanup() noexcept;
 	virtual void Update();
-	virtual void UpdateChildren();
+	virtual void UpdateChildren() noexcept;
 	virtual bool HandleGuiEvent(const sysEvent_t* sev);
-	virtual bool IsActive();
-	virtual void ActivateMenu(bool show);
+	virtual bool IsActive() noexcept;
+	virtual void ActivateMenu(bool show) noexcept;
 	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false);
-	virtual int ActiveScreen() { return activeScreen; }
-	virtual void SetNextScreen(shellAreas_t screen) { nextScreen = static_cast<int>(screen); }
+	virtual int ActiveScreen() noexcept { return activeScreen; }
+	virtual void SetNextScreen(shellAreas_t screen) noexcept { nextScreen = static_cast<int>(screen); }
 
 	virtual void StartWidgetActionRepeater(idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event);
 	virtual void PumpWidgetActionRepeater();
-	virtual void ClearWidgetActionRepeater();
-	virtual std::shared_ptr<idSWF> GetGUI() { return gui; }
+	virtual void ClearWidgetActionRepeater() noexcept;
+	virtual std::shared_ptr<idSWF> GetGUI() noexcept { return gui; }
 	virtual void AddChild(std::shared_ptr<idMenuWidget> widget);
 
-	std::shared_ptr<idMenuWidget_CommandBar> GetCmdBar() { return cmdBar; }
+	std::shared_ptr<idMenuWidget_CommandBar> GetCmdBar() noexcept { return cmdBar; }
 
 protected:
 	int activeScreen;
@@ -140,20 +140,20 @@ public:
 	{ }
 
 	void Update() override;
-	void ActivateMenu(bool show) override;
+	void ActivateMenu(bool show) noexcept override;
 	void Initialize(const std::string& filename) override;
-	void Cleanup() override;
+	void Cleanup() noexcept override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 	bool HandleGuiEvent(const sysEvent_t* sev) override;
 
-	void SetShellState(shellState_t s) { nextState = s; }
+	void SetShellState(shellState_t s) noexcept { nextState = s; }
 
-	std::shared_ptr<idMenuWidget_MenuBar> GetMenuBar() { return menuBar; }
+	std::shared_ptr<idMenuWidget_MenuBar> GetMenuBar() noexcept { return menuBar; }
 
-	void SetNewGameType(int type) { newGameType = type; }
-	int GetNewGameType() { return newGameType; }
-	void SetInGame(bool val) { inGame = val; }
-	bool GetInGame() { return inGame; }
+	void SetNewGameType(int type) noexcept { newGameType = type; }
+	int GetNewGameType() noexcept { return newGameType; }
+	void SetInGame(bool val) noexcept { inGame = val; }
+	bool GetInGame() noexcept { return inGame; }
 	void HandleExitGameBtn();
 	void SetupPCOptions();
 	void StartGame(int index);

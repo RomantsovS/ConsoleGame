@@ -1,8 +1,7 @@
 #ifndef PLAYER_ENTITY_H
 #define PLAYER_ENTITY_H
 
-class idPlayer : public idActor
-{
+class idPlayer : public idActor {
 public:
 	usercmd_t usercmd;
 	int oldButtons{};
@@ -28,11 +27,11 @@ public:
 
 	void RestorePersistantInfo();
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) override;
+	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 
-	void HandleUserCmds(const usercmd_t& newcmd);
+	void HandleUserCmds(const usercmd_t& newcmd) noexcept;
 
-	bool IsLocallyControlled() const;
+	bool IsLocallyControlled() const noexcept;
 private:
 	std::shared_ptr<idWeapon> weapon;
 
@@ -41,11 +40,11 @@ private:
 	int currentWeapon{ -1 };
 	int idealWeapon{ -1 };
 
-	void EvaluateControls();
-	void AdjustSpeed();
+	void EvaluateControls() noexcept;
+	void AdjustSpeed() noexcept;
 	void Move();
 
-	void FireWeapon();
+	void FireWeapon() noexcept;
 	void Weapon_Combat();
 	void UpdateWeapon();
 };

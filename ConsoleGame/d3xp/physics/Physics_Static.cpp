@@ -23,7 +23,7 @@ idPhysics_Static::~idPhysics_Static() {
 	}*/
 }
 
-void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e) {
+void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e) noexcept {
 	self = e;
 }
 
@@ -42,7 +42,7 @@ void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float de
 idPhysics_Static::GetClipModel
 ================
 */
-std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const {
+std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const noexcept {
 	if (clipModel) {
 		return clipModel;
 	}
@@ -54,7 +54,7 @@ std::shared_ptr<idClipModel> idPhysics_Static::GetClipModel(int id) const {
 idPhysics_Static::GetNumClipModels
 ================
 */
-int idPhysics_Static::GetNumClipModels() const {
+int idPhysics_Static::GetNumClipModels() const noexcept {
 	return (clipModel != nullptr);
 }
 
@@ -63,7 +63,7 @@ int idPhysics_Static::GetNumClipModels() const {
 idPhysics_Static::SetClipMask
 ================
 */
-void idPhysics_Static::SetClipMask(int mask, int id) {
+void idPhysics_Static::SetClipMask(int mask, int id) noexcept {
 }
 
 /*
@@ -71,7 +71,7 @@ void idPhysics_Static::SetClipMask(int mask, int id) {
 idPhysics_Static::GetClipMask
 ================
 */
-int idPhysics_Static::GetClipMask(int id) const {
+int idPhysics_Static::GetClipMask(int id) const noexcept {
 	return 0;
 }
 
@@ -80,7 +80,7 @@ int idPhysics_Static::GetClipMask(int id) const {
 idPhysics_Static::GetBounds
 ================
 */
-const idBounds& idPhysics_Static::GetBounds(int id) const {
+const idBounds& idPhysics_Static::GetBounds(int id) const noexcept {
 	if (clipModel) {
 		return clipModel->GetBounds();
 	}
@@ -102,7 +102,7 @@ const idBounds& idPhysics_Static::GetAbsBounds(int id) const {
 	return absBounds;
 }
 
-bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	//Vector2 masterOrigin, oldOrigin;
 
 	/*if (hasMaster) {
@@ -126,14 +126,14 @@ bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec) {
 	return false;
 }
 
-void idPhysics_Static::UpdateTime(int endTimeMSec) {
+void idPhysics_Static::UpdateTime(int endTimeMSec) noexcept {
 }
 
-int idPhysics_Static::GetTime() const {
+int idPhysics_Static::GetTime() const noexcept {
 	return 0;
 }
 
-void idPhysics_Static::Activate() {
+void idPhysics_Static::Activate() noexcept {
 }
 
 /*
@@ -141,17 +141,17 @@ void idPhysics_Static::Activate() {
 idPhysics_Static::PutToRest
 ================
 */
-void idPhysics_Static::PutToRest() {
+void idPhysics_Static::PutToRest() noexcept {
 }
 
-bool idPhysics_Static::IsAtRest() const {
+bool idPhysics_Static::IsAtRest() const noexcept {
 	return true;
 }
 
-void idPhysics_Static::SaveState() {
+void idPhysics_Static::SaveState() noexcept {
 }
 
-void idPhysics_Static::RestoreState() {
+void idPhysics_Static::RestoreState() noexcept {
 }
 
 void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id) {
@@ -176,7 +176,7 @@ void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id) {
 	previous = next;*/
 }
 
-void idPhysics_Static::SetAxis(const Vector2 & newAxis, int id) {
+void idPhysics_Static::SetAxis(const Vector2 & newAxis, int id) noexcept {
 	/*Vector2 masterOrigin;
 	Vector2 masterAxis;*/
 
@@ -207,7 +207,7 @@ void idPhysics_Static::Translate(const Vector2 & translation, int id) {
 	}
 }
 
-void idPhysics_Static::Rotate(const Vector2 & rotation, int id) {
+void idPhysics_Static::Rotate(const Vector2 & rotation, int id) noexcept {
 	/*Vector2 masterOrigin;
 	Vector2 masterAxis;*/
 
@@ -231,15 +231,15 @@ void idPhysics_Static::Rotate(const Vector2 & rotation, int id) {
 	}*/
 }
 
-const Vector2 & idPhysics_Static::GetOrigin(int id) const {
+const Vector2 & idPhysics_Static::GetOrigin(int id) const noexcept {
 	return current.origin;
 }
 
-const Vector2 & idPhysics_Static::GetAxis(int id) const {
+const Vector2 & idPhysics_Static::GetAxis(int id) const noexcept {
 	return current.axis;
 }
 
-void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 }
 
 /*
@@ -247,7 +247,7 @@ void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity, int i
 idPhysics_Static::GetLinearVelocity
 ================
 */
-const Vector2& idPhysics_Static::GetLinearVelocity(int id) const {
+const Vector2& idPhysics_Static::GetLinearVelocity(int id) const noexcept {
 	return vec2_origin;
 }
 
@@ -256,7 +256,7 @@ const Vector2& idPhysics_Static::GetLinearVelocity(int id) const {
 idPhysics_Static::DisableClip
 ================
 */
-void idPhysics_Static::DisableClip() {
+void idPhysics_Static::DisableClip() noexcept {
 	if (clipModel) {
 		clipModel->Disable();
 	}
@@ -267,7 +267,7 @@ void idPhysics_Static::DisableClip() {
 idPhysics_Static::EnableClip
 ================
 */
-void idPhysics_Static::EnableClip() {
+void idPhysics_Static::EnableClip() noexcept {
 	if (clipModel) {
 		clipModel->Enable();
 	}
@@ -278,7 +278,7 @@ void idPhysics_Static::EnableClip() {
 idPhysics_Static::UnlinkClip
 ================
 */
-void idPhysics_Static::UnlinkClip() {
+void idPhysics_Static::UnlinkClip() noexcept {
 	if (clipModel) {
 		clipModel->Unlink();
 	}
@@ -300,15 +300,15 @@ void idPhysics_Static::LinkClip() {
 idPhysics_Static::EvaluateContacts
 ================
 */
-bool idPhysics_Static::EvaluateContacts() {
+bool idPhysics_Static::EvaluateContacts() noexcept {
 	return false;
 }
 
-void idPhysics_Static::ClearContacts() {
+void idPhysics_Static::ClearContacts() noexcept {
 }
 
-void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e) {
+void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e) noexcept {
 }
 
-void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e) {
+void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept {
 }

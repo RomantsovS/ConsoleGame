@@ -7,7 +7,7 @@
 idMenuWidget_Button::Update
 ========================
 */
-void idMenuWidget_Button::Update() {
+void idMenuWidget_Button::Update() noexcept {
 	if (auto spMenuData = menuData.lock()) {
 		if(spMenuData->GetGUI())
 			BindSprite(spMenuData->GetGUI()->GetRootObject().get());

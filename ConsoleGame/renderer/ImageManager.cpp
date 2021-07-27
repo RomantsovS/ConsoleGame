@@ -123,7 +123,7 @@ void idImageManager::Init() {
 Shutdown
 ===============
 */
-void idImageManager::Shutdown() {
+void idImageManager::Shutdown() noexcept {
 	images.clear();
 
 }

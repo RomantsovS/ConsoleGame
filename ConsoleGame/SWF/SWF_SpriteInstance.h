@@ -5,7 +5,7 @@ class idSWF;
 
 class idSWFSpriteInstance : public std::enable_shared_from_this<idSWFSpriteInstance> {
 public:
-	idSWFSpriteInstance(std::shared_ptr<idSWF> _swf);
+	idSWFSpriteInstance(std::shared_ptr<idSWF> _swf) noexcept;
 	~idSWFSpriteInstance();
 	idSWFSpriteInstance(const idSWFSpriteInstance&) = default;
 	idSWFSpriteInstance& operator=(const idSWFSpriteInstance&) = default;
@@ -14,15 +14,15 @@ public:
 
 	void Init();
 
-	std::shared_ptr<idSWF> GetSWF() { if (auto res = swf.lock()) { return res; } else { return nullptr; } }
+	std::shared_ptr<idSWF> GetSWF() noexcept { if (auto res = swf.lock()) { return res; } else { return nullptr; } }
 
-	std::shared_ptr<idSWFScriptObject> GetScriptObject() { return scriptObject; }
+	std::shared_ptr<idSWFScriptObject> GetScriptObject() noexcept { return scriptObject; }
 
-	void SetVisible(bool visible);
-	bool IsVisible() { return isVisible; }
-	void SetColor(const int color);
+	void SetVisible(bool visible) noexcept;
+	bool IsVisible() noexcept { return isVisible; }
+	void SetColor(const int color) noexcept;
 
-	void SetXPos(float xPos = -1.0f);
+	void SetXPos(float xPos = -1.0f) noexcept;
 
 	// sprite instances can be nested
 	//std::weak_ptr<idSWFSpriteInstance> parent;
@@ -34,7 +34,7 @@ public:
 
 	// children display entries
 	std::vector<swfDisplayEntry_t> displayList;
-	swfDisplayEntry_t* FindDisplayEntry(int depth);
+	swfDisplayEntry_t* FindDisplayEntry(int depth) noexcept;
 
 	// name of this sprite instance
 	std::string name;
@@ -43,7 +43,7 @@ public:
 	// SWF_PlaceObject.cpp
 	//----------------------------------
 	swfDisplayEntry_t* PlaceObject(size_t depth, bool isSprite, const std::string& name, const Vector2& pos = vec2_origin);
-	void RemoveObject();
+	void RemoveObject() noexcept;
 
 	//----------------------------------
 	// SWF_SpriteInstance.cpp

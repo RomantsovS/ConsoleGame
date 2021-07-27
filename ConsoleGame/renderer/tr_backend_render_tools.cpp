@@ -120,7 +120,7 @@ void RB_ShowDebugText() {
 RB_ClearDebugLines
 ================
 */
-void RB_ClearDebugLines(int time) {
+void RB_ClearDebugLines(int time) noexcept {
 	int			i;
 	int			num;
 	debugLine_t* line;
@@ -146,8 +146,7 @@ void RB_ClearDebugLines(int time) {
 	rb_numDebugLines = num;
 }
 
-void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest)
-{
+void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept {
 	debugLine_t* line;
 
 	if (rb_numDebugLines < MAX_DEBUG_LINES) {

@@ -46,7 +46,7 @@ idRenderSystemLocal::~idRenderSystemLocal() {
 idRenderSystemLocal::SetColor
 =============
 */
-void idRenderSystemLocal::SetColor(const int rgba) {
+void idRenderSystemLocal::SetColor(const int rgba) noexcept {
 	currentColorNativeBytesOrder = rgba;
 }
 
@@ -152,7 +152,7 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) {
 		worlds.erase(iter);
 }
 
-void idRenderSystemLocal::Display() {
+void idRenderSystemLocal::Display() noexcept {
 	screen.display();
 }
 

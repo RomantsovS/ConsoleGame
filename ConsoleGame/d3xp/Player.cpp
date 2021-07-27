@@ -166,7 +166,7 @@ idPlayer::FireWeapon
 */
 idCVar g_infiniteAmmo("g_infiniteAmmo", "1", CVAR_GAME | CVAR_BOOL, "infinite ammo");
 
-void idPlayer::FireWeapon() {
+void idPlayer::FireWeapon() noexcept {
 	if (weapon->IsReady()) {
 		if (g_infiniteAmmo.GetBool()) {
 			//AI_ATTACK_HELD = true;
@@ -228,7 +228,7 @@ void idPlayer::UpdateWeapon() {
 idPlayer::Collide
 ==============
 */
-bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) {
+bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	auto other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
 		if (other->IsType(AISimple::Type) || other->IsType(idChain::Type)) {
@@ -289,7 +289,7 @@ void idPlayer::Think() {
 idPlayer::EvaluateControls
 ==============
 */
-void idPlayer::EvaluateControls() {
+void idPlayer::EvaluateControls() noexcept {
 	/*if (usercmd.impulseSequence != oldImpulseSequence) {
 		PerformImpulse(usercmd.impulse);
 	}
@@ -304,7 +304,7 @@ void idPlayer::EvaluateControls() {
 idPlayer::AdjustSpeed
 ==============
 */
-void idPlayer::AdjustSpeed() {
+void idPlayer::AdjustSpeed() noexcept {
 	float speed{};
 
 	if (usercmd.buttons & BUTTON_RUN) {
@@ -350,7 +350,7 @@ void idPlayer::Move() {
 idPlayer::HandleUserCmds
 ================
 */
-void idPlayer::HandleUserCmds(const usercmd_t& newcmd) {
+void idPlayer::HandleUserCmds(const usercmd_t& newcmd) noexcept {
 	// latch button actions
 	oldButtons = usercmd.buttons;
 
@@ -360,6 +360,6 @@ void idPlayer::HandleUserCmds(const usercmd_t& newcmd) {
 	usercmd = newcmd;
 }
 
-bool idPlayer::IsLocallyControlled() const {
+bool idPlayer::IsLocallyControlled() const noexcept {
 	return entityNumber == gameLocal.GetLocalClientNum();
 }

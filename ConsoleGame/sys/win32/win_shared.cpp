@@ -1,5 +1,5 @@
-#pragma hdrstop
 #include <precompiled.h>
+#pragma hdrstop
 
 #include "win_local.h"
 
@@ -8,7 +8,7 @@
 Sys_Milliseconds
 ================
 */
-int Sys_Milliseconds() {
+int Sys_Milliseconds() noexcept {
 	static auto sys_timeBase = clock();
 	return clock() - sys_timeBase;
 }
@@ -29,7 +29,7 @@ long long Sys_Microseconds() {
 	return ((long long)((long long)Sys_GetClockTicks() << 10)) / ticksPerMicrosecondTimes1024;
 }
 
-long Sys_Time() {
+long Sys_Time() noexcept {
 	return clock();
 }
 

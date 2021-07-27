@@ -29,17 +29,17 @@ public:
 	idDeclLocal(idDeclLocal&&) = default;
 	idDeclLocal& operator=(idDeclLocal&&) = default;
 
-	const std::string& GetName() const override;
-	int GetLineNum() const override;
+	const std::string& GetName() const noexcept override;
+	int GetLineNum() const noexcept override;
 	std::string GetFileName() const override;
 	void GetText(char* text) const override;
-	int GetTextLength() const override;
+	int GetTextLength() const noexcept override;
 	void MakeDefault() override;
 protected:
-	bool SetDefaultText() override;
+	bool SetDefaultText() noexcept override;
 	std::string DefaultDefinition() const override;
 	bool Parse(const char* text, const int textLength, bool allowBinaryVersion) override;
-	void FreeData() override;
+	void FreeData() noexcept override;
 protected:
 	void AllocateSelf();
 
@@ -96,7 +96,7 @@ public:
 	void Shutdown() override;
 	void RegisterDeclType(const std::string& typeName, declType_t type, std::shared_ptr<idDecl>(*allocator)()) override;
 	void RegisterDeclFolder(const std::string& folder, const std::string& extension, declType_t defaultType) override;
-	int GetNumDeclTypes() const override;
+	int GetNumDeclTypes() const noexcept override;
 	const std::string& GetDeclNameFromType(declType_t type) const override;
 	const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) override;
 
@@ -105,10 +105,10 @@ public:
 
 	const std::shared_ptr<idMaterial> FindMaterial(const std::string& name, bool makeDefault = true) override;
 public:
-	static void MakeNameCanonical(const std::string& name, std::string& result, int maxLength);
+	static void MakeNameCanonical(const std::string& name, std::string& result, int maxLength) noexcept;
 	std::shared_ptr<idDeclLocal> FindTypeWithoutParsing(declType_t type, const std::string& name, bool makeDefault = true);
 
-	std::shared_ptr<idDeclType> GetDeclType(int type) const { return declTypes[type]; }
+	std::shared_ptr<idDeclType> GetDeclType(int type) const noexcept { return declTypes[type]; }
 private:
 	std::vector<std::shared_ptr<idDeclType>> declTypes;
 	std::vector<std::shared_ptr<idDeclFolder>> declFolders;
@@ -490,7 +490,7 @@ void idDeclManagerLocal::RegisterDeclFolder(const std::string& folder, const std
 idDeclManagerLocal::GetNumDeclTypes
 ===================
 */
-int idDeclManagerLocal::GetNumDeclTypes() const {
+int idDeclManagerLocal::GetNumDeclTypes() const noexcept {
 	return declTypes.size();
 }
 
@@ -690,7 +690,7 @@ const std::shared_ptr<idMaterial> idDeclManagerLocal::FindMaterial(const std::st
 idDeclManagerLocal::MakeNameCanonical
 ===================
 */
-void idDeclManagerLocal::MakeNameCanonical(const std::string& name, std::string& result, int maxLength) {
+void idDeclManagerLocal::MakeNameCanonical(const std::string& name, std::string& result, int maxLength) noexcept {
 	int i, lastDot;
 
 	lastDot = -1;
@@ -780,7 +780,7 @@ std::shared_ptr<idDeclLocal> idDeclManagerLocal::FindTypeWithoutParsing(declType
 	// see if it already exists
 	std::vector<std::shared_ptr<idDeclLocal>> list = linearLists.at(typeIndex);
 	auto iter = std::find_if(list.begin(), list.end(),
-		[&canonicalName](std::shared_ptr<idDeclLocal> decl) { return decl->name == canonicalName; });
+		[&canonicalName](std::shared_ptr<idDeclLocal> decl) noexcept { return decl->name == canonicalName; });
 	if (iter != list.end()) {
 		// only print these when decl_show is set to 2, because it can be a lot of clutter
 		/*if (decl_show.GetInteger() > 1) {
@@ -849,7 +849,7 @@ idDeclLocal::idDeclLocal() {
 idDeclLocal::GetName
 =================
 */
-const std::string& idDeclLocal::GetName() const {
+const std::string& idDeclLocal::GetName() const noexcept {
 	return name;
 }
 
@@ -858,7 +858,7 @@ const std::string& idDeclLocal::GetName() const {
 idDeclLocal::GetLineNum
 =================
 */
-int idDeclLocal::GetLineNum() const {
+int idDeclLocal::GetLineNum() const noexcept {
 	return sourceLine;
 }
 
@@ -890,7 +890,7 @@ void idDeclLocal::GetText(char* text) const {
 idDeclLocal::GetTextLength
 =================
 */
-int idDeclLocal::GetTextLength() const {
+int idDeclLocal::GetTextLength() const noexcept {
 	return textLength;
 }
 
@@ -963,7 +963,7 @@ void idDeclLocal::MakeDefault() {
 idDeclLocal::SetDefaultText
 =================
 */
-bool idDeclLocal::SetDefaultText() {
+bool idDeclLocal::SetDefaultText() noexcept {
 	return false;
 }
 
@@ -996,7 +996,7 @@ bool idDeclLocal::Parse(const char* text, const int textLength, bool allowBinary
 idDeclLocal::FreeData
 =================
 */
-void idDeclLocal::FreeData() {
+void idDeclLocal::FreeData() noexcept {
 }
 
 /*

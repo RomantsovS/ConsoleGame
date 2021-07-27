@@ -21,7 +21,7 @@ idMenuScreen::~idMenuScreen() {
 idMenuScreen::Update
 ========================
 */
-void idMenuScreen::Update() {
+void idMenuScreen::Update() noexcept {
 	auto spmenuGUI = menuGUI.lock();
 	if (!spmenuGUI) {
 		return;

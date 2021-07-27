@@ -81,7 +81,7 @@ void idAFBody::Init() {
 idAFBody::SetClipModel
 ================
 */
-void idAFBody::SetClipModel(std::shared_ptr<idClipModel> clipModel) {
+void idAFBody::SetClipModel(std::shared_ptr<idClipModel> clipModel) noexcept {
 	if (this->clipModel && this->clipModel != clipModel) {
 		this->clipModel = nullptr;
 	}
@@ -99,7 +99,7 @@ void idAFBody::SetClipModel(std::shared_ptr<idClipModel> clipModel) {
 idPhysics_AF::Evolve
 ================
 */
-void idPhysics_AF::Evolve(float timeStep) {
+void idPhysics_AF::Evolve(float timeStep) noexcept {
 	// calculate the position of the bodies for the next physics state
 
 	if (!bodies.empty()) {
@@ -132,7 +132,7 @@ idPhysics_AF::CollisionImpulse
   this is silly as it doesn't take the AF structure into account
 ================
 */
-bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) {
+bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept {
 	auto ent = gameLocal.entities[collision.c.entityNum];
 	if (ent == self.lock()) {
 		return false;
@@ -149,7 +149,7 @@ bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& col
 idPhysics_AF::ApplyCollisions
 ================
 */
-bool idPhysics_AF::ApplyCollisions(float timeStep) {
+bool idPhysics_AF::ApplyCollisions(float timeStep) noexcept {
 	for (size_t i = 0; i < collisions.size(); i++) {
 		if (CollisionImpulse(timeStep, collisions[i].body.get(), collisions[i].trace)) {
 			return true;
@@ -163,7 +163,7 @@ bool idPhysics_AF::ApplyCollisions(float timeStep) {
 idPhysics_AF::SetupCollisionForBody
 ================
 */
-idEntity* idPhysics_AF::SetupCollisionForBody(idAFBody* body) const {
+idEntity* idPhysics_AF::SetupCollisionForBody(idAFBody* body) const noexcept {
 	size_t i;
 	idEntity* passEntity = nullptr;
 
@@ -267,7 +267,7 @@ void idPhysics_AF::MoveEachBodiesToPrevOne() {
 idPhysics_AF::EvaluateContacts
 ================
 */
-bool idPhysics_AF::EvaluateContacts() {
+bool idPhysics_AF::EvaluateContacts() noexcept {
 	/*int i, j, k, numContacts, numBodyContacts;
 	idAFBody* body;
 	contactInfo_t contactInfo[10];
@@ -342,7 +342,7 @@ bool idPhysics_AF::EvaluateContacts() {
 idPhysics_AF::SwapStates
 ================
 */
-void idPhysics_AF::SwapStates() {
+void idPhysics_AF::SwapStates() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 
 		auto body = bodies[i];
@@ -371,7 +371,7 @@ void idPhysics_AF::UpdateClipModels() {
 idPhysics_AF::TestIfAtRest
 ================
 */
-bool idPhysics_AF::TestIfAtRest(float timeStep) {
+bool idPhysics_AF::TestIfAtRest(float timeStep) noexcept {
 	if (current.atRest >= 0) {
 		return true;
 	}
@@ -386,7 +386,7 @@ bool idPhysics_AF::TestIfAtRest(float timeStep) {
 idPhysics_AF::Rest
 ================
 */
-void idPhysics_AF::Rest() {
+void idPhysics_AF::Rest() noexcept {
 	current.atRest = gameLocal.time;
 
 	for (size_t i = 0; i < bodies.size(); i++) {
@@ -401,7 +401,7 @@ void idPhysics_AF::Rest() {
 idPhysics_AF::Activate
 ================
 */
-void idPhysics_AF::Activate() {
+void idPhysics_AF::Activate() noexcept {
 	// if the articulated figure was at rest
 	if (current.atRest >= 0) {
 		// reset the active time for the max move time
@@ -419,7 +419,7 @@ idPhysics_AF::PutToRest
   put to rest untill something collides with this physics object
 ================
 */
-void idPhysics_AF::PutToRest() {
+void idPhysics_AF::PutToRest() noexcept {
 	Rest();
 }
 
@@ -428,7 +428,7 @@ void idPhysics_AF::PutToRest() {
 idPhysics_AF::SetClipModel
 ================
 */
-void idPhysics_AF::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) {
+void idPhysics_AF::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) noexcept {
 }
 
 /*
@@ -436,7 +436,7 @@ void idPhysics_AF::SetClipModel(std::shared_ptr<idClipModel> model, float densit
 idPhysics_AF::GetClipModel
 ================
 */
-std::shared_ptr<idClipModel> idPhysics_AF::GetClipModel(int id) const {
+std::shared_ptr<idClipModel> idPhysics_AF::GetClipModel(int id) const noexcept {
 	if (id >= 0 && id < static_cast<int>(bodies.size())) {
 		return bodies[id]->GetClipModel();
 	}
@@ -448,7 +448,7 @@ std::shared_ptr<idClipModel> idPhysics_AF::GetClipModel(int id) const {
 idPhysics_AF::GetNumClipModels
 ================
 */
-int idPhysics_AF::GetNumClipModels() const {
+int idPhysics_AF::GetNumClipModels() const noexcept {
 	return bodies.size();
 }
 
@@ -457,7 +457,7 @@ int idPhysics_AF::GetNumClipModels() const {
 idPhysics_AF::GetBounds
 ================
 */
-const idBounds& idPhysics_AF::GetBounds(int id) const {
+const idBounds& idPhysics_AF::GetBounds(int id) const noexcept {
 	static idBounds relBounds;
 
 	if (id >= 0 && id < static_cast<int>(bodies.size())) {
@@ -488,7 +488,7 @@ const idBounds& idPhysics_AF::GetBounds(int id) const {
 idPhysics_AF::GetAbsBounds
 ================
 */
-const idBounds& idPhysics_AF::GetAbsBounds(int id) const {
+const idBounds& idPhysics_AF::GetAbsBounds(int id) const noexcept {
 	static idBounds absBounds;
 
 	if (id >= 0 && id < static_cast<int>(bodies.size())) {
@@ -512,7 +512,7 @@ const idBounds& idPhysics_AF::GetAbsBounds(int id) const {
 idPhysics_AF::Evaluate
 ================
 */
-bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) {
+bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	float timeStep;
 
 	timeStep = MS2SEC(timeStepMSec);
@@ -578,7 +578,7 @@ bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) {
 idPhysics_AF::UpdateTime
 ================
 */
-void idPhysics_AF::UpdateTime(int endTimeMSec) {
+void idPhysics_AF::UpdateTime(int endTimeMSec) noexcept {
 }
 
 /*
@@ -586,7 +586,7 @@ void idPhysics_AF::UpdateTime(int endTimeMSec) {
 idPhysics_AF::GetTime
 ================
 */
-int idPhysics_AF::GetTime() const {
+int idPhysics_AF::GetTime() const noexcept {
 	return gameLocal.time;
 }
 
@@ -595,7 +595,7 @@ int idPhysics_AF::GetTime() const {
 idPhysics_AF::DebugDraw
 ================
 */
-void idPhysics_AF::DebugDraw() {
+void idPhysics_AF::DebugDraw() noexcept {
 }
 
 /*
@@ -693,7 +693,7 @@ int idPhysics_AF::GetBodyId(const std::shared_ptr<idAFBody>& body) const {
 idPhysics_AF::GetBody
 ================
 */
-std::shared_ptr<idAFBody> idPhysics_AF::GetBody(const std::string& bodyName) const {
+std::shared_ptr<idAFBody> idPhysics_AF::GetBody(const std::string& bodyName) const noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		if (bodies[i]->name == bodyName) {
 			return bodies[i];
@@ -730,7 +730,7 @@ void idPhysics_AF::DeleteBody(const int id) {
 idPhysics_AF::IsAtRest
 ================
 */
-bool idPhysics_AF::IsAtRest() const {
+bool idPhysics_AF::IsAtRest() const noexcept {
 	return current.atRest >= 0;
 }
 
@@ -739,7 +739,7 @@ bool idPhysics_AF::IsAtRest() const {
 idPhysics_AF::SaveState
 ================
 */
-void idPhysics_AF::SaveState() {
+void idPhysics_AF::SaveState() noexcept {
 	saved = current;
 
 	for (size_t i = 0; i < bodies.size(); i++) {
@@ -752,7 +752,7 @@ void idPhysics_AF::SaveState() {
 idPhysics_AF::RestoreState
 ================
 */
-void idPhysics_AF::RestoreState() {
+void idPhysics_AF::RestoreState() noexcept {
 	current = saved;
 
 	for (size_t i = 0; i < bodies.size(); i++) {
@@ -767,7 +767,7 @@ void idPhysics_AF::RestoreState() {
 idPhysics_AF::SetOrigin
 ================
 */
-void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) {
+void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 	/*if (masterBody) {
 		Translate(masterBody->current->worldOrigin + masterBody->current->worldAxis * newOrigin - bodies[0]->current->worldOrigin);
 	}
@@ -781,7 +781,7 @@ void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) {
 idPhysics_AF::SetAxis
 ================
 */
-void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) {
+void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) noexcept {
 }
 
 /*
@@ -789,7 +789,7 @@ void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) {
 idPhysics_AF::Translate
 ================
 */
-void idPhysics_AF::Translate(const Vector2& translation, int id) {
+void idPhysics_AF::Translate(const Vector2& translation, int id) noexcept {
 	// translate all the bodies
 	for (size_t i = 0; i < bodies.size(); i++) {
 
@@ -807,7 +807,7 @@ void idPhysics_AF::Translate(const Vector2& translation, int id) {
 idPhysics_AF::GetOrigin
 ================
 */
-const Vector2& idPhysics_AF::GetOrigin(int id) const {
+const Vector2& idPhysics_AF::GetOrigin(int id) const noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return vec2_origin;
 	}
@@ -821,7 +821,7 @@ const Vector2& idPhysics_AF::GetOrigin(int id) const {
 idPhysics_AF::SetLinearVelocity
 ================
 */
-void idPhysics_AF::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
+void idPhysics_AF::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return;
 	}
@@ -834,7 +834,7 @@ void idPhysics_AF::SetLinearVelocity(const Vector2& newLinearVelocity, int id) {
 idPhysics_AF::GetLinearVelocity
 ================
 */
-const Vector2& idPhysics_AF::GetLinearVelocity(int id) const {
+const Vector2& idPhysics_AF::GetLinearVelocity(int id) const noexcept {
 	if (id < 0 || id >= static_cast<int>(bodies.size())) {
 		return vec2_origin;
 	}
@@ -848,7 +848,7 @@ const Vector2& idPhysics_AF::GetLinearVelocity(int id) const {
 idPhysics_AF::DisableClip
 ================
 */
-void idPhysics_AF::DisableClip() {
+void idPhysics_AF::DisableClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Disable();
 	}
@@ -859,7 +859,7 @@ void idPhysics_AF::DisableClip() {
 idPhysics_AF::EnableClip
 ================
 */
-void idPhysics_AF::EnableClip() {
+void idPhysics_AF::EnableClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Enable();
 	}
@@ -870,7 +870,7 @@ void idPhysics_AF::EnableClip() {
 idPhysics_AF::UnlinkClip
 ================
 */
-void idPhysics_AF::UnlinkClip() {
+void idPhysics_AF::UnlinkClip() noexcept {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		bodies[i]->clipModel->Unlink();
 	}
@@ -881,6 +881,6 @@ void idPhysics_AF::UnlinkClip() {
 idPhysics_AF::LinkClip
 ================
 */
-void idPhysics_AF::LinkClip() {
+void idPhysics_AF::LinkClip() noexcept {
 	UpdateClipModels();
 }

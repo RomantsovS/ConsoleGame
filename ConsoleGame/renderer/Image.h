@@ -7,15 +7,15 @@ class idImage {
 public:
 	idImage(const std::string& name);
 
-	const std::string& GetName() const { return imgName; }
+	const std::string& GetName() const noexcept { return imgName; }
 
-	void MakeDefault();	// fill with a grid pattern
+	void MakeDefault() noexcept;	// fill with a grid pattern
 
 	void ActuallyLoadImage(bool fromBackEnd);
 
-	bool IsLoaded() const { return texnum != -1; }
+	bool IsLoaded() const noexcept { return texnum != -1; }
 
-	std::vector<ModelPixel>& GetPixels() { return pixels; }
+	std::vector<ModelPixel>& GetPixels() noexcept { return pixels; }
 private:
 	friend class idImageManager;
 
@@ -37,7 +37,7 @@ public:
 	}
 
 	void Init();
-	void Shutdown();
+	void Shutdown() noexcept;
 
 	// If the exact combination of parameters has been asked for already, an existing
 	// image will be returned, otherwise a new image will be created.

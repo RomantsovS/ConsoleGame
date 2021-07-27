@@ -167,7 +167,7 @@ void idGameLocal::MapShutdown() {
 idGameLocal::GetLocalClientNum
 ========================
 */
-int idGameLocal::GetLocalClientNum() const {
+int idGameLocal::GetLocalClientNum() const noexcept {
 	return 0;
 }
 
@@ -740,7 +740,7 @@ idGameLocal::GameState
 Used to allow entities to know if they're being spawned during the initial spawn.
 ==============
 */
-gameState_t	idGameLocal::GameState() const {
+gameState_t	idGameLocal::GameState() const noexcept {
 	return gamestate;
 }
 
@@ -760,7 +760,7 @@ void idGameLocal::Shell_Init(const std::string& filename) {
 idGameLocal::Shell_Init
 ========================
 */
-void idGameLocal::Shell_Cleanup() {
+void idGameLocal::Shell_Cleanup() noexcept {
 	if (shellHandler) {
 		shellHandler = nullptr;
 	}
@@ -792,7 +792,7 @@ void idGameLocal::Shell_CreateMenu(bool inGame) {
 idGameLocal::Shell_Show
 ========================
 */
-void idGameLocal::Shell_Show(bool show) {
+void idGameLocal::Shell_Show(bool show) noexcept {
 	if (shellHandler) {
 		shellHandler->ActivateMenu(show);
 	}
@@ -803,7 +803,7 @@ void idGameLocal::Shell_Show(bool show) {
 idGameLocal::Shell_IsActive
 ========================
 */
-bool idGameLocal::Shell_IsActive() const {
+bool idGameLocal::Shell_IsActive() const noexcept {
 	if (shellHandler) {
 		return shellHandler->IsActive();
 	}
@@ -943,7 +943,7 @@ void idGameLocal::MapPopulate() {
 		AddRandomPoint();*/
 }
 
-void idGameLocal::MapClear(bool clearClients) {
+void idGameLocal::MapClear(bool clearClients) noexcept {
 	for (size_t i = (clearClients ? 0 : MAX_CLIENTS); i < MAX_GENTITIES; i++) {
 		auto ent = entities[i];
 
@@ -1071,7 +1071,6 @@ std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classde
 		obj = classdef.CreateInstance();
 		obj->CallSpawn();
 	}
-
 	catch (std::exception&) {
 		obj = nullptr;
 	}
@@ -1193,7 +1192,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 	}
 }
 
-void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) {
+void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept {
 	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent)) {
 		ent->spawnNode.Remove();
 		entities[ent->entityNumber] = nullptr;
@@ -1268,7 +1267,7 @@ Vector2 idGameLocal::SelectInitialSpawnPoint(idPlayer* player) {
 idGameLocal::SelectTimeGroup
 ============
 */
-void idGameLocal::SelectTimeGroup(int timeGroup) {
+void idGameLocal::SelectTimeGroup(int timeGroup) noexcept {
 	if (timeGroup) {
 		fast.Get(time, previousTime/*, realClientTime*/);
 	}
@@ -1284,7 +1283,7 @@ void idGameLocal::SelectTimeGroup(int timeGroup) {
 idGameLocal::GetTimeGroupTime
 ============
 */
-int idGameLocal::GetTimeGroupTime(int timeGroup) {
+int idGameLocal::GetTimeGroupTime(int timeGroup) noexcept {
 	if (timeGroup) {
 		return fast.time;
 	}
@@ -1298,7 +1297,7 @@ int idGameLocal::GetTimeGroupTime(int timeGroup) {
 idGameLocal::ResetSlowTimeVars
 ============
 */
-void idGameLocal::ResetSlowTimeVars() {
+void idGameLocal::ResetSlowTimeVars() noexcept {
 	//slowmoScale = 1.0f;
 	//slowmoState = SLOWMO_STATE_OFF;
 

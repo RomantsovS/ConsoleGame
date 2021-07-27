@@ -11,7 +11,7 @@ public:
 	static int vsnPrintf(gsl::not_null<gsl::zstring<>> dest, int size, gsl::czstring<> fmt, va_list argptr);
 	static void StripTrailing(std::string& str, const char c);
 	static void SlashesToBackSlashes(std::string &str); // convert slashes
-	static bool IsNumeric(const std::string& s);
+	static bool IsNumeric(const std::string& s) noexcept;
 
 	static void Copynz(gsl::not_null<gsl::zstring<>> dest, gsl::czstring<> src, int destsize);
 

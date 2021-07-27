@@ -206,12 +206,12 @@ public:
 		return true;
 	}
 
-	void Set(std::shared_ptr<idSWFScriptFunction> function) {
+	void Set(std::shared_ptr<idSWFScriptFunction> function) noexcept {
 		action = widgetAction_t::WIDGET_ACTION_FUNCTION;
 		scriptFunction = function;
 	}
 
-	void Set(widgetAction_t action_) {
+	void Set(widgetAction_t action_) noexcept {
 		action = action_;
 		parms.clear();
 	}
@@ -229,9 +229,9 @@ public:
 		parms.Append(var2);
 	}
 
-	std::shared_ptr<idSWFScriptFunction> GetScriptFunction() { return scriptFunction; }
-	const widgetAction_t GetType() const { return action; }
-	const idSWFParmList& GetParms() const { return parms; }
+	std::shared_ptr<idSWFScriptFunction> GetScriptFunction() noexcept { return scriptFunction; }
+	const widgetAction_t GetType() const noexcept { return action; }
+	const idSWFParmList& GetParms() const noexcept { return parms; }
 
 private:
 	widgetAction_t action;
@@ -304,28 +304,28 @@ public:
 	idMenuWidget(idMenuWidget&&) = default;
 	idMenuWidget& operator=(idMenuWidget&&) = default;
 
-	void Cleanup();
+	void Cleanup() noexcept;
 
 	// typically this is where the allocations for a widget will occur: sub widgets, etc.
 	// Note that SWF sprite objects may not be accessible at this point.
-	virtual void Initialize(std::shared_ptr<idMenuHandler> data) { menuData = data; }
+	virtual void Initialize(std::shared_ptr<idMenuHandler> data) noexcept { menuData = data; }
 
-	virtual void Update() {}
+	virtual void Update() noexcept {}
 
-	widgetState_t GetState() const { return widgetState; }
-	void SetState(const widgetState_t state);
+	widgetState_t GetState() const noexcept { return widgetState; }
+	void SetState(const widgetState_t state) noexcept;
 
 	std::shared_ptr<idSWF> GetSWFObject();
 	std::weak_ptr<idMenuHandler> GetMenuData();
 
 	// actually binds the sprite. this must be called after setting sprite path!
-	std::shared_ptr<idSWFSpriteInstance> GetSprite() { return boundSprite; }
+	std::shared_ptr<idSWFSpriteInstance> GetSprite() noexcept { return boundSprite; }
 	bool BindSprite(gsl::not_null<idSWFScriptObject*> root);
-	void ClearSprite();
+	void ClearSprite() noexcept;
 
 	void SetSpritePath(const char* arg1, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL);
 	void SetSpritePath(const std::vector<std::string>& spritePath_, const char* arg1 = NULL, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL);
-	std::vector<std::string>& GetSpritePath() { return spritePath; }
+	std::vector<std::string>& GetSpritePath() noexcept { return spritePath; }
 
 	//------------------------
 	// Event Handling
@@ -341,7 +341,7 @@ public:
 	// returns the list of actions for a given event, or NULL if no actions are registered for
 	// that event.  Events should not be directly added to the returned list.  Instead use
 	// AddEventAction for adding new events.
-	std::vector<idWidgetAction>* GetEventActions(const widgetEvent_t eventType);
+	std::vector<idWidgetAction>* GetEventActions(const widgetEvent_t eventType) noexcept;
 
 	// allocates an action for the given event
 	idWidgetAction& AddEventAction(const widgetEvent_t eventType);
@@ -355,25 +355,25 @@ public:
 	void								SetDataSourceFieldIndex(const int dataSourceFieldIndex_) { dataSourceFieldIndex = dataSourceFieldIndex_; }
 	int									GetDataSourceFieldIndex() const { return dataSourceFieldIndex; }
 	*/
-	std::shared_ptr<idMenuWidget> GetFocus() { return (focusIndex >= 0 && focusIndex < children.size()) ? children[focusIndex] : nullptr; }
-	size_t GetFocusIndex() const { return focusIndex; }
+	std::shared_ptr<idMenuWidget> GetFocus() noexcept { return (focusIndex >= 0 && focusIndex < children.size()) ? children[focusIndex] : nullptr; }
+	size_t GetFocusIndex() const noexcept { return focusIndex; }
 	void SetFocusIndex(const size_t index, bool skipSound = false);
 
 
 	//------------------------
 	// Hierarchy
 	//------------------------
-	idMenuWidgetList& GetChildren() { return children; }
-	const idMenuWidgetList& GetChildren() const { return children; }
-	std::shared_ptr<idMenuWidget> GetChildByIndex(const int index) const { return children[index]; }
+	idMenuWidgetList& GetChildren() noexcept { return children; }
+	const idMenuWidgetList& GetChildren() const noexcept { return children; }
+	std::shared_ptr<idMenuWidget> GetChildByIndex(const int index) const noexcept { return children[index]; }
 
 	void AddChild(std::shared_ptr<idMenuWidget> widget);
 	void RemoveChild(std::shared_ptr<idMenuWidget> widget);
 
-	std::shared_ptr<idMenuWidget> GetParent() { return parent.lock(); }
-	const std::shared_ptr<idMenuWidget> GetParent() const { return parent.lock(); }
-	void SetParent(std::shared_ptr<idMenuWidget> parent_) { parent = parent_; }
-	void SetSWFObj(std::shared_ptr<idSWF> obj) { swfObj = obj; }
+	std::shared_ptr<idMenuWidget> GetParent() noexcept { return parent.lock(); }
+	const std::shared_ptr<idMenuWidget> GetParent() const noexcept { return parent.lock(); }
+	void SetParent(std::shared_ptr<idMenuWidget> parent_) noexcept { parent = parent_; }
+	void SetSWFObj(std::shared_ptr<idSWF> obj) noexcept { swfObj = obj; }
 protected:
 	std::weak_ptr<idMenuHandler> menuData;
 	std::weak_ptr<idSWF> swfObj;
@@ -408,13 +408,13 @@ public:
 	idMenuWidget_Button& operator=(idMenuWidget_Button&&) = default;
 
 	bool ExecuteEvent(const idWidgetEvent& event) override;
-	void Update() override;
+	void Update() noexcept override;
 
 	//---------------
 	// Model
 	//---------------
 	void SetLabel(const std::string& label) { btnLabel = label; }
-	const std::string& GetLabel() const { return btnLabel; }
+	const std::string& GetLabel() const noexcept { return btnLabel; }
 	void SetValues(std::vector<std::string>& list);
 protected:
 	std::vector<std::string> values;
@@ -433,8 +433,8 @@ public:
 		xPos(0) {
 	}
 
-	void Update() override;
-	void SetPosition(float pos) { xPos = pos; }
+	void Update() noexcept override;
+	void SetPosition(float pos) noexcept { xPos = pos; }
 
 private:
 
@@ -459,25 +459,25 @@ public:
 
 	}
 
-	void Update() override;
+	void Update() noexcept override;
 	bool				HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 	//virtual void				ObserveEvent(const idMenuWidget& widget, const idWidgetEvent& event);
 	virtual void				Scroll(const int scrollIndexAmount, const bool wrapAround = false);
 	virtual void				ScrollOffset(const int scrollIndexAmount);
-	virtual size_t				GetTotalNumberOfOptions() const { return GetChildren().size(); }
+	virtual size_t				GetTotalNumberOfOptions() const noexcept { return GetChildren().size(); }
 	//virtual bool				PrepareListElement(idMenuWidget& widget, const int childIndex) { return true; }
 
-	bool						IsWrappingAllowed() const { return allowWrapping; }
-	void						SetWrappingAllowed(const bool allow) { allowWrapping = allow; }
+	bool						IsWrappingAllowed() const noexcept { return allowWrapping; }
+	void						SetWrappingAllowed(const bool allow) noexcept { allowWrapping = allow; }
 
-	void						SetNumVisibleOptions(const size_t numVisibleOptions_) { numVisibleOptions = numVisibleOptions_; }
-	size_t						GetNumVisibleOptions() const { return numVisibleOptions; }
+	void						SetNumVisibleOptions(const size_t numVisibleOptions_) noexcept { numVisibleOptions = numVisibleOptions_; }
+	size_t						GetNumVisibleOptions() const noexcept { return numVisibleOptions; }
 
-	int							GetViewOffset() const { return viewOffset; }
-	void						SetViewOffset(const int offset) { viewOffset = offset; }
+	int							GetViewOffset() const noexcept { return viewOffset; }
+	void						SetViewOffset(const int offset) noexcept { viewOffset = offset; }
 
-	int							GetViewIndex() const { return viewIndex; }
-	void						SetViewIndex(const int index) { viewIndex = index; }
+	int							GetViewIndex() const noexcept { return viewIndex; }
+	void						SetViewIndex(const int index) noexcept { viewIndex = index; }
 
 	void						CalculatePositionFromIndexDelta(int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int indexDelta, const bool allowWrapping, const bool wrapAround = false) const;
 	void						CalculatePositionFromOffsetDelta(int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int offsetDelta) const;
@@ -515,11 +515,11 @@ public:
 		buttons.resize(MAX_BUTTONS);
 	}
 
-	void Update() override;
+	void Update() noexcept override;
 	bool ExecuteEvent(const idWidgetEvent& event) override;
 
-	buttonInfo_t* GetButton(const button_t button) { return &buttons[button]; }
-	void ClearAllButtons();
+	buttonInfo_t* GetButton(const button_t button) noexcept { return &buttons[button]; }
+	void ClearAllButtons() noexcept;
 
 private:
 	std::vector<buttonInfo_t> buttons;
@@ -538,16 +538,16 @@ public:
 		ignoreColor(false) {
 	}
 
-	void Update() override;
-	void Initialize(std::shared_ptr<idMenuHandler> data) override;
-	size_t GetTotalNumberOfOptions() const override;
+	void Update() noexcept override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	size_t GetTotalNumberOfOptions() const noexcept override;
 	virtual bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex);
 
 	//virtual void				Recalculate();
 	virtual void				SetListData(std::vector<std::vector<std::string>>& list);
 
-	void						SetControlList(bool val) { controlList = val; }
-	void						SetIgnoreColor(bool val) { ignoreColor = val; }
+	void						SetControlList(bool val) noexcept { controlList = val; }
+	void						SetIgnoreColor(bool val) noexcept { ignoreColor = val; }
 
 protected:
 	std::vector<std::vector<std::string>> listItemInfo;
@@ -571,12 +571,12 @@ public:
 		rightSpacer(0.0f) {
 	}
 
-	void Update() override;
-	void Initialize(std::shared_ptr<idMenuHandler> data) override;
-	virtual void				SetButtonSpacing(float rSpace) { rightSpacer = rSpace; }
+	void Update() noexcept override;
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	virtual void				SetButtonSpacing(float rSpace) noexcept { rightSpacer = rSpace; }
 	bool				PrepareListElement(std::shared_ptr<idMenuWidget>, const size_t childIndex) override;
 	virtual void				SetListHeadings(std::vector<std::string>& list);
-	size_t				GetTotalNumberOfOptions() const override;
+	size_t				GetTotalNumberOfOptions() const noexcept override;
 
 private:
 
