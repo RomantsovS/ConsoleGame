@@ -24,8 +24,7 @@ jobs:
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
           ./MSBuild.exe $Env:GITHUB_WORKSPACE\ConsoleGame.sln
           
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v2
       with:
         name: ConsoleGame
-        path: ConsoleGame\build\Win32\Debug\ConsoleGame.exe
+        path: $Env:GITHUB_WORKSPACE\ConsoleGame\build\Win32\Debug\ConsoleGame.exe
