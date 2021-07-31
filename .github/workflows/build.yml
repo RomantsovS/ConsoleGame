@@ -14,4 +14,4 @@ jobs:
     - name: echo MSBuild
       run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-          ./MSBuild.exe -version
+          ./MSBuild.exe ConsoleGame.sln
