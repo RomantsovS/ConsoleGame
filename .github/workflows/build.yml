@@ -27,6 +27,12 @@ jobs:
         pwd
         ls -l .
         cd ..
+        cd sonar-scanner-cli-4.6.1.2450-windows
+        pwd
+        ls -l .
+        cd bin
+        ls -l .
+        cd ../..
          
     - name: install vcpkg
       run: |
