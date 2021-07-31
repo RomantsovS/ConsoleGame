@@ -23,8 +23,10 @@ jobs:
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
         echo "${PWD}/build-wrapper-win-x86" >> $GITHUB_PATH
+        cd build-wrapper-win-x86
         pwd
         ls -l .
+        cd ..
          
     - name: install vcpkg
       run: |
@@ -42,7 +44,9 @@ jobs:
       run: msbuild -version
           
     - name: Compile
-      run: build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
+      run: |
+        cd build-wrapper-win-x86
+        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ../ConsoleGame.sln /t:Rebuild
           
     - uses: actions/upload-artifact@v2
       with:
