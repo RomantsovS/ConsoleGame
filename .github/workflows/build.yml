@@ -1,0 +1,37 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install vcpkg
+      run: |
+        cd ..
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+        ./vcpkg.exe integrate install
+        .\vcpkg.exe install ms-gsl
+    - name: MSBuild
+      run: |
+          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
+          ./MSBuild.exe $Env:GITHUB_WORKSPACE\ConsoleGame.sln
+          cd $Env:GITHUB_WORKSPACE
+          pwd
+          ls
+          cd ConsoleGame
+          ls
+          cd build
+          ls
+          
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ConsoleGame
+        path: $Env:GITHUB_WORKSPACE\ConsoleGame\build\Win32\Debug\ConsoleGame.exe
