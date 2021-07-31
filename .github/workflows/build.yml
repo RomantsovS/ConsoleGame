@@ -45,8 +45,7 @@ jobs:
           
     - name: Compile
       run: |
-        cd build-wrapper-win-x86
-        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ../ConsoleGame.sln /t:Rebuild
+        ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
           
     - uses: actions/upload-artifact@v2
       with:
