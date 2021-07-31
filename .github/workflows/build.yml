@@ -11,6 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install wget
+      run: |
+        choco install wget --no-progress
+        
     - name: Prepare Sonar scanner
       run: |
         wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.1.2450-windows.zip
