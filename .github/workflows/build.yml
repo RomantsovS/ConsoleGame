@@ -49,6 +49,8 @@ jobs:
 
     - name: SonarCloud Scan
       run: |
+        pwd
+        ls -l .
         ./sonar-scanner-cli-4.6.1.2450-windows/bin/sonar-scanner.bat -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=romantsovs -Dsonar.login=$SONAR_TOKEN
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
