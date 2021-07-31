@@ -17,12 +17,14 @@ jobs:
         
     - name: Prepare Sonar scanner
       run: |
+        echo "$PATH"
         wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.1.2450-windows.zip
         unzip -q sonar-scanner-cli-4.6.1.2450-windows.zip
         echo "${PWD}/sonar-scanner-cli-4.6.1.2450-windows/bin/" >> $GITHUB_PATH
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
         echo "${PWD}/build-wrapper-win-x86" >> $GITHUB_PATH
+        echo "$PATH"
         pwd
         ls -l .
          
@@ -43,6 +45,8 @@ jobs:
           
     - name: Compile
       run: |
+        pwd
+        ls -l .
         ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
 
     - name: SonarCloud Scan
