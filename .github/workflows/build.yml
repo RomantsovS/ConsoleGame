@@ -31,8 +31,10 @@ jobs:
           msbuild $Env:GITHUB_WORKSPACE\ConsoleGame.sln
           echo "Root Directory"
           ls -l .
+          cd build
+          ls -l .
           
     - uses: actions/upload-artifact@v2
       with:
         name: ConsoleGame
-        path: $Env:GITHUB_WORKSPACE\ConsoleGame\build\Win32\Debug\ConsoleGame.exe
+        path: ./build\Win32\Debug\ConsoleGame.exe
