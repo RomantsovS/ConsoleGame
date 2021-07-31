@@ -23,6 +23,8 @@ jobs:
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
         echo "${PWD}/build-wrapper-win-x86" >> $GITHUB_PATH
+        pwd
+        ls -l .
          
     - name: install vcpkg
       run: |
