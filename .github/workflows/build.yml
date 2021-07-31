@@ -49,6 +49,14 @@ jobs:
         ls -l .
         ./build-wrapper-win-x86/build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
 
+    - name: check path
+      run: |
+        echo "$PATH"
+        pwd
+        ls -l .
+        cd sonar-scanner-cli-4.6.1.2450-windows
+        ls -l .
+        
     - name: SonarCloud Scan
       run: |
         pwd
