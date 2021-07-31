@@ -16,9 +16,8 @@ jobs:
         cd ..
         git clone https://github.com/Microsoft/vcpkg.git
         cd vcpkg
-        ./bootstrap-vcpkg.sh
-        ./vcpkg integrate install
-        vcpkg install ms-gsl
+        .\bootstrap-vcpkg.bat
+        .\vcpkg.exe install ms-gsl
     - name: echo MSBuild
       run: |
           cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
