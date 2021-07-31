@@ -23,16 +23,8 @@ jobs:
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
         echo "${PWD}/build-wrapper-win-x86" >> $GITHUB_PATH
-        cd build-wrapper-win-x86
         pwd
         ls -l .
-        cd ..
-        cd sonar-scanner-cli-4.6.1.2450-windows
-        pwd
-        ls -l .
-        cd bin
-        ls -l .
-        cd ../..
          
     - name: install vcpkg
       run: |
