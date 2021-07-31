@@ -43,6 +43,7 @@ jobs:
       run: msbuild -version
           
     - name: Compile
+      shell: bash
       run: |
         ./build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
         
