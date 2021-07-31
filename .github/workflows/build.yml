@@ -38,12 +38,9 @@ jobs:
   
     - name: echo MSBuild
       run: msbuild -version
-
-    - name: MSBuild
-      run: msbuild ConsoleGame.sln /t:Rebuild
           
     - name: Compile
-      run: build-wrapper-win-x86-64.exe --out-dir bw-outputs ConsoleGame.sln /t:Rebuild
+      run: build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
           
     - uses: actions/upload-artifact@v2
       with:
