@@ -50,14 +50,13 @@ jobs:
       shell: bash
       run: |
         pwd
-        echo "$PWD"
         ls -l .
-        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
+        MSBuild.exe ConsoleGame.sln /t:Rebuild
         
     - name: SonarCloud Scan
       shell: bash
       run: |
-        sonar-scanner.bat -Dsonar.login=$SONAR_TOKEN
+        sonar-scanner.bat
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
