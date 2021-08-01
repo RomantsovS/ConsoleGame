@@ -43,7 +43,10 @@ jobs:
   
     - name: echo MSBuild
       shell: bash
-      run: msbuild -version
+      run: |
+        echo "$PATH"
+        echo "$env:GITHUB_PATH"
+        msbuild -version
           
     - name: Compile
       shell: bash
