@@ -23,7 +23,7 @@ jobs:
         echo "${{github.workspace}}/sonar-scanner-4.6.1.2450-windows/bin/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
-        echo "${{github.workspace}}/build-wrapper-win-x86" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "${{github.workspace}}/build-wrapper-win-x86/" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         echo ${env:PATH}
          
     - name: install vcpkg
@@ -42,7 +42,6 @@ jobs:
       run: msbuild -version
           
     - name: Compile
-      shell: bash
       run: |
         .\build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
         
