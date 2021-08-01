@@ -51,7 +51,7 @@ jobs:
       run: |
         pwd
         ls -l .
-        MSBuild.exe ConsoleGame.sln /t:Rebuild
+        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln //t:Rebuild
         
     - name: SonarCloud Scan
       shell: bash
