@@ -26,7 +26,6 @@ jobs:
         wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
         unzip -q build-wrapper-win-x86.zip          
         echo "${{github.workspace}}/build-wrapper-win-x86/" >> $GITHUB_PATH
-        echo "$PATH"
          
     - name: install vcpkg
       shell: bash
@@ -50,12 +49,12 @@ jobs:
     - name: Compile
       shell: bash
       run: |
-        ./build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
+        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
         
     - name: SonarCloud Scan
       shell: bash
       run: |
-        ./sonar-scanner.bat -Dsonar.login=$SONAR_TOKEN
+        sonar-scanner.bat -Dsonar.login=$SONAR_TOKEN
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
