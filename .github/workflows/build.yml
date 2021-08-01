@@ -49,6 +49,9 @@ jobs:
     - name: Compile
       shell: bash
       run: |
+        pwd
+        echo "$PWD"
+        ls -l .
         build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln /t:Rebuild
         
     - name: SonarCloud Scan
