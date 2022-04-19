@@ -72,7 +72,7 @@ public:
 	void UpdateVisuals();
 	void UpdateModel();
 	void UpdateModelTransform();
-	virtual void SetColor(const int color);
+	virtual void SetColor(const Screen::color_type color);
 	virtual void FreeModelDef();
 	virtual void Hide();
 	bool IsHidden() const noexcept;

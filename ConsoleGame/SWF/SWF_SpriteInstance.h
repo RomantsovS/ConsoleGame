@@ -20,7 +20,7 @@ public:
 
 	void SetVisible(bool visible) noexcept;
 	bool IsVisible() noexcept { return isVisible; }
-	void SetColor(const int color) noexcept;
+	void SetColor(const Screen::color_type color) noexcept;
 
 	void SetXPos(float xPos = -1.0f) noexcept;
 

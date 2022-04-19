@@ -70,8 +70,8 @@ public:
 	// if the load failed for any reason, this will return true
 	virtual bool				IsDefaultModel() const = 0;
 
-	virtual int GetColor() const = 0;
-	virtual void SetColor(int col) = 0;
+	virtual Screen::color_type GetColor() const = 0;
+	virtual void SetColor(Screen::color_type col) = 0;
 };
 
 #endif

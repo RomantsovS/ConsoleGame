@@ -146,7 +146,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	trace_t collision;
 	Vector2 impulse;
 	float timeStep;
-	bool collided, cameToRest = false;
+	bool collided = false, cameToRest = false;
 
 	timeStep = MS2SEC(timeStepMSec);
 	current.lastTimeStep = timeStep;

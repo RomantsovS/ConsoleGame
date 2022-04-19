@@ -35,8 +35,8 @@ public:
 	bool LoadTextModel(const std::string& fileName);
 	bool LoadBMPModel(const std::string& fileName);
 
-	int GetColor() const noexcept override;
-	void SetColor(int col) noexcept override;
+	Screen::color_type GetColor() const noexcept override;
+	void SetColor(Screen::color_type col) noexcept override;
 public:
 	std::vector<ModelPixel> surfaces;
 
@@ -47,7 +47,7 @@ protected:
 	bool reloadable; // if not, reloadModels won't check timestamp
 	bool levelLoadReferenced; // for determining if it needs to be freed
 private:
-	int color;
+	Screen::color_type color;
 };
 
 #endif

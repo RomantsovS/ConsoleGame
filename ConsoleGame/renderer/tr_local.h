@@ -192,14 +192,14 @@ public:
 	void BeginLevelLoad() override;
 	void EndLevelLoad() override;
 
-	void SetColor(const int color) noexcept override;
+	void SetColor(const Screen::color_type color) noexcept override;
 
 	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) override;
 	void DrawBigChar(int x, int y, int ch) override;
-	void DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) override;
+	void DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) override;
 
-	void DrawPositionedString(Vector2 pos, const std::string& str, int color) override;
-	void DrawString(const std::string& text, const int color) override;
+	void DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) override;
+	void DrawString(const std::string& text, const Screen::color_type color) override;
 	void RenderCommandBuffers() override;
 
 	void SetHeight(int h) noexcept override { height = h; }
@@ -226,21 +226,22 @@ public:
 	std::shared_ptr<viewDef_t> viewDef;
 
 	// GUI drawing variables for surface creation
-	int currentColorNativeBytesOrder;
+	Screen::color_type currentColorNativeBytesOrder;
 
 	Screen screen;
-	bool update_frame;
-	bool update_info;
 
-	Screen::pos_type height, width, borderWidth, borderHeight;
+	Screen::pos_type width, height;// , borderWidth, borderHeight;
 	Screen::Pixel borderPixel;
 
-	int update_frame_time;
+	int update_frame_time = 0;
+
+	bool update_frame;
 };
 
 extern idRenderSystemLocal tr;
 
 extern idCVar r_skipBackEnd; // don't draw anything
+extern idCVar r_console_pos;
 
 /*
 ============================================================
@@ -317,13 +318,14 @@ TR_BACKEND_RENDERTOOLS
 
 void DrawFPS();
 
-void RB_AddDebugText(const std::string &text, const Vector2 &origin, const int color, const int lifetime = 0);
+void RB_AddDebugText(std::string text, const Vector2 &origin, const Screen::color_type color, const int lifetime = 0);
 void RB_ClearDebugText(int time);
-void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept;
+void RB_AddDebugLine(const Screen::color_type color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept;
 void RB_ClearDebugLines(int time) noexcept;
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
-void RB_DrawText(const std::string& text, const Vector2& origin, const int color);
+void RB_ShowDebugText();
+void RB_DrawText(const std::string& text, const Vector2& origin, const Screen::color_type color);
 
 extern idCVar max_debug_text;
 

@@ -4,11 +4,16 @@
 #include "tr_local.h"
 
 idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar text_info_max_height("text_info_max_height", "10", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT,
+	"");
+idCVar text_info_max_height("text_info_max_height", "10",
+	CVAR_SYSTEM | CVAR_INIT, "");
 
-Screen::Screen(pos_type ht, pos_type wd, Pixel back) noexcept :
-	height(ht), width(wd), backgroundPixel(back), cur_write_coord({0, 0}),
+Screen::Screen(pos_type wd, pos_type ht, Pixel back) noexcept
+	: width(wd),
+	height(ht),
+	backgroundPixel(back),
+	cur_write_coord({ 0, 0 }),
 	window_rect({ 0, 0, 1, 1 }) {
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
@@ -19,36 +24,42 @@ void Screen::init() {
 		common->FatalError("Bad h_console_std_out");
 
 	// Change console visual size to a minimum so ScreenBuffer can shrink
-		// below the actual visual size
+	// below the actual visual size
 	SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
 
 	// Set the size of the screen buffer
-	COORD coord = { (short)width, (short)height + static_cast<short>(text_info_max_height.GetInteger()) };
+	COORD coord = { static_cast<short>(width),
+		static_cast<short>(height + text_info_max_height.GetInteger()) };
 	if (!SetConsoleScreenBufferSize(h_console_std_out, coord)) {
-		common->FatalError("SetConsoleScreenBufferSize failed - (%s)\n", getLastErrorMsg());
+		common->FatalError("SetConsoleScreenBufferSize failed - (%s)\n",
+			getLastErrorMsg());
 	}
 
-	if(!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
+	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
+			getLastErrorMsg());
 
 	CONSOLE_CURSOR_INFO cursorInfo;
 
 	GetConsoleCursorInfo(h_console_std_out, &cursorInfo);
-	cursorInfo.bVisible = false; // set the cursor visibility
+	cursorInfo.bVisible = false;  // set the cursor visibility
 	SetConsoleCursorInfo(h_console_std_out, &cursorInfo);
 
 	CONSOLE_FONT_INFOEX cfi;
 	cfi.cbSize = sizeof(cfi);
 	cfi.nFont = 0;
-	cfi.dwFontSize.X = window_font_width.GetInteger(); // Width of each character in the font
-	cfi.dwFontSize.Y = window_font_height.GetInteger(); // Height
+	cfi.dwFontSize.X =
+		window_font_width.GetInteger();  // Width of each character in the font
+	cfi.dwFontSize.Y = window_font_height.GetInteger();  // Height
 	cfi.FontFamily = FF_DONTCARE;
 	cfi.FontWeight = FW_NORMAL;
-	wcscpy_s(cfi.FaceName, L"Consolas"); // Choose your font
-	SetCurrentConsoleFontEx(h_console_std_out, FALSE, &cfi);
+	wcscpy_s(cfi.FaceName, L"Consolas");  // Choose your font
+	if (!SetCurrentConsoleFontEx(h_console_std_out, FALSE, &cfi))
+		common->FatalError("SetCurrentConsoleFontEx  failed - (%s)\n",
+			getLastErrorMsg());
 
 	// Get screen buffer info and check the maximum allowed window size. Return
-		// error if exceeded, so user knows their dimensions/fontsize are too large
+	// error if exceeded, so user knows their dimensions/fontsize are too large
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	if (!GetConsoleScreenBufferInfo(h_console_std_out, &csbi))
 		common->FatalError("GetConsoleScreenBufferInfo");
@@ -58,22 +69,55 @@ void Screen::init() {
 		common->FatalError("Screen Width / Font Width Too Big");
 
 	// Set Physical Console Window Size
-	window_rect = { 0, 0, static_cast<short>(width) - 1, (short)height + static_cast<short>(text_info_max_height.GetInteger()) - 1 };
+	window_rect = { 0, 0, static_cast<short>(width) - 1,
+		static_cast<short>(height + text_info_max_height.GetInteger()) - 1 };
 	if (!SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect))
 		common->FatalError("SetConsoleWindowInfo wrong width or height");
 
-	// Set flags to allow mouse input		
+	// Set flags to allow mouse input
 	if (!SetConsoleMode(h_console_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
 		common->FatalError("SetConsoleMode std in");
 
 	// Allocate memory for screen buffer
 	buffer.resize(width * height);
-	//memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
-
-	contents.resize(height * width);
-	clearContents();
+	// memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
 
 	cur_write_coord = { 0, 0 };
+	/*
+	size_t cnt = 100'000;
+
+	auto start = std::chrono::steady_clock::now();
+
+	Vector2 v{ 1.0f, 2.0f };
+
+	for (int i = 0; i < cnt; ++i) {
+			LOG_SUM_DURATION("auto v1 = v + v;", microseconds);
+			auto v1 = v + v;
+			(void)v1;
+	}
+
+	auto finish = std::chrono::steady_clock::now();
+	auto dur = finish - start;
+	auto d = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	common->DPrintf("time: %d\n", d);
+
+	start = std::chrono::steady_clock::now();
+
+	for (int i = 0; i < cnt; ++i) {
+			LOG_SUM_DURATION("set(vec2_origin, backgroundPixel);", microseconds);
+			set(vec2_origin, backgroundPixel);
+	}
+
+	finish = std::chrono::steady_clock::now();
+	dur = finish - start;
+	d = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
+	common->DPrintf("time: %d\n", d);*/
+	/*
+	for (float i = 0; i < tr.screen.getHeight(); ++i) {
+			for (float j = 0; j < tr.screen.getWidth(); ++j) {
+					set(Vector2(j, i), Screen::Pixel('*', int(i) % 15));
+			}
+	}*/
 }
 
 Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
@@ -87,68 +131,57 @@ Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
 		common->Error("Screen width: %d out of range: %d", col, width);
 	}
 
-	//contents[row * width + col] = ch;  // set specified location to given value
-	buffer[row * width + col].Char.AsciiChar = ch.value;
-	buffer[row * width + col].Attributes = ch.color;
-	
-	return *this;                  // return this object as an lvalue
+	auto& char_info = buffer[row * width + col];
+	char_info.Char.AsciiChar = ch.value;
+	char_info.Attributes = ch.color;
+
+	return *this;  // return this object as an lvalue
 }
 
-void Screen::clear() {
-	std::fill(buffer.begin(), buffer.end(), CHAR_INFO());
-
-	//clearContents();
-}
+void Screen::clear() { std::fill(buffer.begin(), buffer.end(), CHAR_INFO()); }
 
 void Screen::clearTextInfo() noexcept {
 	DWORD written;
-	FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20, COORD({ 0, cur_write_coord.Y }), &written);
+	FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20,
+		COORD({ 0, cur_write_coord.Y }), &written);
 }
 
 void Screen::display() noexcept {
 	cur_write_coord = { 0, 0 };
 
-	/*for (pos_type y = 0; y < height; ++y) {
-		for (pos_type x = 0; x < width; ++x) {
-			buffer[y * width + x].Char.AsciiChar = contents[y * width + x].value;
-			buffer[y * width + x].Attributes = contents[y * width + x].color;
-		}
-	}
-	*/
-	WriteConsoleOutput(h_console_std_out, buffer.data(), { (short)width, (short)height }, { 0,0 }, &window_rect);
+	WriteConsoleOutput(h_console_std_out, buffer.data(),
+		{ (short)width, (short)height }, { 0, 0 }, &window_rect);
+
 	cur_write_coord.Y += height;
 }
+/*
+void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, int
+color_text, int color_background) { if (color_background == colorNone)
+				color_background = backgroundPixel.color;
 
-void Screen::clearContents() noexcept {
-	for(auto & pix : contents) {
-		pix = backgroundPixel;
-	}
+		std::vector<WORD> attribute(lenght, (WORD)(color_background << 4) |
+color_text | FOREGROUND_INTENSITY); DWORD written;
+
+		WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght,
+coord, &written); WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght,
+coord, &written);
 }
 
-void Screen::writeInColor(COORD coord, const char* symbol, size_t lenght, int color_text, int color_background) {
-	if (color_background == colorNone)
-		color_background = backgroundPixel.color;
+void Screen::writeInColor(const std::string& text, int color_text, int
+color_background) { std::string text_full_string = text;
 
-	std::vector<WORD> attribute(lenght, (WORD)(color_background << 4) | color_text | FOREGROUND_INTENSITY);
-	DWORD written;
-	
-	WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght, coord, &written);
-	WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght, coord, &written);
+		if (text.size() % width != 0) {
+				text_full_string.append(width - (text.size() % width), ' ');
+		}
+
+		writeInColor(cur_write_coord, text_full_string.c_str(),
+text_full_string.size(), color_text, color_background);
+
+		cur_write_coord.Y +=
+static_cast<SHORT>(ceil(static_cast<pos_type>(text.size()) / width)) + 1;
+		cur_write_coord.X = 0;
 }
-
-void Screen::writeInColor(const std::string& text, int color_text, int color_background) {
-	std::string text_full_string = text;
-
-	if (text.size() % width != 0) {
-		text_full_string.append(width - (text.size() % width), ' ');
-	}
-
-	writeInColor(cur_write_coord, text_full_string.c_str(), text_full_string.size(), color_text, color_background);
-
-	cur_write_coord.Y += static_cast<SHORT>(ceil(static_cast<pos_type>(text.size()) / width)) + 1;
-	cur_write_coord.X = 0;
-}
-
+*/
 bool Screen::readInput(unsigned& key) noexcept {
 	/*DWORD events;
 	INPUT_RECORD input_record;
@@ -158,7 +191,7 @@ bool Screen::readInput(unsigned& key) noexcept {
 	auto real_time = Sys_Milliseconds();
 
 	if (real_time - real_time_last < 100) {
-		return false;
+			return false;
 	}
 
 	real_time_last = real_time;
@@ -168,19 +201,19 @@ bool Screen::readInput(unsigned& key) noexcept {
 	GetNumberOfConsoleInputEvents(h_console_std_in, &events);
 
 	if (!events)
-		return false;
+			return false;
 
 	ReadConsoleInput(h_console_std_in, &input_record, 1, &events);
-	
+
 	switch (input_record.EventType)
 	{
 	case KEY_EVENT:
 	{
-		if (input_record.Event.KeyEvent.bKeyDown)
-		{
-			key = input_record.Event.KeyEvent.wVirtualKeyCode;
-			return true;
-		}
+			if (input_record.Event.KeyEvent.bKeyDown)
+			{
+					key = input_record.Event.KeyEvent.wVirtualKeyCode;
+					return true;
+			}
 	}
 	}*/
 
@@ -196,22 +229,24 @@ std::string Screen::waitConsoleInput() {
 
 	while (true)
 	{
-		ReadConsoleInput(h_console_std_in, &input_record, 1, &events);
+			ReadConsoleInput(h_console_std_in, &input_record, 1, &events);
 
-		if (input_record.EventType == KEY_EVENT && input_record.Event.KeyEvent.bKeyDown)
-		{
-			if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
-				return std::string();
-			else if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_RETURN)
-				return text_input;
-			else if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_SHIFT ||
-				input_record.Event.KeyEvent.wVirtualKeyCode == VK_CONTROL) {
-				continue;
+			if (input_record.EventType == KEY_EVENT &&
+	input_record.Event.KeyEvent.bKeyDown)
+			{
+					if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
+							return std::string();
+					else if (input_record.Event.KeyEvent.wVirtualKeyCode ==
+	VK_RETURN) return text_input; else if
+	(input_record.Event.KeyEvent.wVirtualKeyCode == VK_SHIFT ||
+							input_record.Event.KeyEvent.wVirtualKeyCode ==
+	VK_CONTROL) { continue;
+					}
+
+					text_input += input_record.Event.KeyEvent.uChar.AsciiChar;
+					WriteConsole(h_console_std_out,
+	&input_record.Event.KeyEvent.uChar.AsciiChar, 1, &written, NULL);
 			}
-
-			text_input += input_record.Event.KeyEvent.uChar.AsciiChar;
-			WriteConsole(h_console_std_out, &input_record.Event.KeyEvent.uChar.AsciiChar, 1, &written, NULL);
-		}
 	}*/
 
 	return "";
@@ -232,10 +267,12 @@ void Screen::clearConsoleOutut() noexcept {
 
 void Screen::setDrawOutputBuffer() {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
+			getLastErrorMsg());
 }
 
 void Screen::setStdOutputBuffer() {
 	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n", getLastErrorMsg());
+		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
+			getLastErrorMsg());
 }

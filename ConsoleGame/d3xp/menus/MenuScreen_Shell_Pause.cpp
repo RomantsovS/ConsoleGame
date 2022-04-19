@@ -70,7 +70,7 @@ void idMenuScreen_Shell_Pause::Update() noexcept {
 			buttonInfo = cmdBar->GetButton(idMenuWidget_CommandBar::BUTTON_JOY1);
 			buttonInfo->action.Set(widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED);
 
-			std::shared_ptr<idPlayer> player = gameLocal.GetLocalPlayer();
+			idPlayer* player = gameLocal.GetLocalPlayer();
 			if (player) {
 			}
 

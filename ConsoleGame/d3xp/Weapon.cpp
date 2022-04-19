@@ -46,7 +46,7 @@ Only called at player spawn time, not each weapon switch
 void idWeapon::SetOwner(std::shared_ptr<idPlayer> _owner) {
 	assert(owner.expired());
 	owner = _owner;
-	SetName(va("%s_weapon", _owner->name.c_str()));
+	SetName(va("%s_weap", _owner->name.c_str()));
 }
 
 /*

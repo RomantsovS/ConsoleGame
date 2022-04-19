@@ -39,6 +39,7 @@
 #include "../idlib/Lib.h"
 
 #include "sys/sys_filesystem.h"
+#include "sys/proflie.h"
 
 // framework
 #include "../framework/CmdSystem.h"

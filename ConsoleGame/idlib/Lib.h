@@ -15,25 +15,25 @@ public:
 #define MAX_PRINT_MSG			16384		// buffer size for our various printf routines
 
 // basic colors
-extern int colorNone;
-extern int colorBlack;
-extern int colorWhite;
-extern int colorBlack;
-extern int colorBlue;
-extern int colorGreen;
-extern int colorCyan;
-extern int colorRed;
-extern int colorMagenta;
-extern int colorBrown;
-extern int colorLightGray;
-extern int colorDarkGray;
-extern int colorLightBlue;
-extern int colorLightGreen;
-extern int colorLightCyan;
-extern int colorLightRed;
-extern int colorLightMagenta;
-extern int colorYellow;
-extern int colorWhite;
+extern unsigned short colorNone;
+extern unsigned short colorBlack;
+extern unsigned short colorWhite;
+extern unsigned short colorBlack;
+extern unsigned short colorBlue;
+extern unsigned short colorGreen;
+extern unsigned short colorCyan;
+extern unsigned short colorRed;
+extern unsigned short colorMagenta;
+extern unsigned short colorBrown;
+extern unsigned short colorLightGray;
+extern unsigned short colorDarkGray;
+extern unsigned short colorLightBlue;
+extern unsigned short colorLightGreen;
+extern unsigned short colorLightCyan;
+extern unsigned short colorLightRed;
+extern unsigned short colorLightMagenta;
+extern unsigned short colorYellow;
+extern unsigned short colorWhite;
 
 /*
 ===============================================================================

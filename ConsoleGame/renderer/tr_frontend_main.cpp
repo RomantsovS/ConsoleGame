@@ -3,8 +3,7 @@
 
 #include "tr_local.h"
 
-void R_RenderView(std::shared_ptr<viewDef_t> parms)
-{
+void R_RenderView(std::shared_ptr<viewDef_t> parms) {
 	tr.viewDef = parms;
 
 	// identify all the visible portal areas, and create view lights and view entities

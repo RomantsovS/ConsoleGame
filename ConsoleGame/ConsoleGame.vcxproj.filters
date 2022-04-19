@@ -339,6 +339,9 @@
     <ClInclude Include="renderer\Image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="idlib\sys\proflie.h">
+      <Filter>idlib\Sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer\Model.cpp">

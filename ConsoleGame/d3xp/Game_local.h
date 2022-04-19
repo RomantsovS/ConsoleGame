@@ -132,7 +132,7 @@ public:
 	int GetFrameNum() const noexcept { return framenum; };
 	int GetTime() const noexcept override { return time; };
 
-	std::shared_ptr<idPlayer> GetLocalPlayer() const;
+	idPlayer* GetLocalPlayer() const;
 
 	Vector2 SelectInitialSpawnPoint(idPlayer* player);
 
@@ -152,12 +152,12 @@ public:
 	template <typename T>
 	T GetRandomValue(T min, T max);
 
-	int GetRandomColor();
+	Screen::color_type GetRandomColor();
 
 	short GetHeight() noexcept { return height; }
 	short GetWidth() noexcept { return width; }
 
-	const std::vector<int>& GetColors() const noexcept { return colors; }
+	const std::vector<Screen::color_type>& GetColors() const noexcept { return colors; }
 	void AddRandomPoint();
 
 	int GetInfoUpdateTime() noexcept { return info_update_time; }
@@ -194,7 +194,7 @@ private:
 
 	short height, width;
 	int info_update_time;
-	std::vector<int> colors;
+	std::vector<Screen::color_type> colors;
 
 	std::default_random_engine rand_eng;
 

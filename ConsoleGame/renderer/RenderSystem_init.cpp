@@ -8,6 +8,8 @@
 #include "../sys/win32/win_local.h"
 
 idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
+idCVar r_update_frame_time("r_update_frame_time", "100", CVAR_SYSTEM | CVAR_RENDERER, "");
+idCVar r_console_pos("r_console_pos", "10", CVAR_SYSTEM | CVAR_RENDERER, "");
 
 /*
 =================
@@ -41,7 +43,7 @@ void idRenderSystemLocal::Clear() {
 
 	currentColorNativeBytesOrder = 15;
 
-	update_frame = update_info = true;
+	update_frame = true;
 }
 
 void idRenderSystemLocal::Init() {
@@ -58,20 +60,21 @@ void idRenderSystemLocal::Init() {
 
 	renderModelManager->Init();
 
-	borderHeight = 2;
-	borderWidth = 2;
+	//borderWidth = 0;
+	//borderHeight = 0;
 
-	height = game_height.GetInteger() + borderHeight * 2;
-	width = game_width.GetInteger() + borderWidth * 2;
+	width = game_width.GetInteger();// +borderWidth * 2;
+	height = game_height.GetInteger();// +borderHeight * 2;
 
 	borderPixel = Screen::Pixel('#', colorWhite);
 
-	screen = Screen(height + max_debug_text.GetInteger() * 10, width, Screen::Pixel(' ', colorBlack));
+	screen = Screen(width, height, Screen::Pixel(' ', colorBlack));
 	screen.init();
 	
 	viewDef = nullptr;
 
-	update_frame = update_info = true;
+	update_frame = true;
+	update_frame_time = r_update_frame_time.GetInteger();
 
 	r_initialized = true;
 

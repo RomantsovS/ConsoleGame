@@ -275,7 +275,7 @@ void idEntity::UpdateModelTransform() {
 	}
 }
 
-void idEntity::SetColor(const int color) {
+void idEntity::SetColor(const Screen::color_type color) {
 	renderEntity.color = color;
 
 	UpdateVisuals();
@@ -318,7 +318,7 @@ void idEntity::RestorePhysics(std::shared_ptr<idPhysics> phys) noexcept {
 }
 
 bool idEntity::RunPhysics() {
-	bool moved;
+	bool moved = false;
 
 	// don't run physics if not enabled
 	if (!(thinkFlags & TH_PHYSICS)) {

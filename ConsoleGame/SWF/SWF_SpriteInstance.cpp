@@ -140,7 +140,7 @@ void idSWFSpriteInstance::SetVisible(bool visible) noexcept {
 idSWFSpriteInstance::SetColor
 ========================
 */
-void idSWFSpriteInstance::SetColor(const int color) noexcept {
+void idSWFSpriteInstance::SetColor(const Screen::color_type color) noexcept {
 	for (auto& display : displayList) {
 		if (display.textInstance) {
 			display.textInstance->color = color;

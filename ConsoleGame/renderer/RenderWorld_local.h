@@ -44,9 +44,9 @@ public:
 
 	void DebugClearLines(int time) override;
 
-	void DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime) override;
-	void DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) noexcept override;
-	void DebugBounds(const int color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
+	void DrawTextToScreen(std::string text, const Vector2 &origin, const Screen::color_type color, const int lifetime) override;
+	void DebugLine(const Screen::color_type color, const Vector2& start, const Vector2& end, const int lifetime = 0, const bool depthTest = false) noexcept override;
+	void DebugBounds(const Screen::color_type color, const idBounds& bounds, const Vector2& org = vec2_origin, const int lifetime = 0) override;
 
 	std::string mapName; // ie: maps/tim_dm2.proc, written to demoFile
 

@@ -7,6 +7,7 @@ extern idCVar window_font_height;
 class Screen {
 public:
 	using pos_type = int;
+	using color_type = unsigned short;
 
 	/*enum class ConsoleColor {
 		None = -1,
@@ -31,11 +32,11 @@ public:
 	struct Pixel {
 		Pixel() = default;
 
-		Pixel(char val, int col) noexcept : value(val), color(col) {}
-		Pixel(const Pixel &p, int col) noexcept : value(p.value), color(col) {}
+		Pixel(char val, color_type col) noexcept : value(val), color(col) {}
+		Pixel(const Pixel &p, color_type col) noexcept : value(p.value), color(col) {}
 		
 		char value;
-		int color;
+		Screen::color_type color;
 	};
 
 	Screen() = default;
@@ -53,8 +54,8 @@ public:
 	Screen &set(pos_type row, pos_type col, const Screen::Pixel& ch);
 	Screen &set(const Vector2& pos, const Screen::Pixel& ch);
 	
-	pos_type getHeight() const noexcept { return height; }
 	pos_type getWidth() const noexcept { return width; }
+	pos_type getHeight() const noexcept { return height; }
 
 	const Pixel &getBackgroundPixel() const noexcept { return backgroundPixel; }
 
@@ -62,8 +63,8 @@ public:
 	void clearTextInfo() noexcept;
 
 	void display() noexcept;
-	void writeInColor(COORD coord, const char* symbol, size_t lenght, int color_text, int color_background = colorNone);
-	void writeInColor(const std::string& text, int color_text, int color_background = colorNone);
+	//void writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::color_type color_text, Screen::color_type color_background = colorNone);
+	//void writeInColor(const std::string& text, Screen::color_type color_text, Screen::color_type color_background = colorNone);
 
 	bool readInput(unsigned& key) noexcept;
 	std::string waitConsoleInput();
@@ -74,7 +75,7 @@ public:
 	void setDrawOutputBuffer();
 	void setStdOutputBuffer();
 private:
-	pos_type height, width;
+	pos_type width, height;
 	Pixel backgroundPixel;
 	//std::vector<char> buffer;
 	std::vector<CHAR_INFO> buffer;
@@ -82,18 +83,10 @@ private:
 	HANDLE h_console_std_out;
 	SMALL_RECT window_rect;
 
-	std::vector<Pixel> contents;
 	COORD cur_write_coord;
-
-	void clearContents() noexcept;
 };
 
-Screen::Pixel Screen::get(pos_type r, pos_type c) const noexcept {
-	pos_type row = r * width;      // compute row location
-	return contents[row + c]; // return character at the given column
-}
-
-inline Screen & Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
+inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
 

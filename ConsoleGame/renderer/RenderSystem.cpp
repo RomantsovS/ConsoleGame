@@ -34,7 +34,7 @@ void idRenderSystemLocal::RenderCommandBuffers() {
 idRenderSystem::~idRenderSystem() {
 }
 
-idRenderSystemLocal::idRenderSystemLocal() : update_frame_time(100) {
+idRenderSystemLocal::idRenderSystemLocal() {
 	Clear();
 }
 
@@ -46,7 +46,7 @@ idRenderSystemLocal::~idRenderSystemLocal() {
 idRenderSystemLocal::SetColor
 =============
 */
-void idRenderSystemLocal::SetColor(const int rgba) noexcept {
+void idRenderSystemLocal::SetColor(const Screen::color_type rgba) noexcept {
 	currentColorNativeBytesOrder = rgba;
 }
 
@@ -111,7 +111,7 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) {
+void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) {
 	//idVec4		color;
 	int			xx;
 
@@ -125,16 +125,16 @@ void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& stri
 	SetColor(colorWhite);
 }
 
-void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, int color) {
+void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) {
 	for (const auto& ch : str) {
 		screen.set(pos, Screen::Pixel(ch, color));
 		++pos.y;
 	}
 }
 
-void idRenderSystemLocal::DrawString(const std::string& text, const int color) {
+void idRenderSystemLocal::DrawString(const std::string& text, const Screen::color_type color) {
 	if (!text.empty()) {
-		tr.screen.writeInColor(text, color);
+		//tr.screen.writeInColor(text, color);
 	}
 }
 
@@ -155,7 +155,7 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) {
 void idRenderSystemLocal::Display() noexcept {
 	screen.display();
 }
-
+/*
 void idRenderSystemLocal::FillBorder() {
 	for (Screen::pos_type y = 0; y < height; ++y) {
 		for (Screen::pos_type x = 0; x < borderWidth; ++x)
@@ -173,7 +173,7 @@ void idRenderSystemLocal::FillBorder() {
 			screen.set(x, y, borderPixel);
 	}
 }
-
+*/
 void idRenderSystemLocal::ClearScreen() {
 	screen.clear();
 }
@@ -192,5 +192,5 @@ void idRenderSystemLocal::UpdateTimers() {
 		return;
 
 	tr.ClearScreen();
-	tr.FillBorder();
+	//tr.FillBorder();
 }

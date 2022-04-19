@@ -9,8 +9,7 @@ idCVar com_noSleep("com_noSleep", "0", CVAR_BOOL, "don't sleep if the game is ru
 idCVar timescale("timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f);
 
 void idCommonLocal::Frame() {
-	try
-	{
+	try {
 		if (quit_requested)
 			Quit();
 
@@ -120,7 +119,7 @@ void idCommonLocal::Frame() {
 	}
 }
 void idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
-	for(size_t i = 0; i < numGameFrames_; ++i)
+	for (size_t i = 0; i < numGameFrames_; ++i)
 		game->RunFrame();
 
 	Draw();

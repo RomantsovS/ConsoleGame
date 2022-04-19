@@ -35,7 +35,7 @@ public:
 	std::shared_ptr<idSWFScriptObject> scriptObject;
 
 	std::string text;
-	int color;
+	Screen::color_type color;
 
 	bool visible;
 };

@@ -47,22 +47,20 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	const auto modelNumSurfaces = model->NumSurfaces();
 
 	auto rEntSp = vEntity.entityDef.lock();
-	gsl::not_null<idRenderModel*> modelRawPtr = model.get();
+	idRenderModel* modelRawPtr = model.get();
 
 	if (rEntSp) {
-		const auto curPos = Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +
+		const auto curPos = /*Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +*/
 			rEntSp->parms.origin.GetIntegerVectorFloor();
 
-		for (int surfaceNum = 0; surfaceNum < modelNumSurfaces; surfaceNum++) {
+		for (int surfaceNum = 0; surfaceNum != modelNumSurfaces; surfaceNum++) {
 			const ModelPixel& surf = modelRawPtr->Surface(surfaceNum);
-
 			tr.screen.set(curPos + surf.origin, surf.screenPixel);
 		}
 	}
 }
 
-void R_AddModels()
-{
+void R_AddModels() {
 	//tr.viewDef->viewEntitys = R_SortViewEntities(tr.viewDef->viewEntitys);
 
 	//-------------------------------------------------

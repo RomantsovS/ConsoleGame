@@ -326,11 +326,11 @@ bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces
 	return true;
 }
 
-int idRenderModelStatic::GetColor() const noexcept {
+Screen::color_type idRenderModelStatic::GetColor() const noexcept {
 	return color;
 }
 
-void idRenderModelStatic::SetColor(int col) noexcept {
+void idRenderModelStatic::SetColor(Screen::color_type col) noexcept {
 	/*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
 	{
 		iter->screenPixel.color = col;

@@ -45,6 +45,8 @@ typedef struct CrtMemBlockHeader
 	byte		gap[4];								// Buffer just before (lower than) the user's memory:
 } CrtMemBlockHeader;
 
+DEF_LOGS;
+
 /*
 ==================
 Sys_AllocHook
@@ -52,8 +54,7 @@ Sys_AllocHook
 	called for every malloc/new/free/delete
 ==================
 */
-int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char* szFileName, int nLine)
-{
+int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, long lRequest, const unsigned char* szFileName, int nLine) {
 	CrtMemBlockHeader* pHead;
 	byte* temp;
 
@@ -376,6 +377,7 @@ BOOL WINAPI ConsoleHandler(DWORD CEvent) noexcept {
 
 int main(int argc, const char * const * argv) {
 #ifdef DEBUG
+	/*
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetDbgFlag(0);
 	_CrtSetAllocHook(Sys_AllocHook);
@@ -392,7 +394,7 @@ int main(int argc, const char * const * argv) {
 		"Memory Allocation Log File for Example Program, run at %s on %s.\n",
 		timeStr, dateStr);
 	fputs(lineStr, logFile);
-
+	*/
 	//_CrtSetBreakAlloc(1143);
 #endif
 

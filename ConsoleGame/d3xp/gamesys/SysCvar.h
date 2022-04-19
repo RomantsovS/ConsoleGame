@@ -4,6 +4,7 @@
 extern idCVar g_showCollisionModels;
 extern idCVar g_showCollisionTraces;
 extern idCVar g_maxShowDistance;
+extern idCVar g_showEntityInfo;
 
 extern idCVar pm_walkspeed;
 extern idCVar pm_runspeed;

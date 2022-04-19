@@ -37,15 +37,15 @@ public:
 
 	// font support
 
-	virtual void SetColor(const int rgba) = 0;
+	virtual void SetColor(const Screen::color_type rgba) = 0;
 
 	virtual void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) = 0;
 
 	virtual void DrawBigChar(int x, int y, int ch) = 0;
-	virtual void DrawBigStringExt(int x, int y, const std::string& string, const int setColor, bool forceColor) = 0;
+	virtual void DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) = 0;
 
-	virtual void DrawPositionedString(Vector2 pos, const std::string& str, int color) = 0;
-	virtual void DrawString(const std::string& text, const int color) = 0;
+	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) = 0;
+	virtual void DrawString(const std::string& text, const Screen::color_type color) = 0;
 
 	virtual void RenderCommandBuffers() = 0;
 

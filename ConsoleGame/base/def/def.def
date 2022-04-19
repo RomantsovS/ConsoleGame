@@ -38,7 +38,7 @@ entityDef mushroom {
 	"spawnclass"			"AISimple"
 	"model"					"mushroom"
 	"size"					"16 16"
-	"speed"					"20"
+	"speed"					"10"
 	"color"					"10"
 }
 
@@ -80,7 +80,7 @@ entityDef turtle {
 	"spawnclass"			"AISimple"
 	"model"					"turtle"
 	"size"					"16 23"
-	"speed"					"20"
+	"speed"					"10"
 	"color"					"11"
 }
 
@@ -107,7 +107,7 @@ entityDef projectile_grenade {
 	"def_damage"				"damage_grenadeDirect"
 
 	"health"					"0"					// amount of damage projectile can take if damaged (0 means it can't be destroyed)
-	"velocity"					"100 0"			// how fast the projectile leaves the gun (or distance if fuse is 0)
+	"velocity"					"150 0"			// how fast the projectile leaves the gun (or distance if fuse is 0)
 	"fuse"						"0"					// how long before the projectile is removed or self-detonates.  Use 0 for beam weapons (velocity == distance).
 						
 	"detonate_on_fuse"			"1"					// whether projectile should detonate when it's fuse runs out

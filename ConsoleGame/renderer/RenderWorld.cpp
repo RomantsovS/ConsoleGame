@@ -251,15 +251,15 @@ idRenderWorldLocal::DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-void idRenderWorldLocal::DrawTextToScreen(const std::string &text, const Vector2 &origin, const int color, const int lifetime = 0) {
-	RB_AddDebugText(text, origin, color, lifetime);
+void idRenderWorldLocal::DrawTextToScreen(std::string text, const Vector2 &origin, const Screen::color_type color, const int lifetime = 0) {
+	RB_AddDebugText(std::move(text), origin, color, lifetime);
 }
 
-void idRenderWorldLocal::DebugLine(const int color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) noexcept {
+void idRenderWorldLocal::DebugLine(const Screen::color_type color, const Vector2& start, const Vector2& end, const int lifetime, const bool depthTest) noexcept {
 	RB_AddDebugLine(color, start, end, lifetime, depthTest);
 }
 
-void idRenderWorldLocal::DebugBounds(const int color, const idBounds& bounds, const Vector2& org, const int lifetime) {
+void idRenderWorldLocal::DebugBounds(const Screen::color_type color, const idBounds& bounds, const Vector2& org, const int lifetime) {
 	int i;
 	Vector2 v[4];
 

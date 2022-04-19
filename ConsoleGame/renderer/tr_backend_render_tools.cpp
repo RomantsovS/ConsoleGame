@@ -24,7 +24,7 @@ idCVar max_debug_text("max_debug_text", "4", CVAR_TOOL, "", 0, MAX_DEBUG_TEXT);
 struct debugText_t {
 	std::string text;
 	Vector2 origin;
-	int color;
+	Screen::color_type color;
 	int lifeTime;
 };
 
@@ -72,10 +72,10 @@ void RB_ClearDebugText(int time) {
 RB_AddDebugText
 ================
 */
-void RB_AddDebugText(const std::string &text, const Vector2 &origin, const int color, const int lifetime) {
+void RB_AddDebugText(std::string text, const Vector2 &origin, const Screen::color_type color, const int lifetime) {
 	if (rb_numDebugText < max_debug_text.GetInteger()) {
-		auto debugText = &rb_debugText[rb_numDebugText++];
-		debugText->text = text;
+		auto debugText = &rb_debugText.at(rb_numDebugText++);
+		debugText->text = std::move(text);
 		debugText->origin = origin;
 		debugText->color = color;
 		debugText->lifeTime = rb_debugTextTime + lifetime;
@@ -91,11 +91,12 @@ RB_DrawText
   align can be 0-left, 1-center (default), 2-right
 ================
 */
-void RB_DrawText(const std::string &text, const Vector2 &origin, const int color) {
+/*
+void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::color_type color) {
 	if (!text.empty()) {
 		tr.screen.writeInColor(text, color);
 	}
-}
+}*/
 
 /*
 ================
@@ -110,7 +111,7 @@ void RB_ShowDebugText() {
 	}
 
 	for (auto& text : rb_debugText) {
-		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight() + (i + 1) * 10, text.text, text.color, true);
+		renderSystem->DrawBigStringExt(0, r_console_pos.GetInteger() + (i + 1) * 10, text.text, text.color, true);
 		++i;
 	}
 }
@@ -146,7 +147,7 @@ void RB_ClearDebugLines(int time) noexcept {
 	rb_numDebugLines = num;
 }
 
-void RB_AddDebugLine(const int color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept {
+void RB_AddDebugLine(const Screen::color_type color, const Vector2& start, const Vector2& end, const int lifeTime, const bool depthTest) noexcept {
 	debugLine_t* line;
 
 	if (rb_numDebugLines < MAX_DEBUG_LINES) {
@@ -180,11 +181,11 @@ void RB_ShowDebugLines() {
 	for (i = 0; i < rb_numDebugLines; i++, line++) {
 		if (!line->depthTest) {
 			for (x_pos = static_cast<Screen::pos_type>(line->start.x); x_pos <= line->end.x; ++x_pos) {
-				tr.screen.set(x_pos + tr.borderHeight, static_cast<Screen::pos_type>(line->start.y) + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen.set(x_pos/* + tr.borderHeight*/, static_cast<Screen::pos_type>(line->start.y)/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
 			}
 			
 			for (y_pos = static_cast<Screen::pos_type>(line->start.y); y_pos <= line->end.y; ++y_pos) {
-				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) + tr.borderHeight, y_pos + tr.borderWidth, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) /* + tr.borderHeight*/, y_pos/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
 			}
 		}
 	}
@@ -198,5 +199,5 @@ RB_RenderDebugTools
 
 void RB_RenderDebugTools() {
 	RB_ShowDebugLines();
-	RB_ShowDebugText();
+	//RB_ShowDebugText();
 }

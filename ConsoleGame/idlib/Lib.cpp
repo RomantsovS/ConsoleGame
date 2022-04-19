@@ -11,23 +11,23 @@ idCommon* idLib::common = nullptr;
 ===============================================================================
 */
 
-int colorNone = -1;
-int colorBlack = 0;
-int colorBlue = 1;
-int colorGreen = 2;
-int colorCyan = 3;
-int colorRed = 4;
-int colorMagenta = 5;
-int colorBrown = 6;
-int colorLightGray = 7;
-int colorDarkGray = 8;
-int colorLightBlue = 9;
-int colorLightGreen = 10;
-int colorLightCyan = 11;
-int colorLightRed = 12;
-int colorLightMagenta = 13;
-int colorYellow = 14;
-int colorWhite = 15;
+Screen::color_type colorNone = -1;
+Screen::color_type colorBlack = 0;
+Screen::color_type colorBlue = 1;
+Screen::color_type colorGreen = 2;
+Screen::color_type colorCyan = 3;
+Screen::color_type colorRed = 4;
+Screen::color_type colorMagenta = 5;
+Screen::color_type colorBrown = 6;
+Screen::color_type colorLightGray = 7;
+Screen::color_type colorDarkGray = 8;
+Screen::color_type colorLightBlue = 9;
+Screen::color_type colorLightGreen = 10;
+Screen::color_type colorLightCyan = 11;
+Screen::color_type colorLightRed = 12;
+Screen::color_type colorLightMagenta = 13;
+Screen::color_type colorYellow = 14;
+Screen::color_type colorWhite = 15;
 
 /*
 ===============

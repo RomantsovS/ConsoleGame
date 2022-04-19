@@ -2,6 +2,7 @@
 #pragma hdrstop
 
 #include "Common_local.h"
+#include "../renderer/tr_local.h"
 
 // the console will query the cvar and command systems for
 // command completion information
@@ -66,8 +67,13 @@ int idConsoleLocal::DrawFPS(int y) {
 		fps = (fps + 500) / 1000;
 	}
 
-	const std::string s = va("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime), game->GetTime());
-	renderSystem->DrawBigStringExt(0, y, s, colorWhite, true);
+	if (tr.update_frame) {
+		//const std::string s = va("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime), game->GetTime());
+		//renderSystem->DrawBigStringExt(0, y, s, colorWhite, true);
+
+		renderSystem->DrawBigStringExt(0, 0, string_format("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime),
+			game->GetTime()), colorWhite, true);
+	}
 
 	return y;
 }
@@ -238,7 +244,8 @@ void idConsoleLocal::Draw(bool forceFullScreen) {
 		std::string console_text = std::string(":").append(consoleField.GetBuffer());
 		console_text.append("_");
 
-		renderSystem->DrawBigStringExt(0, renderSystem->GetHeight(), console_text, colorWhite, true);
+		renderSystem->DrawBigStringExt(0, r_console_pos.GetInteger(), console_text, colorWhite, true);
+		RB_ShowDebugText();
 	}
 
 	if (com_showFPS.GetBool()) {

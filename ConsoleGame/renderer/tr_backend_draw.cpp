@@ -14,11 +14,9 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 	//-------------------------------------------------
 	RB_RenderDebugTools();
 
-	if (tr.update_frame) {
-		tr.Display();
+	tr.Display();
 
-		tr.update_frame = false;
-	}
+	tr.update_frame = false;
 }
 
 /*

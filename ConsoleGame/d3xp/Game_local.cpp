@@ -7,13 +7,15 @@ std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this w
 
 // the rest of the engine will only reference the "game" variable, while all local aspects stay hidden
 idGameLocal gameLocal;
-idGame *game = &gameLocal;
+idGame* game = &gameLocal;
 
 idCVar game_width("game_width", "120", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_height("game_height", "40", CVAR_SYSTEM | CVAR_INIT, "");
 
 idCVar game_add_point_delay("game_add_point_delay", "1000", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT, "");
+
+idCVar r_info_update_frame_time("r_info_update_frame_time", "100", CVAR_SYSTEM | CVAR_INIT, "");
 
 void AddRandomPoints(const idCmdArgs& args) {
 	auto cnt = max(game_add_point_count.GetInteger(), 1);
@@ -22,7 +24,7 @@ void AddRandomPoints(const idCmdArgs& args) {
 		gameLocal.AddRandomPoint();
 }
 
-idGameLocal::idGameLocal() : info_update_time(200) {
+idGameLocal::idGameLocal() {
 	Clear();
 }
 
@@ -33,6 +35,8 @@ void idGameLocal::Init() {
 	Printf("--------- Initializing Game ----------\n");
 	Printf("gamename: %s\n", GAME_VERSION.c_str());
 	Printf("gamedate: %s\n", __DATE__);
+
+	info_update_time = r_info_update_frame_time.GetInteger();
 
 	// register game specific decl types
 	declManager->RegisterDeclType("model", declType_t::DECL_MODELDEF, idDeclAllocator<idDeclModelDef>);
@@ -116,7 +120,7 @@ void idGameLocal::Shutdown() {
 	Printf("--------------------------------------\n");
 }
 
-void idGameLocal::InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) {
+void idGameLocal::InitFromNewMap(const std::string& mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) {
 	if (!mapFileName.empty()) {
 		MapShutdown();
 	}
@@ -183,7 +187,7 @@ avoid the fast pre-cache check associated with each entityDef
 void idGameLocal::CacheDictionaryMedia(gsl::not_null<const idDict*> dict) {
 	auto kv = dict->MatchPrefix("model");
 	//while (kv) {
-	if(kv) {
+	if (kv) {
 		if (!kv->second.empty()) {
 			//declManager->MediaPrint("Precaching model %s\n", kv->GetValue().c_str());
 			// precache model/animations
@@ -216,7 +220,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 	args.Set("classname", gameLocal.world->spawnArgs.GetString("def_player", "player_doommarine"));
 
 	//args.Set("model", "pixel");
-	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
+	args.Set("color", std::to_string(static_cast<Screen::color_type>(gameLocal.GetRandomColor())));
 	args.Set("origin", world->spawnArgs.GetString("player_origin", "10, 10"));
 
 	std::shared_ptr<idEntity> ent;
@@ -240,16 +244,16 @@ draw phase even happening.  This just returns client 0, which will
 be correct for single player.
 ================
 */
-std::shared_ptr<idPlayer> idGameLocal::GetLocalPlayer() const {
+idPlayer* idGameLocal::GetLocalPlayer() const {
 	if (GetLocalClientNum() < 0) {
 		return NULL;
 	}
 
-	if (!entities[GetLocalClientNum()] || !entities[GetLocalClientNum()]->IsType(idPlayer::Type)) {
+	if (!entities.at(GetLocalClientNum()) || !entities.at(GetLocalClientNum())->IsType(idPlayer::Type)) {
 		// not fully in game yet
 		return NULL;
 	}
-	return std::static_pointer_cast<idPlayer>(entities[GetLocalClientNum()]);
+	return static_cast<idPlayer*>(entities[GetLocalClientNum()].get());
 }
 
 /*
@@ -308,9 +312,18 @@ void idGameLocal::RunFrame() {
 	gameRenderWorld->DebugClearLines(time + 1);
 
 	static auto lastTimePointSpawn = time;
-	if (time - lastTimePointSpawn > world->spawnArgs.GetInt("game_add_point_delay", 1000)) {
+	static int game_add_point_delay = world->spawnArgs.GetInt("game_add_point_delay");
+
+	if (game_add_point_delay == 0) {
+		for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 1000); ++i)
+			AddRandomPoint();
+		world->spawnArgs.SetInt("game_add_point_delay", -1);
+		game_add_point_delay = -1;
+	}
+
+	if (game_add_point_delay > 0 && time - lastTimePointSpawn > game_add_point_delay) {
 		lastTimePointSpawn = time;
-		
+
 		for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0); ++i) {
 			AddRandomPoint();
 		}
@@ -366,24 +379,24 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 	// Run thinks on any players that have queued up usercmds for networking.
 	//assert(playerNumber < MAX_PLAYERS);
 
-	if (!entities[playerNumber]) {
+	if (!entities.at(playerNumber)) {
 		return;
 	}
 
-	std::shared_ptr<idPlayer> player = std::dynamic_pointer_cast<idPlayer>(entities[playerNumber]);
+	gsl::not_null<idPlayer*> player = dynamic_cast<idPlayer*>(entities.at(playerNumber).get());
 
 	// Only run a single userCmd each game frame for local players, otherwise when
 	// we are running < 60fps things like footstep sounds may get started right on top
 	// of each other instead of spread out in time.
 	if (player->IsLocallyControlled()) {
 		auto cmd = usercmdGen->GetCurrentUsercmd();
-		RunSingleUserCmd(cmd, player.get());
+		RunSingleUserCmd(cmd, player);
 		return;
 	}
 }
 
 bool idGameLocal::Draw(int clientNum) {
-	std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities[clientNum]);
+	std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities.at(clientNum));
 
 	if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
 		return false;
@@ -408,13 +421,13 @@ void idGameLocal::RunDebugInfo() {
 	else
 		return;
 
-	const std::shared_ptr<idPlayer>& player = GetLocalPlayer();
+	const idPlayer* player = GetLocalPlayer();
 	if (!player) {
 		return;
 	}
 
 	char buf[256];
-	
+
 	size_t num_spawned_entities = 0, num_active_entities = 0;
 
 	for (auto ent = spawnedEntities.Prev(); ent != NULL; ent = ent->spawnNode.Prev())
@@ -423,13 +436,12 @@ void idGameLocal::RunDebugInfo() {
 	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next())
 		++num_active_entities;
 
-	sprintf_s(buf, "num ents %3d, active ents %3d", num_spawned_entities, num_active_entities);
+	if (g_showEntityInfo.GetBool()) {
+		gameRenderWorld->DrawTextToScreen(string_format("num ents %3d, active ents %3d", num_spawned_entities,
+			num_active_entities), Vector2(), colorYellow, info_update_time + 1);
+		
+		clip.PrintStatistics();
 
-	gameRenderWorld->DrawTextToScreen(buf, Vector2(), colorYellow, info_update_time + 1);
-
-	clip.PrintStatistics();
-
-	if (/*g_showEntityInfo.GetBool()*/true) {
 		/*idMat3		axis = player->viewAngles.ToMat3();
 		idVec3		up = axis[2] * 5.0f;
 		idBounds	viewTextBounds(origin);
@@ -471,15 +483,12 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			if (true || ent->IsActive())
-			{
-				static char buf[256];
+			if (ent->IsActive()) {
 				auto phys = ent->GetPhysics();
-				sprintf_s(buf, "ent %15s pos[%5.2f %5.2f] vel[%6.2f %6.2f] rest %d", ent->GetName().c_str(),
+				auto str = string_format("%10s p[%5.2f %5.2f] v[%6.2f %6.2f] rest %d", ent->GetName().c_str(),
 					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,
 					phys->IsAtRest());
-
-				gameRenderWorld->DrawTextToScreen(buf, Vector2(), ent->GetRenderEntity()->color, info_update_time + 1);
+				gameRenderWorld->DrawTextToScreen(std::move(str), Vector2(), ent->GetRenderEntity()->color, info_update_time + 1);
 			}
 		}
 	}
@@ -715,7 +724,7 @@ void idGameLocal::Clear() {
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
 	world = nullptr;
-	
+
 	clip.Shutdown();
 
 	framenum = 0;
@@ -923,7 +932,7 @@ void idGameLocal::SpawnMapEntities() {
 		CacheDictionaryMedia(&args);
 
 		SpawnEntityDef(args);
-			num++;
+		num++;
 	}
 
 	Printf("...%i entities spawned\n\n", num);
@@ -938,9 +947,6 @@ void idGameLocal::MapPopulate() {
 	// before the physics are run so entities can bind correctly
 	Printf("==== Processing events ====\n");
 	idEvent::ServiceEvents();
-
-	/*for(int i = 0; i < 1; ++i)
-		AddRandomPoint();*/
 }
 
 void idGameLocal::MapClear(bool clearClients) noexcept {
@@ -1015,8 +1021,8 @@ void idGameLocal::AddRandomPoint() {
 	args.Set("origin", origin.ToString());
 	args.Set("axis", axis.ToString());
 	args.Set("size", va("%s %s", std::to_string(size_x).c_str(), std::to_string(size_y).c_str()));
-	args.Set("color", std::to_string(static_cast<int>(gameLocal.GetRandomColor())));
-	
+	args.Set("color", std::to_string(static_cast<Screen::color_type>(gameLocal.GetRandomColor())));
+
 	int speed = def->dict.GetInt("speed");
 	auto rand = gameLocal.GetRandomValue(0.0f, 1.0f);
 	if (gameLocal.GetRandomValue(0.0f, 1.0f) > 0)
@@ -1041,8 +1047,8 @@ void idGameLocal::AddRandomPoint() {
 	gameLocal.SpawnEntityDef(args, &ent);*/
 }
 
-int idGameLocal::GetRandomColor() {
-	std::uniform_int_distribution<int> u_c(0, colors.size() - 1);
+Screen::color_type idGameLocal::GetRandomColor() {
+	std::uniform_int_distribution<Screen::color_type> u_c(0, colors.size() - 1);
 
 	int col(u_c(rand_eng));
 
@@ -1079,9 +1085,9 @@ std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classde
 	return std::static_pointer_cast<idEntity>(obj);
 }
 
-bool idGameLocal::SpawnEntityDef(const idDict & args, std::shared_ptr<idEntity>* ent) {
+bool idGameLocal::SpawnEntityDef(const idDict& args, std::shared_ptr<idEntity>* ent) {
 	std::string classname, spawn, error, name;
-	idTypeInfo *cls;
+	idTypeInfo* cls;
 	std::shared_ptr<idClass> obj;
 
 	if (ent) {
@@ -1153,7 +1159,7 @@ const idDict* idGameLocal::FindEntityDefDict(const std::string& name, bool makeD
 	return decl ? &decl->dict : nullptr;
 }
 
-void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict & spawnArgsToCopy) {
+void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict& spawnArgsToCopy) {
 	int spawn_entnum;
 
 	if (spawnCount >= (1 << (32 - GENTITYNUM_BITS))) {
