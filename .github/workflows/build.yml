@@ -10,28 +10,56 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-
+      with:
+        fetch-depth: 0
+          
+    - name: Install wget
+      shell: bash
+      run: |
+        choco install wget --no-progress
+        
+    - name: Prepare Sonar scanner
+      shell: bash
+      run: |
+        wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.1.2450-windows.zip
+        unzip -q sonar-scanner-cli-4.6.1.2450-windows.zip
+        echo "${{github.workspace}}/sonar-scanner-4.6.1.2450-windows/bin/" >> $GITHUB_PATH
+        wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+        unzip -q build-wrapper-win-x86.zip          
+        echo "${{github.workspace}}/build-wrapper-win-x86/" >> $GITHUB_PATH
+         
     - name: install vcpkg
+      shell: bash
       run: |
         cd ..
         git clone https://github.com/Microsoft/vcpkg.git
         cd vcpkg
-        .\bootstrap-vcpkg.bat
+        sh bootstrap-vcpkg.sh
         ./vcpkg.exe integrate install
-        .\vcpkg.exe install ms-gsl
-    - name: MSBuild
+        ./vcpkg.exe install ms-gsl
+        
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+  
+    - name: echo MSBuild
+      shell: bash
       run: |
-          cd "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\"
-          ./MSBuild.exe $Env:GITHUB_WORKSPACE\ConsoleGame.sln
-          cd $Env:GITHUB_WORKSPACE
-          pwd
-          ls
-          cd ConsoleGame
-          ls
-          cd build
-          ls
+        msbuild.exe -version
+          
+    - name: Compile
+      shell: bash
+      run: |
+        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln //t:Rebuild
+        
+    - name: SonarCloud Scan
+      shell: bash
+      run: |
+        sonar-scanner.bat
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           
     - uses: actions/upload-artifact@v2
       with:
         name: ConsoleGame
-        path: $Env:GITHUB_WORKSPACE\ConsoleGame\build\Win32\Debug\ConsoleGame.exe
+        path: .\build\Win32\Debug\ConsoleGame.exe
