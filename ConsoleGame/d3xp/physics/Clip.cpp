@@ -246,7 +246,7 @@ int idClipModel::CheckModel(const std::string& name) {
 	return collisionModelManager->LoadModel(name);
 }
 
-void idClipModel::Unlink() noexcept  {
+void idClipModel::Unlink() noexcept {
 	for (auto link = clipLinks; link; link = clipLinks) {
 		clipLinks = link->nextLink;
 		if (link->prevInSector) {
@@ -527,8 +527,8 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 	int i, num;
 	std::vector<idClipModel*> clipModelList(1);
 	idBounds traceBounds;
-	float radius;
-	trace_t trace;
+	//float radius;
+	trace_t trace{};
 
 	if (TestHugeTranslation(results, mdl, start, end)) {
 		return true;
@@ -554,11 +554,11 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 
 	if (!trm) {
 		traceBounds.FromPointTranslation(start, results.endpos - start);
-		radius = 0;
+		//radius = 0;
 	}
 	else {
 		traceBounds.FromBoundsTranslation(trm->bounds, start, results.endpos - start);
-		radius = trm->bounds.GetRadius();
+		//radius = trm->bounds.GetRadius();
 	}
 
 	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList);
@@ -590,20 +590,17 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 		}
 	}
 
-	auto res = results.fraction < 1.0f;
-
-	return res;
+	return results.fraction < 1.0f;
 }
 
 bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
-	const idClipModel* mdl, int contentMask, const idEntity* passEntity)
-{
+	const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	idClip::numMotions++;
 
 	//int i, num;
 	//idClipModel* touch, * clipModelList[MAX_GENTITIES];
 	//Vector2 dir, endPosition;
-	idBounds traceBounds;
+	//idBounds traceBounds;
 	//float radius;
 	//trace_t translationalTrace, rotationalTrace, trace;
 	//const idTraceModel* trm;
@@ -635,8 +632,7 @@ bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 }
 
 int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
-	const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask,
-	const idEntity* passEntity) {
+	const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	int i, j, num, n, numContacts;
 	std::shared_ptr<idClipModel> touch;
 	std::vector<idClipModel*> clipModelList(1);
@@ -704,8 +700,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 }
 
 int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
-	int maxCount) const
-{
+	int maxCount) const {
 	listParms_t parms;
 
 	if (bounds[0][0] > bounds[1][0] ||
@@ -713,7 +708,7 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 		//||bounds[0][2] > bounds[1][2]
 		) {
 		// we should not go through the tree for degenerate or backwards bounds
-		//assert(false);
+		assert(false);
 		return 0;
 	}
 
@@ -730,8 +725,7 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 	return parms.count;
 }
 
-std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const idBounds& bounds, Vector2& maxSector)
-{
+std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const idBounds& bounds, Vector2& maxSector) {
 	int				i;
 	Vector2			size;
 	idBounds		front, back;

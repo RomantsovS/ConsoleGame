@@ -179,11 +179,12 @@ inline bool idBounds::ContainsPoint(const Vector2& p) const {
 }
 
 inline bool idBounds::IntersectsBounds(const idBounds& a) const {
-	if (a.b[1][0] < b[0][0] || a.b[1][1] < b[0][1] /*|| a.b[1][2] < b[0][2]*/
-		|| a.b[0][0] > b[1][0] || a.b[0][1] > b[1][1] /*|| a.b[0][2] > b[1][2]*/) {
+	/*if (a.b[1][0] < b[0][0] || a.b[1][1] < b[0][1]
+		|| a.b[0][0] > b[1][0] || a.b[0][1] > b[1][1]) {
 		return false;
-	}
-	return true;
+	}*/
+	return a.b[0][0] <= b[1][0] && a.b[1][0] >= b[0][0]
+		&& a.b[0][1] <= b[1][1] && a.b[1][1] >= b[0][1];
 }
 
 inline bool idBounds::ContainsBounds(const idBounds& a) const {

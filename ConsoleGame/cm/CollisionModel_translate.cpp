@@ -39,8 +39,7 @@ void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t* tw, const idTraceMod
 }
 
 void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& start, const Vector2& end,
-	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin)
-{
+	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) {
 	Vector2 last_step_dist, cur_step_dist;
 	int cur_step;
 
@@ -50,17 +49,15 @@ void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& 
 	
 	int num_steps = static_cast<int>(std::ceil(idMath::Fabs(dir[max_dimension]) / CM_POINT_SIZE));
 	
-	if (num_steps > 1)
-	{
+	if (num_steps > 1) {
 		Vector2 step_dist = dir / num_steps;
-		if (step_dist.LengthSqr() >= vec3_pointEpsilon.LengthSqr())
-		{
+		if (step_dist.LengthSqr() >= vec3_pointEpsilon.LengthSqr()) {
 			num_steps = static_cast<int>(num_steps / CM_BOX_EPSILON);
 			step_dist = dir / num_steps;
 		}
 
-		for (last_step_dist = vec2_origin, cur_step_dist = step_dist, cur_step = 0; cur_step < num_steps; last_step_dist = cur_step_dist, cur_step_dist += step_dist)
-		{
+		for (last_step_dist = vec2_origin, cur_step_dist = step_dist, cur_step = 0; cur_step < num_steps;
+			last_step_dist = cur_step_dist, cur_step_dist += step_dist) {
 			TranslationIter(results, start + last_step_dist, start + cur_step_dist, trm, contentMask, model, modelOrigin);
 			// if there is a collision
 			if (results->fraction < 1.0f) {
@@ -78,8 +75,7 @@ void idCollisionModelManagerLocal::Translation(trace_t* results, const Vector2& 
 }
 
 void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vector2& start, const Vector2& end,
-	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin)
-{
+	const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) {
 	int i;
 	cm_trmVertex_t* vert;
 	static cm_traceWork_t tw;

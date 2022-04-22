@@ -18,7 +18,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	// globals we really should pass in...
 	const auto viewDef = tr.viewDef;
 
-	auto entityDef = vEntity.entityDef.lock();
+	auto entityDef = vEntity.entityDef;
 	const auto renderEntity = &entityDef->parms;
 	//const idRenderWorldLocal * world = entityDef->world;
 
@@ -34,7 +34,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	//---------------------------
 	// create a dynamic model if the geometry isn't static
 	//---------------------------
-	auto model = R_EntityDefDynamicModel(entityDef.get());
+	auto model = R_EntityDefDynamicModel(entityDef);
 	if (!model || model->NumSurfaces() <= 0) {
 		return;
 	}
@@ -46,7 +46,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	const auto model_col = renderEntity->color;
 	const auto modelNumSurfaces = model->NumSurfaces();
 
-	auto rEntSp = vEntity.entityDef.lock();
+	auto rEntSp = vEntity.entityDef;
 	idRenderModel* modelRawPtr = model.get();
 
 	if (rEntSp) {

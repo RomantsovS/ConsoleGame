@@ -179,7 +179,7 @@ void idRenderWorldLocal::FreeDefs() {
 	// free all entityDefs
 	for (size_t i = 0; i < entityDefs.size(); i++) {
 		auto mod = entityDefs[i];
-		if (mod && mod->world.lock().get() == this)
+		if (mod && mod->world == this)
 		{
 			FreeEntityDef(i);
 			entityDefs[i] = nullptr;

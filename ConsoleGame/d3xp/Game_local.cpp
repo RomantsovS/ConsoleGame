@@ -225,7 +225,7 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 
 	std::shared_ptr<idEntity> ent;
 	if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
-		Error("Failed to spawn player as '%s'", args.GetString("classname").c_str());
+		//Error("Failed to spawn player as '%s'", args.GetString("classname").c_str());
 	}
 
 	// make sure it's a compatible class
@@ -396,11 +396,11 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 }
 
 bool idGameLocal::Draw(int clientNum) {
-	std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities.at(clientNum));
+	//std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities.at(clientNum));
 
-	if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
-		return false;
-	}
+	//if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
+	//	return false;
+	//}
 
 	gameRenderWorld->RenderScene(nullptr);
 
@@ -483,7 +483,7 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			if (ent->IsActive()) {
+			if (true/*ent->IsActive()*/) {
 				auto phys = ent->GetPhysics();
 				auto str = string_format("%10s p[%5.2f %5.2f] v[%6.2f %6.2f] rest %d", ent->GetName().c_str(),
 					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,

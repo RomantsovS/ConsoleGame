@@ -76,10 +76,10 @@ public:
 
 	//--------------------------
 	// RenderWorld.cpp
-	void AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t *area);
+	void AddEntityRefToArea(idRenderEntityLocal* def, portalArea_t *area);
 
-	void PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum);
-	void PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def);
+	void PushFrustumIntoTree_r(idRenderEntityLocal* def, int nodeNum);
+	void PushFrustumIntoTree(idRenderEntityLocal* def);
 
 	std::shared_ptr<idRenderWorld> getptr() override;
 };

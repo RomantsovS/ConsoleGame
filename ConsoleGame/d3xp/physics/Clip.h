@@ -63,7 +63,7 @@ private:
 	int renderModelHandle; // render model def handle
 
 	std::shared_ptr<clipLink_t> clipLinks; // links into sectors
-	int						touchCount;
+	int touchCount;
 
 	void Init(); // initialize
 	void Link_r(clipSector_t* node);

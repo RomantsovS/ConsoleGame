@@ -13,8 +13,8 @@ Does not actually free the entityDef.
 */
 void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept {
 	// free the entityRefs from the areas
-	for (auto ref = def->entityRefs; ref;) {
-		auto next = ref->ownerNext;
+	for (auto ref = def->entityRefs.get(); ref;) {
+		auto next = ref->ownerNext.get();
 
 		// unlink from the area
 		ref->areaNext->areaPrev = ref->areaPrev;
@@ -38,8 +38,7 @@ chaining them to both the area and the entityDef.
 Bumps tr.viewCount, which means viewCount can change many times each frame.
 ===============
 */
-void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> entity)
-{
+void R_CreateEntityRefs(idRenderEntityLocal* entity) {
 	if (!entity->parms.hModel) {
 		entity->parms.hModel = renderModelManager->DefaultModel();
 	}
@@ -58,7 +57,7 @@ void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> entity)
 	tr.viewCount++;
 
 	// push the model frustum down the BSP tree into areas
-	entity->world.lock()->PushFrustumIntoTree(entity);
+	entity->world->PushFrustumIntoTree(entity);
 }
 
 /*

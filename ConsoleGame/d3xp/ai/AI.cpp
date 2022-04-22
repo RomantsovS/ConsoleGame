@@ -85,9 +85,21 @@ void AISimple::Spawn() {
 	Vector2 linearVelocity;
 	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
 	physicsObj->SetLinearVelocity(linearVelocity);
+
+	lastChangeDirection = gameLocal.time;
+	directionChangePeriod = spawnArgs.GetInt("directionChangePeriod", "0");
 }
 
 void AISimple::Think() noexcept {
+	if (directionChangePeriod > 0 && gameLocal.time - lastChangeDirection > directionChangePeriod) {
+		auto vel = GetPhysics()->GetLinearVelocity();
+		int i = gameLocal.GetRandomValue({-1, 1});
+		vel = ((vel.x == 0) ? Vector2(vel.y * i, 0.0f) : Vector2(0.0f, vel.x * i));
+		GetPhysics()->SetLinearVelocity(vel);
+
+		lastChangeDirection = gameLocal.time;
+	}
+
 	idEntity::Think();
 }
 

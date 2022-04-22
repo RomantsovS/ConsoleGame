@@ -41,6 +41,9 @@ public:
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 private:
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
+
+	int lastChangeDirection{};
+	int directionChangePeriod = 0;
 protected:
 	void Hide() override;
 

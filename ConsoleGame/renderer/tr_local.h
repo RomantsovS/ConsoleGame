@@ -28,7 +28,7 @@ struct areaReference_t {
 	std::shared_ptr<areaReference_t> areaNext;				// chain in the area
 	std::shared_ptr<areaReference_t> areaPrev;
 	std::shared_ptr<areaReference_t> ownerNext;				// chain on either the entityDef or lightDef
-	std::weak_ptr<idRenderEntityLocal> entity;					// only one of entity / light will be non-NULL
+	idRenderEntityLocal* entity;					// only one of entity / light will be non-NULL
 	portalArea_t *area;					// so owners can find all the areas they are in
 };
 
@@ -67,7 +67,7 @@ public:
 
 	renderEntity_t parms;
 
-	std::weak_ptr<idRenderWorldLocal> world;
+	idRenderWorldLocal* world;
 	int index; // in world entityDefs
 
 	// a viewEntity_t is created whenever a idRenderEntityLocal is considered for inclusion
@@ -114,7 +114,7 @@ struct viewEntity_t {
 	std::shared_ptr<viewEntity_t> next;
 
 	// back end should NOT reference the entityDef, because it can change when running SMP
-	std::weak_ptr<idRenderEntityLocal> entityDef;
+	idRenderEntityLocal* entityDef;
 
 	// for scissor clipping, local inside renderView viewport
 	// scissorRect.Empty() is true if the viewEntity_t was never actually
@@ -251,7 +251,7 @@ RENDERWORLD_DEFS
 ============================================================
 */
 
-void R_CreateEntityRefs(std::shared_ptr<idRenderEntityLocal> def);
+void R_CreateEntityRefs(idRenderEntityLocal* def);
 void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept;
 
 void R_FreeDerivedData() noexcept;
@@ -265,7 +265,7 @@ RENDERWORLD_PORTALS
 ============================================================
 */
 
-std::shared_ptr<viewEntity_t> R_SetEntityDefViewEntity(std::shared_ptr<idRenderEntityLocal> def);
+std::shared_ptr<viewEntity_t> R_SetEntityDefViewEntity(idRenderEntityLocal* def);
 
 /*
 ====================================================================

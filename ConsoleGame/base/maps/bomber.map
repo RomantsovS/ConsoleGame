@@ -5,14 +5,14 @@ Version 2
 "call" "map_marscity1::main"
 "no_Weapons" "1"
 "def_player" "player"
-"player_origin" "136 100"
+"player_origin" "15 34"
 "game_add_point_delay" "0"
-"game_add_point_count" "0"
+"game_add_point_count" "45"
 // primitive 2
 {
  brushDef3
  {
-  ( 0 0 256 164 )
+  ( 0 0 250 150 )
  }
 }
 }
@@ -24,22 +24,17 @@ Version 2
 
 {
 "classname" "block"
-"origin" "74 34"
+"origin" "84 34"
 }
 
 {
 "classname" "block"
-"origin" "114 34"
+"origin" "134 34"
 }
 
 {
 "classname" "block"
-"origin" "154 34"
-}
-
-{
-"classname" "block"
-"origin" "194 34"
+"origin" "184 34"
 }
 
 {
@@ -49,92 +44,52 @@ Version 2
 
 {
 "classname" "block"
-"origin" "34 74"
+"origin" "34 84"
 }
 
 {
 "classname" "block"
-"origin" "74 74"
+"origin" "84 84"
 }
 
 {
 "classname" "block"
-"origin" "114 74"
+"origin" "134 84"
 }
 
 {
 "classname" "block"
-"origin" "154 74"
+"origin" "184 84"
 }
 
 {
 "classname" "block"
-"origin" "194 74"
+"origin" "234 84"
 }
 
 {
 "classname" "block"
-"origin" "234 74"
+"origin" "34 134"
 }
 
 {
 "classname" "block"
-"origin" "34 114"
+"origin" "84 134"
 }
 
 {
 "classname" "block"
-"origin" "74 114"
+"origin" "134 134"
 }
 
 {
 "classname" "block"
-"origin" "114 114"
+"origin" "184 134"
 }
 
 {
 "classname" "block"
-"origin" "154 114"
-}
-
-{
-"classname" "block"
-"origin" "194 114"
-}
-
-{
-"classname" "block"
-"origin" "234 114"
-}
-
-{
-"classname" "block"
-"origin" "34 154"
-}
-
-{
-"classname" "block"
-"origin" "74 154"
-}
-
-{
-"classname" "block"
-"origin" "114 154"
-}
-
-{
-"classname" "block"
-"origin" "154 154"
-}
-
-{
-"classname" "block"
-"origin" "194 154"
-}
-
-{
-"classname" "block"
-"origin" "234 154"
+"origin" "234 134"
 }
 
 {
@@ -149,48 +104,48 @@ Version 2
 
 {
 "classname" "brick"
-"origin" "94 84"
+"origin" "104 84"
 }
 
 {
 "classname" "brick"
-"origin" "94 100"
+"origin" "104 100"
 }
 
 {
 "classname" "brick"
-"origin" "136 136"
+"origin" "156 66"
 }
 
 {
 "classname" "mushroom"
 "name" "mushroom1"
 "origin" "216 140"
-"color" "5"
+"color" "1"
 "linearVelocity" "0 10"
 }
 
 {
 "classname" "turtle"
 "name" "turtle1"
-"origin" "172 82"
+"origin" "160 92"
 "linearVelocity" "0 10"
 "color" "6"
 }
 
 {
 "classname" "mushroom"
-"name" "mushroom1"
+"name" "mushroom2"
 "origin" "16 140"
-"color" "5"
+"color" "2"
 "linearVelocity" "0 10"
 }
 
 {
 "classname" "mushroom"
-"name" "mushroom1"
+"name" "mushroom3"
 "origin" "92 10"
-"color" "5"
+"color" "3"
 "linearVelocity" "10 0"
 }
 
@@ -202,10 +157,3 @@ Version 2
 "color" "6"
 }
 
-{
-"classname" "turtle"
-"name" "turtle1"
-"origin" "52 72"
-"linearVelocity" "0 10"
-"color" "6"
-}

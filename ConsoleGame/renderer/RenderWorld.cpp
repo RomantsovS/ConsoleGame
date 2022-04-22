@@ -58,12 +58,11 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, gsl::not_null<const r
 		entityDefs.resize(entityDefs.size() + 4);
 	}
 
-	std::shared_ptr<idRenderEntityLocal> def = entityDefs[entityHandle];
+	std::shared_ptr<idRenderEntityLocal>& def = entityDefs[entityHandle];
 
 	if (def) {
 		// save any decals if the model is the same, allowing marks to move with entities
-		if (def->parms.hModel == re->hModel)
-		{
+		if (def->parms.hModel == re->hModel) {
 			R_FreeEntityDefDerivedData(def.get(), true, true);
 		}
 		else {
@@ -76,7 +75,7 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, gsl::not_null<const r
 
 		entityDefs[entityHandle] = def;
 
-		def->world = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());
+		def->world = this;
 		def->index = entityHandle;
 	}
 
@@ -84,7 +83,7 @@ void idRenderWorldLocal::UpdateEntityDef(int entityHandle, gsl::not_null<const r
 
 	// based on the model bounds, add references in each area
 	// that may contain the updated surface
-	R_CreateEntityRefs(def);
+	R_CreateEntityRefs(def.get());
 }
 
 /*
@@ -166,7 +165,7 @@ bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const
 	return true;
 }
 
-void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal> def, portalArea_t* area) {
+void idRenderWorldLocal::AddEntityRefToArea(idRenderEntityLocal* def, portalArea_t* area) {
 	if (!def) {
 		common->Error("idRenderWorldLocal::AddEntityRefToArea: NULL def");
 		return;
@@ -194,7 +193,7 @@ void idRenderWorldLocal::AddEntityRefToArea(std::shared_ptr<idRenderEntityLocal>
 	ref->areaPrev->areaNext = ref;
 }
 
-void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLocal> def, int nodeNum) {
+void idRenderWorldLocal::PushFrustumIntoTree_r(idRenderEntityLocal* def, int nodeNum) {
 	if (nodeNum < 0) {
 		int areaNum = -1 - nodeNum;
 		auto area = &portalAreas[areaNum];
@@ -203,8 +202,7 @@ void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLoc
 		}
 		area->viewCount = tr.viewCount;
 
-		if (def)
-		{
+		if (def) {
 			AddEntityRefToArea(def, area);
 		}
 
@@ -224,9 +222,8 @@ void idRenderWorldLocal::PushFrustumIntoTree_r(std::shared_ptr<idRenderEntityLoc
 	}
 }
 
-void idRenderWorldLocal::PushFrustumIntoTree(std::shared_ptr<idRenderEntityLocal> def) {
-	if (areaNodes.empty())
-	{
+void idRenderWorldLocal::PushFrustumIntoTree(idRenderEntityLocal* def) {
+	if (areaNodes.empty()) {
 		return;
 	}
 

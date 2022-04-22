@@ -36,7 +36,7 @@ entityDef block {
 
 entityDef mushroom {
 	"spawnclass"			"AISimple"
-	"model"					"mushroom"
+	"model"					"models/mushroom16x16.bmp"
 	"size"					"16 16"
 	"speed"					"10"
 	"color"					"10"
@@ -76,12 +76,22 @@ entityDef player {
 	"current_weapon"		"0"
 }
 
+entityDef player_turtle {
+	"spawnclass"			"idPlayer"
+	"model"					"turtle"
+	"size"					"16 23"
+	"linearVelocity"		"0 10"
+	"def_weapon0"			"weapon_handgrenade"
+	"current_weapon"		"0"
+}
+
 entityDef turtle {
 	"spawnclass"			"AISimple"
-	"model"					"turtle"
+	"model"					"models/turtle16x23.bmp"
 	"size"					"16 23"
 	"speed"					"10"
 	"color"					"11"
+	"directionChangePeriod" "5000"
 }
 
 entityDef font {

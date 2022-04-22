@@ -151,6 +151,8 @@ public:
 
 	template <typename T>
 	T GetRandomValue(T min, T max);
+	template <typename T>
+	T GetRandomValue(std::initializer_list<T> values);
 
 	Screen::color_type GetRandomColor();
 
@@ -202,8 +204,7 @@ private:
 };
 
 template<typename T>
-inline T idGameLocal::GetRandomValue(T min, T max)
-{
+inline T idGameLocal::GetRandomValue(T min, T max) {
 	T cur_min = max(min, 0);
 
 	if (min < 0)
@@ -221,6 +222,11 @@ inline T idGameLocal::GetRandomValue(T min, T max)
 	}
 
 	return cur_val;
+}
+
+template <typename T>
+T idGameLocal::GetRandomValue(std::initializer_list<T> values) {
+	return *std::next(values.begin(), GetRandomValue(0u, values.size() - 1));
 }
 
 extern idGameLocal gameLocal;

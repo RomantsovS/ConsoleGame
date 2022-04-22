@@ -11,7 +11,7 @@ If the entityDef is not already on the viewEntity list, create
 a viewEntity and add it to the list with an empty scissor rect.
 =============
 */
-std::shared_ptr<viewEntity_t> R_SetEntityDefViewEntity(std::shared_ptr<idRenderEntityLocal> def) {
+std::shared_ptr<viewEntity_t> R_SetEntityDefViewEntity(idRenderEntityLocal* def) {
 	if (def->viewCount == tr.viewCount) {
 		// already set up for this frame
 		return def->viewEntity;
@@ -42,7 +42,7 @@ void idRenderWorldLocal::AddAreaViewEntities(int areaNum) {
 
 	for (auto ref = area->entityRefs->areaNext; ref != area->entityRefs;
 		ref = ref->areaNext) {
-		auto entity = ref->entity.lock();
+		auto entity = ref->entity;
 
 		// cull reference bounds
 		/*if (CullEntityByPortals(entity, ps)) {
