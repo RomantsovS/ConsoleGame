@@ -31,7 +31,7 @@ void idPlayer::SetupWeaponEntity() {
 	}
 	else {
 		weapon = std::static_pointer_cast<idWeapon>(gameLocal.SpawnEntityType(idWeapon::Type, nullptr));
-		weapon->SetOwner(std::dynamic_pointer_cast<idPlayer>(shared_from_this()));
+		weapon->SetOwner(dynamic_cast<idPlayer*>(this));
 		currentWeapon = -1;
 	}
 
@@ -74,7 +74,7 @@ Prepare any resources used by the player.
 void idPlayer::Spawn() {
 	// set our collision model
 	physicsObj = std::make_shared<Physics_PlayerMy>();
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 	SetClipModel();
 	//physicsObj.SetMass(spawnArgs.GetFloat("mass", "100"));
 	//physicsObj->SetContents(CONTENTS_BODY);

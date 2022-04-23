@@ -190,8 +190,8 @@ void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
 }
 
 void idClipModel::Link(idClip& clp) {
-	//assert(idClipModel::entity);
-	if (idClipModel::entity.expired()) {
+	assert(idClipModel::entity);
+	if (!idClipModel::entity) {
 		return;
 	}
 
@@ -222,7 +222,7 @@ void idClipModel::Link(idClip& clp) {
 	Link_r(clp.clipSectors.front().get());
 }
 
-void idClipModel::Link(idClip& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle) {
+void idClipModel::Link(idClip& clp, idEntity* ent, int newId, const Vector2& newOrigin, int renderModelHandle) {
 	this->entity = ent;
 	this->id = newId;
 	this->origin = newOrigin;
@@ -264,9 +264,9 @@ void idClipModel::Unlink() noexcept {
 
 void idClipModel::Init() {
 	enabled = true;
-	entity.reset();
+	entity = nullptr;
 	id = 0;
-	owner.reset();
+	owner = nullptr;
 	origin.Zero();
 	//axis.Identity();
 	bounds.Zero();
@@ -396,7 +396,8 @@ int idClipModel::Handle() const {
 	}
 	else {
 		// this happens in multiplayer on the combat models
-		gameLocal.Warning("idClipModel::Handle: clip model %d on '%s' (%x) is not a collision or trace model", id, entity.lock()->name.c_str(), entity.lock()->entityNumber);
+		gameLocal.Warning("idClipModel::Handle: clip model %d on '%s' (%x) is not a collision or trace model", id,
+			entity->name.c_str(), entity->entityNumber);
 		return 0;
 	}
 }
@@ -525,7 +526,7 @@ inline bool TestHugeTranslation(trace_t& results, const idClipModel* mdl, const 
 bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& end,
 	const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	int i, num;
-	std::vector<idClipModel*> clipModelList(1);
+	std::array<idClipModel*, MAX_GENTITIES> clipModelList;
 	idBounds traceBounds;
 	//float radius;
 	trace_t trace{};
@@ -561,7 +562,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 		//radius = trm->bounds.GetRadius();
 	}
 
-	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList);
+	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList.data());
 
 	for (i = 0; i < num; i++) {
 		auto touch = clipModelList[i];
@@ -582,7 +583,7 @@ bool idClip::Translation(trace_t& results, const Vector2& start, const Vector2& 
 
 		if (trace.fraction < results.fraction) {
 			results = trace;
-			results.c.entityNum = touch->entity.lock()->entityNumber;
+			results.c.entityNum = touch->entity->entityNumber;
 			results.c.id = touch->id;
 			if (results.fraction == 0.0f) {
 				break;
@@ -634,8 +635,7 @@ bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
 	const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	int i, j, num, n, numContacts;
-	std::shared_ptr<idClipModel> touch;
-	std::vector<idClipModel*> clipModelList(1);
+	std::array<idClipModel*, MAX_GENTITIES> clipModelList;
 	idBounds traceBounds;
 
 	const idTraceModel* trm = TraceModelForClipModel(mdl);
@@ -667,7 +667,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 		traceBounds.ExpandSelf(depth);
 	}
 
-	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList);
+	num = GetTraceClipModels(traceBounds, contentMask, passEntity, clipModelList.data());
 
 	for (i = 0; i < num; i++) {
 		auto touch = clipModelList[i];
@@ -686,7 +686,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 			start, dir, depth, trm, contentMask, touch->Handle(), touch->origin);
 
 		for (j = 0; j < n; j++) {
-			contacts[numContacts].entityNum = touch->entity.lock()->entityNumber;
+			contacts[numContacts].entityNum = touch->entity->entityNumber;
 			contacts[numContacts].id = touch->id;
 			numContacts++;
 		}
@@ -699,7 +699,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 	return numContacts;
 }
 
-int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
+int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, idClipModel** clipModelList,
 	int maxCount) const {
 	listParms_t parms;
 
@@ -715,7 +715,7 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, st
 	parms.bounds[0] = bounds[0] - vec3_boxEpsilon;
 	parms.bounds[1] = bounds[1] + vec3_boxEpsilon;
 	parms.contentMask = contentMask;
-	parms.list = &clipModelList;
+	parms.list = clipModelList;
 	parms.count = 0;
 	parms.maxCount = maxCount;
 
@@ -824,8 +824,7 @@ void idClip::ClipModelsTouchingBounds_r(const clipSector_t* node, listParms_t& p
 
 		check->touchCount = touchCount;
 
-		parms.list->resize(parms.count + 1);
-		(*(parms.list))[parms.count] = check;
+		parms.list[parms.count] = check;
 		parms.count++;
 	}
 }
@@ -848,10 +847,10 @@ const idTraceModel* idClip::TraceModelForClipModel(const idClipModel* mdl) const
 }
 
 int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
-	const idEntity* passEntity, std::vector<idClipModel*>& clipModelList) const {
+	const idEntity* passEntity, idClipModel** clipModelList) const {
 	int i, num;
 	idClipModel* cm;
-	std::shared_ptr<idEntity> passOwner;
+	idEntity* passOwner;
 
 	num = ClipModelsTouchingBounds(bounds, contentMask, clipModelList, MAX_GENTITIES);
 
@@ -860,28 +859,26 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 	}
 
 	if (passEntity->GetPhysics()->GetNumClipModels() > 0) {
-		passOwner = passEntity->GetPhysics()->GetClipModel()->GetOwner().lock();
+		passOwner = passEntity->GetPhysics()->GetClipModel()->GetOwner();
 	}
 	else {
 		passOwner = nullptr;
 	}
 
-	clipModelList.resize(num);
-
 	for (i = 0; i < num; i++) {
 
 		cm = clipModelList[i];
 
-		if (auto entSp = cm->entity.lock()) {
+		if (auto entSp = cm->entity) {
 			// check if we should ignore this entity
-			if (entSp.get() == passEntity) {
+			if (entSp == passEntity) {
 				clipModelList[i] = nullptr;			// don't clip against the pass entity
 			}
 			else if (entSp == passOwner) {
-				clipModelList[i] = NULL;			// missiles don't clip with their owner
+				clipModelList[i] = nullptr;			// missiles don't clip with their owner
 			}
-			else if (auto ownerSp = cm->owner.lock()) {
-				if (ownerSp.get() == passEntity) {
+			else if (auto ownerSp = cm->owner) {
+				if (ownerSp == passEntity) {
 					clipModelList[i] = nullptr;		// don't clip against own missiles
 				}
 				else if (ownerSp == passOwner) {
@@ -942,17 +939,17 @@ void idClip::PrintStatistics() noexcept {
 idClip::DrawClipModels
 ============
 */
-void idClip::DrawClipModels(const Vector2& eye, const float radius, const std::shared_ptr<idEntity>& passEntity) {
+void idClip::DrawClipModels(const Vector2& eye, const float radius, const idEntity* passEntity) {
 	int				i, num;
 	idBounds		bounds;
-	std::vector<idClipModel*> clipModelList(1);
+	std::array<idClipModel*, MAX_GENTITIES> clipModelList;
 
 	bounds = idBounds(eye).Expand(radius);
 
-	num = idClip::ClipModelsTouchingBounds(bounds, -1, clipModelList, MAX_GENTITIES);
+	num = idClip::ClipModelsTouchingBounds(bounds, -1, clipModelList.data(), MAX_GENTITIES);
 
 	for (i = 0; i < num; i++) {
-		gsl::not_null<idClipModel*> clipModel = clipModelList[i];
+		const gsl::not_null<idClipModel*> clipModel = clipModelList[i];
 		if (clipModel->GetEntity() == passEntity) {
 			continue;
 		}

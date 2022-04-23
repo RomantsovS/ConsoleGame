@@ -25,7 +25,7 @@ public:
 
 	// Init
 	void Spawn() noexcept;
-	void SetOwner(std::shared_ptr<idPlayer> owner);
+	void SetOwner(idPlayer* owner);
 
 	static void CacheWeapon(const std::string& weaponName);
 
@@ -55,7 +55,7 @@ private:
 	bool WEAPON_ATTACK{};
 	weaponStatus_t status{};
 
-	std::weak_ptr<idPlayer> owner;
+	idPlayer* owner;
 
 	// weapon definition
 	// we maintain local copies of the projectile and brass dictionaries so they

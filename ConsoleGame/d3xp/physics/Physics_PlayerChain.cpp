@@ -247,7 +247,7 @@ bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	if (IsOutsideWorld()) {
 		gameLocal.Warning("Physics_PlayerChain outside world bounds for entity '%s' type '%s' at (%s)",
-			self.lock()->name.c_str(), self.lock()->GetType()->classname.c_str(),
+			self->name.c_str(), self->GetType()->classname.c_str(),
 			GetOrigin().ToString(0).c_str());
 	}
 
@@ -294,14 +294,14 @@ Physics_PlayerChain::CollisionImpulse
 */
 bool Physics_PlayerChain::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept {
 	auto ent = gameLocal.entities[collision.c.entityNum];
-	if (ent == self.lock()) {
+	if (ent.get() == self) {
 		return false;
 	}
 
 	auto velocity = body->current->spatialVelocity;
 
 	// callback to self to let the entity know about the impact
-	return self.lock()->Collide(collision, velocity);
+	return self->Collide(collision, velocity);
 }
 
 /*
@@ -395,7 +395,7 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
 			}
 		}
 
-		body->clipModel->Link(gameLocal.clip, self.lock(), body->clipModel->GetId(), body->next->worldOrigin);
+		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->next->worldOrigin);
 	}
 
 	MoveEachBodiesToPrevOne();
@@ -418,7 +418,7 @@ void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
 			bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
 		}
 
-		bodies[i]->clipModel->Link(gameLocal.clip, self.lock(), bodies[i]->clipModel->GetId(), bodies[i]->next->worldOrigin);
+		bodies[i]->clipModel->Link(gameLocal.clip, self, bodies[i]->clipModel->GetId(), bodies[i]->next->worldOrigin);
 	}
 }
 
@@ -447,7 +447,7 @@ Physics_PlayerChain::UpdateClipModels
 void Physics_PlayerChain::UpdateClipModels() {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
-		body->clipModel->Link(gameLocal.clip, self.lock(), body->clipModel->GetId(), body->current->worldOrigin);
+		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->current->worldOrigin);
 	}
 }
 

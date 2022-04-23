@@ -90,7 +90,7 @@ void idPhysics_RigidBody::SetClipModel(std::shared_ptr<idClipModel> model, float
 	}
 	clipModel = model;
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, current.i.position);
+		clipModel->Link(gameLocal.clip, self, 0, current.i.position);
 	}
 
 	current.i.linearMomentum.Zero();
@@ -186,7 +186,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 	}
 
 	// update the position of the clip model
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 
 	DebugDraw();
 
@@ -228,7 +228,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	if (IsOutsideWorld()) {
 		gameLocal.Warning("rigid body moved outside world bounds for entity '%s' type '%s' at (%s)",
-			self.lock()->name.c_str(), self.lock()->GetType()->classname.c_str(), current.i.position.ToString(0).c_str());
+			self->name.c_str(), self->GetType()->classname.c_str(), current.i.position.ToString(0).c_str());
 		Rest();
 	}
 
@@ -244,7 +244,7 @@ int idPhysics_RigidBody::GetTime() const noexcept {
 
 void idPhysics_RigidBody::Activate() noexcept {
 	current.atRest = -1;
-	self.lock()->BecomeActive(TH_PHYSICS);
+	self->BecomeActive(TH_PHYSICS);
 }
 
 void idPhysics_RigidBody::PutToRest() noexcept {
@@ -272,7 +272,7 @@ idPhysics_RigidBody::RestoreState
 void idPhysics_RigidBody::RestoreState() noexcept {
 	current = saved;
 
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 
 	EvaluateContacts();
 }
@@ -321,7 +321,7 @@ idPhysics_RigidBody::LinkClip
 ================
 */
 void idPhysics_RigidBody::LinkClip() noexcept {
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 }
 
 bool idPhysics_RigidBody::EvaluateContacts() noexcept {
@@ -338,7 +338,7 @@ bool idPhysics_RigidBody::EvaluateContacts() noexcept {
 	dir = current.i.linearMomentum;
 	dir.Normalize();
 	auto num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(),
-		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self.lock().get());
+		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self);
 	contacts.resize(num);
 
 	AddContactEntitiesForContacts();
@@ -389,7 +389,7 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPSt
 	bool collided = false;
 
 	// if there was a collision
-	if (gameLocal.clip.Motion(collision, current.i.position, next_.i.position, clipModel.get(), clipMask, self.lock().get())) {
+	if (gameLocal.clip.Motion(collision, current.i.position, next_.i.position, clipModel.get(), clipMask, self)) {
 		// set the next state to the state at the moment of impact
 		next_.i.position = collision.endpos;
 		//next_.i.orientation = collision.endAxis;
@@ -405,7 +405,7 @@ bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& im
 	Vector2 velocity;
 
 	// callback to self to let the entity know about the collision
-	return self.lock()->Collide(collision, velocity);
+	return self->Collide(collision, velocity);
 }
 
 bool idPhysics_RigidBody::TestIfAtRest() const noexcept {
@@ -425,7 +425,7 @@ void idPhysics_RigidBody::Rest() noexcept {
 	current.atRest = gameLocal.time;
 	current.i.linearMomentum.Zero();
 	//current.i.angularMomentum.Zero();
-	self.lock()->BecomeInactive(TH_PHYSICS);
+	self->BecomeInactive(TH_PHYSICS);
 }
 
 void idPhysics_RigidBody::DebugDraw() noexcept {
@@ -446,7 +446,7 @@ void idPhysics_RigidBody::SetOrigin(const Vector2 &newOrigin, int id) noexcept {
 		current.i.position = newOrigin;
 	//}
 
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 
 	Activate();
 }
@@ -478,7 +478,7 @@ void idPhysics_RigidBody::Translate(const Vector2& translation, int id) noexcept
 	current.localOrigin += translation;
 	current.i.position += translation;
 
-	clipModel->Link(gameLocal.clip, self.lock(), clipModel->GetId(), current.i.position);
+	clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 
 	Activate();
 }

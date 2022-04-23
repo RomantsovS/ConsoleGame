@@ -21,7 +21,7 @@ idMultiModelAF::Spawn
 */
 void idMultiModelAF::Spawn() {
 	physicsObj = std::make_shared<idPhysics_AF>();
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 }
 
 /*
@@ -172,7 +172,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin, float l
 		// add body
 		auto clip = std::make_shared<idClipModel>(trm);
 		//clip->SetContents(CONTENTS_SOLID);
-		clip->Link(gameLocal.clip, shared_from_this(), i, org);
+		clip->Link(gameLocal.clip, this, i, org);
 		body = std::make_shared<idAFBody>(name + std::to_string(i), clip, density);
 		physicsObj->AddBody(body);
 
@@ -198,7 +198,7 @@ void idChain::Spawn() {
 	origin = GetPhysics()->GetOrigin();
 
 	// initialize physics
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 	physicsObj->SetClipMask(MASK_SOLID);
 	SetPhysics(physicsObj);
 

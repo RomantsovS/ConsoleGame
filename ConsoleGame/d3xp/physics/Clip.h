@@ -26,19 +26,19 @@ public:
 	void LoadModel(const idTraceModel& trm, bool persistantThroughSave = true);
 
 	void Link(idClip& clp);				// must have been linked with an entity and id before
-	void Link(idClip& clp, std::shared_ptr<idEntity> ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
+	void Link(idClip& clp, idEntity* ent, int newId, const Vector2& newOrigin, int renderModelHandle = -1);
 	void Unlink() noexcept; // unlink from sectors
 	//void					SetPosition(const idVec3& newOrigin, const idMat3& newAxis);	// unlinks the clip model
 	void Translate(const Vector2& translation) noexcept;							// unlinks the clip model
 	//void					Rotate(const idRotation& rotation);							// unlinks the clip model
 	void Enable() noexcept;						// enable for clipping
 	void Disable() noexcept;					// keep linked but disable for clipping
-	void SetEntity(std::shared_ptr<idEntity> newEntity) noexcept;
-	std::shared_ptr<idEntity> GetEntity() const noexcept;
+	void SetEntity(idEntity* newEntity) noexcept;
+	idEntity* GetEntity() const noexcept;
 	void SetId(int newId) noexcept;
 	int GetId() const noexcept;
-	void SetOwner(std::shared_ptr<idEntity> newOwner) noexcept;
-	std::weak_ptr<idEntity> GetOwner() const noexcept;
+	void SetOwner(idEntity* newOwner) noexcept;
+	idEntity* GetOwner() const noexcept;
 	const idBounds& GetBounds() const noexcept;
 	const idBounds& GetAbsBounds() const noexcept;
 	const Vector2& GetOrigin() const noexcept;
@@ -49,9 +49,9 @@ public:
 	static void ClearTraceModelCache() noexcept;
 private:
 	bool enabled; // true if this clip model is used for clipping
-	std::weak_ptr<idEntity> entity; // entity using this clip model
+	idEntity* entity; // entity using this clip model
 	int id; // id for entities that use multiple clip models
-	std::weak_ptr<idEntity> owner; // owner of the entity that owns this clip model
+	idEntity* owner; // owner of the entity that owns this clip model
 	Vector2 origin; // origin of clip model
 	//idMat3 axis; // orientation of clip model
 	idBounds bounds; // bounds
@@ -74,19 +74,19 @@ private:
 	static int GetTraceModelHashKey(const idTraceModel& trm) noexcept;
 };
 
-inline void idClipModel::SetEntity(std::shared_ptr<idEntity> newEntity) noexcept {
+inline void idClipModel::SetEntity(idEntity* newEntity) noexcept {
 	entity = newEntity;
 }
 
-inline void idClipModel::SetOwner(std::shared_ptr<idEntity> newOwner) noexcept {
+inline void idClipModel::SetOwner(idEntity* newOwner) noexcept {
 	owner = newOwner;
 }
 
-inline std::shared_ptr<idEntity> idClipModel::GetEntity() const noexcept {
-	return entity.lock();
+inline idEntity* idClipModel::GetEntity() const noexcept {
+	return entity;
 }
 
-inline std::weak_ptr<idEntity> idClipModel::GetOwner() const noexcept {
+inline idEntity* idClipModel::GetOwner() const noexcept {
 	return owner;
 }
 
@@ -135,7 +135,7 @@ idClip::ClipModelsTouchingBounds_r
 struct listParms_t {
 	idBounds		bounds;
 	int				contentMask;
-	std::vector<idClipModel*>* list;
+	idClipModel** list;
 	int				count;
 	int				maxCount;
 };
@@ -171,7 +171,7 @@ public:
 		const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask,
 		const idEntity* passEntity);
 
-	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, std::vector<idClipModel*>& clipModelList,
+	int ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, idClipModel** clipModelList,
 		int maxCount) const;
 
 	const idBounds& GetWorldBounds() const noexcept;
@@ -179,7 +179,7 @@ public:
 
 	// stats and debug drawing
 	void PrintStatistics() noexcept;
-	void DrawClipModels(const Vector2& eye, const float radius, const std::shared_ptr<idEntity>& passEntity);
+	void DrawClipModels(const Vector2& eye, const float radius, const idEntity* passEntity);
 	void DrawClipSectors();
 private:
 	int						numClipSectors;
@@ -200,7 +200,7 @@ private:
 	void ClipModelsTouchingBounds_r(const clipSector_t* node, listParms_t& parms) const;
 	const idTraceModel* TraceModelForClipModel(const idClipModel* mdl) const;
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
-		const idEntity* passEntity, std::vector<idClipModel*>& clipModelList) const;
+		const idEntity* passEntity, idClipModel** clipModelList) const;
 	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
 		idClipModel* touch) const;
 

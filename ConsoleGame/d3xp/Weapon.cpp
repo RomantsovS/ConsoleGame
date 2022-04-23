@@ -43,8 +43,8 @@ idWeapon::SetOwner
 Only called at player spawn time, not each weapon switch
 ================
 */
-void idWeapon::SetOwner(std::shared_ptr<idPlayer> _owner) {
-	assert(owner.expired());
+void idWeapon::SetOwner(idPlayer* _owner) {
+	assert(owner);
 	owner = _owner;
 	SetName(va("%s_weap", _owner->name.c_str()));
 }
@@ -185,10 +185,9 @@ void idWeapon::UpdateScript() {
 		}
 
 		std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
-		auto ownerSp = owner.lock();
-		proj->Create(ownerSp, ownerSp->GetPhysics()->GetOrigin(), vec2_origin);
+		proj->Create(owner, owner->GetPhysics()->GetOrigin(), vec2_origin);
 
-		proj->Launch(ownerSp->GetPhysics()->GetOrigin(), ownerSp->GetPhysics()->GetLinearVelocity(), vec2_origin);
+		proj->Launch(owner->GetPhysics()->GetOrigin(), owner->GetPhysics()->GetLinearVelocity(), vec2_origin);
 
 		PostEventMS(&EV_Weapon_WeaponReady, spawnArgs.GetInt("ready_time", "500"));
 

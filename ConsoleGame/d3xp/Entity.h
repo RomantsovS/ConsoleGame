@@ -100,9 +100,9 @@ public:
 	// activate the physics object, 'ent' is the entity activating this entity
 	virtual void ActivatePhysics(idEntity* ent);
 	// add a contact entity
-	virtual void AddContactEntity(std::shared_ptr<idEntity> ent);
+	virtual void AddContactEntity(idEntity* ent);
 	// remove a touching entity
-	virtual void RemoveContactEntity(std::shared_ptr<idEntity> ent);
+	virtual void RemoveContactEntity(idEntity* ent);
 
 	// damage
 	// applies damage to this entity

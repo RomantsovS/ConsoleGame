@@ -42,6 +42,14 @@ entityDef mushroom {
 	"color"					"10"
 }
 
+entityDef mushroom_static {
+	"spawnclass"			"idStaticEntity"
+	"model"					"models/mushroom16x16.bmp"
+	"size"					"16 16"
+	"speed"					"10"
+	"color"					"10"
+}
+
 entityDef chain {
 	"spawnclass"			"idChain"
 	//"name"					"idChain"

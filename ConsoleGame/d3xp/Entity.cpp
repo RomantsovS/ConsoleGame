@@ -383,11 +383,11 @@ void idEntity::ActivatePhysics(idEntity* ent) {
 	GetPhysics()->Activate();
 }
 
-void idEntity::AddContactEntity(std::shared_ptr<idEntity> ent) {
+void idEntity::AddContactEntity(idEntity* ent) {
 	GetPhysics()->AddContactEntity(ent);
 }
 
-void idEntity::RemoveContactEntity(std::shared_ptr<idEntity> ent) {
+void idEntity::RemoveContactEntity(idEntity* ent) {
 	GetPhysics()->RemoveContactEntity(ent);
 }
 
@@ -516,7 +516,7 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) 
 
 	defaultPhysicsObj = std::make_shared<idPhysics_Static>();
 
-	defaultPhysicsObj->SetSelf(shared_from_this());
+	defaultPhysicsObj->SetSelf(this);
 	defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
 	defaultPhysicsObj->SetOrigin(origin);
 	defaultPhysicsObj->SetAxis(axis);

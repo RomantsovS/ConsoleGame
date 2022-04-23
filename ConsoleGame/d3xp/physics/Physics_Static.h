@@ -24,7 +24,7 @@ public:
 	idPhysics_Static& operator=(idPhysics_Static&&) = default;
 
 public:	// common physics interface
-	void SetSelf(std::shared_ptr<idEntity> e) noexcept override;
+	void SetSelf(idEntity* e) noexcept override;
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) override;
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
 	int GetNumClipModels() const noexcept override;
@@ -67,10 +67,10 @@ public:	// common physics interface
 	bool EvaluateContacts() noexcept override;
 
 	void ClearContacts() noexcept override;
-	void AddContactEntity(std::shared_ptr<idEntity> e) noexcept override;
-	void RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept override;
+	void AddContactEntity(idEntity* e) noexcept override;
+	void RemoveContactEntity(idEntity* e) noexcept override;
 protected:
-	std::weak_ptr<idEntity> self; // entity using this physics object
+	idEntity* self; // entity using this physics object
 	staticPState_s current;			// physics state
 	std::shared_ptr<idClipModel> clipModel; // collision model
 };

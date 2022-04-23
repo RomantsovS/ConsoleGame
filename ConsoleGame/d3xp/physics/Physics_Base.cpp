@@ -7,7 +7,7 @@ CLASS_DECLARATION(idPhysics, idPhysics_Base)
 END_CLASS
 
 idPhysics_Base::idPhysics_Base() {
-	self.reset();
+	self = nullptr;
 	clipMask = 0;
 	ClearContacts();
 }
@@ -15,7 +15,7 @@ idPhysics_Base::idPhysics_Base() {
 idPhysics_Base::~idPhysics_Base() {
 }
 
-void idPhysics_Base::SetSelf(std::shared_ptr<idEntity> e) noexcept {
+void idPhysics_Base::SetSelf(idEntity* e) noexcept {
 	self = e;
 }
 
@@ -176,13 +176,13 @@ void idPhysics_Base::ClearContacts()
 	for (auto iter = contacts.begin(); iter != contacts.end(); ++iter) {
 		auto ent = gameLocal.entities[iter->entityNum];
 		if (ent) {
-			ent->RemoveContactEntity(self.lock());
+			ent->RemoveContactEntity(self);
 		}
 	}
 	contacts.clear();
 }
 
-void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e) {
+void idPhysics_Base::AddContactEntity(idEntity* e) {
 	bool found = false;
 
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
@@ -199,8 +199,8 @@ void idPhysics_Base::AddContactEntity(std::shared_ptr<idEntity> e) {
 	}
 }
 
-void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept {
-	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
+void idPhysics_Base::RemoveContactEntity(idEntity* e) noexcept {
+	/*for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (!ent) {
 			iter = contactEntities.erase(iter);
@@ -210,14 +210,17 @@ void idPhysics_Base::RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept {
 			iter = contactEntities.erase(iter);
 			return;
 		}
-	}
+	}*/
+	contactEntities.erase(std::remove_if(contactEntities.begin(), contactEntities.end(), [e](idEntity* ent) {
+		return !ent || ent == e;
+		}), contactEntities.end());
 }
 
 void idPhysics_Base::AddContactEntitiesForContacts() {
 	for (size_t i = 0; i < contacts.size(); i++) {
 		auto ent = gameLocal.entities[contacts[i].entityNum];
-		if (ent && ent != self.lock()) {
-			ent->AddContactEntity(self.lock());
+		if (ent && ent.get() != self) {
+			ent->AddContactEntity(self);
 		}
 	}
 }
@@ -226,7 +229,7 @@ void idPhysics_Base::ActivateContactEntities() {
 	for (auto iter = contactEntities.begin(); iter != contactEntities.end(); ++iter) {
 		auto ent = *iter;
 		if (ent) {
-			ent->ActivatePhysics(self.lock().get());
+			ent->ActivatePhysics(self);
 		}
 		else {
 			iter = contactEntities.erase(iter);

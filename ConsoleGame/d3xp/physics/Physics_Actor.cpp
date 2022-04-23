@@ -34,7 +34,7 @@ idPhysics_Actor::SetClipModelAxis
 */
 void idPhysics_Actor::SetClipModelAxis() {
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, clipModel->GetOrigin());
+		clipModel->Link(gameLocal.clip, self, 0, clipModel->GetOrigin());
 	}
 }
 
@@ -48,7 +48,7 @@ void idPhysics_Actor::SetClipModel(std::shared_ptr<idClipModel> model, const flo
 		clipModel = nullptr;
 	}
 	clipModel = model;
-	clipModel->Link(gameLocal.clip, self.lock(), 0, clipModel->GetOrigin());
+	clipModel->Link(gameLocal.clip, self, 0, clipModel->GetOrigin());
 }
 
 /*
@@ -129,7 +129,7 @@ idPhysics_Actor::LinkClip
 ================
 */
 void idPhysics_Actor::LinkClip() noexcept {
-	clipModel->Link(gameLocal.clip, self.lock(), 0, clipModel->GetOrigin());
+	clipModel->Link(gameLocal.clip, self, 0, clipModel->GetOrigin());
 }
 
 /*

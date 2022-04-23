@@ -24,7 +24,7 @@ idProjectile::Spawn
 */
 void idProjectile::Spawn() {
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), 1.0f);
 	//physicsObj->SetContents(0);
 	physicsObj->SetClipMask(0);
@@ -37,7 +37,7 @@ void idProjectile::Spawn() {
 idProjectile::Create
 ================
 */
-void idProjectile::Create(std::shared_ptr<idEntity> owner, const Vector2& start, const Vector2& dir) {
+void idProjectile::Create(idEntity* owner, const Vector2& start, const Vector2& dir) {
 	idDict args;
 
 	//Unbind();
@@ -142,7 +142,7 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) no
 
 	// get the entity the projectile collided with
 	std::shared_ptr<idEntity> ent = gameLocal.entities[collision.c.entityNum];
-	if (ent == owner.lock()) {
+	if (ent.get() == owner) {
 		assert(0);
 		return true;
 	}
@@ -170,7 +170,7 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) no
 		}*/
 
 		if (!damageDefName.empty()) {
-			ent->Damage(this, owner.lock().get(), dir, damageDefName, damageScale);
+			ent->Damage(this, owner, dir, damageDefName, damageScale);
 
 			ignore = ent.get();
 		}

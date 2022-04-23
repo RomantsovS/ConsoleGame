@@ -75,7 +75,7 @@ void AISimple::Spawn() {
 	density = 0.0f;
 
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 	//physicsObj->SetClipModel(std::make_shared<idClipModel>(trm), density);
 	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), density);
 	physicsObj->SetOrigin(GetPhysics()->GetOrigin());

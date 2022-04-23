@@ -970,15 +970,15 @@ void idGameLocal::AddRandomPoint() {
 	std::string classname;
 
 	if (ent_type == 0) {
-		classname = "staticentity";
+		classname = "mushroom_static";
 	}
-	else if (ent_type < 3) {
+	/*else if (ent_type < 3) {
 		classname = "chain";
 
 		const size_t links = GetRandomValue(3, 5);
 		args.Set("links", std::to_string(links));
 		searching_radius = static_cast<float>(links);
-	}
+	}*/
 	else if (ent_type < 8) {
 		classname = "mushroom";
 	}

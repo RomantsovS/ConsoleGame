@@ -68,11 +68,8 @@ int idConsoleLocal::DrawFPS(int y) {
 	}
 
 	if (tr.update_frame) {
-		//const std::string s = va("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime), game->GetTime());
-		//renderSystem->DrawBigStringExt(0, y, s, colorWhite, true);
-
-		renderSystem->DrawBigStringExt(0, 0, string_format("%4d fps, %6.0f ftime, %6d gtime", fps, MS2SEC(frameTime),
-			game->GetTime()), colorWhite, true);
+		renderSystem->SetConsoleTextTitle(string_format("ConsoleGame %6d fps, %10.0f ftime, %6d gtime", fps, MS2SEC(frameTime),
+			game->GetTime()));
 	}
 
 	return y;

@@ -1,7 +1,7 @@
 #ifndef PHYSICS_BASE_H
 #define PHYSICS_BASE_H
 
-#define contactEntity_t std::shared_ptr<idEntity>
+#define contactEntity_t idEntity*
 
 class idPhysics_Base : public idPhysics
 {
@@ -17,7 +17,7 @@ public:
 
 public:	// common physics interface
 
-	void SetSelf(std::shared_ptr<idEntity> e) noexcept override;
+	void SetSelf(idEntity* e) noexcept override;
 	void SetClipModel(std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true) noexcept override;
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
 	int GetNumClipModels() const noexcept override;
@@ -59,10 +59,10 @@ public:	// common physics interface
 
 	bool EvaluateContacts() noexcept override;
 	void ClearContacts() override;
-	void AddContactEntity(std::shared_ptr<idEntity> e) override;
-	void RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept override;
+	void AddContactEntity(idEntity* e) override;
+	void RemoveContactEntity(idEntity* e) noexcept override;
 protected:
-	std::weak_ptr<idEntity> self; // entity using this physics object
+	idEntity* self; // entity using this physics object
 	int clipMask; // contents the physics object collides with
 	std::vector<contactInfo_t> contacts; // contacts with other physics objects
 	std::vector<contactEntity_t> contactEntities; // entities touching this physics object

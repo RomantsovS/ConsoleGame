@@ -67,12 +67,10 @@ bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown, bool 
 	// calculate position we are trying to move to
 	end = current.origin + time_left * current.velocity;
 
-	if (auto selfSp = self.lock()) {
-		// see if we can make it there
-		if (gameLocal.clip.Translation(trace, current.origin, end, clipModel.get(), clipMask, selfSp.get())) {
-			// let the entity know about the collision
-			selfSp->Collide(trace, current.velocity);
-		}
+	// see if we can make it there
+	if (gameLocal.clip.Translation(trace, current.origin, end, clipModel.get(), clipMask, self)) {
+		// let the entity know about the collision
+		self->Collide(trace, current.velocity);
 	}
 
 	time_left -= time_left * trace.fraction;
@@ -182,11 +180,11 @@ bool Physics_PlayerMy::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	Physics_PlayerMy::MovePlayer(timeStepMSec);
 
-	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	clipModel->Link(gameLocal.clip, self, 0, current.origin);
 
 	if (IsOutsideWorld()) {
 		gameLocal.Warning("Physics_PlayerMy outside world bounds for entity '%s' type '%s' at (%s)",
-			self.lock()->name.c_str(), self.lock()->GetType()->classname.c_str(),
+			self->name.c_str(), self->GetType()->classname.c_str(),
 			GetOrigin().ToString(0).c_str());
 	}
 
@@ -219,7 +217,7 @@ Physics_PlayerMy::RestoreState
 void Physics_PlayerMy::RestoreState() noexcept {
 	current = saved;
 
-	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	clipModel->Link(gameLocal.clip, self, 0, current.origin);
 
 	EvaluateContacts();
 }
@@ -239,7 +237,7 @@ void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 		current.origin = newOrigin;
 	//}
 
-	clipModel->Link(gameLocal.clip, self.lock(), 0, newOrigin);
+	clipModel->Link(gameLocal.clip, self, 0, newOrigin);
 }
 
 /*
@@ -260,7 +258,7 @@ void Physics_PlayerMy::Translate(const Vector2& translation, int id) noexcept {
 	current.localOrigin += translation;
 	current.origin += translation;
 
-	clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+	clipModel->Link(gameLocal.clip, self, 0, current.origin);
 }
 
 /*

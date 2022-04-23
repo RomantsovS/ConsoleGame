@@ -276,3 +276,7 @@ void Screen::setStdOutputBuffer() {
 		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
 			getLastErrorMsg());
 }
+
+void Screen::SetConsoleTextTitle(const std::string& str) {
+	SetConsoleTitle(str.c_str());
+}

@@ -209,10 +209,11 @@ public:
 
 	void Display() noexcept;
 
-	void FillBorder();
 	void ClearScreen();
 
 	void UpdateTimers() override;
+
+	void SetConsoleTextTitle(const std::string& str) override;
 
 	int frameCount;		// incremented every frame
 	int viewCount;		// incremented every view (twice a scene if subviewed)

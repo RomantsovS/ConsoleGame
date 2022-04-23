@@ -50,6 +50,8 @@ public:
 	virtual void RenderCommandBuffers() = 0;
 
 	virtual void UpdateTimers() = 0;
+
+	virtual void SetConsoleTextTitle(const std::string& str) = 0;
 };
 
 extern idRenderSystem *renderSystem;

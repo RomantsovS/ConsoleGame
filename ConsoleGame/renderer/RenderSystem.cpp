@@ -194,3 +194,7 @@ void idRenderSystemLocal::UpdateTimers() {
 	tr.ClearScreen();
 	//tr.FillBorder();
 }
+
+void idRenderSystemLocal::SetConsoleTextTitle(const std::string& str) {
+	screen.SetConsoleTextTitle(str);
+}

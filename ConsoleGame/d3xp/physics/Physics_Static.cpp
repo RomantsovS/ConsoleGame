@@ -23,7 +23,7 @@ idPhysics_Static::~idPhysics_Static() {
 	}*/
 }
 
-void idPhysics_Static::SetSelf(std::shared_ptr<idEntity> e) noexcept {
+void idPhysics_Static::SetSelf(idEntity* e) noexcept {
 	self = e;
 }
 
@@ -33,7 +33,7 @@ void idPhysics_Static::SetClipModel(std::shared_ptr<idClipModel> model, float de
 	}
 	clipModel = model;
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+		clipModel->Link(gameLocal.clip, self, 0, current.origin);
 	}
 }
 
@@ -169,7 +169,7 @@ void idPhysics_Static::SetOrigin(const Vector2 & newOrigin, int id) {
 	//}
 
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+		clipModel->Link(gameLocal.clip, self, 0, current.origin);
 	}
 
 	/*next = ConvertPStateToInterpolateState(current);
@@ -203,7 +203,7 @@ void idPhysics_Static::Translate(const Vector2 & translation, int id) {
 	current.origin += translation;
 
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+		clipModel->Link(gameLocal.clip, self, 0, current.origin);
 	}
 }
 
@@ -291,7 +291,7 @@ idPhysics_Static::LinkClip
 */
 void idPhysics_Static::LinkClip() {
 	if (clipModel) {
-		clipModel->Link(gameLocal.clip, self.lock(), 0, current.origin);
+		clipModel->Link(gameLocal.clip, self, 0, current.origin);
 	}
 }
 
@@ -307,8 +307,8 @@ bool idPhysics_Static::EvaluateContacts() noexcept {
 void idPhysics_Static::ClearContacts() noexcept {
 }
 
-void idPhysics_Static::AddContactEntity(std::shared_ptr<idEntity> e) noexcept {
+void idPhysics_Static::AddContactEntity(idEntity* e) noexcept {
 }
 
-void idPhysics_Static::RemoveContactEntity(std::shared_ptr<idEntity> e) noexcept {
+void idPhysics_Static::RemoveContactEntity(idEntity* e) noexcept {
 }

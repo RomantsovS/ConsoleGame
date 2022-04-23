@@ -74,6 +74,8 @@ public:
 
 	void setDrawOutputBuffer();
 	void setStdOutputBuffer();
+
+	void SetConsoleTextTitle(const std::string& str);
 private:
 	pos_type width, height;
 	Pixel backgroundPixel;

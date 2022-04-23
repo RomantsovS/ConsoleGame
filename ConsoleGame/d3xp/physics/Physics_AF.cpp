@@ -134,14 +134,14 @@ idPhysics_AF::CollisionImpulse
 */
 bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept {
 	auto ent = gameLocal.entities[collision.c.entityNum];
-	if (ent == self.lock()) {
+	if (ent.get() == self) {
 		return false;
 	}
 
 	auto velocity = body->current->spatialVelocity;
 
 	// callback to self to let the entity know about the impact
-	return self.lock()->Collide(collision, velocity);
+	return self->Collide(collision, velocity);
 }
 
 /*
@@ -235,7 +235,7 @@ void idPhysics_AF::CheckForCollisions(float timeStep) {
 			}
 		}
 
-		body->clipModel->Link(gameLocal.clip, self.lock(), body->clipModel->GetId(), body->next->worldOrigin);
+		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->next->worldOrigin);
 	}
 
 	MoveEachBodiesToPrevOne();
@@ -258,7 +258,7 @@ void idPhysics_AF::MoveEachBodiesToPrevOne() {
 			bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
 		}
 		
-		bodies[i]->clipModel->Link(gameLocal.clip, self.lock(), bodies[i]->clipModel->GetId(), bodies[i]->next->worldOrigin);
+		bodies[i]->clipModel->Link(gameLocal.clip, self, bodies[i]->clipModel->GetId(), bodies[i]->next->worldOrigin);
 	}
 }
 
@@ -362,7 +362,7 @@ idPhysics_AF::UpdateClipModels
 void idPhysics_AF::UpdateClipModels() {
 	for (size_t i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
-		body->clipModel->Link(gameLocal.clip, self.lock(), body->clipModel->GetId(), body->current->worldOrigin);
+		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->current->worldOrigin);
 	}
 }
 
@@ -393,7 +393,7 @@ void idPhysics_AF::Rest() noexcept {
 		bodies[i]->current->spatialVelocity.Zero();
 	}
 
-	self.lock()->BecomeInactive(TH_PHYSICS);
+	self->BecomeInactive(TH_PHYSICS);
 }
 
 /*
@@ -409,7 +409,7 @@ void idPhysics_AF::Activate() noexcept {
 	}
 	current.atRest = -1;
 	current.noMoveTime = 0.0f;
-	self.lock()->BecomeActive(TH_PHYSICS);
+	self->BecomeActive(TH_PHYSICS);
 }
 
 /*
@@ -565,7 +565,7 @@ bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
 	if (IsOutsideWorld()) {
 		gameLocal.Warning("articulated figure moved outside world bounds for entity '%s' type '%s' at (%s)",
-			self.lock()->name.c_str(), self.lock()->GetType()->classname.c_str(),
+			self->name.c_str(), self->GetType()->classname.c_str(),
 			bodies[0]->current->worldOrigin.ToString(0).c_str());
 		Rest();
 	}

@@ -20,7 +20,7 @@ public:
 	idPhysics& operator=(idPhysics&&) = default;
 public: // common physics interface
 	// set pointer to entity using physics
-	virtual void SetSelf(std::shared_ptr<idEntity> e) = 0;
+	virtual void SetSelf(idEntity* e) = 0;
 								// clip models
 	virtual void SetClipModel( std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true ) = 0;
 	virtual std::shared_ptr<idClipModel> GetClipModel(int id = 0) const = 0;
@@ -71,8 +71,8 @@ public: // common physics interface
 	virtual bool EvaluateContacts() = 0;
 
 	virtual void ClearContacts() = 0;
-	virtual void AddContactEntity(std::shared_ptr<idEntity> e) = 0;
-	virtual void RemoveContactEntity(std::shared_ptr<idEntity> e) = 0;
+	virtual void AddContactEntity(idEntity* e) = 0;
+	virtual void RemoveContactEntity(idEntity* e) = 0;
 };
 
 #endif

@@ -135,7 +135,7 @@ void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin, const
 	// add body
 	auto clip = std::make_shared<idClipModel>(trm);
 	//clip->SetContents(CONTENTS_SOLID);
-	clip->Link(gameLocal.clip, shared_from_this(), id, origin);
+	clip->Link(gameLocal.clip, this, id, origin);
 	auto body = std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
 	physicsObj->AddBody(body);
 
@@ -147,7 +147,7 @@ void PlayerChain::AddModel(const Vector2& origin, const int id, const float dens
 	// add body
 	auto clip = std::make_shared<idClipModel>(*GetPhysics()->GetClipModel());
 	//clip->SetContents(CONTENTS_SOLID);
-	clip->Link(gameLocal.clip, shared_from_this(), id, origin);
+	clip->Link(gameLocal.clip, this, id, origin);
 	auto body = std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
 	physicsObj->AddBody(body);
 
@@ -165,7 +165,7 @@ Prepare any resources used by the player.
 void PlayerChain::Spawn() {
 	// set our collision model
 	physicsObj = std::make_shared<Physics_PlayerChain>();
-	physicsObj->SetSelf(shared_from_this());
+	physicsObj->SetSelf(this);
 	physicsObj->SetClipMask(MASK_SOLID);
 
 	SpawnFromSpawnSpot();
