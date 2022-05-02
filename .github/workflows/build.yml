@@ -22,7 +22,12 @@ jobs:
     
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-      
+    
+    - name: echo MSBuild
+      shell: bash
+      run: |
+        msbuild.exe -version
+        
     - name: Install wget
       shell: bash
       run: |
@@ -62,7 +67,7 @@ jobs:
       shell: cmd
       run: |
         SET PATH=%PATH%;%cd%\build\build-wrapper-win-x86
-        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/x64-${{env.BUILD_TYPE}}/ConsoleGame.sln //t:Rebuild 
+        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/x64-${{env.BUILD_TYPE}}/ConsoleGame.sln -t:Rebuild -p:Configuration=${{env.BUILD_TYPE}} 
     - name: Prepare Sonar Scanner
       shell: bash
       run: |
