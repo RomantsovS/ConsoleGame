@@ -48,9 +48,7 @@ jobs:
         cmake --build ${{github.workspace}}/out/build --config ${{env.BUILD_TYPE}}
         
     - name: SonarCloud Scan
-      shell: bash
-      run: |
-        sonar-scanner-debug.bat
+      uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
