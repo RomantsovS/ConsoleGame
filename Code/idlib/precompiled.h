@@ -79,4 +79,7 @@
 #include "../framework/EditField.h"
 #include "../framework/Console.h"
 
+#undef max
+#undef min
+
 #endif

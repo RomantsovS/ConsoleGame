@@ -19,8 +19,9 @@ if (OPTION_ENGINE)
 	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
 
+	message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
+	
 	if(WINDOWS)
-		message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
 		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES})
 	else()
 		add_executable(${target} ${${THIS_PROJECT}_SOURCES})
@@ -29,11 +30,17 @@ if (OPTION_ENGINE)
 		set_property(TARGET ${THIS_PROJECT} PROPERTY OUTPUT_NAME "${OPTION_LAUNCHER_EXECUTABLE}")	
 	endif()
 
-	if(WINDOWS)
+	if(WINDOWS AND MSVC)
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
 
 	target_link_libraries(${THIS_PROJECT} idlib)
+
+	find_package(Microsoft.GSL CONFIG REQUIRED)
+
+	find_path(VCPKG_INCLUDE_DIR gsl/gsl)
+	include_directories(${VCPKG_INCLUDE_DIR})
+	message(STATUS "VCPKG_INCLUDE_DIR = ${VCPKG_INCLUDE_DIR}")
 
 	apply_compile_settings()
 endif()

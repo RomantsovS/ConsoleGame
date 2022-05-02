@@ -18,7 +18,7 @@ idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT
 idCVar r_info_update_frame_time("r_info_update_frame_time", "100", CVAR_SYSTEM | CVAR_INIT, "");
 
 void AddRandomPoints(const idCmdArgs& args) {
-	auto cnt = max(game_add_point_count.GetInteger(), 1);
+	auto cnt = std::max(game_add_point_count.GetInteger(), 1);
 
 	for (int i = 0; i < cnt; ++i)
 		gameLocal.AddRandomPoint();
@@ -997,8 +997,8 @@ void idGameLocal::AddRandomPoint() {
 
 	auto size_x = def->dict.GetVector("size").x;
 	auto size_y = def->dict.GetVector("size").y;
-	auto size_max = max(size_x, size_y);
-	searching_radius = max(searching_radius, size_max) / 2.0f;
+	auto size_max = std::max(size_x, size_y);
+	searching_radius = std::max(searching_radius, size_max) / 2.0f;
 	start_pos += searching_radius;
 
 	Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max), GetRandomValue(start_pos, GetHeight() - size_max));

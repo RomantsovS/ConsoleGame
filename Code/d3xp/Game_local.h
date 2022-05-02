@@ -150,7 +150,7 @@ public:
 	void Shell_SyncWithSession() override;
 
 	template <typename T>
-	T GetRandomValue(T min, T max);
+	T GetRandomValue(T min_val, T max_val);
 	template <typename T>
 	T GetRandomValue(std::initializer_list<T> values);
 
@@ -204,21 +204,21 @@ private:
 };
 
 template<typename T>
-inline T idGameLocal::GetRandomValue(T min, T max) {
-	T cur_min = max(min, 0);
+inline T idGameLocal::GetRandomValue(T min_val, T max_val) {
+	T cur_min = std::max(min_val, static_cast<T>(0));
 
-	if (min < 0)
-		max = max - min;
+	if (min_val < 0)
+		max_val = max_val - min_val;
 
-	if (min > max)
-		Warning("Error getting random value. Min %3f, max %3f", min, max);
+	if (min_val > max_val)
+		Warning("Error getting random value. Min %3f, max %3f", min_val, max_val);
 
-	std::uniform_int_distribution<size_t> u(static_cast<size_t>(cur_min), static_cast<size_t>(max));
+	std::uniform_int_distribution<size_t> u(static_cast<size_t>(cur_min), static_cast<size_t>(max_val));
 
 	T cur_val = static_cast<T>(u(rand_eng));
 
-	if (min < 0) {
-		cur_val += min;
+	if (min_val < 0) {
+		cur_val += min_val;
 	}
 
 	return cur_val;
@@ -226,7 +226,7 @@ inline T idGameLocal::GetRandomValue(T min, T max) {
 
 template <typename T>
 T idGameLocal::GetRandomValue(std::initializer_list<T> values) {
-	return *std::next(values.begin(), GetRandomValue(static_cast<std::initializer_list<T>::size_type>(0), values.size() - 1));
+	return *std::next(values.begin(), GetRandomValue(static_cast<typename std::initializer_list<T>::size_type>(0), values.size() - 1));
 	return 0;
 }
 

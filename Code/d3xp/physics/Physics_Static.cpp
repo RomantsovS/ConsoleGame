@@ -84,7 +84,7 @@ const idBounds& idPhysics_Static::GetBounds(int id) const noexcept {
 	if (clipModel) {
 		return clipModel->GetBounds();
 	}
-	return idBounds::GetBoundsZero();
+	return bounds_zero;
 }
 
 /*

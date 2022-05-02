@@ -91,7 +91,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args)
 			localtime_s(&newtime, &aclock);
 			char buf[256];
 
-			asctime_s(buf, &newtime);
+			asctime_s(buf, sizeof buf, &newtime);
 
 			Printf("log file '%s' opened on %s\n", fileName.c_str(), buf);
 		}

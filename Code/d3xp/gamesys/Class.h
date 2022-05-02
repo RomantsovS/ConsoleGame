@@ -26,11 +26,11 @@ public:
 	idEventArg() { type = D_EVENT_INTEGER; value = 0; };
 	idEventArg(int data) noexcept { type = D_EVENT_INTEGER; value = data; };
 	idEventArg(float data) noexcept { type = D_EVENT_FLOAT; value = *reinterpret_cast<int*>(&data); };
-	idEventArg(Vector2& data) noexcept { type = D_EVENT_VECTOR; value = reinterpret_cast<int>(&data); };
-	idEventArg(const std::string& data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data.c_str()); };
-	idEventArg(const char* data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data); };
-	idEventArg(const class idEntity* data) noexcept { type = D_EVENT_ENTITY; value = reinterpret_cast<int>(data); };
-	idEventArg(const struct trace_s* data) noexcept { type = D_EVENT_TRACE; value = reinterpret_cast<int>(data); };
+	// idEventArg(Vector2& data) noexcept { type = D_EVENT_VECTOR; value = reinterpret_cast<int>(&data); };
+	// idEventArg(const std::string& data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data.c_str()); };
+	// idEventArg(const char* data) noexcept { type = D_EVENT_STRING; value = reinterpret_cast<int>(data); };
+	// idEventArg(const class idEntity* data) noexcept { type = D_EVENT_ENTITY; value = reinterpret_cast<int>(data); };
+	// idEventArg(const struct trace_s* data) noexcept { type = D_EVENT_TRACE; value = reinterpret_cast<int>(data); };
 };
 
 /***********************************************************************

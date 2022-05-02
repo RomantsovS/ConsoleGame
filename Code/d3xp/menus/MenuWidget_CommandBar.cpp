@@ -106,7 +106,7 @@ void idMenuWidget_CommandBar::Update() noexcept {
 			buttonSprite->SetVisible(false);
 			std::shared_ptr<idSWFScriptObject> const shortcutKeys = GetSWFObject()->GetGlobal("shortcutKeys").GetObjectScript();
 			if (shortcutKeys) {
-				buttonSprite->GetScriptObject()->Set("onPress", NULL);
+				buttonSprite->GetScriptObject()->Set("onPress", 0);
 				// bind the main action - need to use all caps here because shortcuts are stored that way
 				shortcutName = buttonName;
 				//shortcutName.ToUpper();

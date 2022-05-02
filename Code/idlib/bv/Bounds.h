@@ -38,13 +38,11 @@ public:
 	// most tight bounds for a translation
 	void FromPointTranslation(const Vector2& point, const Vector2& translation);
 	void FromBoundsTranslation(const idBounds& bounds, const Vector2& origin, const Vector2& translation);
-
-	static idBounds GetBoundsZero() noexcept {
-		return idBounds(vec2_origin, vec2_origin);
-	}
 private:
 	Vector2 b[2];
 };
+
+extern idBounds	bounds_zero;
 
 inline idBounds::idBounds() {
 }
@@ -191,7 +189,5 @@ inline bool idBounds::ContainsBounds(const idBounds& a) const {
 	return b[0][0] < a.b[0][0] && b[0][1] < a.b[0][1] &&
 		b[1][0] > a.b[1][0] && b[1][1] > a.b[1][1];
 }
-
-//extern idBounds	bounds_zero;
 
 #endif // ! BOUNDS_H

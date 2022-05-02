@@ -69,8 +69,8 @@ void Screen::init() {
 		common->FatalError("Screen Width / Font Width Too Big");
 
 	// Set Physical Console Window Size
-	window_rect = { 0, 0, static_cast<short>(width) - 1,
-		static_cast<short>(height + text_info_max_height.GetInteger()) - 1 };
+	window_rect = { 0, 0, static_cast<short>(width - 1),
+		static_cast<short>(height + text_info_max_height.GetInteger() - 1) };
 	if (!SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect))
 		common->FatalError("SetConsoleWindowInfo wrong width or height");
 

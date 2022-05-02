@@ -3,7 +3,7 @@
 
 #define JOINT_HANDLE_TO_CLIPMODEL_ID( id )	( -1 - id )
 
-class idCilp;
+class idClip;
 class idClipModel;
 class idEntity;
 

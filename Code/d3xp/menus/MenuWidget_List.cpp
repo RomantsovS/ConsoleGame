@@ -25,7 +25,7 @@ void idMenuWidget_List::Update() noexcept {
 
 		if (optionIndex < GetChildren().size()) {
 			std::shared_ptr<idMenuWidget> child = GetChildByIndex(optionIndex);
-			const int controlIndex = GetNumVisibleOptions() - min(GetNumVisibleOptions(), GetTotalNumberOfOptions()) + optionIndex;
+			const int controlIndex = GetNumVisibleOptions() - std::min(GetNumVisibleOptions(), GetTotalNumberOfOptions()) + optionIndex;
 			child->SetSpritePath(GetSpritePath(), va("item%d", controlIndex).c_str());
 			if (child->BindSprite(root.get())) {
 				//PrepareListElement(child, childIndex);
@@ -152,17 +152,17 @@ void idMenuWidget_List::CalculatePositionFromOffsetDelta(int& outIndex, int& out
 	// FIXME: make this simpler code - just pass a boolean to control it?
 	assert(offsetDelta != 0);
 
-	const int newOffset = max(currentIndex + offsetDelta, 0);
+	const int newOffset = std::max(currentIndex + offsetDelta, 0);
 
 	if (newOffset >= maxSize) {
 		// scrolling past the end - just scroll all the way to the end
 		outIndex = maxSize - 1;
-		outOffset = max(maxSize - windowSize, 0);
+		outOffset = std::max(maxSize - windowSize, 0);
 	}
 	else if (newOffset >= maxSize - windowSize) {
 		// scrolled to the last window
 		outIndex = newOffset;
-		outOffset = max(maxSize - windowSize, 0);
+		outOffset = std::max(maxSize - windowSize, 0);
 	}
 	else {
 		outIndex = outOffset = newOffset;

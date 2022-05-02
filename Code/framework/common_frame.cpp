@@ -28,7 +28,7 @@ void idCommonLocal::Frame() {
 
 			// if there was a large gap in time since the last frame, or the frame
 			// rate is very very low, limit the number of frames we will run
-			const int clampedDeltaMilliseconds = min(deltaMilliseconds, com_deltaTimeClamp.GetInteger());
+			const int clampedDeltaMilliseconds = std::min(deltaMilliseconds, com_deltaTimeClamp.GetInteger());
 
 			gameTimeResidual += clampedDeltaMilliseconds * timescale.GetFloat();
 

@@ -252,7 +252,7 @@ int Sys_ListFiles(const std::string& directory, std::string extension, std::vect
 		flag = _A_SUBDIR;
 	}
 
-	sprintf(search, "%s\\*%s", directory.c_str(), extension.c_str());
+	search = string_format("%s\\*%s", directory.c_str(), extension.c_str());
 
 	// search
 	list.clear();

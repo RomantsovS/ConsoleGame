@@ -6,7 +6,7 @@ extern idCVar window_font_height;
 
 class Screen {
 public:
-	using pos_type = int;
+	using pos_type = short;
 	using color_type = unsigned short;
 
 	/*enum class ConsoleColor {

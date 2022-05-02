@@ -56,12 +56,12 @@ struct actionRepeater_t {
 	actionRepeater_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "actionRepeater_t");
-#endif DEBUG_PRINT_Ctor_Dtor
+#endif
 	}
 	~actionRepeater_t() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s dtor\n", "actionRepeater_t");
-#endif DEBUG_PRINT_Ctor_Dtor
+#endif
 	}
 	actionRepeater_t(const actionRepeater_t&) = default;
 	actionRepeater_t& operator=(const actionRepeater_t&) = default;

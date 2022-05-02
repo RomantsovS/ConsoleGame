@@ -480,7 +480,7 @@ const idBounds& idPhysics_AF::GetBounds(int id) const noexcept {
 		gameLocal.Warning("Error Physics_AF GetBounds()");
 	}
 
-	return idBounds::GetBoundsZero();
+	return relBounds;
 }
 
 /*

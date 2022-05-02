@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-//idBounds bounds_zero(vec2_origin, vec2_origin);
+idBounds bounds_zero(vec2_origin, vec2_origin);
 
 /*
 ============

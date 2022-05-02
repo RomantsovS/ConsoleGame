@@ -44,7 +44,7 @@ struct modelTrace_t {
 class idRenderWorld {
 public:
 	idRenderWorld() = default;
-	virtual ~idRenderWorld() = 0 {}
+	virtual ~idRenderWorld() = default;
 	idRenderWorld(const idRenderWorld&) = default;
 	idRenderWorld& operator=(const idRenderWorld&) = default;
 	idRenderWorld(idRenderWorld&&) = default;
