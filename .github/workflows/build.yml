@@ -17,18 +17,37 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-          
+    
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+      
     - name: Install wget
       shell: bash
       run: |
         choco install wget --no-progress
-        
-    - name: Prepare Sonar scanner
+
+    - name: Environment
       shell: bash
       run: |
-        wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-windows.zip
-        unzip -q sonar-scanner-cli-4.7.0.2747-windows.zip
-        echo "${{github.workspace}}/sonar-scanner-4.7.0.2747-windows/bin/" >> $GITHUB_PATH
+        mkdir -p build
+    - name: Install Sonar Scanner
+      run: |
+        Invoke-WebRequest -Uri "${{ env.SONAR_WRAPPER_URL }}" -OutFile build/build-wrapper.zip
+        Invoke-WebRequest -Uri "${{ env.SONAR_SCANNER_URL }}" -OutFile build/sonar-scanner.zip
+        Expand-Archive -LiteralPath build/build-wrapper.zip -DestinationPath build
+        Expand-Archive -LiteralPath build/sonar-scanner.zip -DestinationPath build
+    - name: Build with Sonar Wrapper
+      shell: cmd
+      run: |
+        SET PATH=%PATH%;%cd%\build\build-wrapper-win-x86
+        build-wrapper-win-x86-64 --out-dir build\bw_output build-all.bat
+    - name: Prepare Sonar Scanner
+      shell: bash
+      run: |
+        set -x
+        cd build
+        ls -la bw_output
+        mv sonar-scanner-*-windows sonar-scanner
          
     - name: install vcpkg
       shell: bash
@@ -46,15 +65,15 @@ jobs:
     - name: Build
       run: |
         cmake --build ${{github.workspace}}/out/build --config ${{env.BUILD_TYPE}}
-  sonarcloud:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
+        
+    - name: Sonar Scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      shell: cmd
+      run: |
+        SET PATH=%PATH%;%cd%\build\sonar-scanner\bin
+        ECHO PATH=%PATH%
+        ECHO DIR %cd%\build\bw_output\
+        DIR %cd%\build\bw_output\
+        sonar-scanner.bat -Dsonar.cfamily.build-wrapper-output=%cd%\build\bw_output
