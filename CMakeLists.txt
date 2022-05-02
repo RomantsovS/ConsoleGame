@@ -18,8 +18,11 @@ set(METADATA_VERSION ${VERSION} CACHE STRING "Version number for executable meta
 
 # Declare the project.
 set(METADATA_PROJECT_NAME "ConsoleGame" CACHE STRING "Name of the solution project")
+
 project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 		VERSION "${METADATA_VERSION}"
 		LANGUAGES C CXX)
+
+message(STATUS "CMAKE_PREFIX_PATH  = ${CMAKE_PREFIX_PATH}")
 
 include(Tools/CMake/Configure.cmake)

@@ -21,9 +21,10 @@ message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 
 # Including the Toolchain file, as it sets important variables.
-if(DEFINED CMAKE_TOOLCHAIN_FILE)
-	include(${CMAKE_TOOLCHAIN_FILE})
-elseif(WIN32)
+#if(DEFINED CMAKE_TOOLCHAIN_FILE)
+#	include(${CMAKE_TOOLCHAIN_FILE})
+#endif()
+if(WIN32)
 	include("${TOOLS_CMAKE_DIR}/toolchain/windows/WindowsPC-MSVC.cmake")
 endif()
 

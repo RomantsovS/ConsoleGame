@@ -5,7 +5,6 @@ if (OPTION_ENGINE)
 
 	include_directories( "${CMAKE_CURRENT_SOURCE_DIR}" )
 	include_directories( "${CMAKE_SOURCE_DIR}" )
-	include_directories(${GSL_INCLUDE_PATH})
 
 	project(${THIS_PROJECT})
 	read_settings(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
