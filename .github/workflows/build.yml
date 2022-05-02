@@ -38,18 +38,8 @@ jobs:
         Invoke-WebRequest -Uri "${{ env.SONAR_SCANNER_URL }}" -OutFile build/sonar-scanner.zip
         Expand-Archive -LiteralPath build/build-wrapper.zip -DestinationPath build
         Expand-Archive -LiteralPath build/sonar-scanner.zip -DestinationPath build
-    - name: Build with Sonar Wrapper
-      shell: cmd
-      run: |
-        SET PATH=%PATH%;%cd%\build\build-wrapper-win-x86
-        build-wrapper-win-x86-64 --out-dir build\bw_output build-all.bat
-    - name: Prepare Sonar Scanner
-      shell: bash
-      run: |
-        set -x
-        cd build
-        ls -la bw_output
-        mv sonar-scanner-*-windows sonar-scanner
+        ls
+        ls build
          
     - name: install vcpkg
       shell: bash
@@ -67,7 +57,19 @@ jobs:
     - name: Build
       run: |
         cmake --build ${{github.workspace}}/out/build --config ${{env.BUILD_TYPE}}
-        
+
+    - name: Build with Sonar Wrapper
+      shell: cmd
+      run: |
+        SET PATH=%PATH%;%cd%\build\build-wrapper-win-x86
+        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/x64-${{env.BUILD_TYPE}}/ConsoleGame.sln //t:Rebuild 
+    - name: Prepare Sonar Scanner
+      shell: bash
+      run: |
+        set -x
+        cd build
+        ls -la bw_output
+        mv sonar-scanner-*-windows sonar-scanner
     - name: Sonar Scanner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
