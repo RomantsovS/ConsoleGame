@@ -5,6 +5,11 @@ on:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: windows-latest
@@ -21,12 +26,9 @@ jobs:
     - name: Prepare Sonar scanner
       shell: bash
       run: |
-        wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.1.2450-windows.zip
-        unzip -q sonar-scanner-cli-4.6.1.2450-windows.zip
-        echo "${{github.workspace}}/sonar-scanner-4.6.1.2450-windows/bin/" >> $GITHUB_PATH
-        wget -nv https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
-        unzip -q build-wrapper-win-x86.zip          
-        echo "${{github.workspace}}/build-wrapper-win-x86/" >> $GITHUB_PATH
+        wget -nv https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-windows.zip
+        unzip -q sonar-scanner-cli-4.7.0.2747-windows.zip
+        echo "${{github.workspace}}/sonar-scanner-4.7.0.2747-windows/bin/" >> $GITHUB_PATH
          
     - name: install vcpkg
       shell: bash
@@ -36,20 +38,14 @@ jobs:
         cd vcpkg
         sh bootstrap-vcpkg.sh
         ./vcpkg.exe integrate install
-        ./vcpkg.exe install ms-gsl
+        ./vcpkg.exe --triplet x64-windows install ms-gsl
         
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-  
-    - name: echo MSBuild
-      shell: bash
+    - name: Configure CMake
       run: |
-        msbuild.exe -version
-          
-    - name: Compile
-      shell: bash
+        cmake -B ${{github.workspace}}/out/build -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPATCH_VERSION=${{ github.run_number }} -DWITH_GTEST=OFF
+    - name: Build
       run: |
-        build-wrapper-win-x86-64.exe --out-dir bw-outputs MSBuild.exe ConsoleGame.sln //t:Rebuild
+        cmake --build ${{github.workspace}}/out/build --config ${{env.BUILD_TYPE}}
         
     - name: SonarCloud Scan
       shell: bash
@@ -58,8 +54,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
-    - uses: actions/upload-artifact@v2
-      with:
-        name: ConsoleGame
-        path: .\build\Win32\Debug\ConsoleGame.exe
