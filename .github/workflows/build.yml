@@ -21,7 +21,7 @@ jobs:
         fetch-depth: 0
     
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1.1
+      uses: microsoft/setup-msbuild@v1.1
     
     - name: echo MSBuild
       shell: bash
@@ -71,7 +71,7 @@ jobs:
         ls out
         ls out/build
         ls out/build/code
-        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/Code/ConsoleGame.sln -t:Rebuild -p:Configuration=${{env.BUILD_TYPE}} 
+        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/Code/ConsoleGame.sln -t:Rebuild -verbosity:diag -p:Configuration=${{env.BUILD_TYPE}} 
     - name: Prepare Sonar Scanner
       shell: bash
       run: |
