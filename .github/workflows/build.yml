@@ -9,7 +9,9 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-
+  SONAR_WRAPPER_URL: https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
+  SONAR_SCANNER_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-windows.zip
+  
 jobs:
   build:
     runs-on: windows-latest
