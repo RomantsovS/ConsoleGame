@@ -37,10 +37,7 @@ if (OPTION_ENGINE)
 	target_link_libraries(${THIS_PROJECT} idlib)
 
 	find_package(Microsoft.GSL CONFIG REQUIRED)
-
-	find_path(VCPKG_INCLUDE_DIR gsl/gsl)
-	include_directories(${VCPKG_INCLUDE_DIR})
-	message(STATUS "VCPKG_INCLUDE_DIR = ${VCPKG_INCLUDE_DIR}")
+	target_link_libraries(${THIS_PROJECT} Microsoft.GSL::GSL)
 
 	apply_compile_settings()
 endif()

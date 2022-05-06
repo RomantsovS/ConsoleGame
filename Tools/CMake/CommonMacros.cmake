@@ -107,12 +107,6 @@ macro(prepare_project)
 
 	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
-
-	find_package(Microsoft.GSL CONFIG REQUIRED)
-
-	find_path(VCPKG_INCLUDE_DIR gsl/gsl)
-	include_directories(${VCPKG_INCLUDE_DIR})
-	message(STATUS "VCPKG_INCLUDE_DIR = ${VCPKG_INCLUDE_DIR}")
 endmacro()
 
 macro(apply_compile_settings)
