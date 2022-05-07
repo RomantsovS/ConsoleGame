@@ -139,6 +139,8 @@ function(CryEngineModule target)
 	endif()
 
 	apply_compile_settings()
+
+	add_gsl_lib()
 endfunction()
 
 function(CryConsoleApplication target)
@@ -155,3 +157,11 @@ function(CryFileContainer cur_folder)
 
 	set(${THIS_PROJECT}_SOURCES ${${THIS_PROJECT}_SOURCES} ${SOURCES} PARENT_SCOPE)
 endfunction()
+
+macro(add_gsl_lib)
+	find_package(Microsoft.GSL CONFIG REQUIRED)
+	target_link_libraries(${THIS_PROJECT} Microsoft.GSL::GSL)
+
+	get_target_property(MS_GSL_INCLUDE_DIR Microsoft.GSL::GSL INTERFACE_INCLUDE_DIRECTORIES)
+	include_directories( "${MS_GSL_INCLUDE_DIR}" )
+endmacro()

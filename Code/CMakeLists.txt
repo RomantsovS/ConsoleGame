@@ -36,8 +36,7 @@ if (OPTION_ENGINE)
 
 	target_link_libraries(${THIS_PROJECT} idlib)
 
-	find_package(Microsoft.GSL CONFIG REQUIRED)
-	target_link_libraries(${THIS_PROJECT} Microsoft.GSL::GSL)
-
 	apply_compile_settings()
+
+	add_gsl_lib()
 endif()
