@@ -220,7 +220,7 @@ int Sys_PollKeyboardInputEvents() noexcept;
 int Sys_ReturnKeyboardInputEvent(const int n, int& ch, bool& state);
 void Sys_EndKeyboardInputEvents() noexcept;
 
-const char* Sys_DefaultBasePath() noexcept;
+std::filesystem::path Sys_DefaultBasePath() noexcept;
 
 // This really isn't the right place to have this, but since this is the 'top level' include
 // and has a function signature with 'FILE' in it, it kinda needs to be here =/

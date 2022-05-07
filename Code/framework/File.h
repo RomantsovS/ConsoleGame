@@ -37,10 +37,10 @@ public:
 };
 
 class idFile_Permanent : public idFile {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
 
 public:
-	idFile_Permanent(const std::string &file_name, std::ios_base::openmode ios_mode);
+	idFile_Permanent(const std::filesystem::path& file_name, std::ios_base::openmode ios_mode);
 	virtual ~idFile_Permanent();
 	idFile_Permanent(const idFile_Permanent&) = default;
 	idFile_Permanent& operator=(const idFile_Permanent&) = default;
@@ -58,7 +58,7 @@ public:
 
 private:
 	std::string name;		// relative path of the file - relative path
-	std::string fullPath;	// full file path - OS path
+	std::filesystem::path fullPath;	// full file path - OS path
 	int mode;				// open mode
 	int fileSize;			// size of the file
 	idFileHandle o;			// file handle

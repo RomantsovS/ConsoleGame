@@ -201,8 +201,8 @@ void Sys_Sleep(int msec) noexcept {
 Sys_Mkdir
 ==============
 */
-void Sys_Mkdir(const std::string &path) noexcept {
-	_mkdir(path.c_str());
+void Sys_Mkdir(const std::filesystem::path& path) noexcept {
+	std::filesystem::create_directory(path);
 }
 
 /*
@@ -224,8 +224,8 @@ const char* Sys_Cwd() noexcept {
 Sys_DefaultBasePath
 ==============
 */
-const char* Sys_DefaultBasePath() noexcept {
-	return Sys_Cwd();
+std::filesystem::path Sys_DefaultBasePath() noexcept {
+	return std::filesystem::current_path();
 }
 
 /*
@@ -233,41 +233,15 @@ const char* Sys_DefaultBasePath() noexcept {
 Sys_ListFiles
 ==============
 */
-int Sys_ListFiles(const std::string& directory, std::string extension, std::vector<std::string>& list) {
-	std::string search;
-	_finddata_t findinfo;
-	int flag;
+int Sys_ListFiles(const std::filesystem::path& directory, std::string extension, std::vector<std::string>& list) {
+	if (!std::filesystem::exists(directory))
+		return 0;
 
-	if (extension.empty()) {
-		extension = "";
-	}
-
-	// passing a slash as extension will find directories
-	if (extension[0] == '/' && extension[1] == 0) {
-		extension = "";
-		flag = 0;
-	}
-	else {
-		flag = _A_SUBDIR;
-	}
-
-	search = string_format("%s\\*%s", directory.c_str(), extension.c_str());
-
-	// search
-	list.clear();
-
-	auto findhandle = _findfirst(search.c_str(), &findinfo);
-	if (findhandle == -1) {
-		return -1;
-	}
-
-	do {
-		if (flag ^ (findinfo.attrib & _A_SUBDIR)) {
-			list.push_back(findinfo.name);
+	for (auto const& dir_entry : std::filesystem::directory_iterator{ directory }) {
+		if (dir_entry.path().extension().string() == extension) {
+			list.push_back(dir_entry.path().filename().string());
 		}
-	} while (_findnext(findhandle, &findinfo) != -1);
-
-	_findclose(findhandle);
+	}
 
 	return list.size();
 }

@@ -65,6 +65,7 @@ public:
 	float					GetFloat() const noexcept { return internalVar->floatValue; }
 
 	void					SetString(const char* value) { internalVar->InternalSetString(value); }
+	void					SetString(const std::string& value) { internalVar->InternalSetString(value); }
 	void					SetBool(const bool value) noexcept { internalVar->InternalSetBool(value); }
 	void					SetInteger(const int value) noexcept { internalVar->InternalSetInteger(value); }
 	void					SetFloat(const float value) noexcept { internalVar->InternalSetFloat(value); }

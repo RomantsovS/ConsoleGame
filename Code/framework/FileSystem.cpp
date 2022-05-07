@@ -8,7 +8,7 @@ const int FSFLAG_RETURN_FILE_MEM = (1 << 1);
 const std::string BASE_GAMEDIR = "base";
 
 struct searchpath_t {
-	searchpath_t(const std::string& _path, const std::string& _gamedir) : path(_path), gamedir(_gamedir) {
+	searchpath_t(const std::filesystem::path& _path, const std::filesystem::path& _gamedir) : path(_path), gamedir(_gamedir) {
 #ifdef DEBUG_PRINT_Ctor_Dtor
 		common->DPrintf("%s ctor\n", "searchpath_t");
 #endif // DEBUG_PRINT_Ctor_Dtor
@@ -24,8 +24,8 @@ struct searchpath_t {
 	searchpath_t(searchpath_t&&) = default;
 	searchpath_t& operator=(searchpath_t&&) = default;
 
-	std::string	path;		// c:\doom
-	std::string gamedir;	// base
+	std::filesystem::path path; // c:\doom
+	std::filesystem::path gamedir; // base
 };
 
 class idFileSystemLocal : public idFileSystem {
@@ -44,8 +44,8 @@ public:
 	bool IsInitialized() const noexcept override;
 	std::shared_ptr<idFileList> ListFiles(const std::string& relativePath, const std::string& extension, bool sort = false, bool fullRelativePath = false, const std::string& gamedir = "") override;
 	void FreeFileList(std::shared_ptr<idFileList> fileList) noexcept override;
-	virtual std::string BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath);
-	virtual void CreateOSPath(const std::string &OSPath);
+	virtual std::filesystem::path BuildOSPath(const std::filesystem::path& base, const std::filesystem::path& game, const std::filesystem::path& relativePath);
+	virtual void CreateOSPath(const std::filesystem::path& OSPath);
 	std::unique_ptr<char[]> ReadFile(const std::string& relativePath, int& len, ID_TIME_T* timestamp, bool returnBuffer = false) override;
 	virtual std::shared_ptr<idFile> OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles = true, const std::string &gamedir = nullptr);
 	std::shared_ptr<idFile> OpenFileRead(const std::string &relativePath, bool allowCopyFiles = true, const std::string &gamedir = "") override;
@@ -61,11 +61,11 @@ private:
 	static idCVar fs_game_base;
 private:
 	void ReplaceSeparators(std::string& path, char sep = PATHSEPARATOR_CHAR) noexcept;
-	int ListOSFiles(const std::string& directory, const std::string& extension, std::vector<std::string>& list);
-	std::shared_ptr<idFile> OpenOSFile(const std::string& name, fsMode_t mode);
+	int ListOSFiles(const std::filesystem::path& directory, const std::string& extension, std::vector<std::string>& list);
+	std::shared_ptr<idFile> OpenOSFile(const std::filesystem::path& fileName, fsMode_t mode);
 
 	void GetExtensionList(const std::string& extension, std::vector<std::string>& extensionList) const;
-	int GetFileList(const std::string& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir = "");
+	int GetFileList(const std::filesystem::path& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir = "");
 
 	void AddGameDirectory(const std::string &path, const std::string &dir);
 
@@ -90,7 +90,7 @@ bool isFileSystemExists = true;
 idFileSystemLocal::OpenOSFile
 ================
 */
-std::shared_ptr<idFile> idFileSystemLocal::OpenOSFile(const std::string &fileName, fsMode_t mode) {
+std::shared_ptr<idFile> idFileSystemLocal::OpenOSFile(const std::filesystem::path& fileName, fsMode_t mode) {
 	std::ios_base::openmode ios_mode;
 
 	if (mode == FS_WRITE) {
@@ -134,38 +134,20 @@ idFileSystemLocal::CreateOSPath
 Creates any directories needed to store the given filename
 ============
 */
-void idFileSystemLocal::CreateOSPath(const std::string &OSPath) {
-	// make absolutely sure that it can't back up the path
-	// FIXME: what about c: ?
-	if (OSPath.find("..") != std::string::npos || OSPath.find("::") != std::string::npos) {
-#ifdef _DEBUG		
-		common->DPrintf("refusing to create relative path \"%s\"\n", OSPath);
-#endif
-		return;
-	}
-
-	auto path(OSPath);
-	idStr::SlashesToBackSlashes(path);
-	for (auto ofs = &path[1]; *ofs; ofs++) {
-		if (*ofs == PATHSEPARATOR_CHAR) {
-			// create the directory
-			*ofs = 0;
-			Sys_Mkdir(path);
-			*ofs = PATHSEPARATOR_CHAR;
-		}
-	}
+void idFileSystemLocal::CreateOSPath(const std::filesystem::path& OSPath) {
+	Sys_Mkdir(OSPath.parent_path());
 }
 
 void idFileSystemLocal::Init() {
 	if (fs_basepath.GetString().empty()) {
 		size_t i = 0;
 		std::vector<std::string> list;
-		std::string path = Sys_DefaultBasePath();
-		while (i < 5 && ListOSFiles(path + "/base", "cfg", list) < 1) {
-			path += "/../";
+		std::filesystem::path path = Sys_DefaultBasePath();
+		while (i < 5 && ListOSFiles(path / "base", "cfg", list) < 1) {
+			path = path.parent_path();
 			++i;
 		}
-		fs_basepath.SetString(path.c_str());
+		fs_basepath.SetString(path.string());
 	}
 
 	// try to start up normally
@@ -232,23 +214,10 @@ static bool IsOSPath(const std::string path) noexcept {
 idFileSystemLocal::BuildOSPath
 ===================
 */
-std::string idFileSystemLocal::BuildOSPath(const std::string &base, const std::string &game, const std::string &relativePath) {
-	static std::string OSPath;
-	OSPath.resize(max_string_chars);
+std::filesystem::path idFileSystemLocal::BuildOSPath(const std::filesystem::path& base, const std::filesystem::path& game, const std::filesystem::path& relativePath) {
+	static std::filesystem::path OSPath;
 
-	std::string newPath;
-
-	// handle case of this already being an OS path
-	if (IsOSPath(relativePath)) {
-		return relativePath;
-	}
-
-	std::string strBase = base;
-	idStr::StripTrailing(strBase, '/');
-	idStr::StripTrailing(strBase, '\\');
-	sprintf(newPath, "%s/%s/%s", strBase.c_str(), game.c_str(), relativePath.c_str());
-	ReplaceSeparators(newPath);
-	OSPath = newPath;
+	OSPath = base / game / relativePath;
 	return OSPath;
 }
 
@@ -262,7 +231,7 @@ Used for streaming data out of either a
 separate file or a ZIP file.
 ===========
 */
-std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadFlags(const std::string &relativePath, int searchFlags, bool allowCopyFiles, const std::string &gamedir) {
+std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadFlags(const std::string& relativePath, int searchFlags, bool allowCopyFiles, const std::string& gamedir) {
 
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
@@ -274,15 +243,10 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadFlags(const std::string &
 		return nullptr;
 	}
 
-	// qpaths are not supposed to have a leading slash
-	/*if (relativePath[0] == '/' || relativePath[0] == '\\') {
-		relativePath++;
-	}*/
-
 	// make absolutely sure that it can't back up the path.
 	// The searchpaths do guarantee that something will always
 	// be prepended, so we don't need to worry about "c:" or "//limbo" 
-	if (relativePath.find("..") != std::string::npos|| relativePath.find("::") != std::string::npos) {
+	if (relativePath.find("..") != std::string::npos || relativePath.find("::") != std::string::npos) {
 		return nullptr;
 	}
 
@@ -307,7 +271,7 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadFlags(const std::string &
 			}
 
 			auto netpath = BuildOSPath(searchPaths[sp].path, searchPaths[sp].gamedir, relativePath);
-			std::shared_ptr<idFile_Permanent> file = std::reinterpret_pointer_cast<idFile_Permanent>(OpenOSFile(netpath, FS_READ));
+			std::shared_ptr<idFile_Permanent> file = std::dynamic_pointer_cast<idFile_Permanent>(OpenOSFile(netpath, FS_READ));
 			if (!file->o) {
 				continue;
 			}
@@ -316,7 +280,8 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenFileReadFlags(const std::string &
 			file->mode = (1 << FS_READ);
 			file->fileSize = DirectFileLength(file->o);
 			if (fs_debug.GetInteger()) {
-				common->Printf("idFileSystem::OpenFileRead: %s (found in '%s/%s')\n", relativePath.c_str(), searchPaths[sp].path.c_str(), searchPaths[sp].gamedir.c_str());
+				common->Printf("idFileSystem::OpenFileRead: %s (found in '%s')\n", relativePath.c_str(),
+					(searchPaths[sp].path / searchPaths[sp].gamedir).string().c_str());
 			}
 
 			return file;
@@ -431,7 +396,7 @@ Does not clear the list first so this can be used to progressively build a file 
 When 'sort' is true only the new files added to the list are sorted.
 ===============
 */
-int idFileSystemLocal::GetFileList(const std::string& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir) {
+int idFileSystemLocal::GetFileList(const std::filesystem::path& relativePath, const std::vector<std::string>& extensions, std::vector<std::string>& list, bool fullRelativePath, const std::string& gamedir) {
 	if (!IsInitialized()) {
 		common->FatalError("Filesystem call made without initialization\n");
 	}
@@ -444,11 +409,6 @@ int idFileSystemLocal::GetFileList(const std::string& relativePath, const std::v
 		return 0;
 	}
 
-	int pathLength = relativePath.size();
-	if (pathLength) {
-		pathLength++;	// for the trailing '/'
-	}
-
 	// search through the path, one element at a time, adding to list
 	for (int sp = searchPaths.size() - 1; sp >= 0; sp--) {
 		if (!gamedir.empty() && gamedir[0] != 0) {
@@ -457,7 +417,7 @@ int idFileSystemLocal::GetFileList(const std::string& relativePath, const std::v
 			}
 		}
 
-		std::string netpath = BuildOSPath(searchPaths[sp].path, searchPaths[sp].gamedir, relativePath);
+		std::filesystem::path netpath = BuildOSPath(searchPaths[sp].path, searchPaths[sp].gamedir, relativePath);
 
 		for (size_t i = 0; i < extensions.size(); i++) {
 
@@ -474,11 +434,9 @@ int idFileSystemLocal::GetFileList(const std::string& relativePath, const std::v
 			for (size_t j = 0; j < sysFiles.size(); j++) {
 				// unique the match
 				if (fullRelativePath) {
-					std::string work = relativePath;
-					work += "/";
-					work += sysFiles[j];
+					std::filesystem::path work = relativePath / sysFiles[j];
 					if(std::find(list.begin(), list.end(), work) == list.end())
-						list.push_back(work);
+						list.push_back(work.string());
 				}
 				else {
 					if (std::find(list.begin(), list.end(), sysFiles[j]) == list.end())
@@ -529,11 +487,7 @@ idFileSystemLocal::ListOSFiles
  call to the OS for a listing of files in an OS directory
 ===============
 */
-int	idFileSystemLocal::ListOSFiles(const std::string& directory, const std::string& extension, std::vector<std::string>& list) {
-	/*if (extension.empty()) {
-		extension = "";
-	}*/
-
+int	idFileSystemLocal::ListOSFiles(const std::filesystem::path& directory, const std::string& extension, std::vector<std::string>& list) {
 	return Sys_ListFiles(directory, extension, list);
 }
 
@@ -542,20 +496,19 @@ std::shared_ptr<idFile> idFileSystemLocal::OpenFileWrite(const std::string& rela
 		common->FatalError("Filesystem call made without initialization\n");
 	}
 
-	auto path = cvarSystem->GetCVarString(basePath);
-	if (!path[0]) {
+	std::filesystem::path path = cvarSystem->GetCVarString(basePath);
+	if (path.empty()) {
 		path = Sys_DefaultBasePath();
 	}
 	auto OSpath = BuildOSPath(path, gameFolder, relativePath);
 
 	if (fs_debug.GetInteger()) {
-		common->Printf("idFileSystem::OpenFileWrite: %s\n", OSpath.c_str());
+		common->Printf("idFileSystem::OpenFileWrite: %s\n", OSpath.string().c_str());
 	}
 
-	common->DPrintf("writing to: %s\n", OSpath.c_str());
 	CreateOSPath(OSpath);
 
-	auto f = std::reinterpret_pointer_cast<idFile_Permanent>(OpenOSFile(OSpath, FS_WRITE));
+	auto f = std::dynamic_pointer_cast<idFile_Permanent>(OpenOSFile(OSpath, FS_WRITE));
 	if (!f->o) {
 		f = nullptr;
 		return nullptr;
