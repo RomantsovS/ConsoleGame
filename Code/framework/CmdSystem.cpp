@@ -1,5 +1,4 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
 
 idCVar net_allowCheats("net_allowCheats", "1", CVAR_BOOL | CVAR_NOCHEAT, "Allow cheats in multiplayer");
 

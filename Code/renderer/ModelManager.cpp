@@ -1,4 +1,4 @@
-#pragma hdrstop
+
 #include "idlib/precompiled.h"
 
 #include "Model_local.h"

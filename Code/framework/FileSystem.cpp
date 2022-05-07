@@ -1,5 +1,5 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
+
 
 // search flags when opening a file
 const int FSFLAG_SEARCH_DIRS = (1 << 0);

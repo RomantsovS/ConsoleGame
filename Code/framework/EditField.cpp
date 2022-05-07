@@ -1,5 +1,5 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
+
 
 constexpr int MAX_EDIT_LINE = 50;
 

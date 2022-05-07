@@ -1,5 +1,5 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
+
 
 #include "Common_local.h"
 #include "../renderer/tr_local.h"

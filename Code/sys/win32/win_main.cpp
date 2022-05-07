@@ -1,4 +1,3 @@
-#pragma hdrstop
 #include "idlib/precompiled.h"
 
 #include <io.h>

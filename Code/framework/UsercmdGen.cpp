@@ -1,5 +1,5 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
+
 
 const int KEY_MOVESPEED = 127;
 

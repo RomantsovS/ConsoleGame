@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#pragma hdrstop
+
 
 idCommon* idLib::common = nullptr;
 

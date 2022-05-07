@@ -1,5 +1,5 @@
 #include "precompiled.h"
-#pragma hdrstop
+
 
 template<>
 std::string idStr::GetFromValue<int>(const int i)

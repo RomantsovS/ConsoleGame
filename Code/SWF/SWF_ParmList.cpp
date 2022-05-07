@@ -1,4 +1,4 @@
-#pragma hdrstop
+
 #include "idlib/precompiled.h"
 
 std::shared_ptr<idSWFScriptVar> idSWFParmList::Alloc() {

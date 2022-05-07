@@ -1,5 +1,5 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
+
 
 idFile::idFile() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
