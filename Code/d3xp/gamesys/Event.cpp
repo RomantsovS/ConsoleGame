@@ -282,7 +282,7 @@ idEvent::Schedule
 ================
 */
 void idEvent::Schedule(idClass* obj, const idTypeInfo* type, int time) noexcept {
-	//assert(initialized);
+	assert(initialized);
 	if (!initialized) {
 		return;
 	}
@@ -362,10 +362,12 @@ idEvent::ServiceEvents
 void idEvent::ServiceEvents() {
 	int args[D_EVENT_MAXARGS];
 
+	size_t i = EventQueue.Num();
+
 	int num = 0;
 	while (!EventQueue.IsListEmpty()) {
 		auto event = EventQueue.Next();
-		//assert(event);
+		assert(event);
 
 		if (event->time > gameLocal.time) {
 			break;
@@ -421,11 +423,14 @@ void idEvent::ServiceEvents() {
 		// the event is removed from its list so that if then object
 		// is deleted, the event won't be freed twice
 		event->eventNode.Remove();
-		//assert(event->object);
+		size_t i = EventQueue.Num();
+		assert(event->object);
 		event->object->ProcessEventArgPtr(ev, args);
+		i = EventQueue.Num();
 
 		// return the event to the free list
 		event->Free();
+		i = EventQueue.Num();
 
 		// Don't allow ourselves to stay in here too long.  An abnormally high number
 		// of events being processed is evidence of an infinite loop of events.

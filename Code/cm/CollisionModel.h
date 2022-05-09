@@ -11,14 +11,14 @@ typedef enum {
 
 // contact info
 struct contactInfo_t {
-	contactType_t			type;			// contact type
-	Vector2					point;			// point of contact
+	//contactType_t			type;			// contact type
+	//Vector2					point;			// point of contact
 	//Vector2					normal;			// contact plane normal
 	//float					dist;			// contact plane distance
 	int						contents;		// contents at other side of surface
 	//const idMaterial* material;		// surface material
-	int						modelFeature;	// contact feature on model
-	int						trmFeature;		// contact feature on trace model
+	//int						modelFeature;	// contact feature on model
+	//int						trmFeature;		// contact feature on trace model
 	int						entityNum;		// entity the contact surface is a part of
 	int						id;				// id of clip model the contact surface is part of
 };

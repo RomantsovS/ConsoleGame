@@ -100,7 +100,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 
 	tw.trace.fraction = 1.0f;
 	tw.trace.c.contents = 0;
-	tw.trace.c.type = CONTACT_NONE;
+	//tw.trace.c.type = CONTACT_NONE;
 	tw.contents = contentMask;
 	tw.isConvex = true;
 	//tw.rotation = false;
@@ -122,7 +122,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		//results->endAxis = trmAxis;
 		//results->c.normal = vec3_origin;
 		//results->c.material = NULL;
-		results->c.point = start;
+		//results->c.point = start;
 		/*if (common->RW()) {
 			common->RW()->DebugArrow(colorRed, start, end, 1);
 		}*/
@@ -212,7 +212,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 		}*/
 		if (modelOrigin != vec2_origin) {
 			for (i = 0; i < tw.numContacts; i++) {
-				tw.contacts[i].point += modelOrigin;
+				//tw.contacts[i].point += modelOrigin;
 				//tw.contacts[i].dist += modelOrigin * tw.contacts[i].normal;
 			}
 		}
@@ -234,7 +234,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 				results->c.normal *= modelAxis;
 				results->c.point *= modelAxis;
 			}*/
-			results->c.point += modelOrigin;
+			//results->c.point += modelOrigin;
 			//results->c.dist += modelOrigin * results->c.normal;
 		}
 	}

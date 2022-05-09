@@ -201,8 +201,6 @@ private:
 	const idTraceModel* TraceModelForClipModel(const idClipModel* mdl) const;
 	int GetTraceClipModels(const idBounds& bounds, int contentMask,
 		const idEntity* passEntity, idClipModel** clipModelList) const;
-	void TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
-		idClipModel* touch) const;
 
 	bool DrawClipSectors_r(const clipSector_t* node, const idBounds& bounds);
 };

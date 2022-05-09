@@ -58,25 +58,49 @@ Returns true if the velocity was clipped in some way
 #define	MAX_CLIP_PLANES	5
 
 bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown, bool push) {
-	float		time_left;
-	Vector2		end;
-	trace_t		trace;
+	size_t bumpcount, numbumps = 3;
+	float time_left;
+	Vector2 end, clipVelocity = current.velocity;
+	trace_t trace;
+	bool stepped = false;
 
 	time_left = GetFrameTime();
 
-	// calculate position we are trying to move to
-	end = current.origin + time_left * current.velocity;
+	std::vector<int> collidedEntities;
 
-	// see if we can make it there
-	if (gameLocal.clip.Translation(trace, current.origin, end, clipModel.get(), clipMask, self)) {
-		// let the entity know about the collision
-		self->Collide(trace, current.velocity);
+	for (bumpcount = 0; bumpcount < numbumps; bumpcount++) {
+		// calculate position we are trying to move to
+		end = current.origin + time_left * clipVelocity;
+
+		// see if we can make it there
+		gameLocal.clip.Translation(trace, current.origin, end, clipModel.get(), clipMask, self);
+
+		time_left -= time_left * trace.fraction;
+		current.origin = trace.endpos;
+
+		// if moved the entire distance
+		if (trace.fraction >= 1.0f) {
+			stepped = true;
+			break;
+		}
+
+		if (!stepped) {
+			if (std::find(std::begin(collidedEntities), std::end(collidedEntities), trace.c.entityNum) == std::end(collidedEntities)) {
+				// let the entity know about the collision
+				self->Collide(trace, current.velocity);
+				collidedEntities.push_back(trace.c.entityNum);
+			}
+		}
+
+		if (bumpcount == 0 && current.velocity.x != 0.0f)
+			clipVelocity = { current.velocity.x, 0.0f };
+		else if (current.velocity.y != 0.0f)
+			clipVelocity = { 0.0f, current.velocity.y };
+		else
+			break;
 	}
 
-	time_left -= time_left * trace.fraction;
-	current.origin = trace.endpos;
-
-	return true;
+	return bumpcount == 0;
 }
 
 /*

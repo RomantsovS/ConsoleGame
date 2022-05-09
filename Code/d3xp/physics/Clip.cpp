@@ -509,7 +509,7 @@ inline bool TestHugeTranslation(trace_t& results, const idClipModel* mdl, const 
 		results.endpos = start;
 		//results.endAxis = trmAxis;
 		memset(&results.c, 0, sizeof(results.c));
-		results.c.point = start;
+		//results.c.point = start;
 
 		if (mdl->GetEntity()) {
 			gameLocal.Printf("huge translation for clip model %d on entity %d '%s'\n", mdl->GetId(), mdl->GetEntity()->entityNumber, mdl->GetEntity()->GetName());
@@ -888,33 +888,6 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 	}
 
 	return num;
-}
-
-void idClip::TraceRenderModel(trace_t& trace, const Vector2& start, const Vector2& end, const float radius,
-	idClipModel* touch) const {
-	trace.fraction = 1.0f;
-
-	// if the trace is passing through the bounds
-	if (touch->absBounds.Expand(radius).LineIntersection(start, end)) {
-		modelTrace_t modelTrace;
-
-		// test with exact render model and modify trace_t structure accordingly
-		if (gameRenderWorld->ModelTrace(modelTrace, touch->renderModelHandle, start, end, radius)) {
-			trace.fraction = modelTrace.fraction;
-			//trace.endAxis = axis;
-			trace.endpos = modelTrace.point;
-			//trace.c.normal = modelTrace.normal;
-			//trace.c.dist = modelTrace.point * modelTrace.normal;
-			trace.c.point = modelTrace.point;
-			trace.c.type = CONTACT_TRMVERTEX;
-			trace.c.modelFeature = 0;
-			trace.c.trmFeature = 0;
-			//trace.c.contents = modelTrace.material->GetContentFlags();
-			//trace.c.material = modelTrace.material;
-			// NOTE: trace.c.id will be the joint number
-			touch->id = JOINT_HANDLE_TO_CLIPMODEL_ID(modelTrace.jointNumber);
-		}
-	}
 }
 
 /*

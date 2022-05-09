@@ -218,6 +218,6 @@ void idProjectile::Event_Explode() {
 
 	memset(&collision, 0, sizeof(collision));
 	collision.endpos = GetPhysics()->GetOrigin();
-	collision.c.point = GetPhysics()->GetOrigin();
+	//collision.c.point = GetPhysics()->GetOrigin();
 	Explode(collision, NULL);
 }

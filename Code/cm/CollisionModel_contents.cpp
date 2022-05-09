@@ -18,7 +18,7 @@ idCollisionModelManagerLocal::TestTrmVertsInBrush
 ================
 */
 bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_brush_t* b) {
-	int j, numVerts;// , bestPlane;
+	//int j, numVerts;// , bestPlane;
 	//float d, bestd;
 
 	/*if (b->checkcount == idCollisionModelManagerLocal::checkCount) {
@@ -61,13 +61,13 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 		//if (i >= b->numPlanes) {
 		//if(b->bounds.LineIntersection(p, tw->vertices[j].endp)) {
 			tw->trace.fraction = 0.0f;
-			tw->trace.c.type = CONTACT_TRMVERTEX;
+			//tw->trace.c.type = CONTACT_TRMVERTEX;
 			//tw->trace.c.normal = b->planes[bestPlane].Normal();
 			//tw->trace.c.dist = b->planes[bestPlane].Dist();
 			tw->trace.c.contents = b->contents;
 			//tw->trace.c.material = b->material;
 			//tw->trace.c.point = p;
-			tw->trace.c.modelFeature = 0;
+			//tw->trace.c.modelFeature = 0;
 			//tw->trace.c.trmFeature = j;
 
 			if (tw->getContacts) {
@@ -108,7 +108,7 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 
 	tw.trace.fraction = 1.0f;
 	tw.trace.c.contents = 0;
-	tw.trace.c.type = CONTACT_NONE;
+	//tw.trace.c.type = CONTACT_NONE;
 	tw.contents = contentMask;
 	tw.isConvex = true;
 	//tw.rotation = false;

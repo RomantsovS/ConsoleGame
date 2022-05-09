@@ -229,7 +229,7 @@ idPlayer::Collide
 ==============
 */
 bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
-	auto other = gameLocal.entities[collision.c.entityNum];
+	auto& other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
 		if (other->IsType(AISimple::Type) || other->IsType(idChain::Type)) {
 			other->PostEventMS(&EV_Remove, 0);
