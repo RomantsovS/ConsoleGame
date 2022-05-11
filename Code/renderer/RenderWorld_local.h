@@ -39,9 +39,6 @@ public:
 
 	void RenderScene(const renderView_t* renderView) override;
 
-	bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
-		const float radius) const noexcept override;
-
 	void DebugClearLines(int time) override;
 
 	void DrawTextToScreen(std::string text, const Vector2 &origin, const Screen::color_type color, const int lifetime) override;

@@ -31,16 +31,6 @@ struct renderView_t {
 	int viewID;
 };
 
-// modelTrace_t is for tracing vs. visual geometry
-struct modelTrace_t {
-	float					fraction;			// fraction of trace completed
-	Vector2					point;				// end point of trace in global space
-	//Vector2					normal;				// hit triangle normal vector in global space
-	//const idMaterial* material;			// material of hit surface
-	const std::shared_ptr<renderEntity_t> entity;				// render entity that was hit
-	int						jointNumber;		// md5 joint nearest to the hit triangle
-};
-
 class idRenderWorld {
 public:
 	idRenderWorld() = default;
@@ -70,10 +60,6 @@ public:
 	// This doesn't do any occlusion testing, simply ignoring non-gui surfaces.
 	// start / end are in global world coordinates.
 	//virtual guiPoint_t		GuiTrace(qhandle_t entityHandle, const idVec3 start, const idVec3 end) const = 0;
-
-	// Traces vs the render model, possibly instantiating a dynamic version, and returns true if something was hit
-	virtual bool ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start, const Vector2& end,
-		const float radius) const = 0;
 
 	//-------------- Debug Visualization  -----------------
 	// Line drawing for debug visualization

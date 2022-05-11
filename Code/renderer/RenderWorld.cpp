@@ -140,31 +140,6 @@ void idRenderWorldLocal::RenderScene(const renderView_t* renderView) {
 	R_RenderView(parms);
 }
 
-bool idRenderWorldLocal::ModelTrace(modelTrace_t& trace, int entityHandle, const Vector2& start,
-	const Vector2& end, const float radius) const noexcept {
-	memset(&trace, 0, sizeof(trace));
-	trace.fraction = 1.0f;
-	trace.point = end;
-
-	if (entityHandle < 0 || entityHandle >= static_cast<int>(entityDefs.size())) {
-		return false;
-	}
-
-	std::shared_ptr<idRenderEntityLocal> def = entityDefs[entityHandle];
-	if (def == NULL) {
-		return false;
-	}
-
-	renderEntity_t* refEnt = &def->parms;
-
-	/*idRenderModel* model = R_EntityDefDynamicModel(def);
-	if (model == NULL) {
-		return false;
-	}*/
-
-	return true;
-}
-
 void idRenderWorldLocal::AddEntityRefToArea(idRenderEntityLocal* def, portalArea_t* area) {
 	if (!def) {
 		common->Error("idRenderWorldLocal::AddEntityRefToArea: NULL def");
