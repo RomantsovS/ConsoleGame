@@ -38,7 +38,7 @@ std::shared_ptr<idMapBrush> idMapBrush::Parse(idLexer& src, const Vector2& origi
 				return NULL;
 			}
 
-			std::string key = token;
+			idToken key = token;
 
 			if (!src.ReadTokenOnLine(&token) || token.type != TT_STRING) {
 				src.Error("idMapBrush::Parse: expected epair value string not found");
