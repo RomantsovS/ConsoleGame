@@ -1,6 +1,6 @@
 set(MSVC_COMMON_FLAGS 
 	/nologo     # Don't show version info
-	/W0         # Enable warning level
+	/W4         # Enable warning level
 	/fp:fast    # Use fast floating point precision model
 	/Zc:wchar_t # Parse wchar_t as internal type
 	/GF         # Eliminate Duplicate Strings

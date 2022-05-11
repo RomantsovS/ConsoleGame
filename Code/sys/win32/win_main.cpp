@@ -46,6 +46,8 @@ typedef struct CrtMemBlockHeader
 
 DEF_LOGS;
 
+#ifdef MSVC
+
 /*
 ==================
 Sys_AllocHook
@@ -113,6 +115,8 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 
 	return(TRUE);
 }
+
+#endif
 
 /*
 ==================
@@ -233,7 +237,7 @@ std::filesystem::path Sys_DefaultBasePath() noexcept {
 Sys_ListFiles
 ==============
 */
-int Sys_ListFiles(const std::filesystem::path& directory, std::string extension, std::vector<std::string>& list) {
+int Sys_ListFiles(const std::filesystem::path& directory, const std::filesystem::path& extension, std::vector<std::string>& list) {
 	if (!std::filesystem::exists(directory))
 		return 0;
 

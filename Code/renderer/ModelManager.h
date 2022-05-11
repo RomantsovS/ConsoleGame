@@ -22,9 +22,6 @@ public:
 	// called only by renderer::EndLevelLoad
 	virtual void EndLevelLoad() = 0;
 
-	// frees a render model
-	virtual void FreeModel(std::shared_ptr<idRenderModel> model) = 0;
-
 	// returns NULL if modelName is NULL or an empty string, otherwise
 	// it will create a default model if not loadable
 	virtual	std::shared_ptr<idRenderModel> FindModel(const std::string &modelName) = 0;

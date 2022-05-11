@@ -16,7 +16,6 @@ public:
 	// registers console commands and clears the list
 	void Init() override;
 	void Shutdown() noexcept override;
-	void FreeModel(std::shared_ptr<idRenderModel> model) override;
 	std::shared_ptr<idRenderModel> FindModel(const std::string &modelName) override;
 	std::shared_ptr<idRenderModel> DefaultModel() noexcept override;
 	void AddModel(std::shared_ptr<idRenderModel> model) override;
@@ -156,29 +155,6 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 	AddModel(model);
 
 	return model;
-}
-
-/*
-=================
-idRenderModelManagerLocal::FreeModel
-=================
-*/
-void idRenderModelManagerLocal::FreeModel(std::shared_ptr<idRenderModel> model) {
-	if (!model) {
-		return;
-	}
-	if (std::dynamic_pointer_cast<idRenderModelStatic>(model)) {
-		std::logic_error("idRenderModelManager::FreeModel: model " + model->Name() + " is not a static model");
-		return;
-	}
-	if (model == defaultModel) {
-		std::logic_error("idRenderModelManager::FreeModel: can't free the default model");
-		return;
-	}
-
-	R_CheckForEntityDefsUsingModel(model);
-
-	model = nullptr;
 }
 
 void idRenderModelManagerLocal::AddModel(std::shared_ptr<idRenderModel> model) {
