@@ -143,10 +143,12 @@ void idFileSystemLocal::Init() {
 		size_t i = 0;
 		std::vector<std::string> list;
 		std::filesystem::path path = Sys_DefaultBasePath();
-		while (i < 5 && ListOSFiles(path / "base", "cfg", list) < 1) {
+#ifdef DEBUG
+		while (i < 5 && ListOSFiles(path / "base", ".cfg", list) < 1) {
 			path = path.parent_path();
 			++i;
 		}
+#endif // DEBUG
 		fs_basepath.SetString(path.string());
 	}
 

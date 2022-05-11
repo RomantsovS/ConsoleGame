@@ -125,6 +125,10 @@ macro(apply_compile_settings)
 			target_link_options(${THIS_PROJECT} PUBLIC -fsanitize=address)
 		endif()
 	endif()
+
+	if(CMAKE_BUILD_TYPE MATCHES "Debug")
+		target_compile_definitions(${THIS_PROJECT} PRIVATE "DEBUG")
+	endif()
 endmacro()
 
 function(CryEngineModule target)

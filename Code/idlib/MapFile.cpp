@@ -1,6 +1,5 @@
 #include "precompiled.h"
 
-
 /*
 =================
 idMapBrush::Parse

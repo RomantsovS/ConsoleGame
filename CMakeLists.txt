@@ -24,5 +24,6 @@ project("${METADATA_PROJECT_NAME}_${BUILD_PLATFORM}"
 		LANGUAGES C CXX)
 
 message(STATUS "CMAKE_PREFIX_PATH  = ${CMAKE_PREFIX_PATH}")
+message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
 include(Tools/CMake/Configure.cmake)
