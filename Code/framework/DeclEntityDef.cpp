@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 /*
 ================
 idDeclEntityDef::FreeData

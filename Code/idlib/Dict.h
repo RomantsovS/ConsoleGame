@@ -25,7 +25,7 @@ public:
 	// clear dict freeing up memory
 	void Clear() noexcept;
 
-	void Set(std::string key, std::string value);
+	void Set(const std::string& key, const std::string& value);
 	void SetInt(const std::string& key, int val);
 
 	// these return default values of 0.0, 0 and false

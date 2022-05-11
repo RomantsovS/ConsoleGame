@@ -32,7 +32,7 @@ void idDict::Clear() noexcept {
 	args.clear();
 }
 
-void idDict::Set(std::string key, std::string value) {
+void idDict::Set(const std::string& key, const std::string& value) {
 	args.insert_or_assign(key, value);
 }
 
