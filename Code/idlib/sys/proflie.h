@@ -16,28 +16,32 @@ struct CountTime {
 
 class LogsSum {
 public:
-    ~LogsSum() {
-        std::vector<std::pair<std::string, CountTime>> res(logs.begin(), logs.end());
+	~LogsSum() {
+		try {
+			std::vector<std::pair<std::string, CountTime>> res(logs.begin(), logs.end());
 
-        std::sort(res.begin(), res.end(),
-            [](std::pair<std::string, CountTime> lhs, std::pair<std::string, CountTime> rhs) {
-                return lhs.second.time < rhs.second.time;
-            });
+			std::sort(res.begin(), res.end(),
+				[](std::pair<std::string, CountTime> lhs, std::pair<std::string, CountTime> rhs) {
+					return lhs.second.time < rhs.second.time;
+				});
 
-        std::ostringstream os;
-        os << std::setw(60) << "name" << std::setw(20) << "time"
-            << std::setw(20) << "cnt" << std::setw(20)
-            << "cnt_gr_zero_time" << std::endl;
+			std::ostringstream os;
+			os << std::setw(60) << "name" << std::setw(20) << "time"
+				<< std::setw(20) << "cnt" << std::setw(20)
+				<< "cnt_gr_zero_time" << std::endl;
 
-        for (const auto& item : res) {
-            os << std::setw(60) << item.first << std::setw(20) << item.second.time
-                << std::setw(20) << item.second.cnt << std::setw(20)
-                << item.second.cnt_greater_zero_time << std::endl;
-        }
-        Sys_Printf("%s", os.str().c_str());
-    }
+			for (const auto& item : res) {
+				os << std::setw(60) << item.first << std::setw(20) << item.second.time
+					<< std::setw(20) << item.second.cnt << std::setw(20)
+					<< item.second.cnt_greater_zero_time << std::endl;
+			}
+			Sys_Printf("%s", os.str().c_str());
+		}
+		catch (...) {
+		}
+	}
 
-    std::map<std::string, CountTime> logs;
+	std::map<std::string, CountTime> logs;
 };
 
 extern LogsSum logs;
