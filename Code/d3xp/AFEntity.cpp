@@ -68,7 +68,7 @@ void idMultiModelAF::Present() {
 
 		renderEntity.origin = physicsObj->GetOrigin(i);
 		renderEntity.axis = physicsObj->GetAxis(i);
-		renderEntity.hModel = modelHandles[i];
+		renderEntity.hModel = modelHandles[i].get();
 
 		// add to refresh list
 		if (modelDefHandles[i] == -1) {

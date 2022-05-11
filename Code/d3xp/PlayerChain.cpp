@@ -27,7 +27,7 @@ PlayerChain::SetModelForId
 void PlayerChain::SetModelForId(int id, const std::string& modelName) {
 	modelHandles.resize(id + 1);
 	modelDefHandles.resize(id + 1, -1);
-	modelHandles[id] = renderEntity.hModel;
+	modelHandles[id] = renderModelManager->FindModel(modelName);
 }
 
 /*
@@ -50,7 +50,7 @@ void PlayerChain::Present() {
 
 		renderEntity.origin = physicsObj->GetOrigin(i);
 		renderEntity.axis = physicsObj->GetAxis(i);
-		renderEntity.hModel = modelHandles[i];
+		renderEntity.hModel = modelHandles[i].get();
 
 		// add to refresh list
 		if (modelDefHandles[i] == -1) {

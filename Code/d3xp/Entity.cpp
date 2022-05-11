@@ -14,10 +14,10 @@ void idGameEdit::ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args,
 	if (!temp.empty()) {
 		const std::shared_ptr<idDeclModelDef> modelDef = std::dynamic_pointer_cast<idDeclModelDef>(declManager->FindType(declType_t::DECL_MODELDEF, temp, false));
 		if (modelDef) {
-			renderEntity->hModel = modelDef->ModelHandle().lock();
+			renderEntity->hModel = modelDef->ModelHandle().lock().get();
 		}
 		if (!renderEntity->hModel) {
-			renderEntity->hModel = renderModelManager->FindModel(temp);
+			renderEntity->hModel = renderModelManager->FindModel(temp).get();
 		}
 	}
 	/*if (renderEntity->hModel) {
@@ -203,7 +203,7 @@ renderEntity_t * idEntity::GetRenderEntity() noexcept {
 void idEntity::SetModel(const std::string& modelname) {
 	FreeModelDef();
 
-	renderEntity.hModel = renderModelManager->FindModel(modelname);
+	renderEntity.hModel = renderModelManager->FindModel(modelname).get();
 
 	if (renderEntity.hModel) {
 		//renderEntity.bounds = renderEntity.hModel->Bounds(&renderEntity);
@@ -592,7 +592,7 @@ void idAnimatedEntity::SetModel(const std::string& modelname) {
 		return;
 	}
 
-	std::shared_ptr<idRenderModel> renderModel = modelDef->ModelHandle().lock();
+	idRenderModel* renderModel = modelDef->ModelHandle().lock().get();
 	if (!renderModel) {
 		return;
 	}

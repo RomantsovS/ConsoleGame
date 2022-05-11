@@ -40,7 +40,7 @@ Bumps tr.viewCount, which means viewCount can change many times each frame.
 */
 void R_CreateEntityRefs(idRenderEntityLocal* entity) {
 	if (!entity->parms.hModel) {
-		entity->parms.hModel = renderModelManager->DefaultModel();
+		entity->parms.hModel = renderModelManager->DefaultModel().get();
 	}
 
 	// if the entity hasn't been fully specified due to expensive animation calcs
@@ -83,7 +83,7 @@ void R_FreeDerivedData() noexcept {
 R_CheckForEntityDefsUsingModel
 ===================
 */
-void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) noexcept {
+void R_CheckForEntityDefsUsingModel(idRenderModel* model) noexcept {
 	for (auto &rw : tr.worlds)
 	{
 		for (auto &def : rw->entityDefs)

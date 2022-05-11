@@ -4,7 +4,7 @@
 #include "tr_local.h"
 #include "Model_local.h"
 
-std::shared_ptr<idRenderModel> R_EntityDefDynamicModel(idRenderEntityLocal* def) {
+idRenderModel* R_EntityDefDynamicModel(idRenderEntityLocal* def) {
 	auto model = def->parms.hModel;
 
 	if (model->IsDynamicModel() == DM_STATIC) {
@@ -47,14 +47,13 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 	const auto modelNumSurfaces = model->NumSurfaces();
 
 	auto rEntSp = vEntity.entityDef;
-	idRenderModel* modelRawPtr = model.get();
 
 	if (rEntSp) {
 		const auto curPos = /*Vector2(static_cast<float>(tr.borderHeight), static_cast<float>(tr.borderWidth)) +*/
 			rEntSp->parms.origin.GetIntegerVectorFloor();
 
 		for (int surfaceNum = 0; surfaceNum != modelNumSurfaces; surfaceNum++) {
-			const ModelPixel& surf = modelRawPtr->Surface(surfaceNum);
+			const ModelPixel& surf = model->Surface(surfaceNum);
 			tr.screen.set(curPos + surf.origin, surf.screenPixel);
 		}
 	}

@@ -256,7 +256,7 @@ void R_CreateEntityRefs(idRenderEntityLocal* def);
 void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept;
 
 void R_FreeDerivedData() noexcept;
-void R_CheckForEntityDefsUsingModel(std::shared_ptr<idRenderModel> model) noexcept;
+void R_CheckForEntityDefsUsingModel(idRenderModel* model) noexcept;
 
 /*
 ============================================================

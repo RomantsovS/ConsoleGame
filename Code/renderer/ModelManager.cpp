@@ -175,7 +175,7 @@ void idRenderModelManagerLocal::BeginLevelLoad() {
 	{
 		// always reload all models 
 		if (model->IsReloadable()) {
-			R_CheckForEntityDefsUsingModel(model);
+			R_CheckForEntityDefsUsingModel(model.get());
 			model->PurgeModel();
 		}
 	}
@@ -201,7 +201,7 @@ void idRenderModelManagerLocal::EndLevelLoad() {
 
 			purgeCount++;
 
-			R_CheckForEntityDefsUsingModel(model);
+			R_CheckForEntityDefsUsingModel(model.get());
 
 			model->PurgeModel();
 

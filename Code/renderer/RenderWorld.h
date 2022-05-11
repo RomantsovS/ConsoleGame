@@ -2,7 +2,7 @@
 #define RENDER_WORLD_H
 
 struct renderEntity_t {
-	std::shared_ptr<idRenderModel> hModel;
+	idRenderModel* hModel;
 
 	// Entities that are expensive to generate, like skeletal models, can be
 	// deferred until their bounds are found to be in view, in the frustum
