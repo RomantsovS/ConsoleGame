@@ -208,12 +208,15 @@ void idChain::Spawn() {
 	spawnArgs.GetVector("size", "", size);
 
 	Vector2 dir = vec2_origin;
-	for (size_t i = 0; i < 2; ++i) {
-		if (linearVelocity[i] > 0)
-			dir[i] = -size.x;
-		else if (linearVelocity[i] < 0)
-			dir[i] = size.x;
-	}
+	if (linearVelocity.x > 0)
+		dir.x = -size.x;
+	else if (linearVelocity.x < 0)
+		dir.x = size.x;
+
+	if (linearVelocity.y > 0)
+		dir.y = -size.y;
+	else if (linearVelocity.y < 0)
+		dir.y = size.y;
 
 	BuildChain("link", origin, 1.0f, numLinks, dir);
 

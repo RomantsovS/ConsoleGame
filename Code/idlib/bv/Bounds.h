@@ -93,12 +93,12 @@ inline bool idBounds::operator!=(const idBounds& a) const noexcept {
 }
 
 inline void idBounds::Clear() {
-	b[0][0] = b[0][1] = idMath::INFINITY;
-	b[1][0] = b[1][1] = -idMath::INFINITY;
+	b[0].x = b[0].y = idMath::INFINITY;
+	b[1].x = b[1].y = -idMath::INFINITY;
 }
 
 inline void idBounds::Zero() {
-	b[0][0] = b[0][1] = b[1][0] = b[1][1] = 0;
+	b[0].x = b[0].y = b[1].x = b[1].y = 0;
 }
 
 inline bool idBounds::IsCleared() const {
@@ -161,10 +161,10 @@ inline idBounds idBounds::Expand(const float d) const {
 }
 
 inline idBounds& idBounds::ExpandSelf(const float d) {
-	b[0][0] -= d;
-	b[0][1] -= d;
-	b[1][0] += d;
-	b[1][1] += d;
+	b[0].x -= d;
+	b[0].y -= d;
+	b[1].x += d;
+	b[1].y += d;
 	return *this;
 }
 

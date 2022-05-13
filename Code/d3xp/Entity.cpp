@@ -481,7 +481,7 @@ void idEntity::InitDefaultPhysics(const Vector2 & origin, const Vector2 & axis) 
 			if (spawnArgs.GetVector("mins", "", bounds[0]) &&
 				spawnArgs.GetVector("maxs", "", bounds[1])) {
 				setClipModel = true;
-				if (bounds[0][0] > bounds[1][0] || bounds[0][1] > bounds[1][1] /* || bounds[0][2] > bounds[1][2]*/) {
+				if (bounds[0].x > bounds[1].x || bounds[0].y > bounds[1].y /* || bounds[0][2] > bounds[1][2]*/) {
 					gameLocal.Error("Invalid bounds '%s'-'%s' on entity '%s'", bounds[0].ToString(), bounds[1].ToString(), name.c_str());
 				}
 			}

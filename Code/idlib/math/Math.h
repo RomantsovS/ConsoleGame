@@ -30,7 +30,7 @@ public:
 
 	static signed char ClampChar(int i) noexcept;
 
-	static int FloatHash(const float* array, const int numFloats) noexcept;
+	static int FloatHash(gsl::span<const float> arr) noexcept;
 
 	template<typename T>
 	static int ValueInRange(T val, T min, T max);
@@ -100,12 +100,15 @@ inline signed char idMath::ClampChar(int i) noexcept {
 idMath::FloatHash
 ========================
 */
-inline int idMath::FloatHash(const float* array, const int numFloats) noexcept {
-	int i, hash = 0;
+inline int idMath::FloatHash(gsl::span<const float> arr) noexcept {
+	int hash = 0;
 
-	auto ptr = reinterpret_cast<const int*>(array);
-	for (i = 0; i < numFloats; i++) {
-		hash ^= ptr[i];
+	const float a[] = { 1, 2, 3 };
+	gsl::span<const float> s(a);
+
+	gsl::span<const int> ptr(reinterpret_cast<const int*>(&arr[0]), arr.size());
+	for (auto iter : ptr) {
+		hash ^= iter;
 	}
 	return hash;
 }

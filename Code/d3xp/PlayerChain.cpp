@@ -222,12 +222,14 @@ void PlayerChain::SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn
 	Vector2 linearVelocity;
 	spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
 
-	for (size_t i = 0; i < 2; ++i) {
-		if (linearVelocity[i] > 0)
-			linearVelocity[i] = pm_walkspeed.GetFloat();
-		else if (linearVelocity[i] < 0)
-			linearVelocity[i] = -pm_walkspeed.GetFloat();
-	}
+	if (linearVelocity.x > 0)
+		linearVelocity.x = pm_walkspeed.GetFloat();
+	else if (linearVelocity.x < 0)
+		linearVelocity.x = -pm_walkspeed.GetFloat();
+	if (linearVelocity.y > 0)
+		linearVelocity.y = pm_walkspeed.GetFloat();
+	else if (linearVelocity.y < 0)
+		linearVelocity.y = -pm_walkspeed.GetFloat();
 
 	physicsObj->SetLinearVelocity(linearVelocity);
 

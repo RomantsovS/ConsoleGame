@@ -31,7 +31,7 @@ struct Vector2 {
 	float LengthSqr() const noexcept;
 	float Normalize() noexcept; // returns length
 
-	int GetDimension() const noexcept;
+	uint8_t GetDimension() const noexcept;
 	Vector2 GetIntegerVectorFloor() const noexcept;
 	Vector2 GetIntegerVectorCeil() const noexcept;
 	const float* ToFloatPtr() const noexcept;
@@ -59,10 +59,10 @@ inline bool operator!=(const Vector2 & l, const Vector2 &r) noexcept {
 }
 
 inline float Vector2::operator[](const int index) const {
-	if (index > 1)
-		throw std::out_of_range("trying access vector data by index " + std::to_string(index));
+	if (index < GetDimension())
+		return (&x)[index];
 
-	return (&x)[index];
+	throw std::out_of_range("trying access vector data by index " + std::to_string(index));
 }
 
 inline float& Vector2::operator[](const int index) {
@@ -110,7 +110,7 @@ inline float Vector2::Normalize() noexcept {
 	return invLength * sqrLength;
 }
 
-inline int Vector2::GetDimension() const noexcept {
+inline uint8_t Vector2::GetDimension() const noexcept {
 	return 2;
 }
 

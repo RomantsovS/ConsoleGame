@@ -426,7 +426,7 @@ idTraceModel* idClipModel::GetCachedTraceModel(int traceModelIndex) {
 
 int idClipModel::GetTraceModelHashKey(const idTraceModel& trm) noexcept {
 	const auto v = trm.bounds[0];
-	return (trm.type << 8) ^ (trm.numVerts << 4) ^ idMath::FloatHash(v.ToFloatPtr(), v.GetDimension());
+	return (trm.type << 8) ^ (trm.numVerts << 4) ^ idMath::FloatHash({ v.ToFloatPtr(), v.GetDimension() });
 }
 
 idClip::idClip() {
@@ -748,10 +748,10 @@ std::shared_ptr<clipSector_t> idClip::CreateClipSectors_r(const int depth, const
 	}
 
 	size = bounds[1] - bounds[0];
-	if (size[0] >= size[1]) {
+	if (size.x >= size.y) {
 		anode->axis = 0;
 	}
-	else if (size[1] >= size[0]) {
+	else if (size.y >= size.x) {
 		anode->axis = 1;
 	}
 	else {
@@ -805,10 +805,10 @@ void idClip::ClipModelsTouchingBounds_r(const clipSector_t* node, listParms_t& p
 		}*/
 
 		// if the bounds really do overlap
-		if (check->absBounds[0][0] > parms.bounds[1][0] ||
-			check->absBounds[1][0] < parms.bounds[0][0] ||
-			check->absBounds[0][1] > parms.bounds[1][1] ||
-			check->absBounds[1][1] < parms.bounds[0][1]// ||
+		if (check->absBounds[0].x > parms.bounds[1].x ||
+			check->absBounds[1].x < parms.bounds[0].x ||
+			check->absBounds[0].y > parms.bounds[1].y ||
+			check->absBounds[1].y < parms.bounds[0].y// ||
 			//check->absBounds[0][2] > parms.bounds[1][2] ||
 			//check->absBounds[1][2] < parms.bounds[0][2]
 			)
