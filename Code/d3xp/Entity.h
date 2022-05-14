@@ -24,7 +24,7 @@ public:
 
 	int thinkFlags; // TH_? flags
 
-	int						health = 0;					// FIXME: do all objects really need health?
+	int health = 0;
 
 	struct entityFlags_s {
 		bool				notarget : 1;	// if true never attack or target this entity
@@ -106,7 +106,7 @@ public:
 
 	// damage
 	// applies damage to this entity
-	virtual	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName, const float damageScale);
+	virtual	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName);
 	// notifies this entity that is has been killed
 	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept;
 

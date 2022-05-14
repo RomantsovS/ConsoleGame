@@ -274,7 +274,7 @@ void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
 	}
 }
 
-void idGameLocal::RunFrame() {
+void idGameLocal::RunFrame(gameReturn_t& ret) {
 	if (!gameRenderWorld) {
 		return;
 	}
@@ -351,6 +351,25 @@ void idGameLocal::RunFrame() {
 
 	// show any debug info for this frame
 	RunDebugInfo();
+
+	BuildReturnValue(ret);
+}
+
+/*
+====================
+idGameLocal::BuildReturnValue
+
+Fills out gameReturn_t, called on server and clients.
+====================
+*/
+void idGameLocal::BuildReturnValue(gameReturn_t& ret) {
+	ret.sessionCommand.clear();
+
+	// see if a target_sessionCommand has forced a changelevel
+	if (!sessionCommand.empty()) {
+		ret.sessionCommand = sessionCommand;
+		sessionCommand.clear();
+	}
 }
 
 /*
@@ -401,6 +420,9 @@ bool idGameLocal::Draw(int clientNum) {
 	//if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
 	//	return false;
 	//}
+
+	if (!gameRenderWorld)
+		return false;
 
 	gameRenderWorld->RenderScene(nullptr);
 
@@ -704,6 +726,7 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 	previousTime = 0;
 	time = 0;
 	framenum = 0;
+	sessionCommand.clear();
 
 	spawnArgs.Clear();
 
@@ -726,6 +749,7 @@ void idGameLocal::Clear() {
 	world = nullptr;
 
 	clip.Shutdown();
+	sessionCommand.clear();
 
 	framenum = 0;
 	previousTime = 0;

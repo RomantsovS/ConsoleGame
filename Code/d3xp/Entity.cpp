@@ -73,6 +73,8 @@ void idEntity::Spawn() {
 	temp = spawnArgs.GetString("name", def_name);
 	SetName(temp);
 
+	health = spawnArgs.GetInt("health");
+
 	InitDefaultPhysics(origin, axis);
 
 	SetOrigin(origin);
@@ -408,7 +410,7 @@ inflictor, attacker, dir, and point can be NULL for environmental effects
 
 ============
 */
-void idEntity::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName, const float damageScale) {
+void idEntity::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) {
 	
 	if (!fl.takedamage) {
 		return;

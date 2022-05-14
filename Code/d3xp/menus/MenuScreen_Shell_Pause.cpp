@@ -70,12 +70,18 @@ void idMenuScreen_Shell_Pause::Update() noexcept {
 			buttonInfo = cmdBar->GetButton(idMenuWidget_CommandBar::BUTTON_JOY1);
 			buttonInfo->action.Set(widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED);
 
+			bool isDead = false;
 			idPlayer* player = gameLocal.GetLocalPlayer();
-			if (player) {
+			if (player != NULL) {
+				if (player->health <= 0) {
+					isDead = true;
+				}
 			}
 
-			buttonInfo = cmdBar->GetButton(idMenuWidget_CommandBar::BUTTON_JOY2);
-			buttonInfo->action.Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN));
+			if (!isDead) {
+				buttonInfo = cmdBar->GetButton(idMenuWidget_CommandBar::BUTTON_JOY2);
+				buttonInfo->action.Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN));
+			}
 		}
 	}
 
@@ -92,17 +98,21 @@ void idMenuScreen_Shell_Pause::ShowScreen() {
 	std::vector<std::vector<std::string>> menuOptions;
 	std::vector<std::string> option;
 
-	/*bool isDead = false;
+	bool isDead = false;
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if (player != NULL) {
+	if (player) {
 		if (player->health <= 0) {
 			isDead = true;
 		}
-	}*/
+	}
 
-	option.push_back("RETURN TO GAME");	// return to game
-	menuOptions.push_back(option);
-	option.clear();
+	if (!isDead) {
+		option.push_back("RETURN TO GAME");	// return to game
+		menuOptions.push_back(option);
+		option.clear();
+	}
+
+
 	/*option.push_back("#str_02179");	// save game
 	menuOptions.push_back(option);
 	option.clear();
@@ -116,14 +126,13 @@ void idMenuScreen_Shell_Pause::ShowScreen() {
 	menuOptions.push_back(option);
 
 	int index = 0;
-	std::shared_ptr<idMenuWidget_Button> buttonWidget = nullptr;
-	options->GetChildByIndex(index)->ClearEventActions();
-	options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN));
-	buttonWidget = std::dynamic_pointer_cast<idMenuWidget_Button>(options->GetChildByIndex(index));
-	index++;
+	if (!isDead) {
+		options->GetChildByIndex(index)->ClearEventActions();
+		options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN));
+		index++;
+	}
 	options->GetChildByIndex(index)->ClearEventActions();
 	options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_EXIT));
-	buttonWidget = std::dynamic_pointer_cast<idMenuWidget_Button>(options->GetChildByIndex(index));
 
 	options->SetListData(menuOptions);
 	idMenuScreen::ShowScreen();
@@ -132,7 +141,6 @@ void idMenuScreen_Shell_Pause::ShowScreen() {
 		options->SetViewIndex(0);
 		options->SetFocusIndex(0);
 	}
-
 }
 
 /*

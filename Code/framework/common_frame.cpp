@@ -7,6 +7,29 @@ idCVar com_fixedTic("com_fixedTic", "0", CVAR_BOOL, "run a single game frame per
 idCVar com_noSleep("com_noSleep", "0", CVAR_BOOL, "don't sleep if the game is running too fast");
 idCVar timescale("timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f);
 
+/*
+================
+idCommonLocal::ProcessGameReturn
+================
+*/
+void idCommonLocal::ProcessGameReturn(const gameReturn_t& ret) {
+	if (ret.sessionCommand[0]) {
+		idCmdArgs args;
+
+		args.TokenizeString(ret.sessionCommand, false);
+
+		if (args.Argv(0) == "map") {
+			MoveToNewMap(args.Argv(1), false);
+		}
+		else if (args.Argv(0) == "devmap") {
+			MoveToNewMap(args.Argv(1), true);
+		}
+		else if (args.Argv(0) == "died") {
+			game->Shell_Show(true);
+		}
+	}
+}
+
 void idCommonLocal::Frame() {
 	try {
 		if (quit_requested)
@@ -88,8 +111,7 @@ void idCommonLocal::Frame() {
 			// If the session reports we should be loading a map, load it!
 			ExecuteMapChange();
 			return;
-		}
-		else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
+		} else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
 			// If the game is running, but the session reports we are not in a game, disconnect
 			// This happens when a server disconnects us or we sign out
 			//LeaveGame();
@@ -109,19 +131,30 @@ void idCommonLocal::Frame() {
 		
 		renderSystem->UpdateTimers();
 
-		RunGameAndDraw(numGameFrames);
+		// start the game / draw command generation thread going in the background
+		gameReturn_t ret = RunGameAndDraw(numGameFrames);
 
 		renderSystem->RenderCommandBuffers();
+
+		// process the game return for map changes, etc
+		ProcessGameReturn(ret);
 	}
 	catch (const std::exception& err) {
 		common->Error(err.what());
 	}
 }
-void idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
+
+gameReturn_t idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
+	// grab the return value created by the last thread execution
+	gameReturn_t latchedRet = ret;
+
 	for (size_t i = 0; i < numGameFrames_; ++i)
-		game->RunFrame();
+		game->RunFrame(ret);
 
 	Draw();
+
+	// return the latched result while the thread runs in the background
+	return latchedRet;
 }
 
 void idCommonLocal::Draw() {

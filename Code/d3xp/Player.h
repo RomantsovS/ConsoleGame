@@ -5,6 +5,9 @@ class idPlayer : public idActor {
 public:
 	usercmd_t usercmd;
 	int oldButtons{};
+
+	// timers
+	int minRespawnTime = 0; // can respawn when time > this, force after g_forcerespawn
 public:
 	CLASS_PROTOTYPE(idPlayer);
 
@@ -28,6 +31,14 @@ public:
 	void RestorePersistantInfo();
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
+	
+	void CalcDamagePoints(idEntity* inflictor, idEntity* attacker, const idDict* damageDef, int* health);
+	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) override;
+
+	// New damage path for instant client feedback.
+	void ServerDealDamage(int damage, idEntity& inflictor, idEntity& attacker, const Vector2& dir, const std::string& damageDefName); // Actually updates the player's health independent of feedback.
+
+	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
 
 	void HandleUserCmds(const usercmd_t& newcmd) noexcept;
 

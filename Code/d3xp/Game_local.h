@@ -66,6 +66,8 @@ public:
 
 	idClip clip; // collision detection
 
+	std::string sessionCommand; // a target_sessionCommand can set this to return something to the session
+
 	int framenum;
 	game_time_type time;					// in msec
 	int	previousTime;			// time in msec of last frame
@@ -94,11 +96,12 @@ public:
 	void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
 	void MapShutdown() override;
 	void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) override;
-	void RunFrame() override;
+	void RunFrame(gameReturn_t& ret) override;
 	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
 	void RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> player);
 	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
 	bool Draw(int clientNum) override;
+	void BuildReturnValue(gameReturn_t& ret);
 
 	bool IsInGame() const noexcept override  { return GameState() == GAMESTATE_ACTIVE; }
 

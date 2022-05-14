@@ -141,6 +141,11 @@ void idPlayer::SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_an
 	// setup our initial view
 	SetOrigin(spawn_origin);
 
+	//Show();
+
+	// set our respawn time and buttons so that if we're killed we don't respawn immediately
+	minRespawnTime = gameLocal.time;
+
 	BecomeActive(TH_THINK);
 
 	// run a client frame to drop exactly to the floor,
@@ -231,17 +236,16 @@ idPlayer::Collide
 bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	auto& other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
-		if (other->IsType(AISimple::Type) || other->IsType(idChain::Type)) {
-			other->PostEventMS(&EV_Remove, 0);
-			gameLocal.AddRandomPoint();
+		if (other->IsType(AISimple::Type)) {
+			const std::string& damageDefName = other->spawnArgs.GetString("def_damage");
+
+			Damage(other.get(), other.get(), vec2_origin, damageDefName);
 
 			return true;
-		}
-		else if (other->IsType(idChain::Type)) {
+		} else if (other->IsType(idChain::Type)) {
 			other->PostEventMS(&EV_Remove, 0);
 			return true;
-		}
-		else if (other->IsType(idStaticEntity::Type)) {
+		} else if (other->IsType(idStaticEntity::Type)) {
 		}
 	}
 	return false;
@@ -285,11 +289,63 @@ void idPlayer::Think() {
 }
 
 /*
+==================
+idPlayer::Killed
+==================
+*/
+void idPlayer::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
+	float delay;
+
+	// don't allow respawn until the death anim is done
+	// g_forcerespawn may force spawning at some later time
+	delay = spawnArgs.GetFloat("respawn_delay");
+	minRespawnTime = gameLocal.time + SEC2MS(delay);
+
+	UpdateVisuals();
+}
+
+/*
+=================
+idPlayer::CalcDamagePoints
+
+Calculates how many health and armor points will be inflicted, but
+doesn't actually do anything with them.  This is used to tell when an attack
+would have killed the player, possibly allowing a "saving throw"
+=================
+*/
+void idPlayer::CalcDamagePoints(idEntity* inflictor, idEntity* attacker, const idDict* damageDef, int* health) {
+	int damage;
+
+	damageDef->GetInt("damage", "20", damage);
+
+	*health = damage;
+}
+
+/*
 ==============
 idPlayer::EvaluateControls
 ==============
 */
 void idPlayer::EvaluateControls() noexcept {
+	// check for respawning
+	if (health <= 0 && !g_testDeath.GetBool()) {
+		/*if (common->IsMultiplayer()) {
+			// in MP, idMultiplayerGame decides spawns
+			if ((gameLocal.time > minRespawnTime) && (usercmd.buttons & BUTTON_ATTACK)) {
+				forceRespawn = true;
+			}
+			else if (gameLocal.time > maxRespawnTime) {
+				forceRespawn = true;
+			}
+		}
+		else {*/
+			// in single player, we let the session handle restarting the level or loading a game
+			if (gameLocal.time > minRespawnTime) {
+				gameLocal.sessionCommand = "died";
+			}
+		//}
+	}
+
 	/*if (usercmd.impulseSequence != oldImpulseSequence) {
 		PerformImpulse(usercmd.impulse);
 	}
@@ -297,6 +353,91 @@ void idPlayer::EvaluateControls() noexcept {
 	oldImpulseSequence = usercmd.impulseSequence;*/
 
 	AdjustSpeed();
+}
+
+/*
+============
+ServerDealDamage
+
+Only called on the server and in singleplayer. This is where
+the player's health is actually modified, but the visual and
+sound effects happen elsewhere so that clients can get instant
+feedback and hide lag.
+============
+*/
+void idPlayer::ServerDealDamage(int damage, idEntity& inflictor, idEntity& attacker, const Vector2& dir, const std::string& damageDefName) {
+	const auto damageDef = gameLocal.FindEntityDef(damageDefName, false);
+	if (!damageDef) {
+		gameLocal.Warning("Unknown damageDef '%s'", damageDefName.c_str());
+		return;
+	}
+
+	// do the damage
+	if (damage > 0) {
+		int oldHealth = health;
+		health -= damage;
+
+		if (health <= 0) {
+
+			if (health < -999) {
+				health = -999;
+			}
+			Killed(&inflictor, &attacker, damage, dir);
+		}
+	}
+}
+
+/*
+============
+Damage
+
+this		entity that is being damaged
+inflictor	entity that is causing the damage
+attacker	entity that caused the inflictor to damage targ
+	example: this=monster, inflictor=rocket, attacker=player
+
+dir			direction of the attack for knockback in global space
+
+damageDef	an idDict with all the options for damage effects
+
+inflictor, attacker, dir, and point can be NULL for environmental effects
+============
+*/
+void idPlayer::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) {
+	int damage;
+
+	if (health <= 0)
+		return;
+
+	if (!fl.takedamage) {
+		return;
+	}
+
+	if (!inflictor) {
+		inflictor = gameLocal.world.get();
+	}
+	if (!attacker) {
+		attacker = gameLocal.world.get();
+	}
+
+	auto damageDef = gameLocal.FindEntityDef(damageDefName, false);
+	if (!damageDef) {
+		gameLocal.Warning("Unknown damageDef '%s'", damageDefName.c_str());
+		return;
+	}
+
+	if (damageDef->dict.GetBool("ignore_player")) {
+		return;
+	}
+
+	CalcDamagePoints(inflictor, attacker, &damageDef->dict, &damage);
+
+	if (g_debugDamage.GetInteger()) {
+		gameLocal.Printf("client:%02d\tdamage type:%s\t\thealth:%03d\tdamage:%03d\n", entityNumber, damageDef->GetName().c_str(), health, damage);
+	}
+
+	// Server will deal his damage normally
+	ServerDealDamage(damage, *inflictor, *attacker, dir, damageDefName);
 }
 
 /*

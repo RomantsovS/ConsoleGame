@@ -131,8 +131,7 @@ idProjectile::Collide
 bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
 	idEntity* ignore;
 	std::string damageDefName;
-	Vector2		dir{};
-	float		damageScale{};
+	Vector2 dir{};
 
 	if (state == projectileState_t::EXPLODED || state == projectileState_t::FIZZLED) {
 		return true;
@@ -170,7 +169,7 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) no
 		}*/
 
 		if (!damageDefName.empty()) {
-			ent->Damage(this, owner, dir, damageDefName, damageScale);
+			ent->Damage(this, owner, dir, damageDefName);
 
 			ignore = ent.get();
 		}

@@ -111,16 +111,16 @@ void idCommonLocal::ExecuteMapChange() {
 	//if (!mapSpawnData.savegameFile)
 	{
 		// run a single frame to catch any resources that are referenced by events posted in spawn
-		/*idUserCmdMgr emptyCommandManager;
+		//idUserCmdMgr emptyCommandManager;
 		gameReturn_t emptyGameReturn;
-		for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
+		/*for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
 			emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
 		}
 		if (IsClient()) {
 			game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
 		}
 		else {*/
-			game->RunFrame(/*emptyCommandManager, emptyGameReturn*/);
+			game->RunFrame(/*emptyCommandManager,*/ emptyGameReturn);
 		//}
 	}
 
@@ -135,8 +135,24 @@ void idCommonLocal::ExecuteMapChange() {
 	common->Printf("%6d msec to load %s\n", msec, currentMapName.c_str());
 }
 
-void idCommonLocal::UnloadMap()
-{
+/*
+===============
+idCommonLocal::MoveToNewMap
+Single player transition from one map to another
+===============
+*/
+void idCommonLocal::MoveToNewMap(const std::string& mapName, bool devmap) {
+	idMatchParameters matchParameters;
+	matchParameters.mapName = mapName;
+
+	session->QuitMatchToTitle();
+	if (WaitForSessionState(idSession::sessionState_t::IDLE)) {
+		session->CreateMatch(matchParameters);
+		session->StartMatch();
+	}
+}
+
+void idCommonLocal::UnloadMap() {
 	// end the current map in the game
 	if (game) {
 		game->MapShutdown();

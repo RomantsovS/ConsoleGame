@@ -194,13 +194,34 @@ void idMenuHandler_Shell::ActivateMenu(bool show) noexcept {
 		return;
 	}
 
+	if (inGame) {
+		idPlayer* player = gameLocal.GetLocalPlayer();
+		if (player) {
+			if (!show) {
+				bool isDead = false;
+				if (player->health <= 0) {
+					isDead = true;
+				}
+
+				if (isDead) {
+					return;
+				}
+			}
+		}
+	}
+
 	idMenuHandler::ActivateMenu(show);
 	if (show) {
 
 		SetupPCOptions();
 
+		if (cmdBar) {
+			cmdBar->ClearAllButtons();
+			cmdBar->Update();
+		}
 	}
 	else {
+		ClearWidgetActionRepeater();
 		nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_INVALID);
 		activeScreen = static_cast<int>(shellAreas_t::SHELL_AREA_INVALID);
 		nextState = shellState_t::SHELL_STATE_INVALID;

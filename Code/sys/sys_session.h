@@ -11,7 +11,6 @@ public:
 	idMatchParameters() {}
 
 	std::string mapName; // This is only used for SP (gameMap == GAME_MAP_SINGLEPLAYER)
-	idDict	serverInfo;
 };
 
 /*

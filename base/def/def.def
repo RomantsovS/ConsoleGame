@@ -40,6 +40,19 @@ entityDef mushroom {
 	"size"					"16 16"
 	"speed"					"10"
 	"color"					"10"
+	"health"				"1"
+	"def_damage"			"damage_entityCollide"
+}
+
+entityDef turtle {
+	"spawnclass"			"AISimple"
+	"model"					"models/turtle16x23.bmp"
+	"size"					"16 23"
+	"speed"					"10"
+	"color"					"11"
+	"directionChangePeriod" "5000"
+	"health"				"1"
+	"def_damage"			"damage_entityCollide"
 }
 
 entityDef mushroom_static {
@@ -82,6 +95,8 @@ entityDef player {
 	"linearVelocity"		"0 10"
 	"def_weapon0"			"weapon_handgrenade"
 	"current_weapon"		"0"
+	"respawn_delay"			"0"
+	"health"				"1"
 }
 
 entityDef player_turtle {
@@ -91,15 +106,6 @@ entityDef player_turtle {
 	"linearVelocity"		"0 10"
 	"def_weapon0"			"weapon_handgrenade"
 	"current_weapon"		"0"
-}
-
-entityDef turtle {
-	"spawnclass"			"AISimple"
-	"model"					"models/turtle16x23.bmp"
-	"size"					"16 23"
-	"speed"					"10"
-	"color"					"11"
-	"directionChangePeriod" "5000"
 }
 
 entityDef font {
@@ -137,4 +143,8 @@ entityDef projectile_grenade {
 
 entityDef damage_grenadeDirect {
 	"damage"					"150"
+}
+
+entityDef damage_entityCollide {
+	"damage"					"999"
 }

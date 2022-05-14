@@ -39,7 +39,9 @@ public:
 
 	bool ProcessEvent(const sysEvent_t* event) override;
 public:
-	void RunGameAndDraw(size_t numGameFrames_);
+	// the gameReturn_t is from the previous frame, the
+	// new frame will be running in parallel on exit
+	gameReturn_t RunGameAndDraw(size_t numGameFrames_);
 	void Draw(); // called by gameThread
 
 	// loads a map and starts a new game on it
@@ -70,6 +72,8 @@ private:
 	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;
 
+	gameReturn_t ret;
+
 private:
 	void InitCommands();
 	void CloseLogFile();
@@ -81,6 +85,8 @@ private:
 	void StartMenu(bool playIntro = false);
 	void GuiFrameEvents();
 
+	void ProcessGameReturn(const gameReturn_t& ret);
+
 	// Meant to be used like:
 	// while ( waiting ) { BusyWait(); }
 	void BusyWait();
@@ -90,6 +96,8 @@ private:
 	void UnloadMap();
 
 	void Stop(bool resetSession = true);
+
+	void MoveToNewMap(const std::string& mapName, bool devmap);
 };
 
 extern idCommonLocal commonLocal;

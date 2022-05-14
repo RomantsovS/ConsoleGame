@@ -81,7 +81,7 @@ bool idSimpleObject::Collide(const trace_t& collision, const Vector2& velocity) 
 		return true;
 	}
 	else {
-		auto ent = gameLocal.entities[collision.c.entityNum];
+		auto ent = gameLocal.entities[collision.c.entityNum].get();
 
 		if (!ent->IsActive())
 			return true;

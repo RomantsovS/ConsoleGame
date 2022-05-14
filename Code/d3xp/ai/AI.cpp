@@ -110,12 +110,17 @@ void AISimple::Remove() noexcept {
 }
 
 bool AISimple::Collide(const trace_t& collision, const Vector2& velocity) noexcept {
-	auto other = gameLocal.entities[collision.c.entityNum];
+	auto& other = gameLocal.entities[collision.c.entityNum];
 	if (other) {
-		if (collision.c.entityNum == ENTITYNUM_WORLD || other->IsType(AISimple::Type) ||
-			other->IsType(idStaticEntity::Type)) {
-			auto vel = GetPhysics()->GetLinearVelocity();
+		if (collision.c.entityNum == ENTITYNUM_WORLD || other->IsType(AISimple::Type)
+			|| other->IsType(idStaticEntity::Type)) {
+			Vector2 vel = GetPhysics()->GetLinearVelocity();
 			GetPhysics()->SetLinearVelocity(-vel);
+		}
+		else if (other->IsType(idPlayer::Type)) {
+			const std::string& damageDefName = spawnArgs.GetString("def_damage");
+
+			other->Damage(this, this, vec2_origin, damageDefName);
 		}
 	}
 

@@ -1,8 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-class idGame
-{
+struct gameReturn_t {
+	std::string sessionCommand;	// "map", "disconnect", "victory", etc
+};
+
+class idGame {
 public:
 	idGame() = default;
 	virtual ~idGame() = default;
@@ -18,7 +21,7 @@ public:
 	virtual void Shutdown() = 0;
 
 	// Loads a map and spawns all the entities.
-	virtual void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
+	virtual void InitFromNewMap(const std::string& mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
 
 	// Shut down the current map.
 	virtual void MapShutdown() = 0;
@@ -27,7 +30,7 @@ public:
 	virtual void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) = 0;
 
 	// Runs a game frame, may return a session command for level changing, etc
-	virtual void RunFrame() = 0;
+	virtual void RunFrame(gameReturn_t& ret) = 0;
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool Draw(int clientNum) = 0;
@@ -50,7 +53,7 @@ public:
 	virtual void Shell_SyncWithSession() = 0;
 };
 
-extern idGame *game;
+extern idGame* game;
 
 class idGameEdit {
 public:
@@ -61,9 +64,9 @@ public:
 	idGameEdit(idGameEdit&&) = default;
 	idGameEdit& operator=(idGameEdit&&) = default;
 
-	virtual void ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args, renderEntity_t *renderEntity);
+	virtual void ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args, renderEntity_t* renderEntity);
 };
 
-extern idGameEdit *gameEdit;
+extern idGameEdit* gameEdit;
 
 #endif
