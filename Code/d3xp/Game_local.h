@@ -118,6 +118,7 @@ public:
 	// Initializes all map variables common to both save games and spawned games
 	void LoadMap(const std::string& mapName, int randseed);
 
+	bool CheatsOk(bool requirePlayer = true);
 	gameState_t GameState() const noexcept;
 	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const idDict* args = nullptr);
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
@@ -236,7 +237,13 @@ T idGameLocal::GetRandomValue(std::initializer_list<T> values) {
 extern idGameLocal gameLocal;
 
 // content masks
-const int MASK_SOLID = 1;
+constexpr auto MASK_ALL = (-1);
+constexpr auto MASK_SOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID);
+constexpr auto MASK_MONSTERSOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID) | static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP)
+| static_cast<int>(contentsFlags_t::CONTENTS_BODY);
+constexpr auto MASK_PLAYERSOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID) | static_cast<int>(contentsFlags_t::CONTENTS_PLAYERCLIP)
+| static_cast<int>(contentsFlags_t::CONTENTS_BODY);
+constexpr auto MASK_DEADSOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID) | static_cast<int>(contentsFlags_t::CONTENTS_PLAYERCLIP);
 
 #include "physics/Physics.h"
 #include "physics/Physics_Static.h"

@@ -29,8 +29,8 @@ struct cm_brush_t {
 		//numPlanes = 0;
 	}
 	//int						checkcount;			// for multi-check avoidance
-	idBounds				bounds;				// brush bounds
-	int						contents;			// contents of brush
+	idBounds bounds; // brush bounds
+	int contents; // contents of brush
 	//const idMaterial* material;			// material
 	//int						primitiveNum;		// number of brush primitive
 	//int						numPlanes;			// number of bounding planes
@@ -178,9 +178,9 @@ struct cm_traceWork_t {
 	//float angle;									// angle for rotational collision
 	//float maxTan;									// max tangent of half the positive angle used instead of fraction
 	//float radius;									// rotation radius of trm start
-	//idRotation modelVertexRotation;					// inverse rotation for model vertices
+	//idRotation modelVertexRotation;				// inverse rotation for model vertices
 
-	contactInfo_t* contacts;						// array with contacts
+	std::vector<contactInfo_t>* contacts;			// array with contacts
 	int maxContacts;								// max size of contact array
 	int numContacts;								// number of contacts found
 
@@ -216,7 +216,7 @@ public:
 	void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) override;
 	// stores all contact points of the trm with the model, returns the number of contacts
-	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
+	int Contacts(std::vector<contactInfo_t>* contacts, const int maxContacts, const Vector2& start,
 		const Vector2& dir, const float depth, const idTraceModel* trm, 
 		int contentMask, int model, const Vector2& modelOrigin) override;
 
@@ -278,7 +278,7 @@ private:			// collision map data
 	std::shared_ptr<cm_brushRef_t> trmBrushes[1];
 	// for retrieving contact points
 	bool			getContacts;
-	contactInfo_t* contacts;
+	std::vector<contactInfo_t>* contacts;
 	int				maxContacts;
 	int				numContacts;
 };

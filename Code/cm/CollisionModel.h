@@ -68,7 +68,7 @@ public:
 	virtual void Translation(trace_t* results, const Vector2& start, const Vector2& end,
 		const idTraceModel* trm, int contentMask, int model, const Vector2& modelOrigin) = 0;
 	// stores all contact points of the trm with the model, returns the number of contacts
-	virtual int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
+	virtual int Contacts(std::vector<contactInfo_t>* contacts, const int maxContacts, const Vector2& start,
 		const Vector2& dir, const float depth, const idTraceModel* trm,
 		int contentMask, int model, const Vector2& modelOrigin) = 0;
 };

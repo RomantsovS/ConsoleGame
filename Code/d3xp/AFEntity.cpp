@@ -170,7 +170,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin, float l
 	for (i = 0; i < numLinks; i++) {
 		// add body
 		auto clip = std::make_shared<idClipModel>(trm);
-		//clip->SetContents(CONTENTS_SOLID);
+		clip->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_SOLID));
 		clip->Link(gameLocal.clip, this, i, org);
 		body = std::make_shared<idAFBody>(name + std::to_string(i), clip, density);
 		physicsObj->AddBody(body);
@@ -198,7 +198,7 @@ void idChain::Spawn() {
 
 	// initialize physics
 	physicsObj->SetSelf(this);
-	physicsObj->SetClipMask(MASK_SOLID);
+	physicsObj->SetClipMask(MASK_SOLID | static_cast<int>(contentsFlags_t::CONTENTS_BODY));
 	SetPhysics(physicsObj);
 
 	Vector2 linearVelocity;

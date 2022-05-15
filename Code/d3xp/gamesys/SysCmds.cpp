@@ -28,7 +28,7 @@ void Cmd_EntityList_f(const idCmdArgs &args) {
 	gameLocal.Printf("%4s  %30s %16s %10s %s\n", " Num", "EntityDef", "Class", "pos", "At rest");
 	gameLocal.Printf("--------------------------------------------------------------------\n");
 	for (e = 0; e < MAX_GENTITIES; e++) {
-		auto check = gameLocal.entities[e];
+		auto& check = gameLocal.entities[e];
 
 		if (!check) {
 			continue;
@@ -47,6 +47,54 @@ void Cmd_EntityList_f(const idCmdArgs &args) {
 	}
 
 	gameLocal.Printf("...%d entities\t...%d bytes of spawnargs\n", count, size);
+}
+
+/*
+==================
+KillEntities
+
+Kills all the entities of the given class in a level.
+==================
+*/
+void KillEntities(const idCmdArgs& args, const idTypeInfo& superClass) {
+	std::vector<std::string>	ignore;
+
+	if (!gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk(false)) {
+		return;
+	}
+
+	for (int i = 1; i < args.Argc(); i++) {
+		ignore.push_back(args.Argv(i));
+	}
+
+	for (auto ent = gameLocal.spawnedEntities.Next(); ent != NULL; ent = ent->spawnNode.Next()) {
+		if (ent->IsType(superClass)) {
+			size_t i = 0;
+			for (; i < ignore.size(); i++) {
+				if (ignore[i] == ent->name) {
+					break;
+				}
+			}
+
+			if (i >= ignore.size()) {
+				ent->PostEventMS(&EV_Remove, 0);
+			}
+		}
+	}
+}
+
+/*
+==================
+Cmd_KillMonsters_f
+
+Kills all the monsters in a level.
+==================
+*/
+void Cmd_KillMonsters_f(const idCmdArgs& args) {
+	KillEntities(args, idAI::Type);
+
+	// kill any projectiles as well since they have pointers to the monster that created them
+	KillEntities(args, idProjectile::Type);
 }
 
 /*
@@ -91,9 +139,9 @@ void idGameLocal::InitConsoleCommands() {
 	cmdSystem->AddCommand("trigger", Cmd_Trigger_f, CMD_FL_GAME | CMD_FL_CHEAT, "triggers an entity", idGameLocal::ArgCompletion_EntityName);
 	cmdSystem->AddCommand("spawn", Cmd_Spawn_f, CMD_FL_GAME | CMD_FL_CHEAT, "spawns a game entity", idCmdSystem::ArgCompletion_Decl<DECL_ENTITYDEF>);
 	cmdSystem->AddCommand("damage", Cmd_Damage_f, CMD_FL_GAME | CMD_FL_CHEAT, "apply damage to an entity", idGameLocal::ArgCompletion_EntityName);
-	cmdSystem->AddCommand("remove", Cmd_Remove_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes an entity", idGameLocal::ArgCompletion_EntityName);
+	cmdSystem->AddCommand("remove", Cmd_Remove_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes an entity", idGameLocal::ArgCompletion_EntityName);*/
 	cmdSystem->AddCommand("killMonsters", Cmd_KillMonsters_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes all monsters");
-	cmdSystem->AddCommand("killMoveables", Cmd_KillMovables_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes all moveables");
+	/*cmdSystem->AddCommand("killMoveables", Cmd_KillMovables_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes all moveables");
 	cmdSystem->AddCommand("killRagdolls", Cmd_KillRagdolls_f, CMD_FL_GAME | CMD_FL_CHEAT, "removes all ragdolls");
 	cmdSystem->AddCommand("addline", Cmd_AddDebugLine_f, CMD_FL_GAME | CMD_FL_CHEAT, "adds a debug line");
 	cmdSystem->AddCommand("addarrow", Cmd_AddDebugLine_f, CMD_FL_GAME | CMD_FL_CHEAT, "adds a debug arrow");

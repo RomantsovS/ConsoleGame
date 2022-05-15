@@ -22,6 +22,9 @@ public:	// common physics interface
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
 	int GetNumClipModels() const noexcept override;
 
+	void SetContents(int contents, int id = -1) override;
+	int GetContents(int id = -1) const override;
+
 	void SetClipMask(int mask, int id = -1) noexcept override;
 	int GetClipMask(int id = -1) const noexcept override;
 
@@ -58,6 +61,8 @@ public:	// common physics interface
 	void LinkClip() noexcept override;
 
 	bool EvaluateContacts() noexcept override;
+	int GetNumContacts() const;
+	const contactInfo_t& GetContact(int num) const;
 	void ClearContacts() override;
 	void AddContactEntity(idEntity* e) override;
 	void RemoveContactEntity(idEntity* e) noexcept override;
@@ -67,6 +72,8 @@ protected:
 	std::vector<contactInfo_t> contacts; // contacts with other physics objects
 	std::vector<contactEntity_t> contactEntities; // entities touching this physics object
 protected:
+	// add ground contacts for the clip model
+	void AddGroundContacts(const idClipModel* clipModel);
 	// add contact entity links to contact entities
 	void AddContactEntitiesForContacts();
 	// active all contact entities

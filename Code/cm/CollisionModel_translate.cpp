@@ -13,7 +13,7 @@ void CM_AddContact(gsl::not_null<cm_traceWork_t*> tw) {
 		return;
 	}
 	// copy contact information from trace_t
-	tw->contacts[tw->numContacts] = tw->trace.c;
+	(*tw->contacts)[tw->numContacts] = tw->trace.c;
 	tw->numContacts++;
 	// set fraction back to 1 to find all other contacts
 	tw->trace.fraction = 1.0f;
@@ -107,7 +107,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	tw.positionTest = false;
 	tw.quickExit = false;
 	tw.getContacts = idCollisionModelManagerLocal::getContacts;
-	tw.contacts = &idCollisionModelManagerLocal::contacts[0];
+	tw.contacts = idCollisionModelManagerLocal::contacts;
 	tw.maxContacts = idCollisionModelManagerLocal::maxContacts;
 	tw.numContacts = 0;
 	tw.model = idCollisionModelManagerLocal::models[model];
@@ -195,8 +195,6 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 			tw.extents[i] = idMath::Fabs(tw.size[1][i]) + CM_BOX_EPSILON;
 		}*/
 	}
-
-	tw.positionTest = true;
 
 	// trace through the model
 	idCollisionModelManagerLocal::TraceThroughModel(&tw);

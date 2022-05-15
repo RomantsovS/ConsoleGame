@@ -499,7 +499,7 @@ void idCollisionModelManagerLocal::SetupTrmModelStructure() {
 	//trmBrushes[0]->b->primitiveNum = 0;
 	trmBrushes[0]->b->bounds.Clear();
 	//trmBrushes[0]->b->checkcount = 0;
-	trmBrushes[0]->b->contents = -1;		// all contents
+	trmBrushes[0]->b->contents = -1; // all contents
 	//trmBrushes[0]->b->material = trmMaterial;
 	//trmBrushes[0]->b->numPlanes = 0;
 }
@@ -548,7 +548,7 @@ void idCollisionModelManagerLocal::ConvertBrush(cm_model_t* model, gsl::not_null
 	int i, contents;
 	idBounds bounds;
 
-	contents = 1;
+	contents = -1;
 	bounds.Clear();
 
 	/*bounds.AddPoint(vec2_origin);

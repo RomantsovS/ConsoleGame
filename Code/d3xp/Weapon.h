@@ -26,6 +26,7 @@ public:
 	// Init
 	void Spawn() noexcept;
 	void SetOwner(idPlayer* owner);
+	idPlayer* GetOwner();
 
 	static void CacheWeapon(const std::string& weaponName);
 
@@ -68,5 +69,9 @@ private:
 	// script events
 	void Event_WeaponReady() noexcept;
 };
+
+inline idPlayer* idWeapon::GetOwner() {
+	return owner;
+}
 
 #endif

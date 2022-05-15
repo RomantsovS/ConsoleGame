@@ -32,6 +32,23 @@ int idPhysics_Base::GetNumClipModels() const noexcept {
 
 /*
 ================
+idPhysics_Base::SetContents
+================
+*/
+void idPhysics_Base::SetContents(int contents, int id) {
+}
+
+/*
+================
+idPhysics_Base::SetClipMask
+================
+*/
+int idPhysics_Base::GetContents(int id) const {
+	return 0;
+}
+
+/*
+================
 idPhysics_Base::SetClipMask
 ================
 */
@@ -171,10 +188,27 @@ bool idPhysics_Base::EvaluateContacts() noexcept {
 	return false;
 }
 
-void idPhysics_Base::ClearContacts()
-{
+/*
+================
+idPhysics_Base::GetNumContacts
+================
+*/
+int idPhysics_Base::GetNumContacts() const {
+	return contacts.size();
+}
+
+/*
+================
+idPhysics_Base::GetContact
+================
+*/
+const contactInfo_t& idPhysics_Base::GetContact(int num) const {
+	return contacts[num];
+}
+
+void idPhysics_Base::ClearContacts() {
 	for (auto iter = contacts.begin(); iter != contacts.end(); ++iter) {
-		auto ent = gameLocal.entities[iter->entityNum];
+		auto& ent = gameLocal.entities[iter->entityNum];
 		if (ent) {
 			ent->RemoveContactEntity(self);
 		}
@@ -216,9 +250,26 @@ void idPhysics_Base::RemoveContactEntity(idEntity* e) noexcept {
 		}), contactEntities.end());
 }
 
+/*
+================
+idPhysics_Base::AddGroundContacts
+================
+*/
+void idPhysics_Base::AddGroundContacts(const idClipModel* clipModel) {
+	Vector2 dir;
+	size_t index, num;
+
+	index = contacts.size();
+	contacts.resize(index + 10);
+
+	dir = vec2_point_size;
+	num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(), dir, CONTACT_EPSILON, clipModel, clipMask, self);
+	contacts.resize(index + num);
+}
+
 void idPhysics_Base::AddContactEntitiesForContacts() {
 	for (size_t i = 0; i < contacts.size(); i++) {
-		auto ent = gameLocal.entities[contacts[i].entityNum];
+		auto& ent = gameLocal.entities[contacts[i].entityNum];
 		if (ent && ent.get() != self) {
 			ent->AddContactEntity(self);
 		}

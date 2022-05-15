@@ -1183,6 +1183,26 @@ const idDict* idGameLocal::FindEntityDefDict(const std::string& name, bool makeD
 	return decl ? &decl->dict : nullptr;
 }
 
+/*
+==================
+idGameLocal::CheatsOk
+==================
+*/
+bool idGameLocal::CheatsOk(bool requirePlayer) {
+	if (developer.GetBool()) {
+		return true;
+	}
+
+	idPlayer* player = GetLocalPlayer();
+	if (!requirePlayer || (player && (player->health > 0))) {
+		return true;
+	}
+
+	Printf("You must be alive to use this command.\n");
+
+	return false;
+}
+
 void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId, const idDict& spawnArgsToCopy) {
 	int spawn_entnum;
 

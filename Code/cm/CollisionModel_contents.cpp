@@ -117,7 +117,7 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	tw.quickExit = false;
 	tw.numContacts = 0;
 	tw.model = idCollisionModelManagerLocal::models[model];
-	tw.start = start - modelOrigin.GetIntegerVectorFloor();
+	tw.start = start - modelOrigin;
 	tw.end = tw.start;
 
 	// setup trm structure
@@ -127,7 +127,6 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	for (i = 0; i < tw.numVerts; i++) {
 		// set trm at start position
 		tw.vertices[i].p += tw.start;
-		tw.vertices[i].endp = tw.vertices[i].p;
 	}
 
 	// setup trm vertices
@@ -140,23 +139,13 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	// bounds for full trace, a little bit larger for epsilons
 	for (i = 0; i < 2; i++) {
 		if (tw.start[i] < tw.end[i]) {
-			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] - CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_CLIP_EPSILON;
-		}
-		else if (tw.start[i] > tw.end[i]) {
-			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.start[i] + tw.size[1][i] + CM_CLIP_EPSILON;
+			tw.bounds[0][i] = tw.start[i] + tw.size[0][i] - CM_BOX_EPSILON;
+			tw.bounds[1][i] = tw.end[i] + tw.size[1][i] + CM_BOX_EPSILON;
 		}
 		else {
-			tw.bounds[0][i] = tw.end[i] + CM_CLIP_EPSILON;
-			tw.bounds[1][i] = tw.start[i] + CM_CLIP_EPSILON;
+			tw.bounds[0][i] = tw.end[i] + tw.size[0][i] - CM_BOX_EPSILON;
+			tw.bounds[1][i] = tw.start[i] + tw.size[1][i] + CM_BOX_EPSILON;
 		}
-		/*if (idMath::Fabs(tw.size[0][i]) > idMath::Fabs(tw.size[1][i])) {
-			tw.extents[i] = idMath::Fabs(tw.size[0][i]) + CM_BOX_EPSILON;
-		}
-		else {
-			tw.extents[i] = idMath::Fabs(tw.size[1][i]) + CM_BOX_EPSILON;
-		}*/
 	}
 
 	// trace through the model

@@ -144,6 +144,19 @@ void Physics_PlayerMy::WalkMove() {
 }
 
 /*
+=============
+idPhysics_Player::CheckGround
+=============
+*/
+void Physics_PlayerMy::CheckGround() {
+
+	// set the clip model origin before getting the contacts
+	//clipModel->SetPosition(current.origin, clipModel->GetAxis());
+
+	EvaluateContacts();
+}
+
+/*
 ================
 Physics_PlayerMy::MovePlayer
 ================
@@ -155,8 +168,11 @@ void Physics_PlayerMy::MovePlayer(int msec) {
 	// move the player velocity into the frame of a pusher
 	//current.velocity -= current.pushVelocity;
 
+	// check for ground
+	CheckGround();
+
 	// walking on ground
-	Physics_PlayerMy::WalkMove();
+	WalkMove();
 
 	// move the player velocity back into the world frame
 	//current.velocity += current.pushVelocity;

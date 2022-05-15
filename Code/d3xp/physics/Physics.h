@@ -5,8 +5,7 @@ extern const float CONTACT_EPSILON;
 
 class idEntity;
 
-class idPhysics : public idClass
-{
+class idPhysics : public idClass {
 public:
 	CLASS_PROTOTYPE(idPhysics);
 
@@ -25,6 +24,9 @@ public: // common physics interface
 	virtual void SetClipModel( std::shared_ptr<idClipModel> model, float density, int id = 0, bool freeOld = true ) = 0;
 	virtual std::shared_ptr<idClipModel> GetClipModel(int id = 0) const = 0;
 	virtual int GetNumClipModels() const = 0;
+	// get/set the contents of a specific clip model or the whole physics object
+	virtual void SetContents(int contents, int id = -1) = 0;
+	virtual int GetContents(int id = -1) const = 0;
 	// get/set the contents a specific clip model or the whole physics object collides with
 	virtual void SetClipMask(int mask, int id = -1) = 0;
 	virtual int GetClipMask(int id = -1) const = 0;

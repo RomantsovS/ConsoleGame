@@ -71,6 +71,24 @@ int idPhysics_Actor::GetNumClipModels() const noexcept {
 
 /*
 ================
+idPhysics_Actor::SetClipMask
+================
+*/
+void idPhysics_Actor::SetContents(int contents, int id) {
+	clipModel->SetContents(contents);
+}
+
+/*
+================
+idPhysics_Actor::SetClipMask
+================
+*/
+int idPhysics_Actor::GetContents(int id) const {
+	return clipModel->GetContents();
+}
+
+/*
+================
 idPhysics_Actor::GetBounds
 ================
 */
@@ -141,7 +159,8 @@ bool idPhysics_Actor::EvaluateContacts() noexcept {
 
 	// get all the ground contacts
 	ClearContacts();
+	AddGroundContacts(clipModel.get());
 	AddContactEntitiesForContacts();
 
-	return !contacts.empty();
+	return (!contacts.empty());
 }

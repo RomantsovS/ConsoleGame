@@ -15,6 +15,8 @@ public:
 	void Spawn();
 	void Think() noexcept override;
 protected:
+	std::shared_ptr<idPhysics_RigidBody> physicsObj;
+
 	void Hide() override;
 
 	// damage
@@ -40,8 +42,6 @@ public:
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 private:
-	std::shared_ptr<idPhysics_RigidBody> physicsObj;
-
 	int lastChangeDirection{};
 	int directionChangePeriod = 0;
 protected:

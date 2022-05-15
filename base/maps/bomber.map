@@ -151,7 +151,7 @@ Version 2
 
 {
 "classname" "turtle"
-"name" "turtle1"
+"name" "turtle2"
 "origin" "100 54"
 "linearVelocity" "10 0"
 "color" "6"

@@ -64,6 +64,7 @@ private:
 
 	void Friction() noexcept;
 	void WalkMove();
+	void CheckGround();
 	void MovePlayer(int msec);
 };
 

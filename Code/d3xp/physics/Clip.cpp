@@ -642,7 +642,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 	if (!passEntity || passEntity->entityNumber != ENTITYNUM_WORLD) {
 		// test world
 		idClip::numContacts++;
-		numContacts = collisionModelManager->Contacts(contacts.data(), maxContacts, start, dir, depth, trm,
+		numContacts = collisionModelManager->Contacts(&contacts, maxContacts, start, dir, depth, trm,
 			contentMask, 0, vec2_origin);
 	}
 	else {
@@ -681,7 +681,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 		}
 
 		idClip::numContacts++;
-		n = collisionModelManager->Contacts(contacts.data() + numContacts, maxContacts - numContacts,
+		n = collisionModelManager->Contacts(&contacts, maxContacts - numContacts,
 			start, dir, depth, trm, contentMask, touch->Handle(), touch->origin);
 
 		for (j = 0; j < n; j++) {
@@ -800,9 +800,9 @@ void idClip::ClipModelsTouchingBounds_r(const clipSector_t* node, listParms_t& p
 		}
 
 		// if the clip model does not have any contents we are looking for
-		/*if (!(check->contents & parms.contentMask)) {
+		if (!(check->contents & parms.contentMask)) {
 			continue;
-		}*/
+		}
 
 		// if the bounds really do overlap
 		if (check->absBounds[0].x > parms.bounds[1].x ||
@@ -872,18 +872,16 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 			// check if we should ignore this entity
 			if (entSp == passEntity) {
 				clipModelList[i] = nullptr;			// don't clip against the pass entity
-			}
-			else if (entSp == passOwner) {
+			} /*else if (entSp == passOwner) {
 				clipModelList[i] = nullptr;			// missiles don't clip with their owner
-			}
-			else if (auto ownerSp = cm->owner) {
+			} else if (auto ownerSp = cm->owner) {
 				if (ownerSp == passEntity) {
 					clipModelList[i] = nullptr;		// don't clip against own missiles
 				}
 				else if (ownerSp == passOwner) {
 					clipModelList[i] = nullptr;		// don't clip against other missiles from same owner
 				}
-			}
+			}*/
 		}
 	}
 

@@ -26,10 +26,18 @@ void idProjectile::Spawn() {
 	physicsObj = std::make_shared<idPhysics_RigidBody>();
 	physicsObj->SetSelf(this);
 	physicsObj->SetClipModel(std::make_shared<idClipModel>(*GetPhysics()->GetClipModel()), 1.0f);
-	//physicsObj->SetContents(0);
+	physicsObj->SetContents(0);
 	physicsObj->SetClipMask(0);
-	//physicsObj.PutToRest();
 	SetPhysics(physicsObj);
+}
+
+/*
+================
+idProjectile::GetOwner
+================
+*/
+idEntity* idProjectile::GetOwner() const {
+	return owner;
 }
 
 /*
@@ -72,7 +80,6 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	Vector2			velocity;
 	float			speed;
 	//int				contents;
-	int				clipMask{};
 
 	spawnArgs.GetVector("velocity", "0 0 0", velocity);
 
@@ -83,13 +90,12 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	fuse = spawnArgs.GetFloat("fuse");
 
 	//contents = 0;
-	clipMask = MASK_SOLID;
 
 	Vector2 tmpDir = dir;
 	tmpDir.Normalize();
 
-	//physicsObj->SetContents(contents);
-	physicsObj->SetClipMask(clipMask);
+	physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
+	physicsObj->SetClipMask(MASK_PLAYERSOLID);
 	physicsObj->SetLinearVelocity(tmpDir * speed + pushVelocity);
 	physicsObj->SetOrigin(start);
 
@@ -117,6 +123,24 @@ idProjectile::Think
 ================
 */
 void idProjectile::Think() {
+	idPlayer* player = gameLocal.GetLocalPlayer();
+
+	if (player) {
+		bool isPlayerTouchedNow = false;
+		for (size_t i = 0; i < physicsObj->GetNumContacts(); ++i) {
+			auto& ci = physicsObj->GetContact(i);
+			auto& ent = gameLocal.entities[ci.entityNum];
+			if (ent.get() == player) {
+				isPlayerTouchedNow = true;
+				break;
+			}
+		}
+		if (isPlayerTouchedNow && !playerTouched)
+			playerTouched = true;
+		else if (!isPlayerTouchedNow && playerTouched)
+			GetPhysics()->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_SOLID));
+	}
+
 	// run physics
 	RunPhysics();
 
@@ -161,13 +185,6 @@ bool idProjectile::Collide(const trace_t& collision, const Vector2& velocity) no
 
 	// if the hit entity takes damage
 	if (ent->fl.takedamage) {
-		/*if (damagePower) {
-			damageScale = damagePower;
-		}
-		else {
-			damageScale = 1.0f;
-		}*/
-
 		if (!damageDefName.empty()) {
 			ent->Damage(this, owner, dir, damageDefName);
 
@@ -198,7 +215,7 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 	removeTime = spawnArgs.GetInt("remove_time", "1500");
 
 	fl.takedamage = false;
-	//physicsObj->SetContents(0);
+	physicsObj->SetContents(0);
 	physicsObj->PutToRest();
 
 	state = projectileState_t::EXPLODED;

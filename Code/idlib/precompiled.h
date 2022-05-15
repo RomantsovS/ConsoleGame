@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <thread>
 #include <filesystem>
+#include <optional>
 #include <gsl/gsl>
 
 #include "sys/sys_defines.h"

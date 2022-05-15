@@ -9,12 +9,6 @@ constexpr int MAX_WEAPONS = 32;
 CLASS_DECLARATION(idActor, idPlayer)
 END_CLASS
 
-idPlayer::idPlayer() {
-}
-
-idPlayer::~idPlayer() {
-}
-
 /*
 ==============
 idPlayer::SetupWeaponEntity
@@ -77,8 +71,8 @@ void idPlayer::Spawn() {
 	physicsObj->SetSelf(this);
 	SetClipModel();
 	//physicsObj.SetMass(spawnArgs.GetFloat("mass", "100"));
-	//physicsObj->SetContents(CONTENTS_BODY);
-	physicsObj->SetClipMask(MASK_SOLID);
+	physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
+	physicsObj->SetClipMask(MASK_PLAYERSOLID);
 	SetPhysics(physicsObj);
 
 	SetupWeaponEntity();
@@ -245,7 +239,6 @@ bool idPlayer::Collide(const trace_t& collision, const Vector2& velocity) noexce
 		} else if (other->IsType(idChain::Type)) {
 			other->PostEventMS(&EV_Remove, 0);
 			return true;
-		} else if (other->IsType(idStaticEntity::Type)) {
 		}
 	}
 	return false;
@@ -300,6 +293,8 @@ void idPlayer::Killed(idEntity* inflictor, idEntity* attacker, int damage, const
 	// g_forcerespawn may force spawning at some later time
 	delay = spawnArgs.GetFloat("respawn_delay");
 	minRespawnTime = gameLocal.time + SEC2MS(delay);
+
+	physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) | static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
 
 	UpdateVisuals();
 }
@@ -472,6 +467,19 @@ void idPlayer::Move() {
 	oldOrigin = physicsObj->GetOrigin();
 	oldVelocity = physicsObj->GetLinearVelocity();
 	//pushVelocity = physicsObj->GetPushedLinearVelocity();
+
+	if (health <= 0) {
+		physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) | static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
+	} else {
+		physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
+	}
+
+	if (health <= 0) {
+		physicsObj->SetClipMask(MASK_DEADSOLID);
+	}
+	else {
+		physicsObj->SetClipMask(MASK_PLAYERSOLID);
+	}
 
 	{
 		//Vector2	org;

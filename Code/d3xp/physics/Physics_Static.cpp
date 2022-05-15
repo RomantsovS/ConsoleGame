@@ -60,6 +60,29 @@ int idPhysics_Static::GetNumClipModels() const noexcept {
 
 /*
 ================
+idPhysics_Static::SetContents
+================
+*/
+void idPhysics_Static::SetContents(int contents, int id) {
+	if (clipModel) {
+		clipModel->SetContents(contents);
+	}
+}
+
+/*
+================
+idPhysics_Static::GetContents
+================
+*/
+int idPhysics_Static::GetContents(int id) const {
+	if (clipModel) {
+		return clipModel->GetContents();
+	}
+	return 0;
+}
+
+/*
+================
 idPhysics_Static::SetClipMask
 ================
 */

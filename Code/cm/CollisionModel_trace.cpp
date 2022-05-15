@@ -12,7 +12,7 @@ void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, cm_no
 	std::shared_ptr<cm_brushRef_t> bref;
 
 	// position test
-	if (tw->positionTest) {
+	//if (tw->positionTest) {
 		// if already stuck in solid
 		if (tw->trace.fraction == 0.0f) {
 			return;
@@ -33,8 +33,8 @@ void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t* tw, cm_no
 				return;
 			}
 		}*/
-	}
-	/*else if (tw->rotation) {
+	/*}
+	else if (tw->rotation) {
 		// rotate through all polygons in this leaf
 		for (pref = node->polygons; pref; pref = pref->next) {
 			if (idCollisionModelManagerLocal::RotateTrmThroughPolygon(tw, pref->p)) {

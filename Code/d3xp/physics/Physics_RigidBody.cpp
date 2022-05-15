@@ -115,6 +115,24 @@ int idPhysics_RigidBody::GetNumClipModels() const noexcept {
 
 /*
 ================
+idPhysics_RigidBody::SetContents
+================
+*/
+void idPhysics_RigidBody::SetContents(int contents, int id) {
+	clipModel->SetContents(contents);
+}
+
+/*
+================
+idPhysics_RigidBody::GetContents
+================
+*/
+int idPhysics_RigidBody::GetContents(int id) const {
+	return clipModel->GetContents();
+}
+
+/*
+================
 idPhysics_RigidBody::GetBounds
 ================
 */
@@ -334,8 +352,13 @@ bool idPhysics_RigidBody::EvaluateContacts() noexcept {
 	dir.SubVec3(1) = current.i.angularMomentum;
 	dir.SubVec3(0).Normalize();
 	dir.SubVec3(1).Normalize();*/
-	dir = current.i.linearMomentum;
-	dir.Normalize();
+	if (current.i.linearMomentum != vec2_origin) {
+		dir = current.i.linearMomentum;
+		dir.Normalize();
+	}
+	else {
+		dir = vec2_point_size;
+	}
 	auto num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(),
 		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self);
 	contacts.resize(num);
@@ -401,10 +424,8 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime, rigidBodyPSt
 }
 
 bool idPhysics_RigidBody::CollisionImpulse(const trace_t& collision, Vector2& impulse) noexcept {
-	Vector2 velocity;
-
 	// callback to self to let the entity know about the collision
-	return self->Collide(collision, velocity);
+	return self->Collide(collision, vec2_origin);
 }
 
 bool idPhysics_RigidBody::TestIfAtRest() const noexcept {

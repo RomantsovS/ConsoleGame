@@ -29,6 +29,9 @@ public:	// common physics interface
 	std::shared_ptr<idClipModel> GetClipModel(int id = 0) const noexcept override;
 	int GetNumClipModels() const noexcept override;
 
+	void SetContents(int contents, int id = -1) override;
+	int GetContents(int id = -1) const override;
+
 	void SetClipMask(int mask, int id = -1) noexcept override;
 	int GetClipMask(int id = -1) const noexcept override;
 

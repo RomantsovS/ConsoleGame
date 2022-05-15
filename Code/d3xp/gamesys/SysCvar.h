@@ -1,6 +1,8 @@
 #ifndef D3XP_GAMESYS_SYSCVAR_H_
 #define D3XP_GAMESYS_SYSCVAR_H_
 
+extern idCVar	developer;
+
 extern idCVar g_debugDamage;
 
 extern idCVar g_showCollisionModels;

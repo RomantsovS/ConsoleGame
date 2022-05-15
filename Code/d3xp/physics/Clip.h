@@ -33,6 +33,8 @@ public:
 	//void					Rotate(const idRotation& rotation);							// unlinks the clip model
 	void Enable() noexcept;						// enable for clipping
 	void Disable() noexcept;					// keep linked but disable for clipping
+	void SetContents(int newContents);		// override contents
+	int GetContents() const;
 	void SetEntity(idEntity* newEntity) noexcept;
 	idEntity* GetEntity() const noexcept;
 	void SetId(int newId) noexcept;
@@ -73,6 +75,14 @@ private:
 	static idTraceModel* GetCachedTraceModel(int traceModelIndex);
 	static int GetTraceModelHashKey(const idTraceModel& trm) noexcept;
 };
+
+inline void idClipModel::SetContents(int newContents) {
+	contents = newContents;
+}
+
+inline int idClipModel::GetContents() const {
+	return contents;
+}
 
 inline void idClipModel::SetEntity(idEntity* newEntity) noexcept {
 	entity = newEntity;

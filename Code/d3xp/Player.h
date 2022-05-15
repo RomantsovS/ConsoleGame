@@ -11,8 +11,8 @@ public:
 public:
 	CLASS_PROTOTYPE(idPlayer);
 
-	idPlayer();
-	virtual ~idPlayer();
+	idPlayer() = default;
+	virtual ~idPlayer() = default;
 	idPlayer(const idPlayer&) = default;
 	idPlayer& operator=(const idPlayer&) = default;
 	idPlayer(idPlayer&&) = default;
