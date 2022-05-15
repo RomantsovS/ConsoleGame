@@ -148,6 +148,11 @@ gameReturn_t idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
 	// grab the return value created by the last thread execution
 	gameReturn_t latchedRet = ret;
 
+	if (numGameFrames_ == 0) {
+		// Ensure there's no stale gameReturn data from a paused game
+		ret = gameReturn_t();
+	}
+
 	for (size_t i = 0; i < numGameFrames_; ++i)
 		game->RunFrame(ret);
 

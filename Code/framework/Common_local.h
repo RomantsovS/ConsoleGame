@@ -12,8 +12,7 @@ enum errorParm_t {
 
 class idRenderWorld;
 
-class idCommonLocal : public idCommon
-{
+class idCommonLocal : public idCommon {
 public:
 	idCommonLocal();
 	~idCommonLocal();
@@ -49,6 +48,8 @@ public:
 	//void LeaveGame();
 
 	void QuitRequest() noexcept override { quit_requested = true; }
+public:
+	std::string GetCurrentMapName() { return currentMapName; }
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;

@@ -161,8 +161,35 @@ void idCommonLocal::UnloadMap() {
 	mapSpawned = false;
 }
 
+/*
+==================
+Common_Map_f
+
+Restart the server on a different map
+==================
+*/
 void map_f(const idCmdArgs& args) {
 	commonLocal.StartNewGame(args.Argv(1), false, -2);
+}
+
+/*
+==================
+Common_RestartMap_f
+==================
+*/
+void restartMap_f(const idCmdArgs& args) {
+	cmdSystem->AppendCommandText(va("devmap %s %d\n", commonLocal.GetCurrentMapName().c_str(), 0));
+}
+
+/*
+==================
+Common_DevMap_f
+
+Restart the server on a different map in developer mode
+==================
+*/
+void devmap_f(const idCmdArgs& args) {
+	commonLocal.StartNewGame(args.Argv(1), true, -2);
 }
 
 /*
@@ -172,4 +199,6 @@ idCommonLocal::InitCommands
 */
 void idCommonLocal::InitCommands() {
 	cmdSystem->AddCommand("map", map_f, CMD_FL_GAME, "loads a map");
+	cmdSystem->AddCommand("restartMap", restartMap_f, CMD_FL_GAME, "restarts the current map");
+	cmdSystem->AddCommand("devmap", devmap_f, CMD_FL_GAME, "loads a map in developer mode");
 }

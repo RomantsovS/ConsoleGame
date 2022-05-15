@@ -112,6 +112,9 @@ void idMenuScreen_Shell_Pause::ShowScreen() {
 		option.clear();
 	}
 
+	option.push_back("RESTART MAP");	// return to game
+	menuOptions.push_back(option);
+	option.clear();
 
 	/*option.push_back("#str_02179");	// save game
 	menuOptions.push_back(option);
@@ -131,6 +134,10 @@ void idMenuScreen_Shell_Pause::ShowScreen() {
 		options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RETURN));
 		index++;
 	}
+
+	options->GetChildByIndex(index)->ClearEventActions();
+	options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_RESTART));
+	index++;
 	options->GetChildByIndex(index)->ClearEventActions();
 	options->GetChildByIndex(index)->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(pauseMenuCmds_t::PAUSE_CMD_EXIT));
 
