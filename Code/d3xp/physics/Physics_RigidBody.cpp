@@ -434,11 +434,11 @@ bool idPhysics_RigidBody::TestIfAtRest() const noexcept {
 	}
 
 	// need at least 3 contact points to come to rest
-	if (contacts.size() < 2) {
+	//if (contacts.size() < 2) {
 		return false;
-	}
+	//}
 
-	return true;
+	//return true;
 }
 
 void idPhysics_RigidBody::Rest() noexcept {
