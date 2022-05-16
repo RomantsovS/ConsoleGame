@@ -61,7 +61,7 @@ private:
 	// weapon definition
 	// we maintain local copies of the projectile and brass dictionaries so they
 	// do not have to be copied across the DLL boundary when entities are spawned
-	std::weak_ptr<idDeclEntityDef> weaponDef;
+	idDeclEntityDef* weaponDef;
 	idDict projectileDict{};
 
 	int lastAttack{};			// last time an attack occured

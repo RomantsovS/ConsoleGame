@@ -79,40 +79,41 @@ idWeapon::GetWeaponDef
 ================
 */
 void idWeapon::GetWeaponDef(const std::string& objectname, int ammoinclip) {
-	std::string projectileName;
-
 	Clear();
 
 	if (objectname.empty()) {
 		return;
 	}
 
-	//assert(owner);
+	assert(owner);
 
-	weaponDef = gameLocal.FindEntityDef(objectname);
+	weaponDef = gameLocal.FindEntityDef(objectname).get();
 
 	// get the projectile
 	projectileDict.Clear();
 
-	projectileName = weaponDef.lock()->dict.GetString("def_projectile");
+	std::string projectileName = weaponDef->dict.GetString("def_projectile");
 	if (!projectileName.empty()) {
-		const std::shared_ptr<idDeclEntityDef> projectileDef = gameLocal.FindEntityDef(projectileName, false);
+		const std::shared_ptr<idDeclEntityDef>& projectileDef = gameLocal.FindEntityDef(projectileName, false);
 		if (!projectileDef) {
-			gameLocal.Warning("Unknown projectile '%s' in weapon '%s'", projectileName, objectname);
+			gameLocal.Warning("Unknown projectile '%s' in weapon '%s'", projectileName.c_str(), objectname.c_str());
 		}
 		else {
-			const std::string spawnclass = projectileDef->dict.GetString("spawnclass");
+			const std::string& spawnclass = projectileDef->dict.GetString("spawnclass");
 			idTypeInfo* cls = idClass::GetClass(spawnclass);
 			if (!cls || !cls->IsType(idProjectile::Type)) {
-				gameLocal.Warning("Invalid spawnclass '%s' on projectile '%s' (used by weapon '%s')", spawnclass, projectileName, objectname);
+				gameLocal.Warning("Invalid spawnclass '%s' on projectile '%s' (used by weapon '%s')", spawnclass.c_str(),
+					projectileName.c_str(), objectname.c_str());
 			}
 			else {
 				projectileDict = projectileDef->dict;
 			}
 		}
+
+		idProjectile::CacheProjectille(projectileName, projectileDef.get());
 	}
 
-	spawnArgs = weaponDef.lock()->dict;
+	spawnArgs = weaponDef->dict;
 }
 
 /*
@@ -179,7 +180,7 @@ void idWeapon::UpdateScript() {
 		gameLocal.SpawnEntityDef(projectileDict, &ent);
 
 		if (!ent || !ent->IsType(idProjectile::Type)) {
-			const std::string projectileName = weaponDef.lock()->dict.GetString("def_projectile");
+			const std::string projectileName = weaponDef->dict.GetString("def_projectile");
 			gameLocal.Error("'%s' is not an idProjectile", projectileName.c_str());
 			return;
 		}

@@ -132,9 +132,42 @@ entityDef projectile_grenade {
 
 	"health"					"0"					// amount of damage projectile can take if damaged (0 means it can't be destroyed)
 	"velocity"					"0 0"			// how fast the projectile leaves the gun (or distance if fuse is 0)
-	"fuse"						"0"					// how long before the projectile is removed or self-detonates.  Use 0 for beam weapons (velocity == distance).
+	"fuse"						"3"					// how long before the projectile is removed or self-detonates.  Use 0 for beam weapons (velocity == distance).
 	
-	"remove_time"				"5000"
+	"remove_time"				"0"
+
+	"def_projectile"			"projectile_grenade_explosion"
+	"num_projectiles"			"4"
+	"projectile0_shift"		"1 0"
+	"projectile1_shift"		"-1 0"
+	"projectile2_shift"		"0 1"
+	"projectile3_shift"		"0 -1"
+
+	"detonate_on_fuse"			"1"					// whether projectile should detonate when it's fuse runs out
+	"detonate_on_death"			"0"					// whether projectile should detonate when it's "killed" (health runs out)
+	"detonate_on_world"			"0"					// whether projectile should detonate when it hits an obstacle
+	"detonate_on_actor"			"1"					// whether projectile should detonate when it hits a character in the game
+	"detonate_on_trigger"		"1"					// whether projectile should detonate when triggered by a character in the game
+
+	"can_touch_player"			"1"
+}
+
+entityDef damage_grenadeDirect {
+	"damage"					"150"
+}
+
+entityDef projectile_grenade_explosion {
+	"spawnclass"				"FireBall"
+	"size"						"16 16"
+	"model"						"models/fireball16x16.bmp"
+
+	"def_damage"				"damage_grenadeExplosion"
+
+	"health"					"0"					// amount of damage projectile can take if damaged (0 means it can't be destroyed)
+	"velocity"					"0 0"			// how fast the projectile leaves the gun (or distance if fuse is 0)
+	"fuse"						"3"					// how long before the projectile is removed or self-detonates.  Use 0 for beam weapons (velocity == distance).
+	
+	"remove_time"				"0"
 
 	"detonate_on_fuse"			"1"					// whether projectile should detonate when it's fuse runs out
 	"detonate_on_death"			"0"					// whether projectile should detonate when it's "killed" (health runs out)
@@ -143,7 +176,7 @@ entityDef projectile_grenade {
 	"detonate_on_trigger"		"1"					// whether projectile should detonate when triggered by a character in the game
 }
 
-entityDef damage_grenadeDirect {
+entityDef damage_grenadeExplosion {
 	"damage"					"150"
 }
 

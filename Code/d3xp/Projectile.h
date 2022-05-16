@@ -1,16 +1,11 @@
 #ifndef __GAME_PROJECTILE_H__
 #define __GAME_PROJECTILE_H__
 
+extern const idEventDef EV_Explode;
+
 class idProjectile : public idEntity {
 public:
 	CLASS_PROTOTYPE(idProjectile);
-
-	idProjectile();
-	virtual ~idProjectile();
-	idProjectile(const idProjectile&) = default;
-	idProjectile& operator=(const idProjectile&) = default;
-	idProjectile(idProjectile&&) = default;
-	idProjectile& operator=(idProjectile&&) = default;
 
 	void Spawn();
 
@@ -23,6 +18,8 @@ public:
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 	virtual void Explode(const trace_t& collision, idEntity* ignore);
+
+	static void CacheProjectille(const std::string& objectname, idDeclEntityDef* declEntDef);
 protected:
 	idEntity* owner;
 
@@ -38,10 +35,13 @@ protected:
 	};
 
 	projectileState_t state{ projectileState_t::SPAWNED };
-private:
-	void Event_Explode();
 
+	void Event_Explode();
+private:
 	bool playerTouched = false;
+	size_t num_firebals = 1;
+
+	idDict projectileDict{};
 };
 
 #endif

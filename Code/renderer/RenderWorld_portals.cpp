@@ -40,7 +40,7 @@ scissor rect updated.
 void idRenderWorldLocal::AddAreaViewEntities(int areaNum) {
 	portalArea_t* area = &portalAreas[areaNum];
 
-	for (auto ref = area->entityRefs->areaNext; ref != area->entityRefs;
+	for (auto& ref = area->entityRefs->areaNext; ref != area->entityRefs;
 		ref = ref->areaNext) {
 		auto entity = ref->entity;
 

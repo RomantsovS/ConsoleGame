@@ -7,8 +7,7 @@
 #include "Math/Vector2.h"
 #include "Str.h"
 
-class idDict
-{
+class idDict {
 public:
 	using map_type = std::map<std::string, std::string>;
 	using args_pair = map_type::value_type;

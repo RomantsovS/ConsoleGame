@@ -5,7 +5,7 @@ Version 2
 "call" "map_marscity1::main"
 "no_Weapons" "1"
 "def_player" "player"
-"player_origin" "15 34"
+"player_origin" "34 14"
 "game_add_point_delay" "0"
 "game_add_point_count" "0"
 // primitive 2
@@ -16,7 +16,7 @@ Version 2
  }
 }
 }
-
+/*
 {
 "classname" "block"
 "origin" "34 34"
@@ -156,3 +156,4 @@ Version 2
 "linearVelocity" "10 0"
 "color" "6"
 }
+*/

@@ -260,6 +260,7 @@ constexpr auto MASK_DEADSOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID
 #include "Misc.h"
 #include "Actor.h"
 #include "Projectile.h"
+#include "FireBall.h"
 #include "Weapon.h"
 #include "WorldSpawn.h"
 #include "Player.h"
