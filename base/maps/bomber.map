@@ -1,13 +1,13 @@
 Version 2
 // entity 0
 {
-"classname" "worldspawn"
-"call" "map_marscity1::main"
-"no_Weapons" "1"
-"def_player" "player"
-"player_origin" "34 14"
-"game_add_point_delay" "0"
-"game_add_point_count" "0"
+"classname"				"worldspawn"
+"call"					"map_marscity1::main"
+"def_player"			"player"
+"player_origin"			"34 14"
+"game_add_point_delay"	"0"
+"game_add_point_count"	"0"
+"r_background_color"	"2"
 // primitive 2
 {
  brushDef3

@@ -57,7 +57,11 @@ public:
 	pos_type getWidth() const noexcept { return width; }
 	pos_type getHeight() const noexcept { return height; }
 
-	const Pixel &getBackgroundPixel() const noexcept { return backgroundPixel; }
+	void setBackGroundPixel(const Pixel& pixel) noexcept {
+		backgroundPixel.Char.AsciiChar = pixel.value;
+		backgroundPixel.Attributes = pixel.color;
+	}
+	const Pixel getBackgroundPixel() const noexcept { return { backgroundPixel.Char.AsciiChar, backgroundPixel.Attributes }; }
 
 	void clear();
 	void clearTextInfo() noexcept;
@@ -78,7 +82,8 @@ public:
 	void SetConsoleTextTitle(const std::string& str);
 private:
 	pos_type width, height;
-	Pixel backgroundPixel;
+	CHAR_INFO backgroundPixel{};
+
 	//std::vector<char> buffer;
 	std::vector<CHAR_INFO> buffer;
 	HANDLE h_console_std_in;

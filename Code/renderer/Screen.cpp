@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "tr_local.h"
 
 idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
@@ -12,9 +11,9 @@ idCVar text_info_max_height("text_info_max_height", "10",
 Screen::Screen(pos_type wd, pos_type ht, Pixel back) noexcept
 	: width(wd),
 	height(ht),
-	backgroundPixel(back),
 	cur_write_coord({ 0, 0 }),
 	window_rect({ 0, 0, 1, 1 }) {
+	setBackGroundPixel(back);
 	h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
 	h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 }
@@ -138,7 +137,9 @@ Screen& Screen::set(pos_type col, pos_type row, const Screen::Pixel& ch) {
 	return *this;  // return this object as an lvalue
 }
 
-void Screen::clear() { std::fill(buffer.begin(), buffer.end(), CHAR_INFO()); }
+void Screen::clear() {
+	std::fill(buffer.begin(), buffer.end(), backgroundPixel);
+}
 
 void Screen::clearTextInfo() noexcept {
 	DWORD written;
