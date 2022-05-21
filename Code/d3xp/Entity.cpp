@@ -85,6 +85,9 @@ void idEntity::Spawn() {
 		SetModel(temp);
 	}
 	renderEntity.color = spawnArgs.GetInt("color", 15);
+
+	if (g_debugSpawn.GetBool())
+		gameLocal.DPrintf("Spawned ent %d %s %s\n", entityNumber, GetClassname().c_str(), name.c_str());
 }
 
 void idEntity::Remove() noexcept {
@@ -431,6 +434,10 @@ void idEntity::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& di
 	}
 
 	int	damage = damageDef->GetInt("damage");
+
+	if (g_debugDamage.GetInteger()) {
+		gameLocal.Printf("inflictor:%02d\ttarget:%02d\tdamage type:%s\t\thealth:%03d\tdamage:%03d\n", inflictor->entityNumber, entityNumber, damageDefName.c_str(), health, damage);
+	}
 
 	// inform the attacker that they hit someone
 	//attacker->DamageFeedback(this, inflictor, damage);

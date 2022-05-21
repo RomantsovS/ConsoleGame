@@ -5,16 +5,14 @@
 idCVar com_logFile("logFile", "2", CVAR_SYSTEM | CVAR_NOCHEAT, "1 = buffer log, 2 = flush after each print", 0, 2);
 idCVar com_logFileName("logFileName", "qconsole", CVAR_SYSTEM | CVAR_NOCHEAT, "name of log file, if empty, qconsole.log will be used");
 
-void idCommonLocal::Printf(const char* fmt, ...)
-{
+void idCommonLocal::Printf(const char* fmt, ...) {
 	va_list argptr;
 	va_start(argptr, fmt);
 	VPrintf(fmt, argptr);
 	va_end(argptr);
 }
 
-void idCommonLocal::VPrintf(const char* fmt, va_list args)
-{
+void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 	static bool	logFileFailed = false;
 
 	// optionally put a timestamp at the beginning of each print,

@@ -428,7 +428,7 @@ void idPlayer::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& di
 	CalcDamagePoints(inflictor, attacker, &damageDef->dict, &damage);
 
 	if (g_debugDamage.GetInteger()) {
-		gameLocal.Printf("client:%02d\tdamage type:%s\t\thealth:%03d\tdamage:%03d\n", entityNumber, damageDef->GetName().c_str(), health, damage);
+		gameLocal.Printf("inflictor:%02d\ttarget:%02d\tdamage type:%s\t\thealth:%03d\tdamage:%03d\n", inflictor->entityNumber, entityNumber, damageDefName.c_str(), health, damage);
 	}
 
 	// Server will deal his damage normally
