@@ -20,6 +20,8 @@ public:
 	virtual void Explode(const trace_t& collision, idEntity* ignore);
 
 	static void CacheProjectille(const std::string& objectname, idDeclEntityDef* declEntDef);
+
+	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) override;
 protected:
 	idEntity* owner;
 

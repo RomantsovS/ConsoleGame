@@ -91,7 +91,7 @@ entityDef player_snake_long {
 entityDef player {
 	"spawnclass"			"idPlayer"
 	"model"					"mario"
-	"size"					"13 16"
+	"size"					"15 15"
 	"linearVelocity"		"0 10"
 	"def_weapon0"			"weapon_handgrenade"
 	"current_weapon"		"0"

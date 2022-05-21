@@ -82,6 +82,8 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	Vector2			velocity;
 	float			speed;
 
+	fl.takedamage = !spawnArgs.GetBool("noDamage");
+
 	spawnArgs.GetVector("velocity", "0 0 0", velocity);
 
 	speed = velocity.Length() * launchPower;
@@ -305,6 +307,50 @@ void idProjectile::CacheProjectille(const std::string& objectname, idDeclEntityD
 				gameLocal.Warning("Invalid spawnclass '%s' on projectile '%s' (used by weapon '%s')", spawnclass.c_str(),
 					projectileName.c_str(), objectname.c_str());
 			}
+		}
+	}
+}
+
+void idProjectile::Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) {
+
+	if (!fl.takedamage) {
+		return;
+	}
+
+	if (!inflictor) {
+		inflictor = gameLocal.world.get();
+	}
+
+	if (!attacker) {
+		attacker = gameLocal.world.get();
+	}
+
+	const idDict* damageDef = gameLocal.FindEntityDefDict(damageDefName);
+	if (damageDef == NULL) {
+		gameLocal.Error("Unknown damageDef '%s'\n", damageDefName.c_str());
+		return;
+	}
+
+	int	damage = damageDef->GetInt("damage");
+
+	if (g_debugDamage.GetInteger()) {
+		gameLocal.Printf("inflictor:%02d\ttarget:%02d\tdamage type:%s\t\thealth:%03d\tdamage:%03d\n", inflictor->entityNumber, entityNumber, damageDefName.c_str(), health, damage);
+	}
+
+	// inform the attacker that they hit someone
+	//attacker->DamageFeedback(this, inflictor, damage);
+	if (damage) {
+		// do the damage
+		health -= damage;
+		if (health <= 0) {
+			if (health < -999) {
+				health = -999;
+			}
+
+			PostEventSec(&EV_Explode, 0);
+		}
+		else {
+			//Pain(inflictor, attacker, damage, dir, location);
 		}
 	}
 }
