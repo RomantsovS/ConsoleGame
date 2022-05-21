@@ -18,9 +18,6 @@ idCollisionModelManagerLocal::TestTrmVertsInBrush
 ================
 */
 bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_brush_t* b) {
-	//int j, numVerts;// , bestPlane;
-	//float d, bestd;
-
 	/*if (b->checkcount == idCollisionModelManagerLocal::checkCount) {
 		return false;
 	}
@@ -35,49 +32,21 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 		return false;
 	}
 
-	/*if (tw->pointTrace) {
-		numVerts = 1;
+	tw->trace.fraction = 0.0f;
+	//tw->trace.c.type = CONTACT_TRMVERTEX;
+	//tw->trace.c.normal = b->planes[bestPlane].Normal();
+	//tw->trace.c.dist = b->planes[bestPlane].Dist();
+	tw->trace.c.contents = b->contents;
+	//tw->trace.c.material = b->material;
+	//tw->trace.c.point = p;
+	//tw->trace.c.modelFeature = 0;
+	//tw->trace.c.trmFeature = j;
+
+	if (tw->getContacts) {
+		CM_AddContact(tw);
 	}
-	else {
-		numVerts = tw->numVerts;
-	}
 
-	for (j = 0; j < numVerts; j++) {
-		Vector2& p = tw->vertices[j].p;*/
-
-		// see if the point is inside the brush
-		/*bestPlane = 0;
-		bestd = -idMath::INFINITY;
-		for (i = 0; i < b->numPlanes; i++) {
-			d = b->planes[i].Distance(*p);
-			if (d >= 0.0f) {
-				break;
-			}
-			if (d > bestd) {
-				bestd = d;
-				bestPlane = i;
-			}
-		}*/
-		//if (i >= b->numPlanes) {
-		//if(b->bounds.LineIntersection(p, tw->vertices[j].endp)) {
-			tw->trace.fraction = 0.0f;
-			//tw->trace.c.type = CONTACT_TRMVERTEX;
-			//tw->trace.c.normal = b->planes[bestPlane].Normal();
-			//tw->trace.c.dist = b->planes[bestPlane].Dist();
-			tw->trace.c.contents = b->contents;
-			//tw->trace.c.material = b->material;
-			//tw->trace.c.point = p;
-			//tw->trace.c.modelFeature = 0;
-			//tw->trace.c.trmFeature = j;
-
-			if (tw->getContacts) {
-				CM_AddContact(tw);
-			}
-
-			return true;
-		//}
-	//}
-	//return false;
+	return true;
 }
 
 /*

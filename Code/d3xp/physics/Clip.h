@@ -177,7 +177,7 @@ public:
 	bool Motion(trace_t& results, const Vector2& start, const Vector2& end,
 		const idClipModel* mdl, int contentMask, const idEntity* passEntity);
 
-	int Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
+	int Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
 		const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask,
 		const idEntity* passEntity);
 
@@ -188,7 +188,7 @@ public:
 	std::shared_ptr<idClipModel> DefaultClipModel() noexcept;
 
 	// stats and debug drawing
-	void PrintStatistics() noexcept;
+	void PrintStatistics(int lifetime = 0) noexcept;
 	void DrawClipModels(const Vector2& eye, const float radius, const idEntity* passEntity);
 	void DrawClipSectors();
 private:

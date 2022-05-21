@@ -263,7 +263,7 @@ void idPhysics_Base::AddGroundContacts(const idClipModel* clipModel) {
 	contacts.resize(index + 10);
 
 	dir = vec2_point_size;
-	num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(), dir, CONTACT_EPSILON, clipModel, clipMask, self);
+	num = gameLocal.clip.Contacts(&contacts[index], 10, clipModel->GetOrigin(), dir, CONTACT_EPSILON, clipModel, clipMask, self);
 	contacts.resize(index + num);
 }
 

@@ -37,8 +37,14 @@ protected:
 	projectileState_t state{ projectileState_t::SPAWNED };
 
 	void Event_Explode();
+	void DoDamage(idEntity* ent, const Vector2& dir);
 private:
-	bool playerTouched = false;
+	enum class PlayerTouchState {
+		NONE,
+		TOUCHED,
+		UNTAUCHED
+	};
+	PlayerTouchState playerTouched = PlayerTouchState::NONE;
 	size_t num_firebals = 1;
 
 	idDict projectileDict{};

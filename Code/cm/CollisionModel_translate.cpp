@@ -13,7 +13,7 @@ void CM_AddContact(gsl::not_null<cm_traceWork_t*> tw) {
 		return;
 	}
 	// copy contact information from trace_t
-	(*tw->contacts)[tw->numContacts] = tw->trace.c;
+	tw->contacts[tw->numContacts] = tw->trace.c;
 	tw->numContacts++;
 	// set fraction back to 1 to find all other contacts
 	tw->trace.fraction = 1.0f;

@@ -7,6 +7,7 @@
 idCVar developer("developer", "0", CVAR_GAME | CVAR_BOOL, "");
 
 idCVar g_debugDamage("g_debugDamage", "0", CVAR_GAME | CVAR_BOOL, "");
+idCVar g_debugSpawn("g_debugSpawn", "0", CVAR_GAME | CVAR_BOOL, "");
 
 idCVar g_showCollisionModels("g_showCollisionModels", "0", CVAR_GAME | CVAR_BOOL, "");
 idCVar g_showCollisionTraces("g_showCollisionTraces", "0", CVAR_GAME | CVAR_BOOL, "");

@@ -69,8 +69,9 @@ public:
 	std::string sessionCommand; // a target_sessionCommand can set this to return something to the session
 
 	int framenum;
-	game_time_type time;					// in msec
+	game_time_type time;		// in msec
 	int	previousTime;			// time in msec of last frame
+	game_time_type prev_info_update_time;
 
 	timeState_t fast;
 	timeState_t slow;
@@ -260,7 +261,6 @@ constexpr auto MASK_DEADSOLID = static_cast<int>(contentsFlags_t::CONTENTS_SOLID
 #include "Misc.h"
 #include "Actor.h"
 #include "Projectile.h"
-#include "FireBall.h"
 #include "Weapon.h"
 #include "WorldSpawn.h"
 #include "Player.h"

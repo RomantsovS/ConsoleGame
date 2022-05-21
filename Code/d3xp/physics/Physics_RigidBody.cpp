@@ -359,7 +359,7 @@ bool idPhysics_RigidBody::EvaluateContacts() noexcept {
 	else {
 		dir = vec2_point_size;
 	}
-	auto num = gameLocal.clip.Contacts(contacts, 10, clipModel->GetOrigin(),
+	auto num = gameLocal.clip.Contacts(&contacts[0], 10, clipModel->GetOrigin(),
 		dir, CONTACT_EPSILON, clipModel.get(), /*clipModel->GetAxis(),*/ clipMask, self);
 	contacts.resize(num);
 

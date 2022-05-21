@@ -435,8 +435,6 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-	static auto prev_info_update_time = time;
-
 	if (time - prev_info_update_time > info_update_time) {
 		prev_info_update_time = time;
 	}
@@ -459,10 +457,12 @@ void idGameLocal::RunDebugInfo() {
 		++num_active_entities;
 
 	if (g_showEntityInfo.GetBool()) {
-		gameRenderWorld->DrawTextToScreen(string_format("num ents %3d, active ents %3d", num_spawned_entities,
+		gameRenderWorld->DrawTextToScreen(string_format("ents: %3d, active: %3d", num_spawned_entities,
 			num_active_entities), Vector2(), colorYellow, info_update_time + 1);
 		
-		clip.PrintStatistics();
+		if (g_showCollisionTraces.GetBool()) {
+			clip.PrintStatistics(info_update_time + 1);
+		}
 
 		/*idMat3		axis = player->viewAngles.ToMat3();
 		idVec3		up = axis[2] * 5.0f;
@@ -505,7 +505,7 @@ void idGameLocal::RunDebugInfo() {
 				gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(), 0.1f, colorWhite, axis, 1);
 				gameRenderWorld->DrawText(va("#%d", ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis, 1);
 			}*/
-			if (true/*ent->IsActive()*/) {
+			if (ent->IsActive()) {
 				auto phys = ent->GetPhysics();
 				auto str = string_format("%10s p[%5.2f %5.2f] v[%6.2f %6.2f] rest %d", ent->GetName().c_str(),
 					phys->GetOrigin().x, phys->GetOrigin().y, phys->GetLinearVelocity().x, phys->GetLinearVelocity().y,
@@ -725,6 +725,7 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 
 	previousTime = 0;
 	time = 0;
+	prev_info_update_time = 0;
 	framenum = 0;
 	sessionCommand.clear();
 
@@ -753,6 +754,7 @@ void idGameLocal::Clear() {
 
 	framenum = 0;
 	previousTime = 0;
+	prev_info_update_time = 0;
 	time = 0;
 	mapFileName.clear();
 	mapFile = nullptr;
@@ -1139,6 +1141,7 @@ bool idGameLocal::SpawnEntityDef(const idDict& args, std::shared_ptr<idEntity>* 
 
 	// check if we should spawn a class object
 	spawnArgs.GetString("spawnclass", "", &spawn);
+
 	if (!spawn.empty()) {
 
 		cls = idClass::GetClass(spawn);
@@ -1247,6 +1250,10 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept {
 	if ((ent->entityNumber != ENTITYNUM_NONE) && (entities[ent->entityNumber] == ent)) {
 		ent->spawnNode.Remove();
+
+		if (g_debugSpawn.GetBool())
+			DPrintf("Unregister ent %d %s %s\n", ent->entityNumber, ent->GetClassname().c_str(), ent->name.c_str());
+
 		entities[ent->entityNumber] = nullptr;
 
 		int freeListType = (ent->entityNumber >= ENTITYNUM_FIRST_NON_REPLICATED) ? 1 : 0;

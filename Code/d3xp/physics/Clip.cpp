@@ -597,26 +597,11 @@ bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 	const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	idClip::numMotions++;
 
-	//int i, num;
-	//idClipModel* touch, * clipModelList[MAX_GENTITIES];
-	//Vector2 dir, endPosition;
-	//idBounds traceBounds;
-	//float radius;
-	//trace_t translationalTrace, rotationalTrace, trace;
-	//const idTraceModel* trm;
-
 	if (TestHugeTranslation(results, mdl, start, end)) {
 		return true;
 	}
 
-	/*if (mdl != NULL && rotation.GetAngle() != 0.0f && rotation.GetVec() != vec3_origin) {
-		// if no translation
-		if (start == end) {
-			// pure rotation
-			return Rotation(results, start, rotation, mdl, trmAxis, contentMask, passEntity);
-		}
-	}
-	else*/if (start != end) {
+	if (start != end) {
 		// pure translation
 		return Translation(results, start, end, mdl, contentMask, passEntity);
 	}
@@ -631,7 +616,7 @@ bool idClip::Motion(trace_t& results, const Vector2& start, const Vector2& end,
 	return false;
 }
 
-int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts, const Vector2& start,
+int idClip::Contacts(contactInfo_t* contacts, const int maxContacts, const Vector2& start,
 	const Vector2& dir, const float depth, const idClipModel* mdl, int contentMask, const idEntity* passEntity) {
 	int i, j, num, n, numContacts;
 	std::array<idClipModel*, MAX_GENTITIES> clipModelList;
@@ -642,7 +627,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 	if (!passEntity || passEntity->entityNumber != ENTITYNUM_WORLD) {
 		// test world
 		idClip::numContacts++;
-		numContacts = collisionModelManager->Contacts(&contacts, maxContacts, start, dir, depth, trm,
+		numContacts = collisionModelManager->Contacts(contacts, maxContacts, start, dir, depth, trm,
 			contentMask, 0, vec2_origin);
 	}
 	else {
@@ -681,7 +666,7 @@ int idClip::Contacts(std::vector<contactInfo_t>& contacts, const int maxContacts
 		}
 
 		idClip::numContacts++;
-		n = collisionModelManager->Contacts(&contacts, maxContacts - numContacts,
+		n = collisionModelManager->Contacts(contacts + numContacts, maxContacts - numContacts,
 			start, dir, depth, trm, contentMask, touch->Handle(), touch->origin);
 
 		for (j = 0; j < n; j++) {
@@ -893,13 +878,13 @@ int idClip::GetTraceClipModels(const idBounds& bounds, int contentMask,
 idClip::PrintStatistics
 ============
 */
-void idClip::PrintStatistics() noexcept {
+void idClip::PrintStatistics(int lifetime) noexcept {
 	static char buf[256];
 
-	//sprintf_s(buf, "t = %3d, r = %3d, m = %3d, render = %3d, contents = %3d, contacts = %3d",
-	//	numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
+	sprintf_s(buf, "t=%3d, r=%3d, m=%3d, rdr=%3d, cnt=%3d, ctct=%3d",
+		numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
 
-	//gameRenderWorld->DrawTextToScreen(buf, Vector2(), gameLocal.GetColors()[8], 0);
+	gameRenderWorld->DrawTextToScreen(buf, Vector2(), colorYellow, lifetime);
 
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }

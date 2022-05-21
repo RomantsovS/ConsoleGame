@@ -4,6 +4,7 @@
 extern idCVar	developer;
 
 extern idCVar g_debugDamage;
+extern idCVar g_debugSpawn;
 
 extern idCVar g_showCollisionModels;
 extern idCVar g_showCollisionTraces;
