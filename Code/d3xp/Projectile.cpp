@@ -158,6 +158,7 @@ void idProjectile::Think() {
 			auto& ci = physicsObj->GetContact(i);
 			auto& ent = gameLocal.entities[ci.entityNum];
 			DoDamage(ent.get(), vec2_origin);
+
 		}
 		if (physicsObj->GetNumContacts() > 0) {
 		}
@@ -234,7 +235,7 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 	if (!spawnArgs.GetString("def_projectile").empty()) {
 		size_t num_projectiles = spawnArgs.GetInt("num_projectiles");
 		Vector2 size = spawnArgs.GetVector("size");
-		Vector2 projSize = projectileDict.GetVector("size");
+		int projSize = projectileDict.GetInt("shift");
 
 		std::shared_ptr<idEntity> ent;
 		gameLocal.SpawnEntityDef(projectileDict, &ent);
@@ -250,8 +251,9 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 		proj->Create(owner, GetPhysics()->GetOrigin(), vec2_origin);
 		proj->Launch(GetPhysics()->GetOrigin(), vec2_origin, vec2_origin);
 
-		for (size_t j = 0; j < num_firebals; ++j) {
-			for (size_t i = 0; i < num_projectiles; ++i) {
+
+		for (size_t i = 0; i < num_projectiles; ++i) {
+			for (size_t j = 0; j < num_firebals; ++j) {
 				std::shared_ptr<idEntity> ent;
 				gameLocal.SpawnEntityDef(projectileDict, &ent);
 
@@ -264,11 +266,24 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 				std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
 
 				Vector2 shift = spawnArgs.GetVector(va("projectile%d_shift", i));
-				shift.x *= (size.x + projSize.x) / 2 * (j + 1);
-				shift.y *= (size.y + projSize.y) / 2 * (j + 1);
-
+				shift.x *= (size.x + projSize) / 2 * (j + 1);
+				shift.y *= (size.y + projSize) / 2 * (j + 1);
+				
 				proj->Create(owner, GetPhysics()->GetOrigin() + shift, vec2_origin);
 				proj->Launch(GetPhysics()->GetOrigin() + shift, vec2_origin, vec2_origin);
+
+				bool collided = false;
+				for (int i = 0; i < proj->physicsObj->GetNumContacts(); ++i) {
+					auto ent = gameLocal.entities[proj->physicsObj->GetContact(i).entityNum].get();
+					if (gameLocal.entities[proj->physicsObj->GetContact(i).entityNum]->IsType(idStaticEntity::Type)) {
+						if(!ent->fl.takedamage)
+							proj->PostEventSec(&EV_Explode, 0);
+						collided = true;
+						break;
+					}
+				}
+				if (collided)
+					break;
 			}
 		}
 	}
