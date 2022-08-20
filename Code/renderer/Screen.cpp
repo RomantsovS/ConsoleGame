@@ -63,7 +63,7 @@ void Screen::init() {
 	if (!GetConsoleScreenBufferInfo(h_console_std_out, &csbi))
 		common->FatalError("GetConsoleScreenBufferInfo");
 	if (height > csbi.dwMaximumWindowSize.Y)
-		common->FatalError("Screen Height / Font Height Too Big");
+		common->FatalError("Screen Height / Font Height Too Big. Max %d", csbi.dwMaximumWindowSize.Y);
 	if (width > csbi.dwMaximumWindowSize.X)
 		common->FatalError("Screen Width / Font Width Too Big");
 

@@ -622,7 +622,7 @@ int idLexer::ReadPunctuation(gsl::not_null<idToken*> token) {
 	for (i = 0; idLexer::punctuations[i].p; i++) {
 		punc = &idLexer::punctuations[i];
 #endif
-		gsl::not_null<gsl::czstring> p{ punc.p };
+		gsl::not_null<gsl::czstring<>> p{ punc.p };
 		// check for this punctuation in the script
 		for (l = 0; p.operator->()[l] && idLexer::script_p[l]; l++) {
 			if (idLexer::script_p[l] != p.operator->()[l]) {

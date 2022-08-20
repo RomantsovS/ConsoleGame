@@ -11,7 +11,7 @@ void idToken::NumberValue() {
 	double m;
 
 	assert(type == TT_NUMBER);
-	gsl::czstring p = c_str();
+	gsl::czstring<> p = c_str();
 	floatvalue = 0;
 	intvalue = 0;
 	// floating point number

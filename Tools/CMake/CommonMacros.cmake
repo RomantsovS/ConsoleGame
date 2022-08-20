@@ -98,8 +98,6 @@ macro(prepare_project)
 	project(${target})
 
 	message(STATUS "prepare project THIS_PROJECT = ${THIS_PROJECT}")
-
-	read_settings(${ARGN})
 	
 	if(NOT ${THIS_PROJECT}_SOURCES)
 		set(${THIS_PROJECT}_SOURCES ${SOURCES})
@@ -135,14 +133,11 @@ endfunction()
 macro(prepare_project_after)
 	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
+	message(STATUS "MODULE_FORCE_SHARED = ${MODULE_FORCE_SHARED}")
+	message(STATUS "MODULE_FORCE_STATIC = ${MODULE_FORCE_STATIC}")
+	message(STATUS "BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
 
-	if (MODULE_FORCE_SHARED)
-		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
-	elseif (MODULE_FORCE_STATIC)
-		add_library(${THIS_PROJECT} STATIC ${${THIS_PROJECT}_SOURCES})
-	else()
-		add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
-	endif()
+	read_settings(${ARGN})
 
 	apply_compile_settings()
 

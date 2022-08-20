@@ -42,7 +42,7 @@ idStr::Copynz
 Safe strncpy that ensures a trailing zero
 =============
 */
-void idStr::Copynz(gsl::not_null<gsl::zstring> dest, gsl::czstring src, int destsize) {
+void idStr::Copynz(gsl::not_null<gsl::zstring<>> dest, gsl::czstring<> src, int destsize) {
 	if (!src) {
 		common->Warning("idStr::Copynz: NULL src");
 		return;
@@ -56,7 +56,7 @@ void idStr::Copynz(gsl::not_null<gsl::zstring> dest, gsl::czstring src, int dest
 	dest.operator->()[destsize - 1] = 0;
 }
 
-int idStr::vsnPrintf(gsl::not_null<gsl::zstring> dest, int size, gsl::czstring fmt, va_list argptr) {
+int idStr::vsnPrintf(gsl::not_null<gsl::zstring<>> dest, int size, gsl::czstring<> fmt, va_list argptr) {
 	int ret = vsnprintf_s(dest, size, size, fmt, argptr);
 
 	dest.operator->()[size - 1] = '\0';

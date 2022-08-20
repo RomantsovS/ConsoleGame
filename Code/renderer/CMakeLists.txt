@@ -1,1 +1,0 @@
-CryFileContainer("renderer")

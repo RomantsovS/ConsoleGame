@@ -383,7 +383,7 @@ void idCmdSystemLocal::ExecuteCommandBuffer() {
 		}*/
 
 		// find a \n or ; line break
-		gsl::not_null<gsl::zstring> text{ (char*)textBuf };
+		gsl::not_null<gsl::zstring<>> text{ (char*)textBuf };
 
 		quotes = 0;
 		for (i = 0; i < textLength; i++) {

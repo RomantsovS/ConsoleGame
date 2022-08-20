@@ -8,12 +8,12 @@ public:
 
 	static void StripTrailingWhitespace(std::string& str);				// strip trailing white space characters
 
-	static int vsnPrintf(gsl::not_null<gsl::zstring> dest, int size, gsl::czstring fmt, va_list argptr);
+	static int vsnPrintf(gsl::not_null<gsl::zstring<>> dest, int size, gsl::czstring<> fmt, va_list argptr);
 	static void StripTrailing(std::string& str, const char c);
 	static void SlashesToBackSlashes(std::string &str); // convert slashes
 	static bool IsNumeric(const std::string& s) noexcept;
 
-	static void Copynz(gsl::not_null<gsl::zstring> dest, gsl::czstring src, int destsize);
+	static void Copynz(gsl::not_null<gsl::zstring<>> dest, gsl::czstring<> src, int destsize);
 
 	static bool caseInSensStringCompareCpp11(const std::string& str1, const std::string& str2);
 

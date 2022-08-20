@@ -1,14 +1,20 @@
 if (OPTION_ENGINE)
 	set(OPTION_LAUNCHER_EXECUTABLE "GameLauncher" CACHE STRING "Base file name for the game executable (without file extension)")
 
-	CryEngineModule(ConsoleGame PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
+	CryEngineModule(ConsoleGame)
 	
 	CryFileContainer("cm")
 	CryFileContainer("d3xp")
+	CryFileContainer("d3xp/ai")
+	CryFileContainer("d3xp/anim")
+	CryFileContainer("d3xp/gamesys")
+	CryFileContainer("d3xp/menus")
+	CryFileContainer("d3xp/physics")
 	CryFileContainer("framework")
 	CryFileContainer("renderer")
 	CryFileContainer("SWF")
 	CryFileContainer("sys")
+	CryFileContainer("sys/win32")
 
 	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
@@ -30,12 +36,5 @@ if (OPTION_ENGINE)
 
 	target_link_libraries(${THIS_PROJECT} idlib)
 
-	apply_compile_settings()
-
-	add_gsl_lib()
-
-	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-	foreach(dir ${dirs})
-  		message(STATUS "dir='${dir}'")
-	endforeach()
+	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
 endif()
