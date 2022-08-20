@@ -1,13 +1,13 @@
-message(STATUS "include WindowsPC-GCC")
+message(STATUS "include Linux-GCC")
 
 set(BUILD_CPU_ARCHITECTURE x64)
-set(BUILD_PLATFORM MinGW64)
-set(WINDOWS TRUE)
+set(BUILD_PLATFORM Linux)
+set(WINDOWS FALSE)
 
 set(GCC_COMMON_FLAGS 
-	-Wall
-	-Wextra
-	-pedantic
+	#-Wall
+	#-Wextra
+	#-pedantic
 	#-Werror
 )
 string(REPLACE ";" " " GCC_COMMON_FLAGS "${GCC_COMMON_FLAGS}")

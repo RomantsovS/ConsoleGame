@@ -31,6 +31,8 @@ if(WIN32)
 	else()
 		include("${TOOLS_CMAKE_DIR}/WindowsPC-GCC.cmake")
 	endif()
+else()
+	include("${TOOLS_CMAKE_DIR}/Linux-GCC.cmake")
 endif()
 
 if (NOT DEFINED BUILD_PLATFORM)

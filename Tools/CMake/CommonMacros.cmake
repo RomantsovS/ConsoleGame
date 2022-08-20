@@ -53,7 +53,7 @@ macro(add_sources_recursive_search)
 	endif()
 
 	file(
-		GLOB_RECURSE _source_list 
+		GLOB _source_list 
 		LIST_DIRECTORIES false
 		"${_src_cur_path}/*.cpp"
 		"${_src_cur_path}/*.h"
@@ -100,13 +100,10 @@ macro(prepare_project)
 	message(STATUS "prepare project THIS_PROJECT = ${THIS_PROJECT}")
 
 	read_settings(${ARGN})
-	add_sources_recursive_search()
+	
 	if(NOT ${THIS_PROJECT}_SOURCES)
 		set(${THIS_PROJECT}_SOURCES ${SOURCES})
 	endif()
-
-	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
-	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
 endmacro()
 
 macro(apply_compile_settings)
@@ -132,7 +129,12 @@ macro(apply_compile_settings)
 endmacro()
 
 function(CryEngineModule target)
-	prepare_project(${ARGN})
+	prepare_project(${ARGN})	
+endfunction()
+
+macro(prepare_project_after)
+	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
+	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
 
 	if (MODULE_FORCE_SHARED)
 		add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
@@ -145,7 +147,12 @@ function(CryEngineModule target)
 	apply_compile_settings()
 
 	add_gsl_lib()
-endfunction()
+
+	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+	foreach(dir ${dirs})
+  		message(STATUS "dir='${dir}'")
+	endforeach()
+endmacro()
 
 function(CryConsoleApplication target)
 	prepare_project(${ARGN})
@@ -163,9 +170,16 @@ function(CryFileContainer cur_folder)
 endfunction()
 
 macro(add_gsl_lib)
-	find_package(Microsoft.GSL CONFIG REQUIRED)
-	target_link_libraries(${THIS_PROJECT} Microsoft.GSL::GSL)
+	include(FetchContent)
+		FetchContent_Declare(GSL
+    	GIT_REPOSITORY "https://github.com/microsoft/GSL"
+    	GIT_TAG "v3.1.0"
+	)
+	FetchContent_MakeAvailable(GSL)
 
-	get_target_property(MS_GSL_INCLUDE_DIR Microsoft.GSL::GSL INTERFACE_INCLUDE_DIRECTORIES)
-	include_directories( "${MS_GSL_INCLUDE_DIR}" )
+	target_link_libraries(${THIS_PROJECT} GSL)
+
+	# get_target_property(MS_GSL_INCLUDE_DIR GSL INTERFACE_INCLUDE_DIRECTORIES)
+	# include_directories( "${MS_GSL_INCLUDE_DIR}" )
+	# message(STATUS "MS_GSL_INCLUDE_DIR = ${MS_GSL_INCLUDE_DIR}")
 endmacro()
