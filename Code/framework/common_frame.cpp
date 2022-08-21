@@ -5,7 +5,143 @@
 idCVar com_deltaTimeClamp("com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame");
 idCVar com_fixedTic("com_fixedTic", "0", CVAR_BOOL, "run a single game frame per render frame");
 idCVar com_noSleep("com_noSleep", "0", CVAR_BOOL, "don't sleep if the game is running too fast");
+idCVar com_smp("com_smp", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "run the game and draw code in a separate thread");
 idCVar timescale("timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f);
+
+/*
+===============
+idGameThread::Run
+
+Run in a background thread for performance, but can also
+be called directly in the foreground thread for comparison.
+===============
+*/
+int idGameThread::Run() {
+	if (numGameFrames == 0) {
+		// Ensure there's no stale gameReturn data from a paused game
+		ret = gameReturn_t();
+	}
+
+	if (isClient) {
+		// run the game logic
+		/*for (int i = 0; i < numGameFrames; i++) {
+			SCOPED_PROFILE_EVENT("Client Prediction");
+			if (userCmdMgr) {
+				game->ClientRunFrame(*userCmdMgr, (i == numGameFrames - 1), ret);
+			}
+			if (ret.syncNextGameFrame || ret.sessionCommand[0] != 0) {
+				break;
+			}
+		}*/
+	}
+	else {
+		// run the game logic
+		for (int i = 0; i < numGameFrames; i++) {
+			//if (userCmdMgr) {
+				game->RunFrame(ret);
+			//}
+		}
+	}
+
+	//commonLocal.DPrintf("idGameThread::Run()\n");
+
+	// we should have consumed all of our usercmds
+	/*if (userCmdMgr) {
+		if (userCmdMgr->HasUserCmdForPlayer(game->GetLocalClientNum()) && common->GetCurrentGame() == DOOM3_BFG) {
+			idLib::Printf("idGameThread::Run: didn't consume all usercmds\n");
+		}
+	}
+
+	commonLocal.frameTiming.finishGameTime = Sys_Microseconds();
+
+	SetThreadGameTime((commonLocal.frameTiming.finishGameTime - commonLocal.frameTiming.startGameTime) / 1000);*/
+
+	// build render commands and geometry
+	commonLocal.Draw();
+	
+	/*commonLocal.frameTiming.finishDrawTime = Sys_Microseconds();
+
+	SetThreadRenderTime((commonLocal.frameTiming.finishDrawTime - commonLocal.frameTiming.finishGameTime) / 1000);
+
+	SetThreadTotalTime((commonLocal.frameTiming.finishDrawTime - commonLocal.frameTiming.startGameTime) / 1000);*/
+
+	return 0;
+}
+
+/*
+===============
+idGameThread::RunGameAndDraw
+
+===============
+*/
+gameReturn_t idGameThread::RunGameAndDraw(int numGameFrames_, bool isClient_, int startGameFrame) {
+	// this should always immediately return
+	this->WaitForThread();
+
+	isClient = isClient_;
+
+	// grab the return value created by the last thread execution
+	gameReturn_t latchedRet = ret;
+
+	numGameFrames = numGameFrames_;
+
+	// start the thread going
+	if (com_smp.GetBool() == false) {
+		// run it in the main thread so PIX profiling catches everything
+		Run();
+	}
+	else {
+		this->SignalWork();
+	}
+
+	// return the latched result while the thread runs in the background
+	return latchedRet;
+}
+
+void idCommonLocal::Draw() {
+	if (game && game->Shell_IsActive()) {
+		const bool gameDraw = game->Draw(game->GetLocalClientNum());
+		/*if (!gameDraw) {
+			renderSystem->SetColor(colorBlack);
+			renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
+		}*/
+		game->Shell_Render();
+	}
+	else if (mapSpawned) {
+		if (game) {
+			game->Draw(0);
+		}
+		else {
+			//renderSystem->SetColor4(0, 0, 0, 1);
+			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
+		}
+	}
+
+	// draw the half console / notify console on top of everything
+	console->Draw(false);
+}
+
+/*
+===============
+idCommonLocal::UpdateScreen
+
+This is an out-of-sequence screen update, not the normal game rendering
+===============
+*/
+void idCommonLocal::UpdateScreen(bool captureToImage) {
+	if (insideUpdateScreen) {
+		return;
+	}
+	insideUpdateScreen = true;
+
+	// build all the draw commands without running a new game tic
+	Draw();
+
+	// get the GPU busy with new commands
+	renderSystem->RenderCommandBuffers();
+
+	insideUpdateScreen = false;
+}
 
 /*
 ================
@@ -111,7 +247,8 @@ void idCommonLocal::Frame() {
 			// If the session reports we should be loading a map, load it!
 			ExecuteMapChange();
 			return;
-		} else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
+		}
+		else if (session->GetState() != idSession::sessionState_t::INGAME && mapSpawned) {
 			// If the game is running, but the session reports we are not in a game, disconnect
 			// This happens when a server disconnects us or we sign out
 			//LeaveGame();
@@ -128,11 +265,17 @@ void idCommonLocal::Frame() {
 		}
 
 		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
-		
+
 		renderSystem->UpdateTimers();
 
 		// start the game / draw command generation thread going in the background
-		gameReturn_t ret = RunGameAndDraw(numGameFrames);
+		gameReturn_t ret = gameThread.RunGameAndDraw(numGameFrames, IsClient(), gameFrame - numGameFrames);
+
+		// make sure the game / draw thread has completed
+		// This may block if the game is taking longer than the render back end
+		gameThread.WaitForThread();
+
+		//commonLocal.DPrintf("idCommonLocal::Frame()\n");
 
 		renderSystem->RenderCommandBuffers();
 
@@ -142,67 +285,4 @@ void idCommonLocal::Frame() {
 	catch (const std::exception& err) {
 		common->Error(err.what());
 	}
-}
-
-gameReturn_t idCommonLocal::RunGameAndDraw(size_t numGameFrames_) {
-	// grab the return value created by the last thread execution
-	gameReturn_t latchedRet = ret;
-
-	if (numGameFrames_ == 0) {
-		// Ensure there's no stale gameReturn data from a paused game
-		ret = gameReturn_t();
-	}
-
-	for (size_t i = 0; i < numGameFrames_; ++i)
-		game->RunFrame(ret);
-
-	Draw();
-
-	// return the latched result while the thread runs in the background
-	return latchedRet;
-}
-
-void idCommonLocal::Draw() {
-	if (game && game->Shell_IsActive()) {
-		const bool gameDraw = game->Draw(game->GetLocalClientNum());
-		/*if (!gameDraw) {
-			renderSystem->SetColor(colorBlack);
-			renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
-		}*/
-		game->Shell_Render();
-	}
-	else if (mapSpawned) {
-		if (game) {
-			game->Draw(0);
-		}
-		else {
-			//renderSystem->SetColor4(0, 0, 0, 1);
-			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
-		}
-	}
-
-	// draw the half console / notify console on top of everything
-	console->Draw(false);
-}
-
-/*
-===============
-idCommonLocal::UpdateScreen
-
-This is an out-of-sequence screen update, not the normal game rendering
-===============
-*/
-void idCommonLocal::UpdateScreen(bool captureToImage) {
-	if (insideUpdateScreen) {
-		return;
-	}
-	insideUpdateScreen = true;
-
-	// build all the draw commands without running a new game tic
-	Draw();
-
-	// get the GPU busy with new commands
-	renderSystem->RenderCommandBuffers();
-
-	insideUpdateScreen = false;
 }

@@ -1,6 +1,26 @@
 #ifndef COMMON_LOCAL_H
 #define COMMON_LOCAL_H
 
+class idGameThread : public idSysThread {
+public:
+	idGameThread() :
+		ret(),
+		numGameFrames(),
+		isClient()
+	{}
+
+	// the gameReturn_t is from the previous frame, the
+	// new frame will be running in parallel on exit
+	gameReturn_t RunGameAndDraw(int numGameFrames, bool isClient_, int startGameFrame);
+
+private:
+	int Run() override;
+
+	gameReturn_t	ret;
+	int				numGameFrames;
+	bool			isClient;
+};
+
 enum errorParm_t {
 	ERP_NONE,
 	ERP_FATAL,						// exit the entire game with a popup window
@@ -9,8 +29,6 @@ enum errorParm_t {
 };
 
 #define	MAX_PRINT_MSG_SIZE	4096
-
-class idRenderWorld;
 
 class idCommonLocal : public idCommon {
 public:
@@ -36,11 +54,12 @@ public:
 	void Error(const char* fmt, ...) override;
 	void FatalError(const char* fmt, ...) override;
 
+	virtual bool IsMultiplayer();
+	virtual bool IsServer();
+	virtual bool IsClient();
+
 	bool ProcessEvent(const sysEvent_t* event) override;
 public:
-	// the gameReturn_t is from the previous frame, the
-	// new frame will be running in parallel on exit
-	gameReturn_t RunGameAndDraw(size_t numGameFrames_);
 	void Draw(); // called by gameThread
 
 	// loads a map and starts a new game on it
@@ -69,6 +88,8 @@ private:
 
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
+
+	idGameThread gameThread; // the game and draw code can be run in parallel
 
 	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;

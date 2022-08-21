@@ -23,6 +23,9 @@
 #include <direct.h>
 #include <algorithm>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
 #include <filesystem>
 #include <optional>
 #include <gsl/gsl>

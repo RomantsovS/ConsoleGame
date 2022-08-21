@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "Common_local.h"
 
 idCVar com_allowConsole("com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key");
@@ -110,6 +109,13 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 
 		// initialize the renderSystem data structures
 		renderSystem->Init();
+
+		// spawn the game thread, even if we are going to run without SMP
+		// one meg stack, because it can parse decls from gui surfaces (unfortunately)
+		// use a lower priority so job threads can run on the same core
+		gameThread.StartWorkerThread("Game/Draw");
+		// boost this thread's priority, so it will prevent job threads from running while
+		// the render back end still has work to do
 
 		// init the user command input code
 		usercmdGen->Init();
