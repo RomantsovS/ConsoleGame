@@ -98,6 +98,9 @@ idSysThread::WaitForThread
 */
 void idSysThread::WaitForThread() {
 	if (isWorker) {
+		//std::ostringstream oss;
+		//oss << std::this_thread::get_id() << " idSysThread::WaitForThread()\n";
+		//common->DPrintf(oss.str().c_str());
 		std::unique_lock lock(workerDoneMutex);
 		signalWorkerDone_cv.wait(lock, [this] { return signalWorkerDone; });
 	}
@@ -113,6 +116,9 @@ idSysThread::SignalWork
 */
 void idSysThread::SignalWork() {
 	if (isWorker) {
+		//std::ostringstream oss;
+		//oss << std::this_thread::get_id() << " idSysThread::SignalWork()\n";
+		//common->DPrintf(oss.str().c_str());
 		std::lock_guard lg(moreWorkToDoMutex);
 		moreWorkToDo = true;
 		signalWorkerDone = false;
@@ -146,15 +152,25 @@ int idSysThread::ThreadProc(idSysThread* thread) {
 	try {
 		if (thread->isWorker) {
 			for (; ; ) {
-				//common->DPrintf("idSysThread::ThreadProc()\n");
+				//std::ostringstream oss;
+				//oss << std::this_thread::get_id() << " idSysThread::ThreadProc()\n";
+				//common->DPrintf(oss.str().c_str());
 				//std::lock_guard lg(thread->signalMutex);
 				if (thread->moreWorkToDo) {
 					thread->moreWorkToDo = false;
 					//thread->signalMoreWorkToDo.Clear();
 				}
 				else {
-					thread->signalWorkerDone = true;
+					{
+						std::unique_lock lock(thread->workerDoneMutex);
+						thread->signalWorkerDone = true;
+					}
 					thread->signalWorkerDone_cv.notify_one();
+
+					//std::ostringstream oss;
+					//oss << std::this_thread::get_id() << " idSysThread::ThreadProc() after signalWorkerDone_cv.notify_one()\n";
+					//common->DPrintf(oss.str().c_str());
+
 					std::unique_lock lock(thread->moreWorkToDoMutex);
 					thread->signalMoreWorkToDo_cv.wait(lock, [thread] { return thread->moreWorkToDo; });
 					continue;

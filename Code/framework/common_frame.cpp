@@ -43,7 +43,9 @@ int idGameThread::Run() {
 		}
 	}
 
-	//commonLocal.DPrintf("idGameThread::Run()\n");
+	//std::ostringstream oss;
+	//oss << std::this_thread::get_id() << " idGameThread::Run()\n";
+	//common->DPrintf(oss.str().c_str());
 
 	// we should have consumed all of our usercmds
 	/*if (userCmdMgr) {
@@ -275,7 +277,9 @@ void idCommonLocal::Frame() {
 		// This may block if the game is taking longer than the render back end
 		gameThread.WaitForThread();
 
-		//commonLocal.DPrintf("idCommonLocal::Frame()\n");
+		//std::ostringstream oss;
+		//oss << std::this_thread::get_id() << " idCommonLocal::Frame()\n";
+		//common->DPrintf(oss.str().c_str());
 
 		renderSystem->RenderCommandBuffers();
 
