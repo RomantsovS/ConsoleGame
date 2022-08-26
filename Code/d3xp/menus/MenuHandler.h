@@ -103,6 +103,7 @@ public:
 	virtual void ActivateMenu(bool show) noexcept;
 	virtual bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false);
 	virtual int ActiveScreen() noexcept { return activeScreen; }
+	virtual int NextScreen() { return nextScreen; }
 	virtual void SetNextScreen(shellAreas_t screen) noexcept { nextScreen = static_cast<int>(screen); }
 
 	virtual void StartWidgetActionRepeater(idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event);

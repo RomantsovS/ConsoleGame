@@ -260,6 +260,7 @@ void idCommonLocal::BusyWait() {
 	UpdateScreen(captureToImage);
 
 	session->UpdateSignInManager();
+	session->Pump();
 }
 
 /*

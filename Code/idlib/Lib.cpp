@@ -45,6 +45,22 @@ void idLib::Printf(const char* fmt, ...) {
 
 /*
 ===============
+idLib::Error
+===============
+*/
+void idLib::Error(const char* fmt, ...) {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->Error("%s", text);
+}
+
+/*
+===============
 idLib::Warning
 ===============
 */

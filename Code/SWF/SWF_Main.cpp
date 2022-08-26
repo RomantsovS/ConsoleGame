@@ -59,11 +59,11 @@ void idSWF::Init() {
 		spr_inst_menuMain_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
 
 	auto spr_inst_pcBar = mainspriteInstance->PlaceObject(3, true, "pcBar", Vector2(10, 0));
-	auto spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(0, true, "btn0", Vector2(-80, 0));
+	auto spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(0, true, "btn0", Vector2(-60, 0));
 	spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
 	spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(1, true, "btn1", Vector2(-10, 0));
 	spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
-	spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(2, true, "btn2", Vector2(30, 0));
+	spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(2, true, "btn2", Vector2(90, 0));
 	spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
 	spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(3, true, "btn3", Vector2(50, 0));
 	spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
@@ -106,6 +106,17 @@ void idSWF::Init() {
 	for (size_t i = 0; i < 8; ++i) {
 		auto spr_inst_menuPause_info_options_item = spr_inst_menuPause_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
 		spr_inst_menuPause_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(-20.0f, 10.0f * i - 100.0f));
+	}
+
+	auto spr_inst_menuPartyLobby = mainspriteInstance->PlaceObject(8, true, "menuPartyLobby");
+	auto spr_inst_PartyLobby_info = spr_inst_menuPartyLobby->spriteInstance->PlaceObject(0, true, "info");
+	spr_inst_PartyLobby_info->spriteInstance->SetVisible(true);
+
+	spr_inst_PartyLobby_info->spriteInstance->PlaceObject(0, true, "btnBack");
+	auto spr_inst_menuPartyLobby_info_options = spr_inst_PartyLobby_info->spriteInstance->PlaceObject(1, true, "options");
+	for (size_t i = 0; i < 8; ++i) {
+		auto spr_inst_menuPartyLobby_info_options_item = spr_inst_menuPartyLobby_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
+		spr_inst_menuPartyLobby_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(-20.0f, 10.0f * i - 100.0f));
 	}
 
 #ifdef DEBUG

@@ -54,11 +54,13 @@ public:
 	void Error(const char* fmt, ...) override;
 	void FatalError(const char* fmt, ...) override;
 
-	virtual bool IsMultiplayer();
-	virtual bool IsServer();
-	virtual bool IsClient();
+	bool IsMultiplayer() override;
+	bool IsServer() override;
+	bool IsClient() override;
 
 	bool ProcessEvent(const sysEvent_t* event) override;
+
+	void OnStartHosting(idMatchParameters& parms) override;
 public:
 	void Draw(); // called by gameThread
 

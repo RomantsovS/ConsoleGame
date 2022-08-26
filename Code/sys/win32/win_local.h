@@ -1,6 +1,8 @@
 #ifndef SYS_WIN32_WIN_LOCAL_H_
 #define SYS_WIN32_WIN_LOCAL_H_
 
+#include "../../idlib/precompiled.h"
+
 #include <windows.h>
 #include <strsafe.h>
 

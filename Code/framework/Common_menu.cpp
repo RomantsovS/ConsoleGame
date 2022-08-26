@@ -4,6 +4,14 @@
 
 /*
 ==============
+idCommonLocal::OnStartHosting
+==============
+*/
+void idCommonLocal::OnStartHosting(idMatchParameters& parms) {
+}
+
+/*
+==============
 idCommonLocal::StartMainMenu
 ==============
 */

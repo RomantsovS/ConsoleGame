@@ -124,3 +124,40 @@ void idMenuWidget_Button::SetValues(std::vector<std::string>& list) {
 		values.push_back(list[i]);
 	}
 }
+
+//****************************************************************
+// LOBBY BUTTON
+//****************************************************************
+
+/*
+========================
+idMenuWidget_LobbyButton::Update
+========================
+*/
+void idMenuWidget_LobbyButton::Update() noexcept {
+
+	if (!GetSprite()) {
+		return;
+	}
+
+	std::shared_ptr<idSWFScriptObject> spriteObject = GetSprite()->GetScriptObject();
+	std::shared_ptr<idSWFTextInstance> txtName = spriteObject->GetNestedText("itemName", "txtVal");
+	//std::shared_ptr<idSWFSpriteInstance> talkIcon = spriteObject->GetNestedSprite("chaticon");
+
+	if (txtName) {
+		txtName->SetText(name);
+	}
+
+	// events
+	spriteObject->Set("onPress", idSWFScriptVar(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_PRESS, 0)));
+	spriteObject->Set("onRelease", idSWFScriptVar(std::make_shared<WrapWidgetSWFEvent>(shared_from_this(), widgetEvent_t::WIDGET_EVENT_RELEASE, 0)));
+}
+
+/*
+========================
+idMenuWidget_LobbyButton::SetButtonInfo
+========================
+*/
+void idMenuWidget_LobbyButton::SetButtonInfo(const std::string& name_) {
+	name = name_;
+}

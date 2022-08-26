@@ -244,6 +244,7 @@ void idCommonLocal::Frame() {
 
 		// Update session and syncronize to the new session state after sleeping
 		session->UpdateSignInManager();
+		session->Pump();
 
 		if (session->GetState() == idSession::sessionState_t::LOADING) {
 			// If the session reports we should be loading a map, load it!

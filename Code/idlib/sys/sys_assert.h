@@ -20,4 +20,6 @@ bool AssertFailed(const std::string& file, int line, const std::string& expressi
 // The VS ultimate editions also get it on win32, but not x86
 #define assert( x )		__analysis_assume( x ) ; idassert( x )
 
+#define verify( x )		( ( x ) ? true : ( AssertFailed( __FILE__, __LINE__, #x ), false ) )
+
 #endif // ! SYS_ASSERT_H

@@ -423,6 +423,23 @@ protected:
 
 /*
 ================================================
+idMenuWidget_LobbyButton
+================================================
+*/
+class idMenuWidget_LobbyButton : public idMenuWidget_Button {
+public:
+	idMenuWidget_LobbyButton() {}
+
+	void Update() noexcept override;
+	void SetButtonInfo(const std::string& name_);
+	bool IsValid() { return !name.empty(); }
+
+protected:
+	std::string name;
+};
+
+/*
+================================================
 idMenuWidget_NavButton
 ================================================
 */
@@ -523,6 +540,27 @@ public:
 
 private:
 	std::vector<buttonInfo_t> buttons;
+};
+
+/*
+================================================
+	idMenuWidget_LobbyList
+================================================
+*/
+class idMenuWidget_LobbyList : public idMenuWidget_List {
+public:
+	idMenuWidget_LobbyList() :
+		numEntries(0) {
+	}
+
+	void Update() noexcept override;
+	bool PrepareListElement(idMenuWidget* widget, const int childIndex);
+	
+	void SetNumEntries(int num) { numEntries = num; }
+	int GetNumEntries() { return numEntries; }
+private:
+	std::vector<std::string> headings;
+	int numEntries;
 };
 
 /*

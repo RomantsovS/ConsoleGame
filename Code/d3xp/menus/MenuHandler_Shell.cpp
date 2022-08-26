@@ -46,7 +46,7 @@ void idMenuHandler_Shell::Update() {
 				nextScreen = SHELL_AREA_CREDITS;
 			}
 			else {*/
-				nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_ROOT);
+			nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_ROOT);
 			//}
 
 			state = nextState;
@@ -125,7 +125,7 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 	//---------------------
 	// Initialize the menus
 	//---------------------
-	#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
+#define BIND_SHELL_SCREEN( screenId, className, menuHandler )	\
 	menuScreens[ (screenId) ] = std::make_shared<className>();	\
 	menuScreens[ (screenId) ]->Initialize( menuHandler );
 
@@ -142,6 +142,7 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_ROOT), idMenuScreen_Shell_Root, shared_from_this());
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_CAMPAIGN), idMenuScreen_Shell_Singleplayer, shared_from_this());
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME), idMenuScreen_Shell_NewGame, shared_from_this());
+		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_PARTY_LOBBY), idMenuScreen_Shell_PartyLobby, shared_from_this());
 	}
 
 	menuBar = std::make_shared<idMenuWidget_MenuBar>();
@@ -256,6 +257,7 @@ void idMenuHandler_Shell::SetupPCOptions() {
 	if (menuBar) {
 		//navOptions.push_back("DEV");	// DEV
 		navOptions.push_back("campaign");	// singleplayer
+		navOptions.push_back("multiplayer");	// multiplayer
 		//navOptions.push_back("settings");	// settings
 		navOptions.push_back("quit");	// quit
 
@@ -272,19 +274,29 @@ void idMenuHandler_Shell::SetupPCOptions() {
 		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
-			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_CAMPAIGN), index);
+			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_CAMPAIGN),
+				index);
+		}
+		index++;
+		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
+		if (buttonWidget) {
+			buttonWidget->ClearEventActions();
+			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_MULTIPLAYER),
+				index);
 		}
 		index++;
 		/*buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
-			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_SETTINGS), index);
+			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_SETTINGS),
+			index);
 		}
 		index++;*/
 		buttonWidget = std::dynamic_pointer_cast<idMenuWidget_MenuButton>(menuBar->GetChildByIndex(index));
 		if (buttonWidget) {
 			buttonWidget->ClearEventActions();
-			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_QUIT), index);
+			buttonWidget->AddEventAction(widgetEvent_t::WIDGET_EVENT_PRESS).Set(widgetAction_t::WIDGET_ACTION_COMMAND, static_cast<int>(shellCommandsPC_t::SHELL_CMD_QUIT),
+				index);
 		}
 	}
 
@@ -368,6 +380,12 @@ bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEve
 			nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_CAMPAIGN);
 			break;
 		}
+		case static_cast<int>(shellCommandsPC_t::SHELL_CMD_MULTIPLAYER): {
+			idMatchParameters matchParameters;
+			//matchParameters.matchFlags = DefaultPartyFlags;
+			session->CreatePartyLobby(matchParameters);
+			break;
+		}
 		case static_cast<int>(shellCommandsPC_t::SHELL_CMD_SETTINGS): {
 			nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_SETTINGS);
 			break;
@@ -391,7 +409,7 @@ idMenuHandler_Shell::StartGame
 ========================
 */
 void idMenuHandler_Shell::StartGame(int index) {
-	switch(index){
+	switch (index) {
 	case 0: {
 		cmdSystem->AppendCommandText(va("map %s %d\n", "bomber", 0));
 		break;

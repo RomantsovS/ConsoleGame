@@ -10,6 +10,8 @@ inline int FRAME_TO_MSEC(long long frame) noexcept {
 	return (int)((frame * com_engineHz_numerator) / com_engineHz_denominator);
 }
 
+class idMatchParameters;
+
 extern idCVar com_allowConsole;
 extern idCVar com_showFPS;
 
@@ -65,8 +67,16 @@ public:
 	// static internal errors or cases where the system may be corrupted.
 	virtual void				FatalError(const char* fmt, ...) = 0;
 
+	// Returns true if a multiplayer game is running.
+	// CVars and commands are checked differently in multiplayer mode.
+	virtual bool IsMultiplayer() = 0;
+	virtual bool IsServer() = 0;
+	virtual bool IsClient() = 0;
+
 	// Processes the given event.
 	virtual	bool				ProcessEvent(const sysEvent_t* event) = 0;
+
+	virtual void OnStartHosting(idMatchParameters& parms) = 0;
 
 	virtual void QuitRequest() = 0;
 };

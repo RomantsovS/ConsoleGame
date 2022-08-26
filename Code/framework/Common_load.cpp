@@ -21,8 +21,13 @@ void idCommonLocal::StartNewGame(const std::string& mapName, bool devmap, int ga
 
 	session->QuitMatchToTitle();
 	if (WaitForSessionState(idSession::sessionState_t::IDLE)) {
-		session->CreateMatch(matchParameters);
-		session->StartMatch();
+		session->CreatePartyLobby(matchParameters);
+		if(WaitForSessionState(idSession::sessionState_t::PARTY_LOBBY)) {
+			session->CreateMatch(matchParameters);
+			//if (WaitForSessionState(idSession::sessionState_t::GAME_LOBBY)) {
+				session->StartMatch();
+			//}
+		}
 	}
 }
 
@@ -41,7 +46,7 @@ void idCommonLocal::ExecuteMapChange() {
 		return;
 	}
 
-	const idMatchParameters& matchParameters = session->GetMatchParms();
+	const idMatchParameters& matchParameters = session->GetActingGameStateLobbyBase().GetMatchParms();
 
 	common->Printf("--------- Execute Map Change ---------\n");
 	common->Printf("Map: %s\n", matchParameters.mapName.c_str());
