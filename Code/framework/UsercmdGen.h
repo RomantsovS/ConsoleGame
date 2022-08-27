@@ -97,6 +97,11 @@ public:
 	bool		operator==(const usercmd_t& rhs) const;*/
 };
 
+enum class inhibit_t {
+	INHIBIT_SESSION = 0,
+	INHIBIT_ASYNC
+};
+
 enum usercmdButton_t {
 	UB_NONE,
 
@@ -180,12 +185,12 @@ public:
 	virtual	void		Clear() = 0;
 
 	// Clears view angles.
-	/*virtual void		ClearAngles() = 0;
+	//virtual void		ClearAngles() = 0;
 
 	// When the console is down or the menu is up, only emit default usercmd, so the player isn't moving around.
 	// Each subsystem (session and game) may want an inhibit will OR the requests.
 	virtual void		InhibitUsercmd(inhibit_t subsystem, bool inhibit) = 0;
-	*/
+	
 	// Set a value that can safely be referenced by UsercmdInterrupt() for each key binding.
 	virtual	int			CommandStringUsercmdData(const std::string& cmdString) = 0;
 

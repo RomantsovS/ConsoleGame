@@ -42,6 +42,7 @@ public:
 	virtual int GetTime() const = 0;
 
 	// MAIN MENU FUNCTIONS
+	virtual bool InhibitControls() = 0;
 	virtual void Shell_Init(const std::string& filename) = 0;
 	virtual void Shell_Cleanup() = 0;
 	virtual void Shell_CreateMenu(bool inGame) = 0;

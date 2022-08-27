@@ -143,6 +143,8 @@ public:
 
 	void SyncPlayersWithLobbyUsers(bool initial);
 
+	bool InhibitControls() override;
+
 	// MAIN MENU FUNCTIONS
 	void Shell_Init(const std::string& filename) override;
 	void Shell_Cleanup() noexcept override;

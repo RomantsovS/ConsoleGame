@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 const int KEY_MOVESPEED = 127;
 
 std::vector<userCmdString_t> userCmdStrings = {
@@ -108,10 +107,10 @@ public:
 
 	void Clear() noexcept override;
 
-	/*void			ClearAngles();
+	//void			ClearAngles();
 
-	void			InhibitUsercmd(inhibit_t subsystem, bool inhibit);
-	*/
+	void InhibitUsercmd(inhibit_t subsystem, bool inhibit);
+	
 	int CommandStringUsercmdData(const std::string& cmdString) override;
 
 	void BuildCurrentUsercmd(int deviceNum) override;
@@ -127,8 +126,8 @@ private:
 	void			MakeCurrent() noexcept;
 	void			InitCurrent() noexcept;
 
-	/*bool			Inhibited();
-	void			AdjustAngles();*/
+	bool			Inhibited();
+	//void			AdjustAngles();
 	void			KeyMove() noexcept;
 	/*void			CircleToSquare(float& axis_x, float& axis_y) const;
 	void			HandleJoystickAxis(int keyNum, float unclampedValue, float threshold, bool positive);
@@ -156,7 +155,7 @@ private:
 	int				buttonState[UB_MAX_BUTTONS];
 	bool			keyState[static_cast<int>(keyNum_t::K_LAST_KEY)];
 
-	//int				inhibitCommands;	// true when in console or menu locally
+	int inhibitCommands; // true when in console or menu locally
 
 	bool			initialized;
 
@@ -204,6 +203,20 @@ idUsercmdGenLocal::idUsercmdGenLocal() {
 }
 
 /*
+================
+idUsercmdGenLocal::InhibitUsercmd
+================
+*/
+void idUsercmdGenLocal::InhibitUsercmd(inhibit_t subsystem, bool inhibit) {
+	if (inhibit) {
+		inhibitCommands |= 1 << static_cast<int>(subsystem);
+	}
+	else {
+		inhibitCommands &= (0xffffffff ^ (1 << static_cast<int>(subsystem)));
+	}
+}
+
+/*
 ===============
 idUsercmdGenLocal::ButtonState
 
@@ -230,6 +243,17 @@ int	idUsercmdGenLocal::KeyState(int key) noexcept {
 		return -1;
 	}
 	return (keyState[key]) ? 1 : 0;
+}
+
+/*
+================
+idUsercmdGenLocal::Inhibited
+
+is user cmd generation inhibited
+================
+*/
+bool idUsercmdGenLocal::Inhibited() {
+	return (inhibitCommands != 0);
 }
 
 /*
@@ -303,13 +327,15 @@ creates the current command for this frame
 ================
 */
 void idUsercmdGenLocal::MakeCurrent() noexcept {
-	toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
+	if (!Inhibited()) {
+		toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
 
-	// set button bits
-	CmdButtons();
+		// set button bits
+		CmdButtons();
 
-	// get basic movement from keyboard
-	KeyMove();
+		// get basic movement from keyboard
+		KeyMove();
+	}
 
 	impulse = cmd.impulse;
 }
@@ -371,6 +397,8 @@ void idUsercmdGenLocal::Clear() noexcept {
 	// clears all key states 
 	memset(buttonState, 0, sizeof(buttonState));
 	memset(keyState, false, sizeof(keyState));
+
+	inhibitCommands = false;
 }
 
 /*
@@ -392,12 +420,12 @@ void idUsercmdGenLocal::Key(int keyNum, bool down) noexcept {
 
 	if (down) {
 		buttonState[action]++;
-		//if (!Inhibited()) {
+		if (!Inhibited()) {
 			if (action >= UB_IMPULSE0 && action <= UB_IMPULSE31) {
 				cmd.impulse = action - UB_IMPULSE0;
 				//cmd.impulseSequence++;
 			}
-		//}
+		}
 	}
 	else {
 		buttonState[action]--;

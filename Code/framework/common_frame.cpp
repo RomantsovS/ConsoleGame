@@ -178,6 +178,13 @@ void idCommonLocal::Frame() {
 
 		eventLoop->RunEventLoop();
 
+		if (console->Active() || (game && game->InhibitControls())) {
+			usercmdGen->InhibitUsercmd(inhibit_t::INHIBIT_SESSION, true);
+		}
+		else {
+			usercmdGen->InhibitUsercmd(inhibit_t::INHIBIT_SESSION, false);
+		}
+
 		const bool pauseGame = !mapSpawned || (game && game->Shell_IsActive());
 
 		// How many game frames to run
