@@ -36,6 +36,8 @@ void idMenuHandler_Shell::Update() {
 		}
 		else if (nextState == shellState_t::SHELL_STATE_GAME_LOBBY) {
 			if (state != shellState_t::SHELL_STATE_IN_GAME) {
+				timeRemaining = WAIT_START_TIME_LONG;
+
 				nextScreen = static_cast<int>(shellAreas_t::SHELL_AREA_GAME_LOBBY);
 
 				state = nextState;
@@ -103,6 +105,41 @@ void idMenuHandler_Shell::Update() {
 	}
 
 	idMenuHandler::Update();
+
+	if (activeScreen == nextScreen && activeScreen == static_cast<int>(shellAreas_t::SHELL_AREA_PARTY_LOBBY)) {
+		std::shared_ptr<idMenuScreen_Shell_PartyLobby> screen = std::dynamic_pointer_cast<idMenuScreen_Shell_PartyLobby>(
+			menuScreens[static_cast<int>(shellAreas_t::SHELL_AREA_PARTY_LOBBY)]);
+		if (screen) {
+			screen->UpdateLobby();
+		}
+	}
+	else if (activeScreen == nextScreen && activeScreen == static_cast<int>(shellAreas_t::SHELL_AREA_GAME_LOBBY)) {
+		if (session->GetActingGameStateLobbyBase().IsHost()) {
+
+			if (timeRemaining <= 0 && state != shellState_t::SHELL_STATE_IN_GAME) {
+				session->StartMatch();
+				state = shellState_t::SHELL_STATE_IN_GAME;
+			}
+
+			/*idMatchParameters matchParameters = session->GetActivePlatformLobbyBase().GetMatchParms();
+			if (!MatchTypeIsPrivate(matchParameters.matchFlags)) {
+				if (Sys_Milliseconds() >= nextPeerUpdateMs) {
+					nextPeerUpdateMs = Sys_Milliseconds() + PEER_UPDATE_INTERVAL;
+					byte buffer[128];
+					idBitMsg msg;
+					msg.InitWrite(buffer, sizeof(buffer));
+					msg.WriteLong(timeRemaining);
+					session->GetActingGameStateLobbyBase().SendReliable(GAME_RELIABLE_MESSAGE_LOBBY_COUNTDOWN, msg, false);
+				}
+			}*/
+		}
+
+		std::shared_ptr<idMenuScreen_Shell_GameLobby> screen = std::dynamic_pointer_cast<idMenuScreen_Shell_GameLobby>(
+			menuScreens[static_cast<int>(shellAreas_t::SHELL_AREA_GAME_LOBBY)]);
+		if (screen) {
+			screen->UpdateLobby();
+		}
+	}
 }
 
 /*
@@ -143,6 +180,7 @@ void idMenuHandler_Shell::Initialize(const std::string& filename) {
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_CAMPAIGN), idMenuScreen_Shell_Singleplayer, shared_from_this());
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_NEW_GAME), idMenuScreen_Shell_NewGame, shared_from_this());
 		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_PARTY_LOBBY), idMenuScreen_Shell_PartyLobby, shared_from_this());
+		BIND_SHELL_SCREEN(static_cast<int>(shellAreas_t::SHELL_AREA_GAME_LOBBY), idMenuScreen_Shell_GameLobby, shared_from_this());
 	}
 
 	menuBar = std::make_shared<idMenuWidget_MenuBar>();
@@ -401,6 +439,51 @@ bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEve
 	}
 
 	return idMenuHandler::HandleAction(action, event, widget, forceHandled);
+}
+
+/*
+========================
+idMenuHandler_Shell::CopySettingsFromSession
+========================
+*/
+void idMenuHandler_Shell::UpdateLobby(idMenuWidget_LobbyList* lobbyList) {
+
+	if (lobbyList == nullptr) {
+		return;
+	}
+
+	idLobbyBase& lobby = session->GetActivePlatformLobbyBase();
+	const int numLobbyPlayers = lobby.GetNumLobbyUsers();
+	//int maxPlayers = session->GetTitleStorageInt("MAX_PLAYERS_ALLOWED", 4);
+
+	//idStaticList< lobbyPlayerInfo_t, MAX_PLAYERS > lobbyPlayers;
+	//for (int i = 0; i < numLobbyPlayers; ++i) {
+	//	lobbyPlayerInfo_t* lobbyPlayer = lobbyPlayers.Alloc();
+
+	//	lobbyUserID_t lobbyUserID = lobby.GetLobbyUserIdByOrdinal(i);
+
+	//	if (!lobbyUserID.IsValid()) {
+	//		continue;
+	//	}
+
+	//	lobbyPlayer->name = lobby.GetLobbyUserName(lobbyUserID);
+	//	// Voice
+	//	lobbyPlayer->voiceState = session->GetDisplayStateFromVoiceState(session->GetLobbyUserVoiceState(lobbyUserID));
+	//}
+
+
+	/*for (int i = 0; i < maxPlayers; ++i) {
+		if (i >= lobbyPlayers.Num()) {
+			lobbyList->SetEntryData(i, "", VOICECHAT_DISPLAY_NONE);
+		}
+		else {
+			lobbyPlayerInfo_t& lobbyPlayer = lobbyPlayers[i];
+			lobbyList->SetEntryData(i, lobbyPlayer.name, lobbyPlayer.voiceState);
+		}
+	}
+
+	lobbyList->SetNumEntries(lobbyPlayers.Num());*/
+
 }
 
 /*

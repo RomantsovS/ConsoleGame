@@ -327,6 +327,15 @@ bool idSessionLocal::State_Party_Lobby_Host() {
 
 /*
 ========================
+idSessionLocal::State_Game_Lobby_Host
+========================
+*/
+bool idSessionLocal::State_Game_Lobby_Host() {
+	return HandlePackets();
+}
+
+/*
+========================
 idSessionLocal::State_Create_And_Move_To_Party_Lobby
 ========================
 */
@@ -352,6 +361,23 @@ bool idSessionLocal::State_Create_And_Move_To_Party_Lobby() {
 	}
 
 	return HandlePackets();		// Valid but busy
+}
+
+/*
+========================
+idSessionLocal::State_Create_And_Move_To_Game_Lobby
+========================
+*/
+bool idSessionLocal::State_Create_And_Move_To_Game_Lobby() {
+
+	if (WaitOnLobbyCreate(GetGameLobby())) {
+		// Success
+		SetState(state_t::STATE_GAME_LOBBY_HOST);
+
+		return true;
+	}
+
+	return false;
 }
 
 /*
@@ -716,16 +742,16 @@ bool idSessionLocal::HandleState() {
 	case state_t::STATE_PRESS_START:							return false;
 	case state_t::STATE_IDLE:								HandlePackets(); return false;		// Call handle packets, since packets from old sessions could still be in flight, which need to be emptied
 	case state_t::STATE_PARTY_LOBBY_HOST:					return State_Party_Lobby_Host();
-	/*case state_t::STATE_PARTY_LOBBY_PEER:					return State_Party_Lobby_Peer();
+	//case state_t::STATE_PARTY_LOBBY_PEER:					return State_Party_Lobby_Peer();
 	case state_t::STATE_GAME_LOBBY_HOST:						return State_Game_Lobby_Host();
-	case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
+	/*case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
 	case state_t::STATE_GAME_STATE_LOBBY_HOST:				return State_Game_State_Lobby_Host();
 	case state_t::STATE_GAME_STATE_LOBBY_PEER:				return State_Game_State_Lobby_Peer();*/
 	case state_t::STATE_LOADING:								return State_Loading();
 	case state_t::STATE_INGAME:								return State_InGame();
 	case state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY:		return State_Create_And_Move_To_Party_Lobby();
-	/*case state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY:		return State_Create_And_Move_To_Game_Lobby();
-	case state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY:	return State_Create_And_Move_To_Game_State_Lobby();
+	case state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY:		return State_Create_And_Move_To_Game_Lobby();
+	/*case state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY:	return State_Create_And_Move_To_Game_State_Lobby();
 	case state_t::STATE_FIND_OR_CREATE_MATCH:				return State_Find_Or_Create_Match();
 	case state_t::STATE_CONNECT_AND_MOVE_TO_PARTY:			return State_Connect_And_Move_To_Party();
 	case state_t::STATE_CONNECT_AND_MOVE_TO_GAME:			return State_Connect_And_Move_To_Game();
@@ -852,6 +878,22 @@ idLobby& idSessionLocal::GetActingGameStateLobby() {
 	}
 
 	return GetGameLobby();
+}
+
+/*
+========================
+idSessionLocal::GetActivePlatformLobbyBase
+This returns the base version for the idSession version
+========================
+*/
+idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase() {
+	idLobby* activeLobby = GetActivePlatformLobby();
+
+	if (activeLobby != nullptr) {
+		return *activeLobby;
+	}
+
+	return stubLobby;		// So we can return at least something
 }
 
 idCVar net_verbose("net_verbose", "0", CVAR_BOOL, "Print a bunch of message about the network session");

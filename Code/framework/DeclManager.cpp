@@ -97,8 +97,10 @@ public:
 	void RegisterDeclType(const std::string& typeName, declType_t type, std::shared_ptr<idDecl>(*allocator)()) override;
 	void RegisterDeclFolder(const std::string& folder, const std::string& extension, declType_t defaultType) override;
 	int GetNumDeclTypes() const noexcept override;
+	int GetNumDecls(declType_t type) override;
 	const std::string& GetDeclNameFromType(declType_t type) const override;
 	const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) override;
+	const std::shared_ptr<idDecl> DeclByIndex(declType_t type, int index, bool forceParse = true) override;
 
 	void ListType(const idCmdArgs& args, declType_t type) override;
 	void PrintType(const idCmdArgs& args, declType_t type) override;
@@ -362,6 +364,7 @@ void idDeclManagerLocal::Init() {
 	// decls used throughout the engine
 	RegisterDeclType("material", declType_t::DECL_MATERIAL, idDeclAllocator<idMaterial>);
 	RegisterDeclType("entityDef", declType_t::DECL_ENTITYDEF, idDeclAllocator<idDeclEntityDef>);
+	RegisterDeclType("mapDef", declType_t::DECL_MAPDEF, idDeclAllocator<idDeclEntityDef>);
 
 	RegisterDeclFolder("materials", ".mtr", declType_t::DECL_MATERIAL);
 
@@ -547,6 +550,47 @@ const std::shared_ptr<idDecl> idDeclManagerLocal::FindType(declType_t type, std:
 
 /*
 ===================
+idDeclManagerLocal::GetNumDecls
+===================
+*/
+int idDeclManagerLocal::GetNumDecls(declType_t type) {
+	int typeIndex = (int)type;
+
+	if (typeIndex < 0 || typeIndex >= declTypes.size() || !declTypes[typeIndex]) {
+		common->FatalError("idDeclManager::GetNumDecls: bad type: %i", typeIndex);
+		return 0;
+	}
+	return linearLists[typeIndex].size();
+}
+
+/*
+===================
+idDeclManagerLocal::DeclByIndex
+===================
+*/
+const std::shared_ptr<idDecl> idDeclManagerLocal::DeclByIndex(declType_t type, int index, bool forceParse) {
+	int typeIndex = (int)type;
+
+	if (typeIndex < 0 || typeIndex >= declTypes.size() || !declTypes[typeIndex]) {
+		common->FatalError("idDeclManager::DeclByIndex: bad type: %i", typeIndex);
+		return NULL;
+	}
+	if (index < 0 || index >= linearLists[typeIndex].size()) {
+		common->Error("idDeclManager::DeclByIndex: out of range");
+	}
+	std::shared_ptr<idDeclLocal> decl = linearLists[typeIndex][index];
+
+	decl->AllocateSelf();
+
+	if (forceParse && decl->declState == declState_t::DS_UNPARSED) {
+		decl->ParseLocal();
+	}
+
+	return decl->self;
+}
+
+/*
+===================
 idDeclManagerLocal::ListType
 
 list*
@@ -708,10 +752,12 @@ void idDeclManagerLocal::MakeNameCanonical(const std::string& name, std::string&
 		}
 	}
 	if (lastDot != -1) {
-		result[lastDot] = '\0';
+		//result[lastDot] = '\0';
+        result.resize(lastDot);
 	}
 	else {
-		result[i] = '\0';
+		//result[i] = '\0';
+          result.resize(i);
 	}
 }
 

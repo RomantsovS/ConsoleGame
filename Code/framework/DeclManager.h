@@ -139,6 +139,14 @@ public:
 	// if the decl wasn't explcitly defined.
 	virtual const std::shared_ptr<idDecl> FindType(declType_t type, std::string name, bool makeDefault = true) = 0;
 
+	// Returns the number of decls of the given type.
+	virtual int GetNumDecls(declType_t type) = 0;
+
+	// The complete lists of decls can be walked to populate editor browsers.
+	// If forceParse is set false, you can get the decl to check name / filename / etc.
+	// without causing it to parse the source and load media.
+	virtual const std::shared_ptr<idDecl> DeclByIndex(declType_t type, int index, bool forceParse = true) = 0;
+
 	// List and print decls.
 	virtual void ListType(const idCmdArgs& args, declType_t type) = 0;
 	virtual void PrintType(const idCmdArgs& args, declType_t type) = 0;

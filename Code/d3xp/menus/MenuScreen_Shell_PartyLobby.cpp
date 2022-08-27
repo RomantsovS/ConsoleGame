@@ -3,6 +3,8 @@
 
 const static int NUM_LOBBY_OPTIONS = 8;
 
+extern idCVar si_map;
+
 enum class partyLobbyCmds_t {
 	PARTY_CMD_QUICK,
 	PARTY_CMD_FIND,
@@ -180,16 +182,16 @@ void idMenuScreen_Shell_PartyLobby::ShowScreen() {
 	isPeer = false;
 	isHost = false;
 
-	/*idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-	if (BindSprite(root)) {
-		idSWFSpriteInstance* waitTime = GetSprite()->GetScriptObject()->GetNestedSprite("waitTime");
+	std::shared_ptr<idSWFScriptObject> root = GetSWFObject()->GetRootObject();
+	if (BindSprite(root.get())) {
+		/*idSWFSpriteInstance* waitTime = GetSprite()->GetScriptObject()->GetNestedSprite("waitTime");
 		if (waitTime != NULL) {
 			waitTime->SetVisible(false);
-		}
+		}*/
 	}
 
 	if (session->GetPartyLobbyBase().IsHost()) {
-		idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
+		/*idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
 		if (net_inviteOnly.GetBool()) {
 			matchParameters.matchFlags |= MATCH_INVITE_ONLY;
 		}
@@ -199,8 +201,8 @@ void idMenuScreen_Shell_PartyLobby::ShowScreen() {
 
 		matchParameters.numSlots = session->GetTitleStorageInt("MAX_PLAYERS_ALLOWED", 4);
 
-		session->UpdatePartyParms(matchParameters);
-	}*/
+		session->UpdatePartyParms(matchParameters);*/
+	}
 
 	idMenuScreen::ShowScreen();
 	if (lobby) {
@@ -264,23 +266,19 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction(idWidgetAction& action, const i
 			break;
 		}
 		case partyLobbyCmds_t::PARTY_CMD_CREATE: {
-			idMatchParameters matchParameters;/* = idMatchParameters(session->GetPartyLobbyBase().GetMatchParms());
+			idMatchParameters matchParameters = idMatchParameters(session->GetPartyLobbyBase().GetMatchParms());
 
-			const bool isInviteOnly = MatchTypeInviteOnly(matchParameters.matchFlags);
+			//const bool isInviteOnly = MatchTypeInviteOnly(matchParameters.matchFlags);
 
 			matchParameters.matchFlags = DefaultPartyFlags | DefaultPrivateGameFlags;
 
-			if (isInviteOnly) {
-				matchParameters.matchFlags |= MATCH_INVITE_ONLY;
-			}
-
-			int mode = idMath::ClampInt(-1, GAME_COUNT - 1, si_mode.GetInteger());
-			const idList< mpMap_t > maps = common->GetMapList();
-			int map = idMath::ClampInt(-1, maps.Num() - 1, si_map.GetInteger());
+			//int mode = idMath::ClampInt(-1, GAME_COUNT - 1, si_mode.GetInteger());
+			const auto& maps = common->GetMapList();
+			int map = idMath::ClampInt(-1, maps.size() - 1, si_map.GetInteger());
 
 			matchParameters.gameMap = map;
-			matchParameters.gameMode = mode;
-			cvarSystem->MoveCVarsToDict(CVAR_SERVERINFO, matchParameters.serverInfo);*/
+			//matchParameters.gameMode = mode;
+			//cvarSystem->MoveCVarsToDict(CVAR_SERVERINFO, matchParameters.serverInfo);
 			session->CreateMatch(matchParameters);
 			break;
 		}
@@ -306,4 +304,96 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction(idWidgetAction& action, const i
 	}
 
 	return idMenuWidget::HandleAction(action, event, widget, forceHandled);
+}
+
+/*
+========================
+idMenuScreen_Shell_PartyLobby::UpdateLobby
+========================
+*/
+void idMenuScreen_Shell_PartyLobby::UpdateLobby() {
+
+	auto spMenuData = menuData.lock();
+
+	if (spMenuData && spMenuData->ActiveScreen() != static_cast<int>(shellAreas_t::SHELL_AREA_PARTY_LOBBY)) {
+		return;
+	}
+
+	// Keep this menu in sync with the session host/peer status.
+	if (session->GetPartyLobbyBase().IsHost() && !isHost) {
+		Update();
+	}
+
+	if (session->GetPartyLobbyBase().IsPeer() && !isPeer) {
+		Update();
+	}
+
+	if (isPeer) {
+		Update();
+	}
+
+	UpdateOptions();
+
+	// setup names for lobby;
+	if (lobby) {
+		std::shared_ptr<idMenuHandler_Shell> mgr = std::dynamic_pointer_cast<idMenuHandler_Shell>(spMenuData);
+		if (mgr) {
+			mgr->UpdateLobby(lobby.get());
+			lobby->Update();
+		}
+
+		if (lobby->GetNumEntries() > 0 && lobby->GetFocusIndex() >= lobby->GetNumEntries()) {
+			lobby->SetFocusIndex(lobby->GetNumEntries() - 1);
+			lobby->SetViewIndex(lobby->GetNumEntries() - 1);
+		}
+	}
+
+	if (session->GetState() == idSession::sessionState_t::PARTY_LOBBY) {
+
+		if (options) {
+			if (options->GetFocusIndex() >= options->GetTotalNumberOfOptions() && options->GetTotalNumberOfOptions() > 0) {
+				options->SetViewIndex(options->GetTotalNumberOfOptions() - 1);
+				options->SetFocusIndex(options->GetTotalNumberOfOptions() - 1);
+			}
+		}
+
+		/*std::shared_ptr<idSWFTextInstance> privacy = GetSprite()->GetScriptObject()->GetNestedText("matchInfo", "txtPrivacy");
+		if (privacy) {
+			if (isPeer) {
+				privacy->SetText("");
+			}
+			else {
+
+				idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
+				int bitSet = (matchParameters.matchFlags & MATCH_INVITE_ONLY);
+				bool privacySet = (bitSet != 0 ? true : false);
+				if (privacySet) {
+					privacy->SetText("#str_swf_privacy_closed");
+					privacy->SetStrokeInfo(true);
+				}
+				else if (!privacySet) {
+					privacy->SetText("#str_swf_privacy_open");
+					privacy->SetStrokeInfo(true);
+				}
+			}
+		}*/
+
+		//idLocalUser* user = session->GetSignInManager().GetMasterLocalUser();
+		//if (user != NULL && options != NULL) {
+		//	if (user->IsInParty() && user->GetPartyCount() > 1 && !session->IsPlatformPartyInLobby() && menuOptions.Num() > 0) {
+		//		if (menuOptions[menuOptions.Num() - 1][0] != "#str_swf_invite_xbox_live_party") {
+		//			menuOptions[menuOptions.Num() - 1][0] = "#str_swf_invite_xbox_live_party";	// invite Xbox LIVE party
+		//			options->SetListData(menuOptions);
+		//			options->Update();
+		//		}
+		//	}
+		//	else if (menuOptions.Num() > 0) {
+		//		if (menuOptions[menuOptions.Num() - 1][0] != "#str_swf_invite_friends") {
+		//			menuOptions[menuOptions.Num() - 1][0] = "#str_swf_invite_friends";	// invite Xbox LIVE party
+		//			options->SetListData(menuOptions);
+		//			options->Update();
+		//		}
+		//	}
+		//}
+	}
 }

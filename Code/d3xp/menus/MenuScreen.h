@@ -166,6 +166,7 @@ public:
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
 
 	void UpdateOptions();
+	void UpdateLobby();
 
 private:
 
@@ -176,6 +177,42 @@ private:
 	std::unique_ptr<idMenuWidget_LobbyList> lobby;
 	std::shared_ptr<idMenuWidget_Button> btnBack;
 
+	std::vector<std::vector<std::string>> menuOptions;
+};
+
+//*
+//================================================	
+//idMenuScreen_Shell_GameLobby
+//================================================
+//*/
+class idMenuScreen_Shell_GameLobby : public idMenuScreen {
+public:
+	idMenuScreen_Shell_GameLobby() :
+		options(nullptr),
+		lobby(nullptr),
+		isPeer(false),
+		isHost(false),
+		privateGameLobby(true),
+		btnBack(nullptr) {
+	}
+
+	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
+	void Update() noexcept override;
+	void ShowScreen() override;
+	void HideScreen() override;
+	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
+	void UpdateLobby();
+	//bool CanKickSelectedPlayer(lobbyUserID_t& luid);
+
+private:
+
+	bool isHost;
+	bool isPeer;
+	bool privateGameLobby;
+
+	std::shared_ptr<idMenuWidget_DynamicList> options;
+	std::unique_ptr<idMenuWidget_LobbyList> lobby;
+	std::shared_ptr<idMenuWidget_Button> btnBack;
 	std::vector<std::vector<std::string>> menuOptions;
 };
 

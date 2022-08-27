@@ -184,3 +184,16 @@ entityDef damage_grenadeExplosion {
 entityDef damage_entityCollide {
 	"damage"					"999"
 }
+
+mapDef bomber {
+	"name"		"bomber"
+	"Deathmatch"		"0"
+	"Team DM"		"0"
+	"Last Man"		"0"
+	"Tourney"		"0"
+	"CTF"		"1"
+	"size0"		"60326772"
+	"size1"		"60326772"
+	"size2"		"76519905"
+	"size3"		"99097218"
+}

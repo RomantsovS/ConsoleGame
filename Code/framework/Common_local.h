@@ -61,6 +61,9 @@ public:
 	bool ProcessEvent(const sysEvent_t* event) override;
 
 	void OnStartHosting(idMatchParameters& parms) override;
+
+	void InitializeMPMapsModes() override;
+	const std::vector<mpMap_t>& GetMapList() const override { return mpGameMaps; }
 public:
 	void Draw(); // called by gameThread
 
@@ -90,6 +93,8 @@ private:
 
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
+
+	std::vector<mpMap_t> mpGameMaps;
 
 	idGameThread gameThread; // the game and draw code can be run in parallel
 

@@ -15,6 +15,17 @@ class idMatchParameters;
 extern idCVar com_allowConsole;
 extern idCVar com_showFPS;
 
+struct mpMap_t {
+
+	void operator=(const mpMap_t& src) {
+		mapFile = src.mapFile;
+		mapName = src.mapName;
+	}
+
+	std::string mapFile;
+	std::string mapName;
+};
+
 class idCommon {
 public:
 	idCommon() = default;
@@ -77,6 +88,9 @@ public:
 	virtual	bool				ProcessEvent(const sysEvent_t* event) = 0;
 
 	virtual void OnStartHosting(idMatchParameters& parms) = 0;
+
+	virtual void InitializeMPMapsModes() = 0;
+	virtual const std::vector<mpMap_t>& GetMapList() const = 0;
 
 	virtual void QuitRequest() = 0;
 };

@@ -173,6 +173,9 @@ void idCommonLocal::Frame() {
 		if (quit_requested)
 			Quit();
 
+		// This is the only place this is incremented
+		idLib::frameNumber++;
+
 		eventLoop->RunEventLoop();
 
 		const bool pauseGame = !mapSpawned || (game && game->Shell_IsActive());

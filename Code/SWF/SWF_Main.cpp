@@ -118,6 +118,22 @@ void idSWF::Init() {
 		auto spr_inst_menuPartyLobby_info_options_item = spr_inst_menuPartyLobby_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
 		spr_inst_menuPartyLobby_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(-20.0f, 10.0f * i - 100.0f));
 	}
+	auto spr_inst_PartyLobby_options = spr_inst_menuPartyLobby->spriteInstance->PlaceObject(1, true, "options");
+
+	auto spr_inst_menuGameLobby = mainspriteInstance->PlaceObject(9, true, "menuGameLobby");
+	auto spr_inst_GameLobby_info = spr_inst_menuGameLobby->spriteInstance->PlaceObject(0, true, "info");
+	spr_inst_GameLobby_info->spriteInstance->SetVisible(true);
+
+	spr_inst_GameLobby_info->spriteInstance->PlaceObject(0, true, "btnBack");
+	auto spr_inst_menuGameLobby_info_options = spr_inst_GameLobby_info->spriteInstance->PlaceObject(1, true, "options");
+	for (size_t i = 0; i < 8; ++i) {
+		auto spr_inst_menuGameLobby_info_options_item = spr_inst_menuGameLobby_info_options->spriteInstance->PlaceObject(i, true, va("item%d", i));
+		spr_inst_menuGameLobby_info_options_item->spriteInstance->PlaceObject(0, false, "txtVal", Vector2(-20.0f, 10.0f * i - 100.0f));
+	}
+
+	auto spr_inst_GameLobby_match_info = spr_inst_menuGameLobby->spriteInstance->PlaceObject(1, true, "matchInfo", Vector2(80.0f, -50.0f));
+	spr_inst_GameLobby_match_info->spriteInstance->SetVisible(true);
+	auto spr_inst_GameLobby_match_info_txtMapName = spr_inst_GameLobby_match_info->spriteInstance->PlaceObject(0, false, "txtMapName");
 
 #ifdef DEBUG
 	shortcutKeys = std::shared_ptr<idSWFScriptObject>(DBG_NEW idSWFScriptObject());

@@ -51,6 +51,7 @@ enum class shellState_t {
 
 static constexpr int MAX_SCREEN_AREAS = 32;
 static constexpr int DEFAULT_REPEAT_TIME = 150;
+static const int WAIT_START_TIME_LONG = 30000;
 
 struct actionRepeater_t {
 	actionRepeater_t() {
@@ -151,18 +152,21 @@ public:
 
 	std::shared_ptr<idMenuWidget_MenuBar> GetMenuBar() noexcept { return menuBar; }
 
+	void SetTimeRemaining(int time) { timeRemaining = time; }
 	void SetNewGameType(int type) noexcept { newGameType = type; }
 	int GetNewGameType() noexcept { return newGameType; }
 	void SetInGame(bool val) noexcept { inGame = val; }
 	bool GetInGame() noexcept { return inGame; }
 	void HandleExitGameBtn();
 	void SetupPCOptions();
+	void UpdateLobby(idMenuWidget_LobbyList* lobbyList);
 	void StartGame(int index);
 private:
 	shellState_t state;
 	shellState_t nextState;
 
 	std::shared_ptr<idMenuWidget_MenuBar> menuBar;
+	int timeRemaining;
 	int newGameType;
 	bool inGame;
 	std::vector<std::string> navOptions;

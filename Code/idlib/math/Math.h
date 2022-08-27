@@ -29,6 +29,7 @@ public:
 	static float Fabs(float f) noexcept; // returns the absolute value of the floating point value
 
 	static signed char ClampChar(int i) noexcept;
+	static int ClampInt(int min, int max, int value);
 
 	static int FloatHash(gsl::span<const float> arr) noexcept;
 
@@ -93,6 +94,21 @@ inline signed char idMath::ClampChar(int i) noexcept {
 		return 127;
 	}
 	return static_cast<signed char>(i);
+}
+
+/*
+========================
+idMath::ClampInt
+========================
+*/
+inline int idMath::ClampInt(int min, int max, int value) {
+	if (value < min) {
+		return min;
+	}
+	if (value > max) {
+		return max;
+	}
+	return value;
 }
 
 /*

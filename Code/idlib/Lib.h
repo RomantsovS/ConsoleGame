@@ -5,6 +5,7 @@ class idLib {
 private:
 public:
 	static class idCommon* common;
+	static int frameNumber;
 
 	// wrapper to idCommon functions 
 	static void Printf(const char* fmt, ...);

@@ -3,6 +3,26 @@
 
 static const int MAX_PLAYERS = 8;
 
+enum class matchFlags_t {
+	MATCH_STATS = BIT(0),		// Match will upload leaderboard/achievement scores
+	MATCH_ONLINE = BIT(1),		// Match will require users to be online
+	MATCH_RANKED = BIT(2),		// Match will affect rank
+	MATCH_PRIVATE = BIT(3),		// Match will NOT be searchable through FindOrCreateMatch
+	MATCH_INVITE_ONLY = BIT(4),		// Match visible through invite only
+
+	MATCH_REQUIRE_PARTY_LOBBY = BIT(5),		// This session uses a party lobby
+	MATCH_PARTY_INVITE_PLACEHOLDER = BIT(6),		// Party is never shown in the UI, it's simply used as a placeholder for invites
+	MATCH_JOIN_IN_PROGRESS = BIT(7),		// Join in progress supported for this match
+};
+
+const int8_t GAME_MAP_RANDOM = -1;
+
+const int DefaultPartyFlags = static_cast<int>(matchFlags_t::MATCH_JOIN_IN_PROGRESS) | static_cast<int>(matchFlags_t::MATCH_ONLINE);
+const int DefaultPublicGameFlags = static_cast<int>(matchFlags_t::MATCH_JOIN_IN_PROGRESS) | static_cast<int>(matchFlags_t::MATCH_REQUIRE_PARTY_LOBBY)
+| static_cast<int>(matchFlags_t::MATCH_RANKED) | static_cast<int>(matchFlags_t::MATCH_STATS);
+const int DefaultPrivateGameFlags = static_cast<int>(matchFlags_t::MATCH_JOIN_IN_PROGRESS) | static_cast<int>(matchFlags_t::MATCH_REQUIRE_PARTY_LOBBY)
+| static_cast<int>(matchFlags_t::MATCH_PRIVATE);
+
 /*
 ================================================
 idMatchParameters
@@ -10,7 +30,12 @@ idMatchParameters
 */
 class idMatchParameters {
 public:
-	idMatchParameters() {}
+	idMatchParameters() :
+		gameMap(GAME_MAP_RANDOM),
+		matchFlags(0) {}
+
+	int8_t gameMap;
+	uint8_t matchFlags;
 
 	std::string mapName; // This is only used for SP (gameMap == GAME_MAP_SINGLEPLAYER)
 };
@@ -87,6 +112,10 @@ public:
 	// and have all platform clients join. It does NOT notify the backends of changes, it's purely for the dedicated
 	// server to be able to host the in-game lobby.
 	virtual idLobbyBase& GetActingGameStateLobbyBase() = 0;
+
+	// GetActivePlatformLobbyBase will return either the game or party lobby, it won't return the game state lobby
+	// This function is generally used for menus, in-game code should refer to GetActingGameStateLobby
+	virtual idLobbyBase& GetActivePlatformLobbyBase() = 0;
 
 	virtual sessionState_t GetState() const = 0;
 

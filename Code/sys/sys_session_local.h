@@ -103,6 +103,8 @@ protected:
 	idLobbyBase& GetGameLobbyBase() override { return gameLobby; }
 	idLobbyBase& GetActingGameStateLobbyBase() override { return GetActingGameStateLobby(); }
 
+	idLobbyBase& GetActivePlatformLobbyBase() override;
+
 	void SetState(state_t newState) noexcept;
 	bool HandlePackets();
 protected:
@@ -116,20 +118,22 @@ protected:
 	idLobby partyLobby;
 	idLobby gameLobby;
 	idLobby gameStateLobby;
+	idLobby stubLobby; // We use this when we request the active lobby when we are not in a lobby (i.e at press start)
 
 	//------------------------
 	// State functions
 	//------------------------
-	bool	State_Party_Lobby_Host();
-	/*bool	State_Party_Lobby_Peer();
-	bool	State_Game_Lobby_Host();
-	bool	State_Game_Lobby_Peer();
-	bool	State_Game_State_Lobby_Host();
-	bool	State_Game_State_Lobby_Peer();*/
-	bool	State_Loading();
-	bool	State_InGame();
-	//bool	State_Find_Or_Create_Match();
-	bool	State_Create_And_Move_To_Party_Lobby();
+	bool State_Party_Lobby_Host();
+	//bool State_Party_Lobby_Peer();
+	bool State_Game_Lobby_Host();
+	/*bool State_Game_Lobby_Peer();
+	bool State_Game_State_Lobby_Host();
+	bool State_Game_State_Lobby_Peer();*/
+	bool State_Loading();
+	bool State_InGame();
+	//bool State_Find_Or_Create_Match();
+	bool State_Create_And_Move_To_Party_Lobby();
+	bool State_Create_And_Move_To_Game_Lobby();
 
 	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
 	virtual void DestroyLobbyBackend(idLobbyBackend* lobby) = 0;

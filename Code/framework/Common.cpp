@@ -130,6 +130,8 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// init the session
 		session->Initialize();
 
+		InitializeMPMapsModes();
+
 		CreateMainMenu();
 
 		StartMenu(true);

@@ -3,6 +3,8 @@
 
 #include "../Game_local.h"
 
+idCVar si_map("si_map", "-1", CVAR_GAME | CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_INTEGER, "default map choice for profile");
+
 // change anytime vars
 idCVar developer("developer", "0", CVAR_GAME | CVAR_BOOL, "");
 
