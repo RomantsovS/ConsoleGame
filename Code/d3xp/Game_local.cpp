@@ -275,79 +275,98 @@ void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
 }
 
 void idGameLocal::RunFrame(gameReturn_t& ret) {
+#ifdef _DEBUG
+	if (common->IsMultiplayer()) {
+		assert(!common->IsClient());
+	}
+#endif
+
 	if (!gameRenderWorld) {
 		return;
 	}
 
-	auto player = GetLocalPlayer();
-
 	static auto start_time = Sys_Milliseconds();
 
-	framenum++;
-	fast.previousTime = FRAME_TO_MSEC(framenum - 1);
-	fast.time = FRAME_TO_MSEC(framenum);
-	//fast.previousTime = fast.time;
-	//fast.time = FRAME_TO_MSEC(Sys_Milliseconds());
-	fast.realClientTime = fast.time;
+	auto player = GetLocalPlayer();
 
-	if (time == 3000) {
-		auto end = Sys_Milliseconds();
+	if (!common->IsMultiplayer() && g_stopTime.GetBool()) {
+		// clear any debug lines from a previous frame
+		gameRenderWorld->DebugClearLines(time + 1);
 
-		DPrintf("reached 3k game time for %d msec\n", (end - start_time));
-	}
-
-	//ComputeSlowScale();
-
-	/*slow.previousTime = slow.time;
-	slow.time += idMath::Ftoi((fast.time - fast.previousTime) * slowmoScale);
-	slow.realClientTime = slow.time;*/
-
-	SelectTimeGroup(true);
-
-	// make sure the random number counter is used each frame so random events
-	// are influenced by the player's actions
-	rand_eng.seed(Sys_Milliseconds());
-
-	// clear any debug lines from a previous frame
-	gameRenderWorld->DebugClearLines(time + 1);
-
-	static auto lastTimePointSpawn = time;
-	static int game_add_point_delay = world->spawnArgs.GetInt("game_add_point_delay");
-
-	if (game_add_point_delay == 0) {
-		for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 1000); ++i)
-			AddRandomPoint();
-		world->spawnArgs.SetInt("game_add_point_delay", -1);
-		game_add_point_delay = -1;
-	}
-
-	if (game_add_point_delay > 0 && time - lastTimePointSpawn > game_add_point_delay) {
-		lastTimePointSpawn = time;
-
-		for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0); ++i) {
-			AddRandomPoint();
+		// set the user commands for this frame
+		if (player) {
+			//player->HandleUserCmds(cmdMgr.GetUserCmdForPlayer(GetLocalClientNum()));
+			//cmdMgr.MakeReadPtrCurrentForPlayer(GetLocalClientNum());
+			player->Think();
 		}
 	}
+	else {
+		framenum++;
+		fast.previousTime = FRAME_TO_MSEC(framenum - 1);
+		fast.time = FRAME_TO_MSEC(framenum);
+		//fast.previousTime = fast.time;
+		//fast.time = FRAME_TO_MSEC(Sys_Milliseconds());
+		fast.realClientTime = fast.time;
 
-	// let entities think
-	for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next()) {
-		RunEntityThink(*ent);
-	}
+		if (time == 3000) {
+			auto end = Sys_Milliseconds();
 
-	// remove any entities that have stopped thinking
-	if (numEntitiesToDeactivate) {
-		std::shared_ptr<idEntity> next_ent;
-		for (auto ent = activeEntities.Next(); ent != nullptr; ent = next_ent) {
-			next_ent = ent->activeNode.Next();
-			if (!ent->thinkFlags) {
-				ent->activeNode.Remove();
+			DPrintf("reached 3k game time for %d msec\n", (end - start_time));
+		}
+
+		//ComputeSlowScale();
+
+		/*slow.previousTime = slow.time;
+		slow.time += idMath::Ftoi((fast.time - fast.previousTime) * slowmoScale);
+		slow.realClientTime = slow.time;*/
+
+		SelectTimeGroup(true);
+
+		// make sure the random number counter is used each frame so random events
+		// are influenced by the player's actions
+		rand_eng.seed(Sys_Milliseconds());
+
+		// clear any debug lines from a previous frame
+		gameRenderWorld->DebugClearLines(time + 1);
+
+		static auto lastTimePointSpawn = time;
+		static int game_add_point_delay = world->spawnArgs.GetInt("game_add_point_delay");
+
+		if (game_add_point_delay == 0) {
+			for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 1000); ++i)
+				AddRandomPoint();
+			world->spawnArgs.SetInt("game_add_point_delay", -1);
+			game_add_point_delay = -1;
+		}
+
+		if (game_add_point_delay > 0 && time - lastTimePointSpawn > game_add_point_delay) {
+			lastTimePointSpawn = time;
+
+			for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0); ++i) {
+				AddRandomPoint();
 			}
 		}
-		numEntitiesToDeactivate = 0;
-	}
 
-	// service any pending events
-	idEvent::ServiceEvents();
+		// let entities think
+		for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next()) {
+			RunEntityThink(*ent);
+		}
+
+		// remove any entities that have stopped thinking
+		if (numEntitiesToDeactivate) {
+			std::shared_ptr<idEntity> next_ent;
+			for (auto ent = activeEntities.Next(); ent != nullptr; ent = next_ent) {
+				next_ent = ent->activeNode.Next();
+				if (!ent->thinkFlags) {
+					ent->activeNode.Remove();
+				}
+			}
+			numEntitiesToDeactivate = 0;
+		}
+
+		// service any pending events
+		idEvent::ServiceEvents();
+	}
 
 	// show any debug info for this frame
 	RunDebugInfo();
@@ -777,6 +796,15 @@ Used to allow entities to know if they're being spawned during the initial spawn
 */
 gameState_t	idGameLocal::GameState() const noexcept {
 	return gamestate;
+}
+
+/*
+========================
+idGameLocal::InhibitControls
+========================
+*/
+bool idGameLocal::InhibitControls() {
+	return (Shell_IsActive() || (common->IsMultiplayer()));
 }
 
 /*

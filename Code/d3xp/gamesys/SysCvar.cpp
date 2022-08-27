@@ -9,6 +9,8 @@ idCVar si_map("si_map", "-1", CVAR_GAME | CVAR_SERVERINFO | CVAR_ARCHIVE | CVAR_
 idCVar developer("developer", "0", CVAR_GAME | CVAR_BOOL, "");
 
 idCVar g_debugDamage("g_debugDamage", "0", CVAR_GAME | CVAR_BOOL, "");
+idCVar g_stopTime("g_stopTime", "0", CVAR_GAME | CVAR_BOOL, "");
+
 idCVar g_debugSpawn("g_debugSpawn", "0", CVAR_GAME | CVAR_BOOL, "");
 
 idCVar g_showCollisionModels("g_showCollisionModels", "0", CVAR_GAME | CVAR_BOOL, "");
