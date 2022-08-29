@@ -37,9 +37,9 @@ int idGameThread::Run() {
 	else {
 		// run the game logic
 		for (int i = 0; i < numGameFrames; i++) {
-			//if (userCmdMgr) {
-				game->RunFrame(ret);
-			//}
+			if (userCmdMgr) {
+				game->RunFrame(*userCmdMgr, ret);
+			}
 		}
 	}
 
@@ -48,15 +48,15 @@ int idGameThread::Run() {
 	//common->DPrintf(oss.str().c_str());
 
 	// we should have consumed all of our usercmds
-	/*if (userCmdMgr) {
-		if (userCmdMgr->HasUserCmdForPlayer(game->GetLocalClientNum()) && common->GetCurrentGame() == DOOM3_BFG) {
+	if (userCmdMgr) {
+		if (userCmdMgr->HasUserCmdForPlayer(game->GetLocalClientNum())) {
 			idLib::Printf("idGameThread::Run: didn't consume all usercmds\n");
 		}
 	}
 
-	commonLocal.frameTiming.finishGameTime = Sys_Microseconds();
+	//commonLocal.frameTiming.finishGameTime = Sys_Microseconds();
 
-	SetThreadGameTime((commonLocal.frameTiming.finishGameTime - commonLocal.frameTiming.startGameTime) / 1000);*/
+	//SetThreadGameTime((commonLocal.frameTiming.finishGameTime - commonLocal.frameTiming.startGameTime) / 1000);*/
 
 	// build render commands and geometry
 	commonLocal.Draw();
@@ -76,9 +76,12 @@ idGameThread::RunGameAndDraw
 
 ===============
 */
-gameReturn_t idGameThread::RunGameAndDraw(int numGameFrames_, bool isClient_, int startGameFrame) {
+gameReturn_t idGameThread::RunGameAndDraw(int numGameFrames_, idUserCmdMgr& userCmdMgr_, bool isClient_, int startGameFrame) {
 	// this should always immediately return
 	this->WaitForThread();
+
+	// save the usercmds for the background thread to pick up
+	userCmdMgr = &userCmdMgr_;
 
 	isClient = isClient_;
 
@@ -163,7 +166,9 @@ void idCommonLocal::ProcessGameReturn(const gameReturn_t& ret) {
 			MoveToNewMap(args.Argv(1), true);
 		}
 		else if (args.Argv(0) == "died") {
-			game->Shell_Show(true);
+			if (!IsMultiplayer()) {
+				game->Shell_Show(true);
+			}
 		}
 	}
 }
@@ -271,18 +276,44 @@ void idCommonLocal::Frame() {
 		// send frame and mouse events to active guis
 		GuiFrameEvents();
 
-		usercmdGen->BuildCurrentUsercmd(0);
+		//--------------------------------------------
+		// Prepare usercmds and kick off the game processing
+		// in a background thread
+		//--------------------------------------------
 
+		// get the previous usercmd for bypassed head tracking transform
+		const usercmd_t	previousCmd = usercmdGen->GetCurrentUsercmd();
+
+		// build a new usercmd
+		usercmdGen->BuildCurrentUsercmd(0);
 		if (pauseGame) {
 			usercmdGen->Clear();
 		}
 
-		//usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
+		usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
+
+		// Store server game time - don't let time go past last SS time in case we are extrapolating
+		if (IsClient()) {
+			//newCmd.serverGameMilliseconds = std::min(Game()->GetServerGameTimeMs(), Game()->GetSSEndTime());
+		}
+		else {
+			//newCmd.serverGameMilliseconds = Game()->GetServerGameTimeMs();
+		}
+
+		userCmdMgr.MakeReadPtrCurrentForPlayer(Game()->GetLocalClientNum());
+
+		// Stuff a copy of this userCmd for each game frame we are going to run.
+		// Ideally, the usercmds would be built in another thread so you could
+		// still get 60hz control accuracy when the game is running slower.
+		for (int i = 0; i < numGameFrames; i++) {
+			//newCmd.clientGameMilliseconds = FRAME_TO_MSEC(gameFrame - numGameFrames + i + 1);
+			userCmdMgr.PutUserCmdForPlayer(game->GetLocalClientNum(), newCmd);
+		}
 
 		renderSystem->UpdateTimers();
 
 		// start the game / draw command generation thread going in the background
-		gameReturn_t ret = gameThread.RunGameAndDraw(numGameFrames, IsClient(), gameFrame - numGameFrames);
+		gameReturn_t ret = gameThread.RunGameAndDraw(numGameFrames, userCmdMgr, IsClient(), gameFrame - numGameFrames);
 
 		// make sure the game / draw thread has completed
 		// This may block if the game is taking longer than the render back end

@@ -20,7 +20,10 @@ if (OPTION_ENGINE)
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
 
 	message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
-	
+
+	find_package(Boost COMPONENTS system REQUIRED)
+	find_package(Threads)
+
 	if(WINDOWS)
 		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES})
 	else()
@@ -34,7 +37,8 @@ if (OPTION_ENGINE)
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
 
-	target_link_libraries(${THIS_PROJECT} idlib)
+	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR})
+	target_link_libraries(${THIS_PROJECT} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} idlib)
 
 	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
 endif()

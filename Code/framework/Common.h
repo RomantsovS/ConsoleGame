@@ -10,6 +10,9 @@ inline int FRAME_TO_MSEC(long long frame) noexcept {
 	return (int)((frame * com_engineHz_numerator) / com_engineHz_denominator);
 }
 
+class idGame;
+class idRenderWorld;
+class idSession;
 class idMatchParameters;
 
 extern idCVar com_allowConsole;
@@ -85,7 +88,9 @@ public:
 	virtual bool IsClient() = 0;
 
 	// Processes the given event.
-	virtual	bool				ProcessEvent(const sysEvent_t* event) = 0;
+	virtual	bool ProcessEvent(const sysEvent_t* event) = 0;
+
+	virtual idGame* Game() = 0;
 
 	virtual void OnStartHosting(idMatchParameters& parms) = 0;
 

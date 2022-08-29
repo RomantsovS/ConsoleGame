@@ -22,6 +22,7 @@ public:
 	void Close();
 
 private:
+	idUDP UDP;
 };
 
 struct lobbyUser_t {

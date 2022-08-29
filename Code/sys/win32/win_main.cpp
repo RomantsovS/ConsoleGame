@@ -41,7 +41,7 @@ typedef struct CrtMemBlockHeader
 	size_t nDataSize;    // Size of user block
 	int nBlockUse;       // Type of block
 	long lRequest;       // Allocation number
-	byte		gap[4];								// Buffer just before (lower than) the user's memory:
+	unsigned char gap[4];								// Buffer just before (lower than) the user's memory:
 } CrtMemBlockHeader;
 
 DEF_LOGS;

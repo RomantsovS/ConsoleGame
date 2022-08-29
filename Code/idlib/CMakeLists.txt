@@ -7,6 +7,8 @@ CryFileContainer("geometry")
 CryFileContainer("math")
 CryFileContainer("sys")
 
+find_package(Boost COMPONENTS system REQUIRED)
+
 if (MODULE_FORCE_SHARED)
 	add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})
 elseif (MODULE_FORCE_STATIC)
@@ -14,5 +16,7 @@ elseif (MODULE_FORCE_STATIC)
 else()
 	add_library(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES})
 endif()
+
+target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR})
 
 prepare_project_after(PCH "precompiled.cpp" PCH_H "precompiled.h")

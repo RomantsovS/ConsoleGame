@@ -1,6 +1,10 @@
+if(NOT DEFINED MSVC_WARNING_LEVEL)
+	set(MSVC_WARNING_LEVEL "/Wall")
+endif()
+
 set(MSVC_COMMON_FLAGS 
 	/nologo     # Don't show version info
-	/Wall         # Enable warning level
+	${MSVC_WARNING_LEVEL}         # Enable warning level
 	/fp:fast    # Use fast floating point precision model
 	/Zc:wchar_t # Parse wchar_t as internal type
 	/GF         # Eliminate Duplicate Strings
@@ -18,4 +22,4 @@ set(CMAKE_RC_FLAGS /nologo)
 
 # Override cxx flags
 set(CMAKE_CXX_FLAGS "${MSVC_COMMON_FLAGS}" CACHE STRING "C++ Common Flags" FORCE)
-set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /EHsc /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)

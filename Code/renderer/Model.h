@@ -52,7 +52,7 @@ public:
 	virtual bool				IsLevelLoadReferenced() = 0;
 
 	// returns the name of the model
-	virtual const std::string Name() const = 0;
+	virtual const std::string& Name() const = 0;
 
 	// returns the number of surfaces
 	virtual int					NumSurfaces() const = 0;

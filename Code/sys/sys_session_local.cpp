@@ -57,6 +57,13 @@ idSessionLocal::FinishDisconnect
 ========================
 */
 void idSessionLocal::FinishDisconnect() noexcept {
+	GetPort().Close();
+	/*while (sendQueue.Peek() != NULL) {
+		sendQueue.RemoveFirst();
+	}
+	while (recvQueue.Peek() != NULL) {
+		recvQueue.RemoveFirst();
+	}*/
 }
 
 /*
@@ -905,7 +912,7 @@ idNetSessionPort::InitPort
 ========================
 */
 bool idNetSessionPort::InitPort(int portNumber, bool useBackend) {
-	return false;
+	return UDP.InitForPort(portNumber);
 }
 
 /*
@@ -914,7 +921,7 @@ idNetSessionPort::IsOpen
 ========================
 */
 bool idNetSessionPort::IsOpen() {
-	return false;
+	return UDP.IsOpen();
 }
 
 /*
@@ -923,5 +930,5 @@ idNetSessionPort::Close
 ========================
 */
 void idNetSessionPort::Close() {
-	
+	UDP.Close();
 }

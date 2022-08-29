@@ -4,6 +4,7 @@
 class idGameThread : public idSysThread {
 public:
 	idGameThread() :
+		userCmdMgr(nullptr),
 		ret(),
 		numGameFrames(),
 		isClient()
@@ -11,11 +12,12 @@ public:
 
 	// the gameReturn_t is from the previous frame, the
 	// new frame will be running in parallel on exit
-	gameReturn_t RunGameAndDraw(int numGameFrames, bool isClient_, int startGameFrame);
+	gameReturn_t RunGameAndDraw(int numGameFrames, idUserCmdMgr& userCmdMgr_, bool isClient_, int startGameFrame);
 
 private:
 	int Run() override;
 
+	idUserCmdMgr* userCmdMgr;
 	gameReturn_t	ret;
 	int				numGameFrames;
 	bool			isClient;
@@ -60,6 +62,8 @@ public:
 
 	bool ProcessEvent(const sysEvent_t* event) override;
 
+	idGame* Game() override { return game; }
+
 	void OnStartHosting(idMatchParameters& parms) override;
 
 	void InitializeMPMapsModes() override;
@@ -74,6 +78,8 @@ public:
 	void QuitRequest() noexcept override { quit_requested = true; }
 public:
 	std::string GetCurrentMapName() { return currentMapName; }
+
+	idUserCmdMgr& GetUCmdMgr() { return userCmdMgr; }
 private:
 	errorParm_t com_errorEntered;
 	bool com_shuttingDown;
@@ -90,6 +96,8 @@ private:
 	bool mapSpawned; // cleared on Stop()
 
 	bool insideUpdateScreen;		// true while inside ::UpdateScreen()
+
+	idUserCmdMgr userCmdMgr;
 
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
@@ -115,6 +123,13 @@ private:
 	void GuiFrameEvents();
 
 	void ProcessGameReturn(const gameReturn_t& ret);
+
+	// Snapshot interpolation
+	/*void	ProcessSnapshot(idSnapShot& ss);
+	int		CalcSnapTimeBuffered(int& totalBufferedTime, int& totalRecvTime);
+	void	ProcessNextSnapshot();
+	void	InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);*/
+	void	ResetNetworkingState();
 
 	// Meant to be used like:
 	// while ( waiting ) { BusyWait(); }

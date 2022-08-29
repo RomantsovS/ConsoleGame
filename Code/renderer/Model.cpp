@@ -119,7 +119,7 @@ void idRenderModelStatic::InitEmpty(const std::string fileName) {
 idRenderModelStatic::Name
 ================
 */
-const std::string idRenderModelStatic::Name() const {
+const std::string& idRenderModelStatic::Name() const {
 	return name;
 }
 

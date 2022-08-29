@@ -322,9 +322,27 @@ public:
 	std::shared_ptr<idSWFSpriteInstance> GetSprite() noexcept { return boundSprite; }
 	bool BindSprite(gsl::not_null<idSWFScriptObject*> root);
 	void ClearSprite() noexcept;
+	
+	template <typename T>
+	void SetSpritePath(T arg) {
+		//idLib::Printf(__PRETTY_FUNCTION__);
+		spritePath.push_back(arg);
+	}
 
-	void SetSpritePath(const char* arg1, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL);
-	void SetSpritePath(const std::vector<std::string>& spritePath_, const char* arg1 = NULL, const char* arg2 = NULL, const char* arg3 = NULL, const char* arg4 = NULL, const char* arg5 = NULL);
+	template <typename T, typename... Args>
+	void SetSpritePath(T arg, Args... args) {
+		//idLib::Printf(__PRETTY_FUNCTION__);
+		spritePath.push_back(arg);
+		SetSpritePath(args...);
+	}
+
+	template <typename... Args>
+	void SetSpritePath(const std::vector<std::string>& spritePath_, Args... args) {
+		//idLib::Printf(__PRETTY_FUNCTION__);
+		spritePath = spritePath_;
+		SetSpritePath(args...);
+	}
+
 	std::vector<std::string>& GetSpritePath() noexcept { return spritePath; }
 
 	//------------------------

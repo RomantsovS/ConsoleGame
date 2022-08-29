@@ -242,7 +242,7 @@ void idMenuHandler_Shell::ActivateMenu(bool show) noexcept {
 					isDead = true;
 				}
 
-				if (isDead) {
+				if (isDead && !common->IsMultiplayer()) {
 					return;
 				}
 			}
@@ -420,7 +420,7 @@ bool idMenuHandler_Shell::HandleAction(idWidgetAction& action, const idWidgetEve
 		}
 		case static_cast<int>(shellCommandsPC_t::SHELL_CMD_MULTIPLAYER): {
 			idMatchParameters matchParameters;
-			//matchParameters.matchFlags = DefaultPartyFlags;
+			matchParameters.matchFlags = DefaultPartyFlags;
 			session->CreatePartyLobby(matchParameters);
 			break;
 		}

@@ -30,7 +30,7 @@ public:
 	virtual void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) = 0;
 
 	// Runs a game frame, may return a session command for level changing, etc
-	virtual void RunFrame(gameReturn_t& ret) = 0;
+	virtual void RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) = 0;
 
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool Draw(int clientNum) = 0;

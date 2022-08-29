@@ -151,40 +151,6 @@ void idMenuWidget::ClearSprite() noexcept {
 
 /*
 ========================
-idMenuWidget::SetSpritePath
-========================
-*/
-void idMenuWidget::SetSpritePath(const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5) {
-	const char* args[] = { arg1, arg2, arg3, arg4, arg5 };
-	const int numArgs = sizeof(args) / sizeof(args[0]);
-	spritePath.clear();
-	for (int i = 0; i < numArgs; ++i) {
-		if (args[i] == NULL) {
-			break;
-		}
-		spritePath.push_back(args[i]);
-	}
-}
-
-/*
-========================
-idMenuWidget::SetSpritePath
-========================
-*/
-void idMenuWidget::SetSpritePath(const std::vector<std::string>& spritePath_, const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5) {
-	const char* args[] = { arg1, arg2, arg3, arg4, arg5 };
-	const int numArgs = sizeof(args) / sizeof(args[0]);
-	spritePath = spritePath_;
-	for (int i = 0; i < numArgs; ++i) {
-		if (args[i] == NULL) {
-			break;
-		}
-		spritePath.push_back(args[i]);
-	}
-}
-
-/*
-========================
 idMenuWidget::GetSWFObject
 ========================
 */

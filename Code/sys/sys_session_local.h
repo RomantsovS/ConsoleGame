@@ -135,6 +135,7 @@ protected:
 	bool State_Create_And_Move_To_Party_Lobby();
 	bool State_Create_And_Move_To_Game_Lobby();
 
+	virtual idNetSessionPort& GetPort(bool dedicated = false) = 0;
 	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
 	virtual void DestroyLobbyBackend(idLobbyBackend* lobby) = 0;
 	virtual void PumpLobbies() = 0;

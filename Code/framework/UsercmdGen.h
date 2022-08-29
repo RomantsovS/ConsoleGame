@@ -213,5 +213,118 @@ public:
 extern idUsercmdGen* usercmdGen;
 //extern userCmdString_t	userCmdStrings[];
 
+/*
+================================================
+idUserCmdMgr
+================================================
+*/
+class idUserCmdMgr {
+public:
+	idUserCmdMgr() {
+		SetDefaults();
+	}
+
+	void SetDefaults() {
+		for (int i = 0; i < cmdBuffer.size(); ++i) {
+			cmdBuffer[i].fill({});
+		}
+		writeFrame.fill(0);
+		readFrame.fill(-1);
+	}
+
+	// Set to 128 for now
+	// Temp fix for usercmds overflowing  Correct fix is to process usercmds as they come in (like q3), rather then buffer them up.
+	static const int USERCMD_BUFFER_SIZE = 128;
+
+	std::array<std::array<usercmd_t, MAX_PLAYERS>, USERCMD_BUFFER_SIZE> cmdBuffer;
+	std::array<int, MAX_PLAYERS> writeFrame; //"where we write to next"
+	std::array<int, MAX_PLAYERS> readFrame; //"the last frame we read"	
+
+	void PutUserCmdForPlayer(int playerIndex, const usercmd_t& cmd) {
+		cmdBuffer[writeFrame[playerIndex] % USERCMD_BUFFER_SIZE][playerIndex] = cmd;
+		if (writeFrame[playerIndex] - readFrame[playerIndex] + 1 > USERCMD_BUFFER_SIZE) {
+			readFrame[playerIndex] = writeFrame[playerIndex] - USERCMD_BUFFER_SIZE / 2;		// Set to middle of buffer as a temp fix until we can catch the client up correctly
+			idLib::Printf("PutUserCmdForPlayer: buffer overflow.\n");
+		}
+		writeFrame[playerIndex]++;
+	}
+
+	void ResetPlayer(int playerIndex) {
+		for (int i = 0; i < USERCMD_BUFFER_SIZE; i++) {
+			memset(&cmdBuffer[i][playerIndex], 0, sizeof(usercmd_t));
+		}
+		writeFrame[playerIndex] = 0;
+		readFrame[playerIndex] = -1;
+	}
+
+	bool HasUserCmdForPlayer(int playerIndex, int buffer = 0) const {
+		// return true if the last frame we read from (+ buffer) is < the last frame we wrote to
+		// (remember writeFrame is where we write to *next*. readFrame is where we last read from last)		
+		bool hasCmd = (readFrame[playerIndex] + buffer < writeFrame[playerIndex] - 1);
+		return hasCmd;
+	}
+
+	const usercmd_t& GetUserCmdForPlayer(int playerIndex) {
+		//Get the next cmd we should process (not necessarily the newest)
+		//Note we may have multiple reads for every write .
+		//We want to:
+		// A) never skip over a cmd (unless we call MakeReadPtrCurrentForPlayer() ).
+		// B) never get ahead of the writeFrame	
+
+		//try to increment before reading (without this we may read the same input twice
+		//and be a frame behind our writes in the case of)
+		if (readFrame[playerIndex] < writeFrame[playerIndex] - 1) {
+			readFrame[playerIndex]++;
+		}
+
+		//grab the next command in the readFrame buffer		
+		int index = readFrame[playerIndex];
+		usercmd_t& result = cmdBuffer[index % USERCMD_BUFFER_SIZE][playerIndex];
+		return result;
+	}
+
+	// Hack to let the player inject his position into the correct usercmd.
+	usercmd_t& GetWritableUserCmdForPlayer(int playerIndex) {
+		//Get the next cmd we should process (not necessarily the newest)
+		//Note we may have multiple reads for every write .
+		//We want to:
+		// A) never skip over a cmd (unless we call MakeReadPtrCurrentForPlayer() ).
+		// B) never get ahead of the writeFrame	
+
+		//try to increment before reading (without this we may read the same input twice
+		//and be a frame behind our writes in the case of)
+		if (readFrame[playerIndex] < writeFrame[playerIndex] - 1) {
+			readFrame[playerIndex]++;
+		}
+
+		//grab the next command in the readFrame buffer		
+		int index = readFrame[playerIndex];
+		usercmd_t& result = cmdBuffer[index % USERCMD_BUFFER_SIZE][playerIndex];
+		return result;
+	}
+
+	void MakeReadPtrCurrentForPlayer(int playerIndex) {
+		//forces us to the head of our read buffer. As if we have processed every cmd available to us and now HasUserCmdForPlayer() returns FALSE
+		//Note we do -1 to point us to the last written cmd.
+		//If a read before the next write, you will get the last write. (not garbage)
+		//If a write is made before the next read, you *will* get the new write ( b/c GetUserCmdForPlayer pre increments)
+
+		//After calling this, HasUserCmdForPlayer() will return FALSE;
+		readFrame[playerIndex] = writeFrame[playerIndex] - 1;
+	}
+
+	int GetPlayerCmds(int user, usercmd_t** buffer, const int bufferSize) {
+		// Fallback to getting cmds from the userCmdMgr
+		int start = std::max(writeFrame[user] - std::min(bufferSize, USERCMD_BUFFER_SIZE), 0);
+		int numCmds = writeFrame[user] - start;
+
+		for (int i = 0; i < numCmds; i++) {
+			int index = (start + i) % USERCMD_BUFFER_SIZE;
+			buffer[i] = &cmdBuffer[index][user];
+		}
+		return numCmds;
+	}
+};
+
 #endif
 

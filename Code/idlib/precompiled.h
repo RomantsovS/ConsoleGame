@@ -30,6 +30,8 @@
 #include <optional>
 #include <gsl/gsl>
 
+#include <boost/asio.hpp>
+
 #include "sys/sys_defines.h"
 #include "sys/sys_includes.h"
 #include "sys/sys_assert.h"
@@ -86,5 +88,9 @@
 
 #undef max
 #undef min
+
+#ifdef _MSC_VER
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
 
 #endif

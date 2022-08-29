@@ -102,6 +102,9 @@ void idCommonLocal::ExecuteMapChange() {
 
 	game->Shell_CreateMenu(true);
 
+	// Reset some values important to multiplayer
+	ResetNetworkingState();
+
 	// If the session state is not loading here, something went wrong.
 	if (session->GetState() == idSession::sessionState_t::LOADING) {
 		// Notify session we are done loading
@@ -116,20 +119,40 @@ void idCommonLocal::ExecuteMapChange() {
 	//if (!mapSpawnData.savegameFile)
 	{
 		// run a single frame to catch any resources that are referenced by events posted in spawn
-		//idUserCmdMgr emptyCommandManager;
+		idUserCmdMgr emptyCommandManager;
 		gameReturn_t emptyGameReturn;
-		/*for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
+		for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
 			emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
 		}
 		if (IsClient()) {
-			game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
+			//game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
 		}
-		else {*/
-			game->RunFrame(/*emptyCommandManager,*/ emptyGameReturn);
-		//}
+		else {
+			game->RunFrame(emptyCommandManager, emptyGameReturn);
+		}
 	}
 
 	renderSystem->EndLevelLoad();
+
+	if (/*!mapSpawnData.savegameFile &&*/ !IsMultiplayer()) {
+		common->Printf("----- Running initial game frames -----\n");
+
+		// In single player, run a bunch of frames to make sure ragdolls are settled
+		idUserCmdMgr emptyCommandManager;
+		gameReturn_t emptyGameReturn;
+		for (int i = 0; i < 100; i++) {
+			for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
+				emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
+			}
+			game->RunFrame(emptyCommandManager, emptyGameReturn);
+		}
+
+		// kick off an auto-save of the game (so we can always continue in this map if we die before hitting an autosave)
+		//common->Printf("----- Saving Game -----\n");
+		//SaveGame("autosave");
+	}
+
+	session->Pump();
 
 	usercmdGen->Clear();
 

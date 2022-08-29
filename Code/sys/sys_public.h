@@ -226,9 +226,71 @@ std::filesystem::path Sys_DefaultBasePath() noexcept;
 // and has a function signature with 'FILE' in it, it kinda needs to be here =/
 using idFileHandle = std::fstream;
 
-
 char* getLastErrorMsg();
 
 void Sys_DebugMemory_f();
+
+/*
+==============================================================
+
+	Networking
+
+==============================================================
+*/
+
+enum class netadrtype_t {
+	NA_BAD,					// an address lookup failed
+	NA_LOOPBACK,
+	NA_BROADCAST,
+	NA_IP
+};
+
+struct netadr_t {
+	netadrtype_t	type;
+	boost::asio::ip::address address;
+	boost::asio::ip::port_type port;
+};
+
+#define	PORT_ANY -1
+
+/*
+================================================
+idUDP
+================================================
+*/
+class idUDP {
+public:
+	// this just zeros netSocket and port
+	idUDP();
+	virtual		~idUDP();
+
+	// if the InitForPort fails, the idUDP.port field will remain 0
+	bool		InitForPort(int portNumber);
+
+	int			GetPort() const { return bound_to.port; }
+	netadr_t	GetAdr() const { return bound_to; }
+	//uint32_t	GetUIntAdr() const { return bound_to.address; }
+	void		Close();
+
+	bool		GetPacket(netadr_t& from, void* data, int& size, int maxSize);
+
+	bool		GetPacketBlocking(netadr_t& from, void* data, int& size, int maxSize,
+		int timeout);
+
+	void		SendPacket(const netadr_t to, const void* data, int size);
+
+	int			packetsRead;
+	int			bytesRead;
+
+	int			packetsWritten;
+	int			bytesWritten;
+
+	bool		IsOpen() const { return socket && socket->is_open(); }
+
+private:
+	netadr_t bound_to;
+	std::unique_ptr<boost::asio::io_context> io_context;
+	std::unique_ptr<boost::asio::ip::udp::socket> socket;
+};
 
 #endif

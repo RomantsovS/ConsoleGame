@@ -22,7 +22,7 @@ public:
 	bool IsLevelLoadReferenced() noexcept override;
 
 	void InitEmpty(const std::string fileName) override;
-	const std::string Name() const override;
+	const std::string& Name() const override;
 	int NumSurfaces() const noexcept override;
 	const ModelPixel &Surface(int surfaceNum) const noexcept override;
 

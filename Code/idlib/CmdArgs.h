@@ -1,6 +1,8 @@
 #ifndef IDLIB_TEXT_CMDARGS_H_
 #define IDLIB_TEXT_CMDARGS_H_
 
+#include "Token.h"
+
 class idCmdArgs {
 public:
 	idCmdArgs() = default;
@@ -14,7 +16,7 @@ public:
 	// The functions that execute commands get their parameters with these functions.
 	int Argc() const noexcept { return argv.size(); }
 	// Argv() will return an empty string, not NULL if arg >= argc.
-	const std::string Argv(size_t arg) const { return (arg >= 0 && arg < argv.size()) ? argv[arg] : std::string(); }
+	const idToken Argv(size_t arg) const { return (arg >= 0 && arg < argv.size()) ? argv[arg] : idToken(); }
 	// Returns a single string containing argv(start) to argv(end)
 	// escapeArgs is a fugly way to put the string back into a state ready to tokenize again
 	const std::string Args(size_t start = 1, size_t end = -1, bool escapeArgs = false) const;
@@ -34,7 +36,7 @@ private:
 	static const int MAX_COMMAND_STRING = 2 * max_string_chars;
 
 	//int argc; // number of arguments
-	std::vector<std::string> argv;			// points into tokenized
+	std::vector<idToken> argv;			// points into tokenized
 	//std::string tokenized;		// will have 0 bytes inserted
 };
 

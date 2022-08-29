@@ -17,7 +17,8 @@ public:
 	void Initialize() noexcept override;
 	void Shutdown() noexcept override;
 
-	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType);
+	idNetSessionPort& GetPort(bool dedicated = false) override;
+	idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
 
 	virtual void PumpLobbies();
 private:
@@ -81,9 +82,19 @@ void idSessionLocalWin::EnsurePort() {
 	}
 	else {
 		// Assume this is another instantiation on the same machine, and just init using any available port
-		//port.InitPort(PORT_ANY, false);
+		port.InitPort(PORT_ANY, false);
 		canJoinLocalHost = true;
 	}
+}
+
+/*
+========================
+idSessionLocalWin::GetPort
+========================
+*/
+idNetSessionPort& idSessionLocalWin::GetPort(bool dedicated) {
+	EnsurePort();
+	return port;
 }
 
 /*

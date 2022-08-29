@@ -261,12 +261,12 @@ idPlayer* idGameLocal::GetLocalPlayer() const {
 idGameLocal::RunEntityThink
 ================
 */
-void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
+void idGameLocal::RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr) {
 	if (ent.entityNumber < MAX_CLIENTS) {
 		// Players may run more than one think per frame in MP,
 		// if there is a large buffer of usercmds from the network.
 		// Players will always run exactly one think in singleplayer.
-		RunAllUserCmdsForPlayer(/*userCmdMgr,*/ ent.entityNumber);
+		RunAllUserCmdsForPlayer(userCmdMgr, ent.entityNumber);
 	}
 	else {
 		// Non-player entities always run one think.
@@ -274,7 +274,7 @@ void idGameLocal::RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/) {
 	}
 }
 
-void idGameLocal::RunFrame(gameReturn_t& ret) {
+void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
 #ifdef _DEBUG
 	if (common->IsMultiplayer()) {
 		assert(!common->IsClient());
@@ -295,8 +295,8 @@ void idGameLocal::RunFrame(gameReturn_t& ret) {
 
 		// set the user commands for this frame
 		if (player) {
-			//player->HandleUserCmds(cmdMgr.GetUserCmdForPlayer(GetLocalClientNum()));
-			//cmdMgr.MakeReadPtrCurrentForPlayer(GetLocalClientNum());
+			player->HandleUserCmds(cmdMgr.GetUserCmdForPlayer(GetLocalClientNum()));
+			cmdMgr.MakeReadPtrCurrentForPlayer(GetLocalClientNum());
 			player->Think();
 		}
 	}
@@ -349,7 +349,7 @@ void idGameLocal::RunFrame(gameReturn_t& ret) {
 
 		// let entities think
 		for (auto ent = activeEntities.Next(); ent; ent = ent->activeNode.Next()) {
-			RunEntityThink(*ent);
+			RunEntityThink(*ent, cmdMgr);
 		}
 
 		// remove any entities that have stopped thinking
@@ -366,12 +366,17 @@ void idGameLocal::RunFrame(gameReturn_t& ret) {
 
 		// service any pending events
 		idEvent::ServiceEvents();
+
+		// do multiplayer related stuff
+		if (common->IsMultiplayer()) {
+			//mpGame.Run();
+		}
+
+		BuildReturnValue(ret);
 	}
 
 	// show any debug info for this frame
 	RunDebugInfo();
-
-	BuildReturnValue(ret);
 }
 
 /*
@@ -403,7 +408,16 @@ void idGameLocal::RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> play
 
 	player->HandleUserCmds(cmd);
 
-	player->Think();
+	if (!common->IsMultiplayer() || common->IsServer()) {
+		player->Think();
+
+		// Keep track of the client time of the usercmd we just ran. We will send this back to clients
+		// in a snapshot so they know when they can stop predicting certain things.
+		//usercmdLastClientMilliseconds[player.GetEntityNumber()] = cmd.clientGameMilliseconds;
+	}
+	else {
+		//player->ClientThink(netInterpolationInfo.serverGameMs, netInterpolationInfo.pct, true);
+	}
 }
 
 /*
@@ -413,9 +427,9 @@ Runs a Think or ClientThink for each usercmd, but leaves a few cmds in the buffe
 so that we have something to process while we wait for more from the network.
 ====================
 */
-void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber) {
+void idGameLocal::RunAllUserCmdsForPlayer(idUserCmdMgr& cmdMgr, const int playerNumber) {
 	// Run thinks on any players that have queued up usercmds for networking.
-	//assert(playerNumber < MAX_PLAYERS);
+	assert(playerNumber < MAX_PLAYERS);
 
 	if (!entities.at(playerNumber)) {
 		return;
@@ -427,13 +441,30 @@ void idGameLocal::RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int pl
 	// we are running < 60fps things like footstep sounds may get started right on top
 	// of each other instead of spread out in time.
 	if (player->IsLocallyControlled()) {
-		auto cmd = usercmdGen->GetCurrentUsercmd();
-		RunSingleUserCmd(cmd, player);
+		if (cmdMgr.HasUserCmdForPlayer(playerNumber)) {
+			/*if (net_usercmd_timing_debug.GetBool()) {
+				idLib::Printf("[%d]Running local cmd for player %d, %d buffered.\n",
+					common->GetGameFrame(), playerNumber, cmdMgr.GetNumUnreadFrames(playerNumber));
+			}*/
+			RunSingleUserCmd(cmdMgr.GetWritableUserCmdForPlayer(playerNumber), player);
+		}
+		else {
+			RunSingleUserCmd(player->usercmd, player);
+		}
+		return;
+	}
+
+	// Only the server runs remote commands.
+	if (common->IsClient()) {
 		return;
 	}
 }
 
 bool idGameLocal::Draw(int clientNum) {
+	if (common->IsMultiplayer() && session->GetState() == idSession::sessionState_t::INGAME) {
+		//return mpGame.Draw(clientNum);
+	}
+
 	//std::shared_ptr<idPlayer> player = std::static_pointer_cast<idPlayer>(entities.at(clientNum));
 
 	//if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
@@ -804,7 +835,7 @@ idGameLocal::InhibitControls
 ========================
 */
 bool idGameLocal::InhibitControls() {
-	return (Shell_IsActive() || (common->IsMultiplayer()));
+	return Shell_IsActive();
 }
 
 /*

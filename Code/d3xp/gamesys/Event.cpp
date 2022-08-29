@@ -136,7 +136,7 @@ static std::vector<std::shared_ptr<idEvent>> EventPool;
 
 bool idEvent::initialized = false;
 
-std::allocator<byte> idEvent::eventDataAllocator;
+std::allocator<unsigned char> idEvent::eventDataAllocator;
 
 /*
 ================

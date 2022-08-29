@@ -97,10 +97,10 @@ public:
 	void InitFromNewMap(const std::string &mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) override;
 	void MapShutdown() override;
 	void CacheDictionaryMedia(gsl::not_null<const idDict*> dict) override;
-	void RunFrame(gameReturn_t& ret) override;
-	void RunAllUserCmdsForPlayer(/*idUserCmdMgr& cmdMgr,*/ const int playerNumber);
+	void RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) override;
+	void RunAllUserCmdsForPlayer(idUserCmdMgr& cmdMgr, const int playerNumber);
 	void RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> player);
-	void RunEntityThink(idEntity& ent/*, idUserCmdMgr& userCmdMgr*/);
+	void RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr);
 	bool Draw(int clientNum) override;
 	void BuildReturnValue(gameReturn_t& ret);
 
