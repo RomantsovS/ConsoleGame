@@ -262,7 +262,16 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction(idWidgetAction& action, const i
 
 		switch (static_cast<partyLobbyCmds_t>(parms[0]->ToInteger())) {
 		case partyLobbyCmds_t::PARTY_CMD_FIND: {
-			spMenuData->SetNextScreen(shellAreas_t::SHELL_AREA_MODE_SELECT);
+			idMatchParameters matchParameters = idMatchParameters(session->GetPartyLobbyBase().GetMatchParms());
+			matchParameters.gameMap = GAME_MAP_RANDOM;
+
+			//session->UpdatePartyParms(matchParameters);
+
+			// Update flags for game lobby.
+			matchParameters.matchFlags = DefaultPartyFlags | DefaultPublicGameFlags;
+
+			session->FindOrCreateMatch(matchParameters);
+
 			break;
 		}
 		case partyLobbyCmds_t::PARTY_CMD_CREATE: {

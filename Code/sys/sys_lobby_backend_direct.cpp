@@ -4,6 +4,8 @@
 
 extern idCVar net_port;
 
+extern idLobbyToSessionCB* lobbyToSessionCB;
+
 /*
 ========================
 idLobbyBackendDirect::idLobbyBackendDirect
@@ -30,9 +32,89 @@ void idLobbyBackendDirect::StartHosting(const idMatchParameters& p, float skillL
 
 /*
 ========================
+idLobbyBackendDirect::StartFinding
+========================
+*/
+void idLobbyBackendDirect::StartFinding(const idMatchParameters& p, int numPartyUsers, float skillLevel) {
+	isLocal = true;
+	isHost = false;
+
+	if (lobbyToSessionCB->CanJoinLocalHost()) {
+		state = lobbyBackendState_t::STATE_READY;
+	}
+	else {
+		state = lobbyBackendState_t::STATE_FAILED;
+	}
+}
+
+/*
+========================
+idLobbyBackendDirect::GetSearchResults
+========================
+*/
+void idLobbyBackendDirect::GetSearchResults(std::vector<lobbyConnectInfo_t>& searchResults) {
+	lobbyConnectInfo_t fakeResult;
+	searchResults.clear();
+	searchResults.push_back(fakeResult);
+}
+
+/*
+========================
+idLobbyBackendDirect::JoinFromConnectInfo
+========================
+*/
+void idLobbyBackendDirect::JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo) {
+	if (lobbyToSessionCB->CanJoinLocalHost()) {
+		boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string("127.0.0.1"), net_port.GetInteger());
+		address.address = ep.address();
+		address.port = ep.port();
+		address.type = netadrtype_t::NA_IP;
+	}
+	else {
+		address = connectInfo.netAddr;
+	}
+
+	state = lobbyBackendState_t::STATE_READY;
+	isLocal = false;
+	isHost = false;
+}
+
+/*
+========================
 idLobbyBackendDirect::Shutdown
 ========================
 */
 void idLobbyBackendDirect::Shutdown() {
 	state = lobbyBackendState_t::STATE_SHUTDOWN;
+}
+
+/*
+========================
+idLobbyBackendDirect::GetOwnerAddress
+========================
+*/
+void idLobbyBackendDirect::GetOwnerAddress(lobbyAddress_t& outAddr) {
+	outAddr.netAddr = address;
+	state = lobbyBackendState_t::STATE_READY;
+}
+
+/*
+========================
+idLobbyBackendDirect::GetConnectInfo
+========================
+*/
+lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo() {
+	lobbyConnectInfo_t connectInfo;
+
+	// If we aren't the host, this lobby should have been joined through JoinFromConnectInfo
+	if (IsHost()) {
+		boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string("127.0.0.1"), net_port.GetInteger());
+		address.address = ep.address();
+		address.port = ep.port();
+		address.type = netadrtype_t::NA_IP;
+	}
+
+	connectInfo.netAddr = address;
+
+	return connectInfo;
 }

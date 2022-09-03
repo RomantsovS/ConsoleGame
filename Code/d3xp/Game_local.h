@@ -102,6 +102,7 @@ public:
 	void RunSingleUserCmd(usercmd_t& cmd, gsl::not_null<idPlayer*> player);
 	void RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr);
 	bool Draw(int clientNum) override;
+	void ServerWriteSnapshot(idSnapShot& ss) override;
 	void BuildReturnValue(gameReturn_t& ret);
 
 	bool IsInGame() const noexcept override  { return GameState() == GAMESTATE_ACTIVE; }

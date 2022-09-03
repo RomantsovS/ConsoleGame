@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package Serialize;
+
+message Address {
+    int32 port = 1;
+}

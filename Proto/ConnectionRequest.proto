@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package Serialize;
+
+import "Address.proto";
+
+message ConnectionRequest {
+    int32 lobbyID = 1;
+    int32 header = 2;
+    int32 type = 3;
+    int32 sessionID = 4;
+    Address address = 5;
+}

@@ -99,6 +99,9 @@ private:
 
 	idUserCmdMgr userCmdMgr;
 
+	//int nextUsercmdSendTime;	// Next time to send usercmds
+	int nextSnapshotSendTime;	// Next time to send a snapshot
+
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
 
@@ -130,6 +133,8 @@ private:
 	void	ProcessNextSnapshot();
 	void	InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);*/
 	void	ResetNetworkingState();
+
+	void SendSnapshots();
 
 	// Meant to be used like:
 	// while ( waiting ) { BusyWait(); }

@@ -1,11 +1,14 @@
 #include "idlib/precompiled.h"
 
 #include "sys_session_local.h"
+#include <ConnectionRequest.pb.h>
 
 idCVar net_useGameStateLobby("net_useGameStateLobby", "0", CVAR_BOOL, "");
 
 idCVar net_port("net_port", "27015", CVAR_INTEGER, "host port number"); // Port to host when using dedicated servers, port to broadcast on when looking for a dedicated server to connect to
 idCVar net_headlessServer("net_headlessServer", "0", CVAR_BOOL, "toggle to automatically host a game and allow peer[0] to control menus");
+
+static const size_t MAX_BUF_SIZE = 1024;
 
 const std::string idSessionLocal::stateToString[static_cast<int>(state_t::NUM_STATES)] = {
 	ASSERT_ENUM_STRING(state_t::STATE_PRESS_START, 0),
@@ -66,6 +69,8 @@ void idSessionLocal::FinishDisconnect() noexcept {
 	}*/
 }
 
+idCVar net_connectTimeoutInSeconds("net_connectTimeoutInSeconds", "15", CVAR_INTEGER, "timeout (in seconds) while connecting");
+
 /*
 ========================
 idSessionLocal::CreatePartyLobby
@@ -118,6 +123,35 @@ void idSessionLocal::CreateMatch(const idMatchParameters& p) {
 
 	// Wait for it to complete
 	SetState(state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY);
+}
+
+/*
+========================
+idSessionLocal::FindOrCreateMatch
+========================
+*/
+void idSessionLocal::FindOrCreateMatch(const idMatchParameters& p) {
+	NET_VERBOSE_PRINT("NET: FindOrCreateMatch\n");
+
+	/*if ((p.matchFlags & MATCH_PARTY_INVITE_PLACEHOLDER) && !GetPartyLobby().IsLobbyActive()) {
+		NET_VERBOSE_PRINT("NET: FindOrCreateMatch MATCH_PARTY_INVITE_PLACEHOLDER\n");
+		CreatePartyLobby(p);
+		connectType = CONNECT_FIND_OR_CREATE;
+		return;
+	}*/
+
+	// Shutdown any possible game lobby
+	GetGameLobby().Shutdown();
+	GetGameStateLobby().Shutdown();
+
+	// Start searching for a game
+	GetGameLobby().StartFinding(p);
+
+	//connectType = connectType_t::CONNECT_FIND_OR_CREATE;
+	connectTime = Sys_Milliseconds();
+
+	// Wait for searching to complete
+	SetState(state_t::STATE_FIND_OR_CREATE_MATCH);
 }
 
 /*
@@ -325,6 +359,119 @@ bool idSessionLocal::DetectDisconnectFromService(bool cancelAndShowMsg) {
 
 /*
 ========================
+idSessionLocal::HandleConnectionFailed
+Called anytime a connection fails, and does the right thing.
+========================
+*/
+void idSessionLocal::HandleConnectionFailed(idLobby& lobby, bool wasFull) {
+	assert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
+		|| localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE);
+	//assert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
+
+	MoveToMainMenu();
+}
+
+/*
+========================
+idSessionLocal::HandleConnectAndMoveToLobby
+Called from State_Connect_And_Move_To_Party/State_Connect_And_Move_To_Game
+========================
+*/
+bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
+	assert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
+		|| localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE);
+	//assert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
+
+	if (lobby.GetState() == idLobby::lobbyState_t::STATE_FAILED) {
+		// If we get here, we were trying to connect to a lobby (from state State_Connect_And_Move_To_Party/State_Connect_And_Move_To_Game)
+		HandleConnectionFailed(lobby, false);
+		return true;
+	}
+
+	if (lobby.GetState() != idLobby::lobbyState_t::STATE_IDLE) {
+		return HandlePackets();	// Valid but busy
+	}
+
+	//
+	// Past this point, we've connected to the lobby
+	//
+
+	// If we are connecting to a game lobby, see if we need to keep waiting as either a host or peer while we're confirming all party members made it
+	if (lobby.lobbyType == idLobby::lobbyType_t::TYPE_GAME) {
+		if (GetPartyLobby().IsHost()) {
+
+			const int timeoutMs = net_connectTimeoutInSeconds.GetInteger() * 1000;
+
+			if (timeoutMs != 0 && Sys_Milliseconds() - lobby.helloStartTime > timeoutMs) {
+				// Took too long, move to next result, or create a game instead
+				HandleConnectionFailed(lobby, false);
+				return true;
+			}
+
+			int numUsersIn = 0;
+
+			for (int i = 0; i < GetPartyLobby().GetNumLobbyUsers(); i++) {
+				bool foundUser = false;
+
+				lobbyUser_t* partyUser = GetPartyLobby().GetLobbyUser(i);
+
+				/*for (int j = 0; j < GetGameLobby().GetNumLobbyUsers(); j++) {
+					lobbyUser_t* gameUser = GetGameLobby().GetLobbyUser(j);
+
+					if (GetGameLobby().IsSessionUserLocal(gameUser) || gameUser->address.Compare(partyUser->address, true)) {
+						numUsersIn++;
+						foundUser = true;
+						break;
+					}
+				}
+
+				assert(!GetPartyLobby().IsSessionUserIndexLocal(i) || foundUser);*/
+			}
+
+			if (numUsersIn != GetPartyLobby().GetNumLobbyUsers()) {
+				return HandlePackets();		// All users not in, keep waiting until all user make it, or we time out
+			}
+
+			NET_VERBOSE_PRINT("NET: All party members made it into the game lobby.\n");
+
+			// Let all the party members know everyone made it, and it's ok to stay at this server
+			for (int i = 0; i < GetPartyLobby().peers.size(); i++) {
+				if (GetPartyLobby().peers[i].IsConnected()) {
+					//GetPartyLobby().QueueReliableMessage(i, idLobby::RELIABLE_PARTY_CONNECT_OK);
+				}
+			}
+		}
+		else {
+			if (!verify(lobby.host != -1)) {
+				MoveToMainMenu();
+				//connectType = CONNECT_NONE;
+				return false;
+			}
+		}
+	}
+
+	// Success
+	switch (lobby.lobbyType) {
+	case idLobby::lobbyType_t::TYPE_PARTY:
+		SetState(state_t::STATE_PARTY_LOBBY_PEER);
+		break;
+	case idLobby::lobbyType_t::TYPE_GAME:
+		SetState(state_t::STATE_GAME_LOBBY_PEER);
+		break;
+	case idLobby::lobbyType_t::TYPE_GAME_STATE:
+		// As a host of the game lobby, it's our duty to notify our members to also join this game state lobby
+		GetGameLobby().SendMembersToLobby(GetGameStateLobby(), false);
+		SetState(state_t::STATE_GAME_STATE_LOBBY_PEER);
+		break;
+	}
+
+	//connectType = CONNECT_NONE;
+
+	return false;
+}
+
+/*
+========================
 idSessionLocal::State_Party_Lobby_Host
 ========================
 */
@@ -385,6 +532,49 @@ bool idSessionLocal::State_Create_And_Move_To_Game_Lobby() {
 	}
 
 	return false;
+}
+
+/*
+========================
+idSessionLocal::State_Find_Or_Create_Match
+========================
+*/
+bool idSessionLocal::State_Find_Or_Create_Match() {
+	//assert(connectType == CONNECT_FIND_OR_CREATE);
+
+	if (GetGameLobby().GetState() == idLobby::lobbyState_t::STATE_FAILED) {
+		// Failed to find any games.  Create one instead (we're assuming this always gets called from FindOrCreateMatch
+		CreateMatch(GetGameLobby().parms);
+		return true;
+	}
+
+	if (DetectDisconnectFromService(true)) {
+		return false;
+	}
+
+	if (GetGameLobby().GetState() != idLobby::lobbyState_t::STATE_IDLE) {
+		return HandlePackets();		// Valid but busy
+	}
+
+	// Done searching, connect to the first search result
+	if (!GetGameLobby().ConnectToNextSearchResult()) {
+		// Failed to find any games.  Create one instead (we're assuming this always gets called from FindOrCreateMatch
+		CreateMatch(GetGameLobby().parms);
+		return true;
+	}
+
+	SetState(state_t::STATE_CONNECT_AND_MOVE_TO_GAME);
+
+	return true;
+}
+
+/*
+========================
+idSessionLocal::State_Connect_And_Move_To_Game
+========================
+*/
+bool idSessionLocal::State_Connect_And_Move_To_Game() {
+	return HandleConnectAndMoveToLobby(GetGameLobby());
 }
 
 /*
@@ -468,6 +658,8 @@ bool idSessionLocal::State_Loading() {
 	SetState(state_t::STATE_INGAME);		// NOTE - Only the host is in-game at this point, all peers will start becoming in-game when they receive their first full snap
 	return true;
 }
+
+idCVar net_verbose("net_verbose", "0", CVAR_BOOL, "Print a bunch of message about the network session");
 
 /*
 ========================
@@ -749,21 +941,21 @@ bool idSessionLocal::HandleState() {
 	case state_t::STATE_PRESS_START:							return false;
 	case state_t::STATE_IDLE:								HandlePackets(); return false;		// Call handle packets, since packets from old sessions could still be in flight, which need to be emptied
 	case state_t::STATE_PARTY_LOBBY_HOST:					return State_Party_Lobby_Host();
-	//case state_t::STATE_PARTY_LOBBY_PEER:					return State_Party_Lobby_Peer();
+		//case state_t::STATE_PARTY_LOBBY_PEER:					return State_Party_Lobby_Peer();
 	case state_t::STATE_GAME_LOBBY_HOST:						return State_Game_Lobby_Host();
-	/*case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
-	case state_t::STATE_GAME_STATE_LOBBY_HOST:				return State_Game_State_Lobby_Host();
-	case state_t::STATE_GAME_STATE_LOBBY_PEER:				return State_Game_State_Lobby_Peer();*/
+		/*case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
+		case state_t::STATE_GAME_STATE_LOBBY_HOST:				return State_Game_State_Lobby_Host();
+		case state_t::STATE_GAME_STATE_LOBBY_PEER:				return State_Game_State_Lobby_Peer();*/
 	case state_t::STATE_LOADING:								return State_Loading();
 	case state_t::STATE_INGAME:								return State_InGame();
 	case state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY:		return State_Create_And_Move_To_Party_Lobby();
 	case state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY:		return State_Create_And_Move_To_Game_Lobby();
-	/*case state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY:	return State_Create_And_Move_To_Game_State_Lobby();
-	case state_t::STATE_FIND_OR_CREATE_MATCH:				return State_Find_Or_Create_Match();
-	case state_t::STATE_CONNECT_AND_MOVE_TO_PARTY:			return State_Connect_And_Move_To_Party();
-	case state_t::STATE_CONNECT_AND_MOVE_TO_GAME:			return State_Connect_And_Move_To_Game();
-	case state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE:		return State_Connect_And_Move_To_Game_State();
-	case state_t::STATE_BUSY:								return State_Busy();*/
+		//case state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY:	return State_Create_And_Move_To_Game_State_Lobby();
+		case state_t::STATE_FIND_OR_CREATE_MATCH:				return State_Find_Or_Create_Match();
+		//case state_t::STATE_CONNECT_AND_MOVE_TO_PARTY:			return State_Connect_And_Move_To_Party();
+		case state_t::STATE_CONNECT_AND_MOVE_TO_GAME:			return State_Connect_And_Move_To_Game();
+		/*case state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE:		return State_Connect_And_Move_To_Game_State();
+		case state_t::STATE_BUSY:								return State_Busy();*/
 	default:
 		idLib::Error("HandleState:  Unknown state in idSessionLocal: %s", stateToString[static_cast<int>(localState)].c_str());
 	}
@@ -801,6 +993,31 @@ idSessionLocal::sessionState_t idSessionLocal::GetState() const {
 	};
 
 	return sessionState_t::MAX_STATES;
+}
+
+/*
+========================
+idSessionLocal::SendSnapshot
+========================
+*/
+void idSessionLocal::SendSnapshot(idSnapShot& ss) {
+	for (int p = 0; p < GetActingGameStateLobby().peers.size(); p++) {
+		idLobby::peer_t& peer = GetActingGameStateLobby().peers[p];
+
+		if (!peer.IsConnected()) {
+			continue;
+		}
+
+		if (!peer.loaded) {
+			continue;
+		}
+
+		/*if (peer.pauseSnapshots) {
+			continue;
+		}*/
+
+		GetActingGameStateLobby().SendSnapshotToPeer(ss, p);
+	}
 }
 
 /*
@@ -853,6 +1070,46 @@ idSessionLocal::HandlePackets
 ========================
 */
 bool idSessionLocal::HandlePackets() {
+	lobbyAddress_t remoteAddress;
+	int recvSize = 0;
+
+	boost::asio::streambuf packetBuffer;
+	boost::asio::streambuf::mutable_buffers_type bufs = packetBuffer.prepare(MAX_BUF_SIZE);
+
+	while (ReadRawPacket(remoteAddress, bufs, recvSize, MAX_BUF_SIZE) && recvSize > 0) {
+		idBitMsg fragMsg;
+		fragMsg.InitRead(packetBuffer, recvSize);
+
+		// Peek at the session ID
+		idPacketProcessor::sessionId_t sessionID = idPacketProcessor::GetSessionID(fragMsg);
+
+		// Make sure it's valid
+		if (sessionID == idPacketProcessor::SESSION_ID_INVALID) {
+			idLib::Printf("NET: Invalid sessionID %s.\n", remoteAddress.ToString().c_str());
+			continue;
+		}
+
+		//
+		// Distribute the packet to the proper lobby
+		//
+
+		const int maskedType = sessionID & idPacketProcessor::LOBBY_TYPE_MASK;
+
+		if (!verify(maskedType > 0)) {
+			continue;
+		}
+
+		idLobby::lobbyType_t lobbyType = (idLobby::lobbyType_t)(maskedType - 1);
+
+		switch (lobbyType) {
+			case idLobby::lobbyType_t::TYPE_GAME:
+				GetGameLobby().HandlePacket(remoteAddress, fragMsg, sessionID);
+				break;
+			default:
+				assert(0);
+		}
+	}
+
 	return false;
 }
 
@@ -903,8 +1160,73 @@ idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase() {
 	return stubLobby;		// So we can return at least something
 }
 
-idCVar net_verbose("net_verbose", "0", CVAR_BOOL, "Print a bunch of message about the network session");
-idCVar net_verboseResource("net_verboseResource", "0", CVAR_BOOL, "Prints a bunch of message about network resources");
+/*
+========================
+idSessionLocal::SendRawPacket
+========================
+*/
+void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated) {
+	const int now = Sys_Milliseconds();
+
+	// short path
+	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
+	GetPort(dedicated).SendRawPacket(to, data, size);
+}
+
+void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool dedicated) {
+	const int now = Sys_Milliseconds();
+
+	// short path
+	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
+	GetPort(dedicated).SendRawPacket(to, buf);
+}
+
+/*
+========================
+idSessionLocal::ReadRawPacket
+========================
+*/
+bool idSessionLocal::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize) {
+	const int now = Sys_Milliseconds();
+
+	for (int i = 0; i < 2; i++) {
+		if (GetPort(false).ReadRawPacket(from, bufs, size, maxSize)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/*
+========================
+lobbyAddress_t::lobbyAddress_t
+========================
+*/
+lobbyAddress_t::lobbyAddress_t() {
+	memset(&netAddr, 0, sizeof(netAddr));
+	netAddr.type = netadrtype_t::NA_BAD;
+}
+
+/*
+========================
+lobbyAddress_t::ToString
+========================
+*/
+std::string lobbyAddress_t::ToString() const {
+	std::ostringstream oss;
+	oss << netAddr.address << ":" << netAddr.port;
+	return oss.str();
+}
+
+/*
+========================
+lobbyAddress_t::Compare
+========================
+*/
+bool lobbyAddress_t::Compare(const lobbyAddress_t& addr, bool ignoreSessionCheck) const {
+	return Sys_CompareNetAdrBase(netAddr, addr.netAddr);
+}
 
 /*
 ========================
@@ -913,6 +1235,30 @@ idNetSessionPort::InitPort
 */
 bool idNetSessionPort::InitPort(int portNumber, bool useBackend) {
 	return UDP.InitForPort(portNumber);
+}
+
+/*
+========================
+idNetSessionPort::ReadRawPacket
+========================
+*/
+bool idNetSessionPort::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize) {
+	bool result = UDP.GetPacket(from.netAddr, bufs, size, maxSize);
+
+	return result;
+}
+
+/*
+========================
+idNetSessionPort::SendRawPacket
+========================
+*/
+void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, const void* data, int size) {
+	UDP.SendPacket(to.netAddr, data, size);
+}
+
+void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf) {
+	UDP.SendPacket(to.netAddr, buf);
 }
 
 /*

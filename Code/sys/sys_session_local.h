@@ -51,6 +51,7 @@ public:
 
 	// Lobby management
 	void CreatePartyLobby(const idMatchParameters& parms_) override;
+	void FindOrCreateMatch(const idMatchParameters& parms) override;
 	void CreateMatch(const idMatchParameters& parms_) override;
 
 	void StartMatch() noexcept override;
@@ -66,6 +67,9 @@ public:
 	void Pump() override;
 
 	sessionState_t GetState() const override;
+
+	//void SendUsercmds(idBitMsg& msg);
+	void SendSnapshot(idSnapShot& ss) override;
 
 	void UpdateSignInManager() override;
 	void RegisterLocalUser() noexcept override { localUserRegistered = true; }
@@ -131,12 +135,20 @@ protected:
 	bool State_Game_State_Lobby_Peer();*/
 	bool State_Loading();
 	bool State_InGame();
-	//bool State_Find_Or_Create_Match();
+	bool State_Find_Or_Create_Match();
 	bool State_Create_And_Move_To_Party_Lobby();
 	bool State_Create_And_Move_To_Game_Lobby();
 
+	bool State_Connect_And_Move_To_Game();
+
+	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated);
+	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf , bool dedicated);
+	bool ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
+
 	virtual idNetSessionPort& GetPort(bool dedicated = false) = 0;
 	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
+	virtual idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
+	virtual idLobbyBackend* JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
 	virtual void DestroyLobbyBackend(idLobbyBackend* lobby) = 0;
 	virtual void PumpLobbies() = 0;
 
@@ -145,6 +157,8 @@ protected:
 	void MoveToMainMenu() noexcept; // End all session (async), and return to IDLE state
 	bool WaitOnLobbyCreate(idLobby& lobby);
 	bool DetectDisconnectFromService(bool cancelAndShowMsg);
+	void HandleConnectionFailed(idLobby& lobby, bool wasFull);
+	bool HandleConnectAndMoveToLobby(idLobby& lobby);
 
 	void ValidateLobbies();
 	void ValidateLobby(idLobby& lobby);
@@ -168,11 +182,20 @@ class idSessionLocalCallbacks : public idSessionCallbacks {
 public:
 	idSessionLocalCallbacks(idSessionLocal* sessionLocal_) { sessionLocal = sessionLocal_; }
 
-	virtual idLobby& GetPartyLobby() { return sessionLocal->GetPartyLobby(); }
-	virtual idLobby& GetGameLobby() { return sessionLocal->GetGameLobby(); }
-	virtual idLobby& GetActingGameStateLobby() { return sessionLocal->GetActingGameStateLobby(); }
+	idLobby& GetPartyLobby() override { return sessionLocal->GetPartyLobby(); }
+	idLobby& GetGameLobby() override { return sessionLocal->GetGameLobby(); }
+	idLobby& GetActingGameStateLobby() override { return sessionLocal->GetActingGameStateLobby(); }
+
+	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) override { sessionLocal->SendRawPacket(to, data, size, useDirectPort); }
+	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool useDirectPort) override {
+		sessionLocal->SendRawPacket(to, buf, useDirectPort);
+	}
+
+	idSession::sessionState_t GetState() const override { return sessionLocal->GetState(); }
 
 	idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) override;
 	void DestroyLobbyBackend(idLobbyBackend* lobby) override;
 
 	idSessionLocal* sessionLocal;

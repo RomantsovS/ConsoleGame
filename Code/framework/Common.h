@@ -10,6 +10,16 @@ inline int FRAME_TO_MSEC(long long frame) noexcept {
 	return (int)((frame * com_engineHz_numerator) / com_engineHz_denominator);
 }
 
+// Rounds UP to the nearest frame
+inline int MSEC_TO_FRAME_CEIL(int msec) {
+	return (int)((((int64)msec * com_engineHz_denominator) + (com_engineHz_numerator - 1)) / com_engineHz_numerator);
+}
+
+// Aligns msec so it starts on a frame bondary
+inline int MSEC_ALIGN_TO_FRAME(int msec) {
+	return FRAME_TO_MSEC(MSEC_TO_FRAME_CEIL(msec));
+}
+
 class idGame;
 class idRenderWorld;
 class idSession;

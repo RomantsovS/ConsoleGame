@@ -91,6 +91,7 @@ public:
 	// Lobby management 
 	//=====================================================================================================
 	virtual void CreatePartyLobby(const idMatchParameters& parms_) = 0;
+	virtual void FindOrCreateMatch(const idMatchParameters& parms_) = 0;
 	virtual void CreateMatch(const idMatchParameters& parms_) = 0;
 	virtual void StartMatch() = 0;
 	virtual void EndMatch(bool premature = false) = 0;	// Meant for host to end match gracefully, go back to lobby, tally scores, etc
@@ -118,6 +119,9 @@ public:
 	virtual idLobbyBase& GetActivePlatformLobbyBase() = 0;
 
 	virtual sessionState_t GetState() const = 0;
+
+	//virtual void SendUsercmds(idBitMsg& msg) = 0;
+	virtual void SendSnapshot(class idSnapShot& ss) = 0;
 
 	virtual void UpdateSignInManager() = 0;
 

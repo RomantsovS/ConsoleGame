@@ -75,6 +75,7 @@ extern unsigned short colorWhite;
 
 // misc
 #include "Dict.h"
+#include "BitMsg.h"
 #include "MapFile.h"
 #include "Thread.h"
 

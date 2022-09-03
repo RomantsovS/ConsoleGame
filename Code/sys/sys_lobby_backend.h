@@ -9,14 +9,34 @@ extern idCVar net_verbose;
 
 class lobbyAddress_t {
 public:
-	
+	lobbyAddress_t();
+
+	std::string ToString() const;
+	bool Compare(const lobbyAddress_t& addr, bool ignoreSessionCheck = false) const;
+
+	// IP address
+	netadr_t netAddr;
+};
+
+struct lobbyConnectInfo_t {
+public:
+	/*void WriteToMsg(idBitMsg& msg) const {
+		msg.WriteNetadr(netAddr);
+	}
+	void ReadFromMsg(idBitMsg& msg) {
+		msg.ReadNetadr(&netAddr);
+	}*/
+	lobbyConnectInfo_t() : netAddr() { }
+
+	netadr_t netAddr;
 };
 
 class idNetSessionPort {
 public:
 	bool InitPort(int portNumber, bool useBackend);
-	//bool ReadRawPacket(lobbyAddress_t& from, void* data, int& size, int maxSize);
-	//void SendRawPacket(const lobbyAddress_t& to, const void* data, int size);
+	bool ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
+	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size);
+	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf);
 
 	bool IsOpen();
 	void Close();
@@ -26,6 +46,13 @@ private:
 };
 
 struct lobbyUser_t {
+	lobbyUser_t() {
+		peerIndex = -1;
+	}
+
+	// Common variables
+	int peerIndex; // peer number on host
+	lobbyAddress_t address;
 };
 
 /*
@@ -76,7 +103,13 @@ public:
 	idLobbyBackend(lobbyBackendType_t lobbyType) : type(lobbyType), isHost(false), isLocal(false) {}
 
 	virtual void StartHosting(const idMatchParameters& p, float skillLevel, lobbyBackendType_t type) = 0;
+	virtual void StartFinding(const idMatchParameters& p, int numPartyUsers, float skillLevel) = 0;
+	virtual void JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo) = 0;
+	virtual void GetSearchResults(std::vector<lobbyConnectInfo_t>& searchResults) = 0;
+	virtual lobbyConnectInfo_t GetConnectInfo() = 0;
 	virtual void Shutdown() = 0;
+	virtual void GetOwnerAddress(lobbyAddress_t& outAddr) = 0;
+	virtual bool IsHost() { return isHost; }
 	virtual void SetInGame(bool value) {}
 
 	virtual lobbyBackendState_t	GetState() = 0;
@@ -89,6 +122,14 @@ protected:
 	idMatchParameters parms;
 	bool isLocal; // True if this lobby is restricted to local play only (won't need and can't connect to online lobbies)
 	bool isHost; // True if we created this lobby
+};
+
+class idLobbyToSessionCB {
+public:
+	virtual class idLobbyBackend* GetLobbyBackend(idLobbyBackend::lobbyBackendType_t type) const = 0;
+	virtual bool CanJoinLocalHost() const = 0;
+
+	// Ugh, hate having to ifdef these, but we're doing some fairly platform specific callbacks
 };
 
 #endif

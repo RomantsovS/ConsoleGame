@@ -325,6 +325,14 @@ void idCommonLocal::Frame() {
 
 		renderSystem->RenderCommandBuffers();
 
+		// Send local usermds to the server.
+		// This happens after the game frame has run so that prediction data is up to date.
+		//SendUsercmds(Game()->GetLocalClientNum());
+
+		// Now that we have an updated game frame, we can send out new snapshots to our clients
+		session->Pump(); // Pump to get updated usercmds to relay
+		SendSnapshots();
+
 		// process the game return for map changes, etc
 		ProcessGameReturn(ret);
 	}

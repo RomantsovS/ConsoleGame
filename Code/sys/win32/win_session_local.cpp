@@ -12,6 +12,7 @@ idSessionLocalWin::idSessionLocalWin
 ========================
 */
 class idSessionLocalWin : public idSessionLocal {
+friend class idLobbyToSessionCBLocal;
 public:
 	// idSessionLocal interface
 	void Initialize() noexcept override;
@@ -19,6 +20,8 @@ public:
 
 	idNetSessionPort& GetPort(bool dedicated = false) override;
 	idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) override;
 
 	virtual void PumpLobbies();
 private:
@@ -30,11 +33,30 @@ private:
 	std::array<std::unique_ptr<idLobbyBackend>, 3> lobbyBackends;
 
 	idNetSessionPort port;
-	bool canJoinLocalHost;
+	bool canJoinLocalHost = false;
 };
 
 idSessionLocalWin sessionLocalWin;
 idSession* session = &sessionLocalWin;
+
+/*
+========================
+idLobbyToSessionCBLocal
+========================
+*/
+class idLobbyToSessionCBLocal : public idLobbyToSessionCB {
+public:
+	idLobbyToSessionCBLocal(idSessionLocalWin* sessionLocalWin_) : sessionLocalWin(sessionLocalWin_) { }
+
+	bool CanJoinLocalHost() const override { sessionLocalWin->EnsurePort(); return sessionLocalWin->canJoinLocalHost; }
+	idLobbyBackend* GetLobbyBackend(idLobbyBackend::lobbyBackendType_t type) const override { return sessionLocalWin->lobbyBackends[type].get(); }
+
+private:
+	idSessionLocalWin* sessionLocalWin;
+};
+
+idLobbyToSessionCBLocal lobbyToSessionCBLocal(&sessionLocalWin);
+idLobbyToSessionCB* lobbyToSessionCB = &lobbyToSessionCBLocal;
 
 /*
 ========================
@@ -105,6 +127,28 @@ idSessionLocalWin::CreateLobbyBackend
 idLobbyBackend* idSessionLocalWin::CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) {
 	idLobbyBackend* lobbyBackend = CreateLobbyInternal(lobbyType);
 	lobbyBackend->StartHosting(p, skillLevel, lobbyType);
+	return lobbyBackend;
+}
+
+/*
+========================
+idSessionLocalWin::FindLobbyBackend
+========================
+*/
+idLobbyBackend* idSessionLocalWin::FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) {
+	idLobbyBackend* lobbyBackend = CreateLobbyInternal(lobbyType);
+	lobbyBackend->StartFinding(p, numPartyUsers, skillLevel);
+	return lobbyBackend;
+}
+
+/*
+========================
+idSessionLocalWin::JoinFromConnectInfo
+========================
+*/
+idLobbyBackend* idSessionLocalWin::JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) {
+	idLobbyBackend* lobbyBackend = CreateLobbyInternal(lobbyType);
+	lobbyBackend->JoinFromConnectInfo(connectInfo);
 	return lobbyBackend;
 }
 

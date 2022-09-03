@@ -13,6 +13,24 @@ idLobbyBackend* idSessionLocalCallbacks::CreateLobbyBackend(const idMatchParamet
 
 /*
 ========================
+idSessionLocalCallbacks::FindLobbyBackend
+========================
+*/
+idLobbyBackend* idSessionLocalCallbacks::FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) {
+	return sessionLocal->FindLobbyBackend(p, numPartyUsers, skillLevel, lobbyType);
+}
+
+/*
+========================
+idSessionLocalCallbacks::JoinFromConnectInfo
+========================
+*/
+idLobbyBackend* idSessionLocalCallbacks::JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) {
+	return sessionLocal->JoinFromConnectInfo(connectInfo, lobbyType);
+}
+
+/*
+========================
 idSessionLocalCallbacks::DestroyLobbyBackend
 ========================
 */

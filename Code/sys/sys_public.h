@@ -246,7 +246,7 @@ enum class netadrtype_t {
 };
 
 struct netadr_t {
-	netadrtype_t	type;
+	netadrtype_t type;
 	boost::asio::ip::address address;
 	boost::asio::ip::port_type port;
 };
@@ -272,12 +272,13 @@ public:
 	//uint32_t	GetUIntAdr() const { return bound_to.address; }
 	void		Close();
 
-	bool		GetPacket(netadr_t& from, void* data, int& size, int maxSize);
+	bool		GetPacket(netadr_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
 
 	bool		GetPacketBlocking(netadr_t& from, void* data, int& size, int maxSize,
 		int timeout);
 
 	void		SendPacket(const netadr_t to, const void* data, int size);
+	void		SendPacket(const netadr_t to, boost::asio::streambuf& buf);
 
 	int			packetsRead;
 	int			bytesRead;
@@ -289,8 +290,10 @@ public:
 
 private:
 	netadr_t bound_to;
-	std::unique_ptr<boost::asio::io_context> io_context;
+	boost::asio::io_context io_context;
 	std::unique_ptr<boost::asio::ip::udp::socket> socket;
 };
+
+bool Sys_CompareNetAdrBase(const netadr_t a, const netadr_t b);
 
 #endif

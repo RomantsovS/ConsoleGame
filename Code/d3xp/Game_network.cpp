@@ -13,3 +13,13 @@ void idGameLocal::SyncPlayersWithLobbyUsers(bool initial) {
 	// spawn the player
 	SpawnPlayer(0);
 }
+
+/*
+================
+idGameLocal::ServerWriteSnapshot
+
+  Write a snapshot of the current game state
+================
+*/
+void idGameLocal::ServerWriteSnapshot(idSnapShot& ss) {
+}

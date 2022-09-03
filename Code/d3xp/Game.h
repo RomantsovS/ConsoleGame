@@ -35,6 +35,9 @@ public:
 	// Makes rendering and sound system calls to display for a given clientNum.
 	virtual bool Draw(int clientNum) = 0;
 
+	// Writes a snapshot of the server game state.
+	virtual void ServerWriteSnapshot(idSnapShot& ss) = 0;
+
 	virtual bool IsInGame() const = 0;
 
 	virtual int GetLocalClientNum() const = 0;

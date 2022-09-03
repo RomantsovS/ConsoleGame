@@ -11,6 +11,10 @@
 #endif
 #endif
 
+#ifdef _WIN32
+#include <SDKDDKVer.h>
+#endif
+
 #include <string>
 #include <memory>
 #include <vector>
@@ -77,6 +81,10 @@
 
 // game
 #include "../d3xp/Game.h"
+
+// Session / Network
+#include "../sys/Snapshot.h"
+#include "../sys/PacketProcessor.h"
 
 #include "../sys/sys_session.h"
 

@@ -26,6 +26,9 @@ idCommonLocal::idCommonLocal() {
 	gameFrame = 0;
 	gameTimeResidual = 0;
 
+	nextSnapshotSendTime = 0;
+	//nextUsercmdSendTime = 0;
+
 	isCommonExists = true;
 }
 
