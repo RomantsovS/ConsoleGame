@@ -1165,13 +1165,13 @@ idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase() {
 idSessionLocal::SendRawPacket
 ========================
 */
-void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated) {
-	const int now = Sys_Milliseconds();
-
-	// short path
-	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
-	GetPort(dedicated).SendRawPacket(to, data, size);
-}
+//void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated) {
+//	const int now = Sys_Milliseconds();
+//
+//	// short path
+//	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
+//	GetPort(dedicated).SendRawPacket(to, data, size);
+//}
 
 void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool dedicated) {
 	const int now = Sys_Milliseconds();
@@ -1196,6 +1196,36 @@ bool idSessionLocal::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf:
 	}
 
 	return false;
+}
+
+/*
+========================
+idSessionLocal::GoodbyeFromHost
+========================
+*/
+void idSessionLocal::GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) {
+	if (!verify(static_cast<int>(localState) > static_cast<int>(state_t::STATE_IDLE))) {
+		idLib::Printf("NET: Got disconnected from host %s on session %s when we were not in a lobby or game.\n", remoteAddress.ToString().c_str(),
+			lobby.GetLobbyName().c_str());
+		MoveToMainMenu();
+		return;		// Ignore if we are not past the main menu
+	}
+
+	// Goodbye from host.  See if we were connecting vs connected
+	if ((localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME)
+		&& lobby.peers[peerNum].GetConnectionState() == idLobby::connectionState_t::CONNECTION_CONNECTING) {
+		// We were denied a connection attempt
+		idLib::Printf("NET: Denied connection attempt from host %s on session %s. MsgType %i.\n", remoteAddress.ToString().c_str(), lobby.GetLobbyName().c_str(), msgType);
+		// This will try to move to the next connection if one exists, otherwise will create a match
+		HandleConnectionFailed(lobby, msgType == idLobby::OOB_GOODBYE_FULL);
+	}
+	else {
+		// We were disconnected from a server we were previously connected to
+		idLib::Printf("NET: Disconnected from host %s on session %s. MsgType %i.\n", remoteAddress.ToString().c_str(), lobby.GetLobbyName().c_str(), msgType);
+
+		// Host left, so pick a new host (possibly even us) for this lobby
+		//lobby.PickNewHost();
+	}
 }
 
 /*
@@ -1253,12 +1283,13 @@ bool idNetSessionPort::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambu
 idNetSessionPort::SendRawPacket
 ========================
 */
-void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, const void* data, int size) {
-	UDP.SendPacket(to.netAddr, data, size);
-}
+//void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, const void* data, int size) {
+//	UDP.SendPacket(to.netAddr, data, size);
+//}
 
 void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf) {
-	UDP.SendPacket(to.netAddr, buf);
+	auto bufdata = buf.data();
+	UDP.SendPacket(to.netAddr, bufdata);
 }
 
 /*

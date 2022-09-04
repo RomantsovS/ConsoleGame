@@ -163,14 +163,15 @@ public:
 	void SendGoodbye(const lobbyAddress_t& remoteAddress, bool wasFull = false);
 	void QueueReliableMessage(int p, char type, const char* data, int dataLen);
 
-	void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
-	void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type, const std::byte* data, int dataLen);
-	void SendConnectionLess(const lobbyAddress_t& remoteAddress, boost::asio::streambuf& buf);
+	//void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
+	//void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type, const std::byte* data, int dataLen);
+	void SendConnectionLess(const lobbyAddress_t& remoteAddress, google::protobuf::Message* proto_msg);
 	void SendConnectionRequest();
 	void ConnectTo(const lobbyConnectInfo_t& connectInfo, bool fromInvite);
+	void HandleGoodbyeFromPeer(int peerNum, lobbyAddress_t& remoteAddress, int msgType);
 	void HandleConnectionAttemptFailed();
 	bool ConnectToNextSearchResult();
-	int HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& peerAddress, int peerNum);
+	int HandleInitialPeerConnection(google::protobuf::Message* proto_msg, const lobbyAddress_t& peerAddress, int peerNum);
 	void InitStateLobbyHost();
 
 	void SendMembersToLobby(lobbyType_t destLobbyType, const lobbyConnectInfo_t& connectInfo, bool waitForOtherMembers);
@@ -261,8 +262,10 @@ public:
 	virtual idLobby& GetGameLobby() = 0;
 	virtual idLobby& GetActingGameStateLobby() = 0;
 
-	virtual	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) = 0;
+	//virtual	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) = 0;
 	virtual	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool useDirectPort) = 0;
+
+	virtual void GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) = 0;
 
 	virtual idSession::sessionState_t GetState() const = 0;
 

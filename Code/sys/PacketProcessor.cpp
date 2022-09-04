@@ -20,7 +20,7 @@ bool idPacketProcessor::ProcessConnectionlessOutgoing(idBitMsg& msg, int lobbyTy
 idPacketProcessor::ProcessConnectionlessIncoming
 ================================================
 */
-bool idPacketProcessor::ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out, int& userData) {
+bool idPacketProcessor::ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out) {
 
 	if (sessionID != SESSION_ID_CONNECTIONLESS_PARTY && sessionID != SESSION_ID_CONNECTIONLESS_GAME && sessionID != SESSION_ID_CONNECTIONLESS_GAME_STATE) {
 		// Not a connectionless msg (this can happen if a previously connected peer keeps sending data for whatever reason)

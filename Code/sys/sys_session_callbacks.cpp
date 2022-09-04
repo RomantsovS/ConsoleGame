@@ -4,6 +4,15 @@
 
 /*
 ========================
+idSessionLocalCallbacks::GoodbyeFromHost
+========================
+*/
+void idSessionLocalCallbacks::GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) {
+	sessionLocal->GoodbyeFromHost(lobby, peerNum, remoteAddress, msgType);
+}
+
+/*
+========================
 idSessionLocalCallbacks::CreateLobbyBackend
 ========================
 */

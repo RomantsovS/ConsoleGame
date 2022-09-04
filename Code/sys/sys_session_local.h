@@ -141,9 +141,11 @@ protected:
 
 	bool State_Connect_And_Move_To_Game();
 
-	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated);
+	//void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated);
 	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf , bool dedicated);
 	bool ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
+
+	void GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType);
 
 	virtual idNetSessionPort& GetPort(bool dedicated = false) = 0;
 	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
@@ -186,10 +188,12 @@ public:
 	idLobby& GetGameLobby() override { return sessionLocal->GetGameLobby(); }
 	idLobby& GetActingGameStateLobby() override { return sessionLocal->GetActingGameStateLobby(); }
 
-	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) override { sessionLocal->SendRawPacket(to, data, size, useDirectPort); }
+	//void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) override { sessionLocal->SendRawPacket(to, data, size, useDirectPort); }
 	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool useDirectPort) override {
 		sessionLocal->SendRawPacket(to, buf, useDirectPort);
 	}
+
+	void GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) override;
 
 	idSession::sessionState_t GetState() const override { return sessionLocal->GetState(); }
 

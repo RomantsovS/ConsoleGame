@@ -194,7 +194,6 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 
 	int peerNum = FindPeer(remoteAddress, sessionID);
 	int type = idPacketProcessor::RETURN_TYPE_NONE;
-	int	userData = 0;
 
 	if (peerNum >= 0) {
 		if (!peers[peerNum].IsActive()) {
@@ -203,7 +202,7 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 		}
 	}
 	else {
-		if (!idPacketProcessor::ProcessConnectionlessIncoming(fragMsg, sessionID, msg, userData)) {
+		if (!idPacketProcessor::ProcessConnectionlessIncoming(fragMsg, sessionID, msg)) {
 			idLib::Printf("ProcessConnectionlessIncoming FAILED from %s.\n", remoteAddress.ToString().c_str());
 			// Not a valid connectionless packet
 			return;
@@ -218,6 +217,11 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 
 	if (type == idPacketProcessor::RETURN_TYPE_NONE) {
 		// This packet is not necessarily invalid, it could be a start or middle of a fragmented packet that's not fully constructed.
+		return;
+	}
+
+	Serialize::ConnectionRequest proto_msg;
+	if (!fragMsg.ReadProtobufMessage(&proto_msg)) {
 		return;
 	}
 
@@ -236,12 +240,17 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 	}*/
 
 	if (type == idPacketProcessor::RETURN_TYPE_OOB) {
-		if (userData == OOB_HELLO) {
+		if (proto_msg.type() == OOB_HELLO) {
 			// Handle new peer connect request
-			peerNum = HandleInitialPeerConnection(fragMsg, remoteAddress, peerNum);
+			peerNum = HandleInitialPeerConnection(&proto_msg, remoteAddress, peerNum);
+			return;
+		}
+		else if (proto_msg.type() == OOB_GOODBYE || proto_msg.type() == OOB_GOODBYE_W_PARTY || proto_msg.type() == OOB_GOODBYE_FULL) {
+			HandleGoodbyeFromPeer(peerNum, remoteAddress, proto_msg.type());
 			return;
 		}
 	}
+
 }
 
 /*
@@ -610,8 +619,33 @@ void idLobby::SendGoodbye(const lobbyAddress_t& remoteAddress, bool wasFull) {
 
 	static const int NUM_REDUNDANT_GOODBYES = 1;
 
+	int msgType = OOB_GOODBYE;
+
+	if (wasFull) {
+		msgType = OOB_GOODBYE_FULL;
+	}
+
+	Serialize::ConnectionRequest proto_msg;
+	proto_msg.set_type(msgType);
+
+	boost::asio::streambuf buffer;
+	idBitMsg msg;
+	msg.InitWrite(buffer);
+
+	// Process the send
+	idPacketProcessor::ProcessConnectionlessOutgoing(msg, static_cast<int>(lobbyType));
+
+	size_t size = proto_msg.ByteSizeLong();
+
+	msg.WriteLongLong(size);
+
+	if (!msg.WriteProtobufMessage(&proto_msg, size))
+		return;
+
+	msg.Flush();
+
 	for (int i = 0; i < NUM_REDUNDANT_GOODBYES; i++) {
-		SendConnectionLess(remoteAddress, 0);
+		SendConnectionLess(remoteAddress, &proto_msg);
 	}
 }
 
@@ -690,24 +724,42 @@ void idLobby::QueueReliableMessage(int p, char type, const char* data, int dataL
 idLobby::SendConnectionLess
 ========================
 */
-void idLobby::SendConnectionLess(const lobbyAddress_t& remoteAddress, char type, const std::byte* data, int dataLen) {
-
-	const bool useDirectPort = (lobbyType == lobbyType_t::TYPE_GAME_STATE);
-
-	// Send it
-	sessionCB->SendRawPacket(remoteAddress, data, dataLen, useDirectPort);
-}
+//void idLobby::SendConnectionLess(const lobbyAddress_t& remoteAddress, char type, const std::byte* data, int dataLen) {
+//
+//	const bool useDirectPort = (lobbyType == lobbyType_t::TYPE_GAME_STATE);
+//
+//	// Send it
+//	sessionCB->SendRawPacket(remoteAddress, data, dataLen, useDirectPort);
+//}
 
 /*
 ========================
 idLobby::SendConnectionLess
 ========================
 */
-void idLobby::SendConnectionLess(const lobbyAddress_t& remoteAddress, boost::asio::streambuf& buf) {
+void idLobby::SendConnectionLess(const lobbyAddress_t& remoteAddress, google::protobuf::Message* proto_msg) {
+	boost::asio::streambuf buffer;
+	idBitMsg msg;
+	msg.InitWrite(buffer);
+
+	// Process the send
+	idPacketProcessor::ProcessConnectionlessOutgoing(msg, static_cast<int>(lobbyType));
+
+	size_t size = proto_msg->ByteSizeLong();
+
+	msg.WriteLongLong(size);
+
+	if (!msg.WriteProtobufMessage(proto_msg, size))
+		return;
+
+	msg.Flush();
+
+	size = buffer.size();
+
 	const bool useDirectPort = (lobbyType == lobbyType_t::TYPE_GAME_STATE);
 
 	// Send it
-	sessionCB->SendRawPacket(remoteAddress, buf, useDirectPort);
+	sessionCB->SendRawPacket(remoteAddress, buffer, useDirectPort);
 }
 
 /*
@@ -750,24 +802,7 @@ void idLobby::SendConnectionRequest() {
 	NET_VERBOSE_PRINT("NET: Sending hello to: %s (lobbyType: %s, session ID %i, attempt: %i)\n", hostAddress.ToString().c_str(), GetLobbyName().c_str(),
 		peers[host].sessionID, connectionAttempts);
 
-	boost::asio::streambuf buffer;
-	idBitMsg msg;
-	msg.InitWrite(buffer);
-
-	// Process the send
-	idPacketProcessor::ProcessConnectionlessOutgoing(msg, static_cast<int>(lobbyType));
-
-	size_t size = proto_msg.ByteSizeLong();
-
-	msg.WriteLongLong(size);
-
-	if (!msg.WriteProtobufMessage(&proto_msg, size))
-		return;
-	
-	msg.Flush();
-
-	size = buffer.size();
-	SendConnectionLess(hostAddress, buffer);
+	SendConnectionLess(hostAddress, &proto_msg);
 
 	connectionAttempts++;
 }
@@ -793,6 +828,34 @@ void idLobby::ConnectTo(const lobbyConnectInfo_t& connectInfo, bool fromInvite) 
 	lobbyBackend->GetOwnerAddress(hostAddress);
 
 	SetState(lobbyState_t::STATE_OBTAINING_ADDRESS);
+}
+
+/*
+========================
+idLobby::HandleGoodbyeFromPeer
+========================
+*/
+void idLobby::HandleGoodbyeFromPeer(int peerNum, lobbyAddress_t& remoteAddress, int msgType) {
+	if (peerNum < 0) {
+		NET_VERBOSE_PRINT("NET: Goodbye from unknown peer %s on session %s\n", remoteAddress.ToString().c_str(), GetLobbyName().c_str());
+		return;
+	}
+
+	if (peers[peerNum].GetConnectionState() == connectionState_t::CONNECTION_FREE) {
+		NET_VERBOSE_PRINT("NET: Goodbye from peer %s on session %s that is not connected\n", remoteAddress.ToString().c_str(), GetLobbyName().c_str());
+		return;
+	}
+
+	if (IsHost()) {
+		// Goodbye from peer, remove him
+		NET_VERBOSE_PRINT("NET: Goodbye from peer %s, on session %s\n", remoteAddress.ToString().c_str(), GetLobbyName().c_str());
+		DisconnectPeerFromSession(peerNum);
+	}
+	else {
+		// Let session handler take care of this
+		NET_VERBOSE_PRINT("NET: Goodbye from host %s, on session %s\n", remoteAddress.ToString().c_str(), GetLobbyName().c_str());
+		sessionCB->GoodbyeFromHost(*this, peerNum, remoteAddress, msgType);
+	}
 }
 
 /*
@@ -846,7 +909,7 @@ idLobby::HandleInitialPeerConnection
 Received on an initial peer connect request (OOB_HELLO)
 ========================
 */
-int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& peerAddress, int peerNum) {
+int idLobby::HandleInitialPeerConnection(google::protobuf::Message* proto_msg, const lobbyAddress_t& peerAddress, int peerNum) {
 	if (!IsHost()) {
 		NET_VERBOSE_PRINT("NET: Got connectionless hello from peer %s on session, and we are not a host\n", peerAddress.ToString().c_str());
 		SendGoodbye(peerAddress);
@@ -885,13 +948,10 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 		return -1;
 	}*/
 
-	Serialize::ConnectionRequest proto_msg;
-	if (!msg.ReadProtobufMessage(&proto_msg)) {
-		return -1;
-	}
+	Serialize::ConnectionRequest* proto_msg_conn_request = static_cast<Serialize::ConnectionRequest*>(proto_msg);
 
 	// Calling AddPeer will set our connectionState to this peer as CONNECTION_CONNECTING (which will get set to CONNECTION_ESTABLISHED below)
-	peerNum = AddPeer(peerAddress, proto_msg.sessionid());
+	peerNum = AddPeer(peerAddress, proto_msg_conn_request->sessionid());
 
 	peer_t& newPeer = peers[peerNum];
 

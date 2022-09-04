@@ -278,7 +278,7 @@ public:
 		int timeout);
 
 	void		SendPacket(const netadr_t to, const void* data, int size);
-	void		SendPacket(const netadr_t to, boost::asio::streambuf& buf);
+	void		SendPacket(const netadr_t to, boost::asio::const_buffers_1& buf);
 
 	int			packetsRead;
 	int			bytesRead;
