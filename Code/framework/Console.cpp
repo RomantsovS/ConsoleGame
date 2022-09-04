@@ -4,6 +4,8 @@
 #include "Common_local.h"
 #include "../renderer/tr_local.h"
 
+const size_t CON_TEXTSIZE = 1024;
+
 // the console will query the cvar and command systems for
 // command completion information
 
@@ -15,7 +17,7 @@ public:
 	bool Active() noexcept override;
 	//virtual	void		ClearNotifyLines();
 	void Close() noexcept override;
-	//virtual	void		Print(const char* text);
+	void Print(const char* text) override;
 	void Draw(bool forceFullScreen) override;
 
 	//void				Dump(const char* toFile);
@@ -24,11 +26,28 @@ public:
 private:
 	void KeyDownEvent(int key);
 
+	void Linefeed();
+
+	void Bottom();
+
+	void DrawInput();
+	void DrawSolidConsole(float frac);
+
 	int DrawFPS(int y);
 
 	//============================
 
+	int LINE_WIDTH;
+	int TOTAL_LINES;
+
 	bool keyCatching;
+
+	std::string text;
+	int current; // line where next message will be printed
+	int x; // offset in current line for next print
+	int display; // bottom of console displays this line
+
+	int vislines; // in scanlines
 
 	idEditField consoleField;
 };
@@ -77,12 +96,28 @@ int idConsoleLocal::DrawFPS(int y) {
 
 /*
 ==============
+Con_Clear_f
+==============
+*/
+static void Con_Clear_f(const idCmdArgs& args) {
+	localConsole.Clear();
+}
+
+/*
+==============
 idConsoleLocal::Init
 ==============
 */
 void idConsoleLocal::Init() noexcept {
 	keyCatching = false;
+
+	LINE_WIDTH = 26;
+	TOTAL_LINES = CON_TEXTSIZE / LINE_WIDTH;
+	text.resize(CON_TEXTSIZE);
+
 	consoleField.Clear();
+
+	cmdSystem->AddCommand("clear", Con_Clear_f, CMD_FL_SYSTEM, "clears the console");
 }
 
 /*
@@ -117,6 +152,18 @@ idConsoleLocal::Clear
 ================
 */
 void idConsoleLocal::Clear() noexcept {
+	std::fill(text.begin(), text.end(), ' ');
+
+	Bottom(); // go to end
+}
+
+/*
+================
+idConsoleLocal::Bottom
+================
+*/
+void idConsoleLocal::Bottom() {
+	display = current;
 }
 
 /*
@@ -222,6 +269,150 @@ bool idConsoleLocal::ProcessEvent(const sysEvent_t* proc_event, bool forceAccept
 }
 
 /*
+===============
+Linefeed
+===============
+*/
+void idConsoleLocal::Linefeed() {
+	int i;
+
+	x = 0;
+	if (display == current) {
+		display++;
+	}
+	current++;
+	for (i = 0; i < LINE_WIDTH; i++) {
+		int offset = ((unsigned int)current % TOTAL_LINES) * LINE_WIDTH + i;
+		text[offset] = ' ';
+	}
+}
+
+/*
+================
+Print
+
+Handles cursor positioning, line wrapping, etc
+================
+*/
+void idConsoleLocal::Print(const char* txt) {
+	int y;
+	int c, l;
+
+	if (TOTAL_LINES == 0) {
+		// not yet initialized
+		return;
+	}
+
+	while ((c = *(const unsigned char*)txt) != 0) {
+		y = current % TOTAL_LINES;
+
+		// if we are about to print a new word, check to see
+		// if we should wrap to the new line
+		if (c > ' ' && (x == 0 || text[y * LINE_WIDTH + x - 1] <= ' ')) {
+			// count word length
+			for (l = 0; l < LINE_WIDTH; l++) {
+				if (txt[l] <= ' ') {
+					break;
+				}
+			}
+
+			// word wrap
+			if (l != LINE_WIDTH && (x + l >= LINE_WIDTH)) {
+				Linefeed();
+				++y;
+			}
+		}
+
+		txt++;
+
+		switch (c) {
+		case '\n':
+			Linefeed();
+			break;
+		case '\t':
+			do {
+				text[y * LINE_WIDTH + x] = ' ';
+				x++;
+				if (x >= LINE_WIDTH) {
+					Linefeed();
+					x = 0;
+				}
+			} while (x & 3);
+			break;
+		case '\r':
+			x = 0;
+			break;
+		default:	// display character and advance
+			text[y * LINE_WIDTH + x] = c;
+			x++;
+			if (x >= LINE_WIDTH) {
+				Linefeed();
+				x = 0;
+			}
+			break;
+		}
+	}
+}
+
+/*
+================
+DrawInput
+
+Draw the editline after a ] prompt
+================
+*/
+void idConsoleLocal::DrawInput() {
+	std::string console_text = std::string(":").append(consoleField.GetBuffer());
+	console_text.append("_");
+	renderSystem->DrawBigStringExt(0, vislines, console_text, colorWhite, true);
+}
+
+/*
+================
+DrawSolidConsole
+
+Draws the console with the solid background
+================
+*/
+void idConsoleLocal::DrawSolidConsole(float frac) {
+	int lines = renderSystem->GetHeight() * frac;
+	if (lines <= 0) {
+		return;
+	}
+
+	if (lines > renderSystem->GetHeight()) {
+		lines = renderSystem->GetHeight();
+	}
+
+	int y = frac * renderSystem->GetHeight() - 2;
+	if (y < 0.0f) {
+		y = 0.0f;
+	}
+
+	vislines = lines;
+	int rows = (lines - BIGCHAR_WIDTH) / BIGCHAR_WIDTH;		// rows of text to draw
+
+	y = lines - (BIGCHAR_HEIGHT * 0);
+
+	size_t row = display;
+
+	auto text_sv = std::string_view(text);
+
+	for (int i = 0; i < lines && row >= 0; i++, y -= BIGCHAR_HEIGHT, row--) {
+		size_t text_p = (row % TOTAL_LINES) * LINE_WIDTH;
+
+		renderSystem->DrawBigStringExt(x, y, text_sv.substr(text_p, LINE_WIDTH), colorWhite, true);
+	}
+
+	// draw the input prompt, user text, and cursor if desired
+	DrawInput();
+
+	if (keyCatching) {	
+		//RB_ShowDebugText();
+	}
+}
+
+/*
 ==============
 Draw
 
@@ -237,13 +428,7 @@ void idConsoleLocal::Draw(bool forceFullScreen) {
 		keyCatching = true;
 	}
 
-	if (keyCatching) {
-		std::string console_text = std::string(":").append(consoleField.GetBuffer());
-		console_text.append("_");
-
-		renderSystem->DrawBigStringExt(0, r_console_pos.GetInteger(), console_text, colorWhite, true);
-		RB_ShowDebugText();
-	}
+	DrawSolidConsole(keyCatching ? 0.8f : 0.0f);
 
 	if (com_showFPS.GetBool()) {
 		DrawFPS(0);

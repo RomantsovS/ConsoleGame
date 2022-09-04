@@ -3,6 +3,9 @@
 
 bool R_IsInitialized() noexcept;
 
+extern const int BIGCHAR_WIDTH;
+extern const int BIGCHAR_HEIGHT;
+
 class idRenderWorld;
 
 class idRenderSystem {
@@ -42,7 +45,7 @@ public:
 	virtual void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) = 0;
 
 	virtual void DrawBigChar(int x, int y, int ch) = 0;
-	virtual void DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) = 0;
+	virtual void DrawBigStringExt(int x, int y, std::string_view string, const Screen::color_type setColor, bool forceColor) = 0;
 
 	virtual void DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) = 0;
 	virtual void DrawString(const std::string& text, const Screen::color_type color) = 0;

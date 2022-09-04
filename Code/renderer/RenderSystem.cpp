@@ -1,14 +1,13 @@
 #include "idlib/precompiled.h"
 
-
 #include "tr_local.h"
 
 idRenderSystemLocal tr;
-idRenderSystem * renderSystem = &tr;
+idRenderSystem* renderSystem = &tr;
 
-constexpr int BIGCHAR_WIDTH = 8;
-constexpr int BIGCHAR_HEIGHT = 8;
- 
+const int BIGCHAR_WIDTH = 8;
+const int BIGCHAR_HEIGHT = 8;
+
 /*
 ====================
 RenderCommandBuffers
@@ -23,7 +22,7 @@ void idRenderSystemLocal::RenderCommandBuffers() {
 
 	if (!tr.update_frame)
 		return;
-	
+
 	// r_skipRender is usually more usefull, because it will still
 	// draw 2D graphics
 	if (!r_skipBackEnd.GetBool()) {
@@ -65,14 +64,20 @@ void idRenderSystemLocal::DrawStretchPic(int x, int y, int w, int h, int s1, int
 
 	const auto& imagePixels = material->GetStage()->image->GetPixels();
 
-	for(int i = 0; i < h; ++i) {
-		for(int j = 0; j < w; ++j) {
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
 			int pixelIndex = t1 * BIGCHAR_WIDTH * BIGCHAR_WIDTH * 16 + i * BIGCHAR_WIDTH * 16 + s1 * BIGCHAR_WIDTH + j;
-			auto pixel = imagePixels[pixelIndex].screenPixel;
-			if (pixel.color != colorBlack)
-				pixel.color = currentColorNativeBytesOrder;
+			try {
+				auto pixel = imagePixels.at(pixelIndex).screenPixel;
 
-			tr.screen.set(x + j, y + i, pixel);
+				if (pixel.color != colorBlack)
+					pixel.color = currentColorNativeBytesOrder;
+
+				tr.screen.set(x + j, y + i, pixel);
+			}
+			catch (const std::exception& err) {
+				common->Error(err.what());
+			}
 		}
 	}
 }
@@ -111,14 +116,16 @@ to a fixed color.
 Coordinates are at 640 by 480 virtual resolution
 ==================
 */
-void idRenderSystemLocal::DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) {
+void idRenderSystemLocal::DrawBigStringExt(int x, int y, std::string_view string, const Screen::color_type setColor, bool forceColor) {
 	//idVec4		color;
 	int			xx;
 
 	// draw the colored text
 	xx = x;
 	SetColor(setColor);
-	for(const auto& s : string) {
+	for (auto s : string) {
+		if (s == '\0')
+			break;
 		DrawBigChar(xx, y, s);
 		xx += BIGCHAR_WIDTH;
 	}

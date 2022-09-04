@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "tr_local.h"
 #include "../d3xp/Game_local.h"
 
@@ -111,7 +110,7 @@ void RB_ShowDebugText() {
 	}
 
 	for (auto& text : rb_debugText) {
-		renderSystem->DrawBigStringExt(0, r_console_pos.GetInteger() + (i + 1) * 10, text.text, text.color, true);
+		renderSystem->DrawBigStringExt(0, r_console_pos.GetInteger() + (i + 1) * (BIGCHAR_HEIGHT + 2), text.text, text.color, true);
 		++i;
 	}
 }

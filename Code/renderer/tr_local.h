@@ -196,7 +196,7 @@ public:
 
 	void DrawStretchPic(int x, int y, int w, int h, int s1, int t1, const idMaterial* material) override;
 	void DrawBigChar(int x, int y, int ch) override;
-	void DrawBigStringExt(int x, int y, const std::string& string, const Screen::color_type setColor, bool forceColor) override;
+	void DrawBigStringExt(int x, int y, std::string_view string, const Screen::color_type setColor, bool forceColor) override;
 
 	void DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) override;
 	void DrawString(const std::string& text, const Screen::color_type color) override;
