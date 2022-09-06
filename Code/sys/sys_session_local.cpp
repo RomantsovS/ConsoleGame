@@ -1070,15 +1070,13 @@ idSessionLocal::HandlePackets
 ========================
 */
 bool idSessionLocal::HandlePackets() {
+	std::array<std::byte, idPacketProcessor::MAX_FINAL_PACKET_SIZE> packetBuffer;
 	lobbyAddress_t remoteAddress;
 	int recvSize = 0;
 
-	boost::asio::streambuf packetBuffer;
-	boost::asio::streambuf::mutable_buffers_type bufs = packetBuffer.prepare(MAX_BUF_SIZE);
-
-	while (ReadRawPacket(remoteAddress, bufs, recvSize, MAX_BUF_SIZE) && recvSize > 0) {
+	while (ReadRawPacket(remoteAddress, packetBuffer.data(), recvSize, MAX_BUF_SIZE) && recvSize > 0) {
 		idBitMsg fragMsg;
-		fragMsg.InitRead(packetBuffer, recvSize);
+		fragMsg.InitRead(packetBuffer.data(), recvSize);
 
 		// Peek at the session ID
 		idPacketProcessor::sessionId_t sessionID = idPacketProcessor::GetSessionID(fragMsg);
@@ -1165,20 +1163,12 @@ idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase() {
 idSessionLocal::SendRawPacket
 ========================
 */
-//void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated) {
-//	const int now = Sys_Milliseconds();
-//
-//	// short path
-//	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
-//	GetPort(dedicated).SendRawPacket(to, data, size);
-//}
-
-void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool dedicated) {
+void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool dedicated) {
 	const int now = Sys_Milliseconds();
 
 	// short path
 	// NOTE: network queuing: will go to tick the queue whenever sendQueue isn't empty, regardless of latency
-	GetPort(dedicated).SendRawPacket(to, buf);
+	GetPort(dedicated).SendRawPacket(to, data, size);
 }
 
 /*
@@ -1186,11 +1176,9 @@ void idSessionLocal::SendRawPacket(const lobbyAddress_t& to, boost::asio::stream
 idSessionLocal::ReadRawPacket
 ========================
 */
-bool idSessionLocal::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize) {
-	const int now = Sys_Milliseconds();
-
+bool idSessionLocal::ReadRawPacket(lobbyAddress_t& from, void* data, int& size, int maxSize) {
 	for (int i = 0; i < 2; i++) {
-		if (GetPort(false).ReadRawPacket(from, bufs, size, maxSize)) {
+		if (GetPort(false).ReadRawPacket(from, data, size, maxSize)) {
 			return true;
 		}
 	}
@@ -1272,8 +1260,8 @@ bool idNetSessionPort::InitPort(int portNumber, bool useBackend) {
 idNetSessionPort::ReadRawPacket
 ========================
 */
-bool idNetSessionPort::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize) {
-	bool result = UDP.GetPacket(from.netAddr, bufs, size, maxSize);
+bool idNetSessionPort::ReadRawPacket(lobbyAddress_t& from, void* data, int& size, int maxSize) {
+	bool result = UDP.GetPacket(from.netAddr, data, size, maxSize);
 
 	return result;
 }
@@ -1283,13 +1271,8 @@ bool idNetSessionPort::ReadRawPacket(lobbyAddress_t& from, boost::asio::streambu
 idNetSessionPort::SendRawPacket
 ========================
 */
-//void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, const void* data, int size) {
-//	UDP.SendPacket(to.netAddr, data, size);
-//}
-
-void idNetSessionPort::SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf) {
-	auto bufdata = buf.data();
-	UDP.SendPacket(to.netAddr, bufdata);
+void idNetSessionPort::SendRawPacket(const lobbyAddress_t to, const void* data, int size) {
+	UDP.SendPacket(to.netAddr, data, size);
 }
 
 /*

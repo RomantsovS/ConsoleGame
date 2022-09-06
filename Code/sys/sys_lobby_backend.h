@@ -34,9 +34,8 @@ public:
 class idNetSessionPort {
 public:
 	bool InitPort(int portNumber, bool useBackend);
-	bool ReadRawPacket(lobbyAddress_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
-	//void SendRawPacket(const lobbyAddress_t& to, const void* data, int size);
-	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf);
+	bool ReadRawPacket(lobbyAddress_t& from, void* data, int& size, int maxSize);
+	void SendRawPacket(const lobbyAddress_t to, const void* data, int size);
 
 	bool IsOpen();
 	void Close();

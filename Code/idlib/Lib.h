@@ -10,6 +10,7 @@ public:
 	// wrapper to idCommon functions 
 	static void Printf(const char* fmt, ...);
 	static void Error(const char* fmt, ...);
+	static void FatalError(const char* fmt, ...);
 	static void Warning(const char* fmt, ...);
 };
 

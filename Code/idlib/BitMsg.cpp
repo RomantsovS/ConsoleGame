@@ -1,64 +1,100 @@
 #include "precompiled.h"
 
-void idBitMsg::InitWrite(boost::asio::streambuf& packetBuffer) {
-	writer = std::make_unique<std::ostream>(&packetBuffer);
-	osostream = std::make_unique<google::protobuf::io::OstreamOutputStream>(writer.get());
-	coded_output = std::make_unique<google::protobuf::io::CodedOutputStream>(osostream.get());
+/*
+========================
+idBitMsg::CheckOverflow
+========================
+*/
+bool idBitMsg::CheckOverflow(int numBits) {
+	if (numBits > GetRemainingWriteBits()) {
+		idLib::FatalError("idBitMsg: overflow without allowOverflow set; maxsize=%i size=%i numBits=%i numRemainingWriteBits=%i",
+		GetMaxSize(), GetSize(), numBits, GetRemainingWriteBits());
+		return true;
+	}
+	return false;
 }
 
-void idBitMsg::InitRead(boost::asio::streambuf& packetBuffer, size_t length) {
-	packetBuffer.commit(length);
+/*
+========================
+idBitMsg::GetByteSpace
+========================
+*/
+std::byte* idBitMsg::GetByteSpace(int length) {
+	if (!writeData) {
+		idLib::FatalError("idBitMsg::GetByteSpace: cannot write to message");
+	}
 
-	reader = std::make_unique<std::istream>(&packetBuffer);
-	isistream = std::make_unique<google::protobuf::io::IstreamInputStream>(reader.get());
-	coded_input = std::make_unique<google::protobuf::io::CodedInputStream>(isistream.get());
+	// check for overflow
+	CheckOverflow(length);
+
+	std::byte* ptr = writeData + curSize;
+	curSize += length;
+	return ptr;
+}
+
+void idBitMsg::WriteBytes(int32_t value, int numBytes) {
+	if (!writeData) {
+		idLib::FatalError("idBitMsg::WriteBits: cannot write to message");
+	}
+
+	std::byte* bytes = reinterpret_cast<std::byte*>(&value);
+	for (int i = 0; i < numBytes; ++i) {
+		writeData[curSize + i] = bytes[numBytes - i - 1];
+	}
+	curSize += numBytes;
+}
+
+/*
+========================
+idBitMsg::ReadBits
+
+If the number of bits is negative a sign is included.
+========================
+*/
+int idBitMsg::ReadBytes(int numBytes) const {
+	int value = 0;
+	int fraction;
+
+	if (!readData) {
+		idLib::FatalError("idBitMsg::ReadBits: cannot read from message");
+	}
+
+	for (size_t i = 0; i < numBytes; ++i) {
+		fraction = static_cast<int>(readData[readCount + i]);
+		value |= fraction << (numBytes - i - 1) * 8;
+	}
+	readCount += numBytes;
+
+	return value;
+}
+
+/*
+========================
+idBitMsg::WriteData
+========================
+*/
+void idBitMsg::WriteData(const void* data, int length) {
+	memcpy(GetByteSpace(length), data, length);
 }
 
 bool idBitMsg::ReadProtobufMessage(google::protobuf::Message* proto_msg) {
-	// Read the size.
-	size_t size = 0;
-	if (!coded_input->ReadVarint64(&size)) {
-		idLib::Warning("NET: error read proto size\n");
-		return false;
-	}
-	// Tell the stream not to read beyond that size.
-	auto limit = coded_input->PushLimit(size);
+	uint64_t size = ReadLongLong();
 
-	// Parse the message.
-	if (!proto_msg->ParseFromCodedStream(coded_input.get())) {
-		idLib::Warning("NET: error parse from code stream\n");
-		return false;
-	}
-
-	if (!coded_input->ConsumedEntireMessage()) {
-		idLib::Warning("NET: error ConsumedEntireMessage\n");
-		return false;
-	}
-
-	// Release the limit.
-	coded_input->PopLimit(limit);
-
-	return true;
+	return proto_msg->ParseFromArray(readData + readCount, size);
 }
 
-bool idBitMsg::WriteProtobufMessage(google::protobuf::Message* proto_msg, int size) {
-	uint8_t* buffer = coded_output->GetDirectBufferForNBytesAndAdvance(size);
-	if (buffer != nullptr) {
-		// Optimization:  The message fits in one buffer, so use the faster
-		// direct-to-array serialization path.
-		proto_msg->SerializeWithCachedSizesToArray(buffer);
+bool idBitMsg::WriteProtobufMessage(google::protobuf::Message* proto_msg) {
+	size_t size = proto_msg->ByteSizeLong();
+	
+	// check for msg overflow
+	if (CheckOverflow(size)) {
+		return false;
 	}
-	else {
-		// Slightly-slower path when the message is multiple buffers.
-		proto_msg->SerializeWithCachedSizes(coded_output.get());
-		if (coded_output->HadError())
-			return false;
-	}
-	return true;
-}
 
-void idBitMsg::Flush() {
-	coded_output = nullptr;
-	osostream = nullptr;
-	writer = nullptr;
+	WriteLongLong(size);
+
+	bool res = proto_msg->SerializeToArray(static_cast<void*>(writeData + curSize), size);
+	curSize += size;
+
+	return res;
 }

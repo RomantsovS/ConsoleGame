@@ -46,6 +46,22 @@ void idLib::Printf(const char* fmt, ...) {
 
 /*
 ===============
+idLib::FatalError
+===============
+*/
+void idLib::FatalError(const char* fmt, ...) {
+	va_list		argptr;
+	char		text[MAX_STRING_CHARS];
+
+	va_start(argptr, fmt);
+	idStr::vsnPrintf(text, sizeof(text), fmt, argptr);
+	va_end(argptr);
+
+	common->FatalError("%s", text);
+}
+
+/*
+===============
 idLib::Error
 ===============
 */

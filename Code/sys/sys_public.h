@@ -272,13 +272,9 @@ public:
 	//uint32_t	GetUIntAdr() const { return bound_to.address; }
 	void		Close();
 
-	bool		GetPacket(netadr_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize);
-
-	bool		GetPacketBlocking(netadr_t& from, void* data, int& size, int maxSize,
-		int timeout);
+	bool		GetPacket(netadr_t& from, void* data, int& size, int maxSize);
 
 	void		SendPacket(const netadr_t to, const void* data, int size);
-	void		SendPacket(const netadr_t to, boost::asio::const_buffers_1& buf);
 
 	int			packetsRead;
 	int			bytesRead;

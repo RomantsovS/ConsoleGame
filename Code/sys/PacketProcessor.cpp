@@ -5,12 +5,16 @@
 idPacketProcessor::ProcessConnectionlessOutgoing
 ================================================
 */
-bool idPacketProcessor::ProcessConnectionlessOutgoing(idBitMsg& msg, int lobbyType) {
+bool idPacketProcessor::ProcessConnectionlessOutgoing(idBitMsg& msg, idBitMsg& out, int lobbyType, int userData) {
 	sessionId_t sessionID = lobbyType + 1;
 
-	msg.WriteLong(sessionID);
+	out.WriteLong(sessionID);
 
-	msg.WriteLong(PACKET_TYPE_OOB);
+	out.WriteLong(PACKET_TYPE_OOB);
+	out.WriteLong(userData);
+
+	// Write msg
+	out.WriteData(msg.GetReadData(), msg.GetSize());
 
 	return true;
 }
@@ -20,7 +24,7 @@ bool idPacketProcessor::ProcessConnectionlessOutgoing(idBitMsg& msg, int lobbyTy
 idPacketProcessor::ProcessConnectionlessIncoming
 ================================================
 */
-bool idPacketProcessor::ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out) {
+bool idPacketProcessor::ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out, int& userData) {
 
 	if (sessionID != SESSION_ID_CONNECTIONLESS_PARTY && sessionID != SESSION_ID_CONNECTIONLESS_GAME && sessionID != SESSION_ID_CONNECTIONLESS_GAME_STATE) {
 		// Not a connectionless msg (this can happen if a previously connected peer keeps sending data for whatever reason)
@@ -30,10 +34,16 @@ bool idPacketProcessor::ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t
 
 	int header = msg.ReadLong();
 
+	userData = msg.ReadLong();
+
 	if (header != PACKET_TYPE_OOB) {
 		idLib::Printf("ProcessConnectionlessIncoming: header.Type() != PACKET_TYPE_OOB\n");
 		return false;		// Only out-of-band packets supported for connectionless
 	}
+
+	out.BeginWriting();
+	out.WriteData(msg.GetReadData() + msg.GetReadCount(), msg.GetRemainingData());
+	out.SetSize(msg.GetRemainingData());
 
 	return true;
 }

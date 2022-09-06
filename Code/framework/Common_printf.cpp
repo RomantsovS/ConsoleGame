@@ -53,7 +53,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 
 			time_t aclock;
 			tm newtime;
-			
+
 #ifdef LOG_FILE_NAME_TIME
 			time(&aclock);
 			localtime_s(&newtime, &aclock);
@@ -204,8 +204,7 @@ void idCommonLocal::Error(const char* fmt, ...)
 	Sys_Error(errorMessage);
 }
 
-void idCommonLocal::FatalError(const char* fmt, ...)
-{
+void idCommonLocal::FatalError(const char* fmt, ...) {
 	va_list		argptr;
 
 	if (com_errorEntered) {

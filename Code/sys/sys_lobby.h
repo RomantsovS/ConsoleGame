@@ -45,6 +45,72 @@ public:
 	lobbyState_t GetState() { return state; }
 	bool HasActivePeers() const override;
 
+	enum class reliablePlayerToPlayer_t {
+		//RELIABLE_PLAYER_TO_PLAYER_VOICE_EVENT,
+		RELIABLE_PLAYER_TO_PLAYER_GAME_DATA,
+		// Game messages would be reserved here in the same way that RELIABLE_GAME_DATA is.
+		// I'm worried about using up the 0xff values we have for reliable type, so I'm not
+		// going to reserve anything here just yet.
+		NUM_RELIABLE_PLAYER_TO_PLAYER,
+	};
+
+	enum class reliableType_t {
+		RELIABLE_HELLO,							// host to peer : connection established
+		RELIABLE_USER_CONNECTED,				// host to peer : a new session user connected
+		RELIABLE_USER_DISCONNECTED,				// host to peer : a session user disconnected
+		RELIABLE_START_LOADING,					// host to peer : peer should begin loading the map
+		RELIABLE_LOADING_DONE,					// peer to host : finished loading map
+		RELIABLE_IN_GAME,						// peer to host : first full snap received, in game now
+		RELIABLE_SNAPSHOT_ACK,					// peer to host : got a snapshot
+		RELIABLE_RESOURCE_ACK,					// peer to host : got some new resources
+		RELIABLE_CONNECT_AND_MOVE_TO_LOBBY,		// host to peer : connect to this server 
+		RELIABLE_PARTY_CONNECT_OK,				// host to peer
+		RELIABLE_PARTY_LEAVE_GAME_LOBBY,		// host to peer : leave game lobby
+		RELIABLE_MATCH_PARMS,					// host to peer : update in match parms
+		RELIABLE_UPDATE_MATCH_PARMS,			// peer to host : peer updating match parms
+
+		// User join in progress msg's (join in progress for the party/game lobby, not inside a match)
+		RELIABLE_USER_CONNECT_REQUEST,			// peer to host: local user wants to join session in progress
+		RELIABLE_USER_CONNECT_DENIED,			// host to peer: user join session in progress denied (not enough slots)
+
+		// User leave in progress msg's (leave in progress for the party/game lobby, not inside a match)
+		RELIABLE_USER_DISCONNECT_REQUEST,		// peer to host: request host to remove user from session
+
+		RELIABLE_KICK_PLAYER,					// host to peer : kick a player
+
+		RELIABLE_MATCHFINISHED,					// host to peer - Match is in post looking at score board
+		RELIABLE_ENDMATCH,						// host to peer - End match, and go to game lobby
+		RELIABLE_ENDMATCH_PREMATURE,			// host to peer - End match prematurely, and go to game lobby (onl possible in unrated/custom games)
+
+		RELIABLE_SESSION_USER_MODIFIED,			// peer to host : user changed something (emblem, name, etc)
+		RELIABLE_UPDATE_SESSION_USER,			// host to peers : inform all peers of the change
+
+		RELIABLE_HEADSET_STATE,					// * to * : headset state change for user
+		RELIABLE_VOICE_STATE,					// * to * : voice state changed for user pair (mute, unmute, etc)
+		RELIABLE_PING,							// * to * : send host->peer, then reflected
+		RELIABLE_PING_VALUES,					// host to peers : ping data from lobbyUser_t for everyone
+
+		RELIABLE_BANDWIDTH_VALUES,				// peer to host: data back about bandwidth test
+
+		RELIABLE_ARBITRATE,						// host to peer : start arbitration
+		RELIABLE_ARBITRATE_OK,					// peer to host : ack arbitration request
+
+		RELIABLE_POST_STATS,					// host to peer : here, write these stats now (hacky)
+
+		RELIABLE_MIGRATION_GAME_DATA,			// host to peers: game data to use incase of a migration
+
+		RELIABLE_START_MATCH_GAME_LOBBY_HOST,	// game lobby host to game state lobby host: start the match, since all players are in
+
+		RELIABLE_DUMMY_MSG,						// used as a placeholder for old removed msg's
+
+		RELIABLE_PLAYER_TO_PLAYER_BEGIN,
+		// use reliablePlayerToPlayer_t
+		RELIABLE_PLAYER_TO_PLAYER_END = RELIABLE_PLAYER_TO_PLAYER_BEGIN + static_cast<int>(reliablePlayerToPlayer_t::NUM_RELIABLE_PLAYER_TO_PLAYER),
+
+		// * to * : misc reliable game data above this
+		RELIABLE_GAME_DATA = RELIABLE_PLAYER_TO_PLAYER_END
+	};
+
 	static const std::string stateToString[static_cast<int>(lobbyState_t::NUM_STATES)];
 
 	static const int CONNECT_REQUEST_FREQUENCY_IN_SECONDS = 5;		// Frequency at which we resend a request to connect to a server (will increase in frequency over time down to MIN_CONNECT_FREQUENCY_IN_SECONDS)
@@ -163,15 +229,14 @@ public:
 	void SendGoodbye(const lobbyAddress_t& remoteAddress, bool wasFull = false);
 	void QueueReliableMessage(int p, char type, const char* data, int dataLen);
 
-	//void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
-	//void SendConnectionLess(const lobbyAddress_t& remoteAddress, char type, const std::byte* data, int dataLen);
-	void SendConnectionLess(const lobbyAddress_t& remoteAddress, google::protobuf::Message* proto_msg);
+	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
+	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type, const std::byte* data, int dataLen);
 	void SendConnectionRequest();
 	void ConnectTo(const lobbyConnectInfo_t& connectInfo, bool fromInvite);
 	void HandleGoodbyeFromPeer(int peerNum, lobbyAddress_t& remoteAddress, int msgType);
 	void HandleConnectionAttemptFailed();
 	bool ConnectToNextSearchResult();
-	int HandleInitialPeerConnection(google::protobuf::Message* proto_msg, const lobbyAddress_t& peerAddress, int peerNum);
+	int HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& peerAddress, int peerNum);
 	void InitStateLobbyHost();
 
 	void SendMembersToLobby(lobbyType_t destLobbyType, const lobbyConnectInfo_t& connectInfo, bool waitForOtherMembers);
@@ -262,8 +327,7 @@ public:
 	virtual idLobby& GetGameLobby() = 0;
 	virtual idLobby& GetActingGameStateLobby() = 0;
 
-	//virtual	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) = 0;
-	virtual	void SendRawPacket(const lobbyAddress_t& to, boost::asio::streambuf& buf, bool useDirectPort) = 0;
+	virtual	void SendRawPacket(const lobbyAddress_t& to, const void* data, int size, bool useDirectPort) = 0;
 
 	virtual void GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) = 0;
 

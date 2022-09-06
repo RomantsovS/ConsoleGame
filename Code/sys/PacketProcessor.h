@@ -36,8 +36,8 @@ public:
 	// Used for out-of-band non connected peers
 	// This doesn't actually support fragmentation, it is just simply here to hide the
 	// header structure, so the caller doesn't have to skip over the header data.
-	static bool ProcessConnectionlessOutgoing(idBitMsg& msg, int lobbyType);
-	static bool ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out);
+	static bool ProcessConnectionlessOutgoing(idBitMsg& msg, idBitMsg& out, int lobbyType, int userData);
+	static bool ProcessConnectionlessIncoming(idBitMsg& msg, sessionId_t sessionID, idBitMsg& out, int& userData);
 
 	// Used to "peek" at a session id of a message fragment
 	static sessionId_t GetSessionID(idBitMsg& msg);

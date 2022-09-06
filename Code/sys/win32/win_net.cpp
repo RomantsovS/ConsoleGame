@@ -177,12 +177,12 @@ void idUDP::Close() {
 idUDP::GetPacket
 ========================
 */
-bool idUDP::GetPacket(netadr_t& from, boost::asio::streambuf::mutable_buffers_type& bufs, int& size, int maxSize) {
+bool idUDP::GetPacket(netadr_t& from, void* data, int& size, int maxSize) {
 	while (1) {
 		boost::asio::ip::udp::endpoint sender_endpoint;
 		boost::asio::socket_base::message_flags flags(0);
 		boost::system::error_code ec;
-		size = socket->receive_from(bufs, sender_endpoint, flags, ec);
+		size = socket->receive_from(boost::asio::buffer(data, maxSize), sender_endpoint, flags, ec);
 
 		if (ec) {
 			if(ec.value() == WSAEWOULDBLOCK)
@@ -214,27 +214,17 @@ idUDP::SendPacket
 ========================
 */
 void idUDP::SendPacket(const netadr_t to, const void* data, int size) {
-	auto buf = boost::asio::buffer(data, size);
-	SendPacket(to, buf);
-}
-
-/*
-========================
-idUDP::SendPacket
-========================
-*/
-void idUDP::SendPacket(const netadr_t to, boost::asio::const_buffers_1& buf) {
 	if (to.type == netadrtype_t::NA_BAD) {
 		idLib::Warning("NET: idUDP::SendPacket: bad address type NA_BAD - ignored");
 		return;
 	}
 
 	packetsWritten++;
-	//bytesWritten += buf.size();
+	bytesWritten += size;
 
 	boost::asio::ip::udp::endpoint destination(to.address, to.port);
 	boost::system::error_code ec;
-	size_t size = socket->send_to(buf, destination, 0, ec);
+	size_t len = socket->send_to(boost::asio::buffer(data, size), destination, 0, ec);
 
 	if (ec) {
 		if (ec.value() == WSAEADDRNOTAVAIL)
@@ -243,6 +233,6 @@ void idUDP::SendPacket(const netadr_t to, boost::asio::const_buffers_1& buf) {
 		idLib::Printf("NET: UDP sendto error - packet dropped: %s\n", NET_ErrorString(ec.value()));
 	}
 	else {
-		idLib::Printf("NET: socket sent %d bytes\n", size);
+		idLib::Printf("NET: socket sent %d bytes\n", len);
 	}
 }
