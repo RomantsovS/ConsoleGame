@@ -557,6 +557,22 @@ int idEntity::GetPhysicsTimeStep() const noexcept {
 	return gameLocal.time - gameLocal.previousTime;
 }
 
+/*
+================
+idEntity::WriteToSnapshot
+================
+*/
+void idEntity::WriteToSnapshot(idBitMsg& msg) const {
+}
+
+/*
+================
+idEntity::ReadFromSnapshot
+================
+*/
+void idEntity::ReadFromSnapshot(const idBitMsg& msg) {
+}
+
 CLASS_DECLARATION(idEntity, idAnimatedEntity)
 END_CLASS
 

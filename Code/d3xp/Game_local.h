@@ -33,6 +33,8 @@ const int ENTITYNUM_FIRST_NON_REPLICATED = ENTITYNUM_MAX_NORMAL - 256;
 
 #include "physics/Clip.h"
 
+const int MAX_ENTITY_STATE_SIZE = 512;
+
 enum gameState_t {
 	GAMESTATE_UNINITIALIZED,		// prior to Init being called
 	GAMESTATE_NOMAP,				// no map loaded
@@ -73,6 +75,8 @@ public:
 	int	previousTime;			// time in msec of last frame
 	game_time_type prev_info_update_time;
 
+	int realClientTime; // real client time
+
 	timeState_t fast;
 	timeState_t slow;
 	int						selectedGroup;
@@ -103,6 +107,8 @@ public:
 	void RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr);
 	bool Draw(int clientNum) override;
 	void ServerWriteSnapshot(idSnapShot& ss) override;
+	void ClientReadSnapshot(const idSnapShot& ss) override;
+	void ClientRunFrame(idUserCmdMgr& cmdMgr, bool lastPredictFrame, gameReturn_t& ret) override;
 	void BuildReturnValue(gameReturn_t& ret);
 
 	bool IsInGame() const noexcept override  { return GameState() == GAMESTATE_ACTIVE; }
@@ -122,7 +128,7 @@ public:
 
 	bool CheatsOk(bool requirePlayer = true);
 	gameState_t GameState() const noexcept;
-	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const idDict* args = nullptr);
+	std::shared_ptr<idEntity> SpawnEntityType(const idTypeInfo& classdef, const idDict* args = nullptr, bool bIsClientReadSnapshot = false);
 	bool SpawnEntityDef(const idDict &args, std::shared_ptr<idEntity> *ent = nullptr);
 
 	const std::shared_ptr<idDeclEntityDef> FindEntityDef(const std::string& name, bool makeDefault = true) const;

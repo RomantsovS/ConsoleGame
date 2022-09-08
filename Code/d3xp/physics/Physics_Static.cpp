@@ -335,3 +335,23 @@ void idPhysics_Static::AddContactEntity(idEntity* e) noexcept {
 
 void idPhysics_Static::RemoveContactEntity(idEntity* e) noexcept {
 }
+
+/*
+================
+idPhysics_Static::WriteToSnapshot
+================
+*/
+void idPhysics_Static::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteFloat(current.origin[0]);
+	msg.WriteFloat(current.origin[1]);
+}
+
+/*
+================
+idPhysics_Base::ReadFromSnapshot
+================
+*/
+void idPhysics_Static::ReadFromSnapshot(const idBitMsg& msg) {
+	current.origin[0] = msg.ReadFloat();
+	current.origin[1] = msg.ReadFloat();
+}

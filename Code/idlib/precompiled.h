@@ -20,6 +20,7 @@
 #include <vector>
 #include <array>
 #include <list>
+#include <queue>
 #include <random>
 #include <iostream>
 #include <fstream>
@@ -85,6 +86,7 @@
 // Session / Network
 #include "../sys/Snapshot.h"
 #include "../sys/PacketProcessor.h"
+#include "../sys/SnapshotProcessor.h"
 
 #include "../sys/sys_session.h"
 

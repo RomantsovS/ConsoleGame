@@ -97,6 +97,8 @@ public:
 	virtual bool IsServer() = 0;
 	virtual bool IsClient() = 0;
 
+	virtual void NetReceiveSnapshot(class idSnapShot& ss) = 0;
+
 	// Processes the given event.
 	virtual	bool ProcessEvent(const sysEvent_t* event) = 0;
 

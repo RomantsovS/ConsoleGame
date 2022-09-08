@@ -15,7 +15,9 @@ idCommon * common = &commonLocal;
 
 bool isCommonExists = false;
 
-idCommonLocal::idCommonLocal() {
+idCommonLocal::idCommonLocal() :
+	readSnapshotIndex(0),
+	writeSnapshotIndex(0) {
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
 

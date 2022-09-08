@@ -60,6 +60,8 @@ public:
 	bool IsServer() override;
 	bool IsClient() override;
 
+	void NetReceiveSnapshot(class idSnapShot& ss) override;
+
 	bool ProcessEvent(const sysEvent_t* event) override;
 
 	idGame* Game() override { return game; }
@@ -102,6 +104,13 @@ private:
 	//int nextUsercmdSendTime;	// Next time to send usercmds
 	int nextSnapshotSendTime;	// Next time to send a snapshot
 
+	// This is ultimately controlled by net_maxBufferedSnapshots by running double speed, but this is the hard max before seeing visual popping
+	static const int RECEIVE_SNAPSHOT_BUFFER_SIZE = 16;
+
+	int readSnapshotIndex;
+	int writeSnapshotIndex;
+	std::array<idSnapShot, RECEIVE_SNAPSHOT_BUFFER_SIZE> receivedSnaps;
+
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
 
@@ -127,12 +136,14 @@ private:
 
 	void ProcessGameReturn(const gameReturn_t& ret);
 
+	void RunNetworkSnapshotFrame();
+
 	// Snapshot interpolation
-	/*void	ProcessSnapshot(idSnapShot& ss);
-	int		CalcSnapTimeBuffered(int& totalBufferedTime, int& totalRecvTime);
-	void	ProcessNextSnapshot();
-	void	InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);*/
-	void	ResetNetworkingState();
+	void ProcessSnapshot(idSnapShot& ss);
+	//int		CalcSnapTimeBuffered(int& totalBufferedTime, int& totalRecvTime);
+	void ProcessNextSnapshot();
+	//void	InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);*/
+	void ResetNetworkingState();
 
 	void SendSnapshots();
 

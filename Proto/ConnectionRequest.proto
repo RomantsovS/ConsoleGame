@@ -5,6 +5,6 @@ package Serialize;
 import "Address.proto";
 
 message ConnectionRequest {
-    int32 sessionID = 2;
-    Address address = 3;
+    int32 sessionID = 1;
+    Address address = 2;
 }

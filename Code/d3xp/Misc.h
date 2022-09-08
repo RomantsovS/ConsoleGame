@@ -14,6 +14,9 @@ public:
 
 	void Spawn();
 	void Think() override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 private:
 	//int spawnTime;
 protected:

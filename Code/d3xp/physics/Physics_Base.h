@@ -66,6 +66,9 @@ public:	// common physics interface
 	void ClearContacts() override;
 	void AddContactEntity(idEntity* e) override;
 	void RemoveContactEntity(idEntity* e) noexcept override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 protected:
 	idEntity* self; // entity using this physics object
 	int clipMask; // contents the physics object collides with

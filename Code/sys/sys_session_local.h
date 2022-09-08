@@ -130,8 +130,8 @@ protected:
 	bool State_Party_Lobby_Host();
 	//bool State_Party_Lobby_Peer();
 	bool State_Game_Lobby_Host();
-	/*bool State_Game_Lobby_Peer();
-	bool State_Game_State_Lobby_Host();
+	bool State_Game_Lobby_Peer();
+	/*bool State_Game_State_Lobby_Host();
 	bool State_Game_State_Lobby_Peer();*/
 	bool State_Loading();
 	bool State_InGame();

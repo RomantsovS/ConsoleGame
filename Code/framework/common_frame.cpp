@@ -24,15 +24,14 @@ int idGameThread::Run() {
 
 	if (isClient) {
 		// run the game logic
-		/*for (int i = 0; i < numGameFrames; i++) {
-			SCOPED_PROFILE_EVENT("Client Prediction");
+		for (int i = 0; i < numGameFrames; i++) {
 			if (userCmdMgr) {
 				game->ClientRunFrame(*userCmdMgr, (i == numGameFrames - 1), ret);
 			}
-			if (ret.syncNextGameFrame || ret.sessionCommand[0] != 0) {
+			/*if (ret.syncNextGameFrame || ret.sessionCommand[0] != 0) {
 				break;
-			}
-		}*/
+			}*/
+		}
 	}
 	else {
 		// run the game logic
@@ -50,7 +49,7 @@ int idGameThread::Run() {
 	// we should have consumed all of our usercmds
 	if (userCmdMgr) {
 		if (userCmdMgr->HasUserCmdForPlayer(game->GetLocalClientNum())) {
-			idLib::Printf("idGameThread::Run: didn't consume all usercmds\n");
+			//idLib::Printf("idGameThread::Run: didn't consume all usercmds\n");
 		}
 	}
 
@@ -273,6 +272,12 @@ void idCommonLocal::Frame() {
 			return;
 		}
 
+		if (mapSpawned && !pauseGame) {
+			if (IsClient()) {
+				RunNetworkSnapshotFrame();
+			}
+		}
+
 		// send frame and mouse events to active guis
 		GuiFrameEvents();
 
@@ -340,3 +345,4 @@ void idCommonLocal::Frame() {
 		common->Error(err.what());
 	}
 }
+

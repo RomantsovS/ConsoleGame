@@ -25,6 +25,38 @@ void idStaticEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage,
 	PostEventMS(&EV_Remove, 0);
 }
 
+/*
+================
+idStaticEntity::WriteToSnapshot
+================
+*/
+void idStaticEntity::WriteToSnapshot(idBitMsg& msg) const {
+	GetPhysics()->WriteToSnapshot(msg);
+}
+
+/*
+================
+idStaticEntity::ReadFromSnapshot
+================
+*/
+void idStaticEntity::ReadFromSnapshot(const idBitMsg& msg) {
+	bool hidden;
+
+	GetPhysics()->ReadFromSnapshot(msg);
+	/*hidden = msg.ReadBits(1) == 1;
+	if (hidden != IsHidden()) {
+		if (hidden) {
+			Hide();
+		}
+		else {
+			Show();
+		}
+	}
+	if (msg.HasChanged()) {
+		UpdateVisuals();
+	}*/
+}
+
 CLASS_DECLARATION(idAnimatedEntity, idSimpleObject)
 END_CLASS
 

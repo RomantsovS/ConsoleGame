@@ -1147,8 +1147,14 @@ Screen::color_type idGameLocal::GetRandomColor() {
 idGameLocal::SpawnEntityType
 ================
 */
-std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const idDict* args) {
+std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const idDict* args, bool bIsClientReadSnapshot) {
 	std::shared_ptr<idClass> obj;
+
+#if _DEBUG
+	if (common->IsClient()) {
+		assert(bIsClientReadSnapshot);
+	}
+#endif
 
 	if (!classdef.IsType(idEntity::Type)) {
 		Error("Attempted to spawn non-entity class '%s'", classdef.classname.c_str());

@@ -62,11 +62,108 @@ void idCommonLocal::SendSnapshots() {
 }
 
 /*
+===============
+idCommonLocal::NetReceiveSnapshot
+===============
+*/
+void idCommonLocal::NetReceiveSnapshot(class idSnapShot& ss) {
+	//ss.SetRecvTime(Sys_Milliseconds());
+	// If we are about to overwrite the oldest snap, then force a read, which will cause a pop on screen, but we have to do this.
+	if (writeSnapshotIndex - readSnapshotIndex >= RECEIVE_SNAPSHOT_BUFFER_SIZE) {
+		idLib::Printf("Overwritting oldest snapshot %d with new snapshot %d\n", readSnapshotIndex, writeSnapshotIndex);
+		assert(writeSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE == readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE);
+		ProcessNextSnapshot();
+	}
+
+	receivedSnaps[writeSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE] = ss;
+	writeSnapshotIndex++;
+
+	// Force read the very first 2 snapshots
+	if (readSnapshotIndex < 2) {
+		ProcessNextSnapshot();
+	}
+}
+
+/*
+========================
+idCommonLocal::ProcessSnapshot
+========================
+*/
+void idCommonLocal::ProcessSnapshot(idSnapShot& ss) {
+	int time = Sys_Milliseconds();
+
+	/*snapTime = time;
+	snapPrevious = snapCurrent;
+	snapCurrent.serverTime = ss.GetTime();
+	snapRate = snapCurrent.serverTime - snapPrevious.serverTime;
+
+
+	static int lastReceivedLocalTime = 0;
+	int timeSinceLastSnap = (time - lastReceivedLocalTime);
+	if (net_debug_snapShotTime.GetBool()) {
+		idLib::Printf("^2ProcessSnapshot. delta serverTime: %d  delta localTime: %d \n", (snapCurrent.serverTime - snapPrevious.serverTime), timeSinceLastSnap);
+	}
+	lastReceivedLocalTime = time;*/
+
+	// Read usercmds from other players
+	/*for (int p = 0; p < MAX_PLAYERS; p++) {
+		if (p == game->GetLocalClientNum()) {
+			continue;
+		}
+		idBitMsg msg;
+		if (ss.GetObjectMsgByID(SNAP_USERCMDS + p, msg)) {
+			NetReadUsercmds(p, msg);
+		}
+	}*/
+
+
+
+
+	// Set server game time here so that it accurately reflects the time when this frame was saved out, in case any serialize function needs it.
+	//int oldTime = Game()->GetServerGameTimeMs();
+	//Game()->SetServerGameTimeMs(snapCurrent.serverTime);
+
+	Game()->ClientReadSnapshot(ss); //, &oldss );
+
+	// Restore server game time
+	//Game()->SetServerGameTimeMs(oldTime);
+
+	//snapTimeDelta = ss.GetRecvTime() - oldss.GetRecvTime();
+	//oldss = ss;
+}
+
+/*
+========================
+idCommonLocal::ProcessNextSnapshot
+========================
+*/
+void idCommonLocal::ProcessNextSnapshot() {
+	if (readSnapshotIndex == writeSnapshotIndex) {
+		idLib::Printf("No snapshots to process.\n");
+		return;		// No snaps to process
+	}
+	ProcessSnapshot(receivedSnaps[readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE]);
+	readSnapshotIndex++;
+}
+
+/*
+========================
+idCommonLocal::RunNetworkSnapshotFrame
+========================
+*/
+void idCommonLocal::RunNetworkSnapshotFrame() {
+	ProcessNextSnapshot();
+}
+
+/*
 ========================
 idCommonLocal::ResetNetworkingState
 ========================
 */
 void idCommonLocal::ResetNetworkingState() {
+	readSnapshotIndex = 0;
+	writeSnapshotIndex = 0;
+
 	userCmdMgr.SetDefaults();
 
 	gameFrame = 0;

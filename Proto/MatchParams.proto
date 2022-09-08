@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package Serialize;
+
+message MatchParams {
+    int32 gameMap = 1;
+    int32 matchFlags = 2;
+    string mapName = 3;
+}

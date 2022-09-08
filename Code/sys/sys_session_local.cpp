@@ -490,6 +490,30 @@ bool idSessionLocal::State_Game_Lobby_Host() {
 
 /*
 ========================
+idSessionLocal::State_Game_Lobby_Peer
+========================
+*/
+bool idSessionLocal::State_Game_Lobby_Peer() {
+	if (GetActingGameStateLobby().startLoadingFromHost) {
+
+	//	VerifySnapshotInitialState();
+
+		// Set loading flag back to false
+		GetActingGameStateLobby().startLoadingFromHost = false;
+
+		// Set state to loading
+		SetState(state_t::STATE_LOADING);
+
+	//	loadingID++;
+
+		return true;
+	}
+
+	return HandlePackets();
+}
+
+/*
+========================
 idSessionLocal::State_Create_And_Move_To_Party_Lobby
 ========================
 */
@@ -943,8 +967,8 @@ bool idSessionLocal::HandleState() {
 	case state_t::STATE_PARTY_LOBBY_HOST:					return State_Party_Lobby_Host();
 		//case state_t::STATE_PARTY_LOBBY_PEER:					return State_Party_Lobby_Peer();
 	case state_t::STATE_GAME_LOBBY_HOST:						return State_Game_Lobby_Host();
-		/*case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
-		case state_t::STATE_GAME_STATE_LOBBY_HOST:				return State_Game_State_Lobby_Host();
+	case state_t::STATE_GAME_LOBBY_PEER:						return State_Game_Lobby_Peer();
+		/*case state_t::STATE_GAME_STATE_LOBBY_HOST:				return State_Game_State_Lobby_Host();
 		case state_t::STATE_GAME_STATE_LOBBY_PEER:				return State_Game_State_Lobby_Peer();*/
 	case state_t::STATE_LOADING:								return State_Loading();
 	case state_t::STATE_INGAME:								return State_InGame();

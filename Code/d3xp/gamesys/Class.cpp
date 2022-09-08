@@ -138,6 +138,9 @@ ABSTRACT_DECLARATION(NULL, idClass)
 EVENT(EV_Remove, idClass::Event_Remove)
 END_CLASS
 
+// typenum order
+std::vector<idTypeInfo*> idClass::typenums;
+
 void idClass::CallSpawn() {
 	idTypeInfo* type;
 
@@ -184,9 +187,12 @@ void idClass::Init() {
 		c->lastChild += num;
 	}
 
+	types.reserve(num);
+	typenums.resize(num);
+
 	for (c = typelist; c != NULL; c = c->next, num++) {
 		types.push_back(c);
-		//typenums[c->typeNum] = c;
+		typenums[c->typeNum] = c;
 	}
 
 	initialized = true;
@@ -201,6 +207,7 @@ void idClass::Shutdown() noexcept {
 		c->Shutdown();
 	}
 	types.clear();
+	typenums.clear();
 
 	initialized = false;
 }
@@ -241,6 +248,28 @@ idTypeInfo* idClass::GetClass(const std::string& name) noexcept {
 				min = mid + 1;
 			}
 		}
+	}
+
+	return NULL;
+}
+
+/*
+================
+idClass::GetType
+================
+*/
+idTypeInfo* idClass::GetType(const int typeNum) {
+	idTypeInfo* c;
+
+	if (!initialized) {
+		for (c = typelist; c != NULL; c = c->next) {
+			if (c->typeNum == typeNum) {
+				return c;
+			}
+		}
+	}
+	else if ((typeNum >= 0) && (typeNum < types.size())) {
+		return typenums[typeNum];
 	}
 
 	return NULL;

@@ -110,6 +110,8 @@ public:
 	// notifies this entity that is has been killed
 	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept;
 
+	virtual void WriteToSnapshot(idBitMsg& msg) const;
+	virtual void ReadFromSnapshot(const idBitMsg& msg);
 protected:
 	renderEntity_t renderEntity;
 	int modelDefHandle;

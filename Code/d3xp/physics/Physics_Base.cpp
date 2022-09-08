@@ -294,3 +294,19 @@ bool idPhysics_Base::IsOutsideWorld() const {
 	}
 	return false;
 }
+
+/*
+================
+idPhysics_Base::WriteToSnapshot
+================
+*/
+void idPhysics_Base::WriteToSnapshot(idBitMsg& msg) const {
+}
+
+/*
+================
+idPhysics_Base::ReadFromSnapshot
+================
+*/
+void idPhysics_Base::ReadFromSnapshot(const idBitMsg& msg) {
+}

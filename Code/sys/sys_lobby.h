@@ -117,6 +117,8 @@ public:
 	static const int MIN_CONNECT_FREQUENCY_IN_SECONDS = 1;		// Min frequency of connection attempts
 	static const int MAX_CONNECT_ATTEMPTS = 5;
 
+	static const int MAX_SNAP_SIZE = idPacketProcessor::MAX_MSG_SIZE;
+
 	static const int OOB_HELLO = 0;
 	static const int OOB_GOODBYE = 1;
 	static const int OOB_GOODBYE_W_PARTY = 2;
@@ -148,9 +150,16 @@ public:
 
 			ResetConnectState();
 		}
+		peer_t(peer_t&& other) : packetProc(std::move(other.packetProc)) {
+			loaded = other.loaded;
+			inGame = other.inGame;
+			address = other.address;
+			connectionState = other.connectionState;
+			sessionID = other.sessionID;
+		}
 
 		void ResetConnectState() {
-			
+			needToSubmitPendingSnap = false;
 		}
 
 		void ResetAllData() {
@@ -161,6 +170,12 @@ public:
 		void ResetMatchData() {
 			loaded = false;
 			inGame = false;
+			needToSubmitPendingSnap = false;
+
+			// Reset the snapshot processor
+			if (snapProc) {
+				snapProc->Reset(false);
+			}
 		}
 
 		bool IsActive() const { return connectionState != connectionState_t::CONNECTION_FREE; }
@@ -173,6 +188,11 @@ public:
 		bool inGame; // true if this peer received the first snapshot, and is in-game
 
 		lobbyAddress_t address;
+
+		std::unique_ptr<idPacketProcessor> packetProc; // Processes packets for this peer
+		std::unique_ptr<idSnapshotProcessor> snapProc; // Processes snapshots for this peer
+
+		bool needToSubmitPendingSnap;
 
 		idPacketProcessor::sessionId_t sessionID;
 	};
@@ -215,6 +235,7 @@ public:
 	void State_Searching();
 	void State_Obtaining_Address();
 	void State_Connect_Hello_Wait();
+	void State_Finalize_Connect();
 
 	void SetState(lobbyState_t newState);
 
@@ -227,7 +248,8 @@ public:
 	void SetPeerConnectionState(int p, connectionState_t newState, bool skipGoodbye = false);
 
 	void SendGoodbye(const lobbyAddress_t& remoteAddress, bool wasFull = false);
-	void QueueReliableMessage(int p, char type, const char* data, int dataLen);
+	void QueueReliableMessage(int peerNum, std::byte type) { QueueReliableMessage(peerNum, type, nullptr, 0); }
+	void QueueReliableMessage(int p, std::byte type, const std::byte* data, int dataLen);
 
 	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
 	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type, const std::byte* data, int dataLen);
@@ -245,6 +267,9 @@ public:
 
 	void PumpPings();
 
+	bool SendAnotherFragment(int p);
+	void ProcessOutgoingMsg(int p, const void* data, int size, bool isOOB, int userData);
+	void ResendReliables(int p);
 	void PumpPackets();
 
 	// SessionID helpers
@@ -253,6 +278,10 @@ public:
 	idPacketProcessor::sessionId_t GenerateSessionID() const;
 	bool SessionIDCanBeUsedForInBand(idPacketProcessor::sessionId_t sessionID) const;
 	idPacketProcessor::sessionId_t IncrementSessionID(idPacketProcessor::sessionId_t sessionID) const;
+
+	void HandleHelloAck(int p, idBitMsg& msg);
+
+	void HandleReliableMsg(int p, idBitMsg& msg);
 
 	//
 	// sys_session_instance_users.cpp
@@ -279,6 +308,9 @@ public:
 	// sys_session_instance_snapshot.cpp
 	//
 	void UpdateSnaps();
+	bool SendCompletedSnaps();
+	bool SubmitPendingSnap(int p);
+	void SendCompletedPendingSnap(int p);
 	void SendSnapshotToPeer(idSnapShot& ss, int p);
 
 	static const int MAX_PEERS = MAX_PLAYERS;
@@ -313,6 +345,8 @@ public:
 	idMatchParameters parms;
 
 	bool loaded; // Used for game sessions, whether this machine is loaded or not
+
+	bool startLoadingFromHost;
 };
 
 /*

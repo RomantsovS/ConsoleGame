@@ -11,8 +11,7 @@ struct staticPState_s
 	Vector2	localAxis;
 };
 
-class idPhysics_Static : public idPhysics
-{
+class idPhysics_Static : public idPhysics {
 public:
 	CLASS_PROTOTYPE(idPhysics_Static);
 
@@ -49,14 +48,14 @@ public:	// common physics interface
 	void SaveState() noexcept override;
 	void RestoreState() noexcept override;
 
-	void SetOrigin(const Vector2 &newOrigin, int id = -1) override;
-	void SetAxis(const Vector2 &newAxis, int id = -1) noexcept override;
+	void SetOrigin(const Vector2& newOrigin, int id = -1) override;
+	void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
-	void Translate(const Vector2 &translation, int id = -1) override;
-	void Rotate(const Vector2 &rotation, int id = -1) noexcept override;
+	void Translate(const Vector2& translation, int id = -1) override;
+	void Rotate(const Vector2& rotation, int id = -1) noexcept override;
 
-	const Vector2 & GetOrigin(int id = 0) const noexcept override;
-	const Vector2 &	GetAxis(int id = 0) const noexcept override;
+	const Vector2& GetOrigin(int id = 0) const noexcept override;
+	const Vector2& GetAxis(int id = 0) const noexcept override;
 
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
 	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
@@ -72,6 +71,9 @@ public:	// common physics interface
 	void ClearContacts() noexcept override;
 	void AddContactEntity(idEntity* e) noexcept override;
 	void RemoveContactEntity(idEntity* e) noexcept override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 protected:
 	idEntity* self; // entity using this physics object
 	staticPState_s current;			// physics state

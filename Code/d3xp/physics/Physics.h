@@ -75,6 +75,10 @@ public: // common physics interface
 	virtual void ClearContacts() = 0;
 	virtual void AddContactEntity(idEntity* e) = 0;
 	virtual void RemoveContactEntity(idEntity* e) = 0;
+
+	// networking
+	virtual void WriteToSnapshot(idBitMsg& msg) const = 0;
+	virtual void ReadFromSnapshot(const idBitMsg& msg) = 0;
 };
 
 #endif

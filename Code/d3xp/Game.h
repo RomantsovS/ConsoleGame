@@ -38,6 +38,12 @@ public:
 	// Writes a snapshot of the server game state.
 	virtual void ServerWriteSnapshot(idSnapShot& ss) = 0;
 
+	// Reads a snapshot and updates the client game state.
+	virtual void ClientReadSnapshot(const idSnapShot& ss) = 0;
+
+	// Runs prediction on entities at the client.
+	virtual void ClientRunFrame(idUserCmdMgr& cmdMgr, bool lastPredictFrame, gameReturn_t& ret) = 0;
+
 	virtual bool IsInGame() const = 0;
 
 	virtual int GetLocalClientNum() const = 0;

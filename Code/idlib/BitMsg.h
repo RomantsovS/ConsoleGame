@@ -58,13 +58,6 @@ public:
 	// number of bytes left to read
 	int GetRemainingData() const;
 
-	// read the specified number of bits
-	int ReadBytes(int numBytes) const;
-
-	uint32_t ReadLong();
-	uint64_t ReadLongLong();
-	bool ReadProtobufMessage(google::protobuf::Message* proto_msg);
-
 	//------------------------
 	// Writing
 	//------------------------
@@ -78,8 +71,22 @@ public:
 	void WriteUShort(uint16_t c);
 	void WriteLong(int32_t c);
 	void WriteLongLong(int64_t c);
+	void WriteFloat(float f);
 	void WriteData(const void* data, int length);
 	bool WriteProtobufMessage(google::protobuf::Message* proto_msg);
+
+	// begin reading.
+	void BeginReading() const;
+
+	// read the specified number of bits
+	int ReadBytes(int numBytes) const;
+
+	int ReadByte();
+	uint16_t ReadUShort();
+	uint32_t ReadLong();
+	uint64_t ReadLongLong();
+	float ReadFloat() const;
+	bool ReadProtobufMessage(google::protobuf::Message* proto_msg);
 private:
 	std::byte* writeData;		// pointer to data for writing
 	const std::byte* readData;		// pointer to data for reading
@@ -223,7 +230,8 @@ idBitMsg::SaveReadState
 ========================
 */
 inline void idBitMsg::SaveReadState(int& c, int& b) const {
-	//c = input->CurrentPosition();
+	assert(writeBit == 0);
+	c = readCount;
 }
 
 /*
@@ -232,7 +240,8 @@ idBitMsg::RestoreReadState
 ========================
 */
 inline void idBitMsg::RestoreReadState(int c, int b) {
-	//input->
+	assert(writeBit == 0);
+	readCount = c;
 }
 
 /*
@@ -277,6 +286,40 @@ inline void idBitMsg::WriteLongLong(int64_t c) {
 	WriteBytes(a, 4);
 }
 
+/*
+========================
+idBitMsg::WriteFloat
+========================
+*/
+inline void idBitMsg::WriteFloat(float f) {
+	WriteBytes(*reinterpret_cast<int*>(&f), 4);
+}
+
+/*
+========================
+idBitMsg::BeginReading
+========================
+*/
+inline void idBitMsg::BeginReading() const {
+	readCount = 0;
+
+	writeBit = 0;
+	tempValue = 0;
+}
+
+/*
+========================
+idBitMsg::ReadByte
+========================
+*/
+inline int idBitMsg::ReadByte() {
+	return ReadBytes(1);
+}
+
+inline uint16_t idBitMsg::ReadUShort() {
+	return ReadBytes(2);
+}
+
 inline uint32_t idBitMsg::ReadLong() {
 	return ReadBytes(4);
 }
@@ -286,6 +329,17 @@ inline uint64_t idBitMsg::ReadLongLong() {
 	int64 b = ReadBytes(4);
 	int64 c = (a << 32) | (0x00000000ffffffff & b);
 	return c;
+}
+
+/*
+========================
+idBitMsg::ReadFloat
+========================
+*/
+inline float idBitMsg::ReadFloat() const {
+	float value;
+	*reinterpret_cast<int*>(&value) = ReadBytes(4);
+	return value;
 }
 
 #endif

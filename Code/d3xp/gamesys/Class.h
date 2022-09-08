@@ -150,6 +150,7 @@ public:
 	static void Init();
 	static void	Shutdown() noexcept;
 	static idTypeInfo * GetClass(const std::string& name) noexcept;
+	static idTypeInfo* GetType(int num);
 private:
 	classSpawnFunc_t CallSpawnFunc(gsl::not_null<idTypeInfo*> cls);
 
@@ -157,6 +158,7 @@ private:
 
 	static bool initialized;
 	static std::vector<idTypeInfo*> types;
+	static std::vector<idTypeInfo*> typenums;
 };
 
 class idTypeInfo {
