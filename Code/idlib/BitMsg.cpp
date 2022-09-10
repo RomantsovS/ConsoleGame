@@ -64,6 +64,11 @@ int idBitMsg::ReadBytes(int numBytes) const {
 		idLib::FatalError("idBitMsg::ReadBits: cannot read from message");
 	}
 
+	// check for overflow
+	if (numBytes > GetRemainingReadBytes()) {
+		return -1;
+	}
+
 	for (size_t i = 0; i < numBytes; ++i) {
 		fraction = static_cast<int>(readData[readCount + i]);
 		value |= fraction << (numBytes - i - 1) * 8;
