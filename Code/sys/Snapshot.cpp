@@ -61,6 +61,8 @@ bool idSnapShot::ReadDeltaForJob(const std::byte* deltaMem, int deltaSize, int& 
 
 		int size = msg.ReadLong();
 
+		idassert(size >= 0 && size < 1024);
+
 		// the buffer shrank or stayed the same
 		objectBuffer_t newbuffer(size);
 
