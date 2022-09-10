@@ -8,8 +8,6 @@ idCVar net_useGameStateLobby("net_useGameStateLobby", "0", CVAR_BOOL, "");
 idCVar net_port("net_port", "27015", CVAR_INTEGER, "host port number"); // Port to host when using dedicated servers, port to broadcast on when looking for a dedicated server to connect to
 idCVar net_headlessServer("net_headlessServer", "0", CVAR_BOOL, "toggle to automatically host a game and allow peer[0] to control menus");
 
-static const size_t MAX_BUF_SIZE = 1024;
-
 const std::string idSessionLocal::stateToString[static_cast<int>(state_t::NUM_STATES)] = {
 	idassert_ENUM_STRING(state_t::STATE_PRESS_START, 0),
 	idassert_ENUM_STRING(state_t::STATE_IDLE, 1),
@@ -1109,7 +1107,7 @@ bool idSessionLocal::HandlePackets() {
 	lobbyAddress_t remoteAddress;
 	int recvSize = 0;
 
-	while (ReadRawPacket(remoteAddress, packetBuffer.data(), recvSize, MAX_BUF_SIZE) && recvSize > 0) {
+	while (ReadRawPacket(remoteAddress, packetBuffer.data(), recvSize, packetBuffer.size()) && recvSize > 0) {
 		idBitMsg fragMsg;
 		fragMsg.InitRead(packetBuffer.data(), recvSize);
 
@@ -1307,6 +1305,8 @@ idNetSessionPort::SendRawPacket
 ========================
 */
 void idNetSessionPort::SendRawPacket(const lobbyAddress_t to, const void* data, int size) {
+	assert(size <= idPacketProcessor::MAX_FINAL_PACKET_SIZE);
+
 	UDP.SendPacket(to.netAddr, data, size);
 }
 
