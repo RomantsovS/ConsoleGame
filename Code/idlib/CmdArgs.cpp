@@ -18,7 +18,7 @@ idCmdArgs::Args
 const std::string idCmdArgs::Args(size_t start, size_t end, bool escapeArgs) const {
 	static char cmd_args[MAX_COMMAND_STRING];
 
-	//assert(argc < MAX_COMMAND_ARGS);
+	//idassert(argc < MAX_COMMAND_ARGS);
 	if (end <= 0) {
 		end = argv.size() - 1;
 	}

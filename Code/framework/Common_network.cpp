@@ -71,7 +71,7 @@ void idCommonLocal::NetReceiveSnapshot(class idSnapShot& ss) {
 	// If we are about to overwrite the oldest snap, then force a read, which will cause a pop on screen, but we have to do this.
 	if (writeSnapshotIndex - readSnapshotIndex >= RECEIVE_SNAPSHOT_BUFFER_SIZE) {
 		idLib::Printf("Overwritting oldest snapshot %d with new snapshot %d\n", readSnapshotIndex, writeSnapshotIndex);
-		assert(writeSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE == readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE);
+		idassert(writeSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE == readSnapshotIndex % RECEIVE_SNAPSHOT_BUFFER_SIZE);
 		ProcessNextSnapshot();
 	}
 

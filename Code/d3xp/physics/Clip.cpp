@@ -189,7 +189,7 @@ void idClipModel::LoadModel(const idTraceModel& trm, bool persistantThroughSave)
 }
 
 void idClipModel::Link(idClip& clp) {
-	assert(idClipModel::entity);
+	idassert(idClipModel::entity);
 	if (!idClipModel::entity) {
 		return;
 	}
@@ -386,7 +386,7 @@ idClipModel::Handle
 ================
 */
 int idClipModel::Handle() const {
-	//assert(renderModelHandle == -1);
+	//idassert(renderModelHandle == -1);
 	if (collisionModelHandle) {
 		return collisionModelHandle;
 	}
@@ -692,7 +692,7 @@ int idClip::ClipModelsTouchingBounds(const idBounds& bounds, int contentMask, id
 		//||bounds[0][2] > bounds[1][2]
 		) {
 		// we should not go through the tree for degenerate or backwards bounds
-		assert(false);
+		idassert(false);
 		return 0;
 	}
 

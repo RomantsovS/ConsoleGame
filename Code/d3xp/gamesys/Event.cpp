@@ -19,8 +19,8 @@ static bool eventError = false;
 static char eventErrorMsg[128];
 
 idEventDef::idEventDef(const std::string& command, const std::string& formatspec, char returnType){
-	//assert(command);
-	//assert(!idEvent::initialized);
+	//idassert(command);
+	//idassert(!idEvent::initialized);
 
 	this->name = command;
 	this->formatspec = formatspec;
@@ -282,7 +282,7 @@ idEvent::Schedule
 ================
 */
 void idEvent::Schedule(idClass* obj, const idTypeInfo* type, int time) noexcept {
-	assert(initialized);
+	idassert(initialized);
 	if (!initialized) {
 		return;
 	}
@@ -367,7 +367,7 @@ void idEvent::ServiceEvents() {
 	int num = 0;
 	while (!EventQueue.IsListEmpty()) {
 		auto event = EventQueue.Next();
-		assert(event);
+		idassert(event);
 
 		if (event->time > gameLocal.time) {
 			break;
@@ -424,7 +424,7 @@ void idEvent::ServiceEvents() {
 		// is deleted, the event won't be freed twice
 		event->eventNode.Remove();
 		size_t i = EventQueue.Num();
-		assert(event->object);
+		idassert(event->object);
 		event->object->ProcessEventArgPtr(ev, args);
 		i = EventQueue.Num();
 

@@ -1,12 +1,6 @@
 #ifndef IDLIB_MAPFILE_H_
 #define IDLIB_MAPFILE_H_
 
-#include <string>
-#include <memory>
-#include <vector>
-
-#include "Dict.h"
-
 const int OLD_MAP_VERSION = 1;
 const int CURRENT_MAP_VERSION = 2;
 

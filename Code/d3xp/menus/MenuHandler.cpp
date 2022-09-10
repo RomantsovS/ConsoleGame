@@ -182,7 +182,7 @@ bool idMenuHandler::HandleAction(idWidgetAction& action, const idWidgetEvent& ev
 	case widgetAction_t::WIDGET_ACTION_START_REPEATER: {
 		idWidgetAction repeatAction;
 		widgetAction_t repeatActionType = static_cast<widgetAction_t>(parms[0]->ToInteger());
-		assert(parms.size() >= 2);
+		idassert(parms.size() >= 2);
 		int repeatDelay = DEFAULT_REPEAT_TIME;
 		if (parms.size() >= 3) {
 			repeatDelay = parms[2]->ToInteger();

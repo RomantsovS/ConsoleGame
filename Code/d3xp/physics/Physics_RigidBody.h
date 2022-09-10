@@ -91,6 +91,9 @@ public:	// common physics interface
 	void LinkClip() noexcept override;
 
 	bool EvaluateContacts() noexcept override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 private:
 	// state of the rigid body
 	rigidBodyPState_t current;

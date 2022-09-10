@@ -7,7 +7,7 @@ idLobby::UpdateSnaps
 ========================
 */
 void idLobby::UpdateSnaps() {
-	assert(lobbyType == GetActingGameStateLobbyType());
+	idassert(lobbyType == GetActingGameStateLobbyType());
 
 	//haveSubmittedSnaps = false;
 
@@ -41,7 +41,7 @@ This function will send send off any previously submitted pending snaps if they 
 ========================
 */
 bool idLobby::SendCompletedSnaps() {
-	assert(lobbyType == GetActingGameStateLobbyType());
+	idassert(lobbyType == GetActingGameStateLobbyType());
 
 	bool sentAllSubmitted = true;
 
@@ -52,25 +52,25 @@ bool idLobby::SendCompletedSnaps() {
 			continue;
 		}
 
-		if (true/*peer.snapProc->PendingSnapReadyToSend()*/) {
+		if (peer.snapProc->PendingSnapReadyToSend()) {
 			// Check to see if there are any snaps that were submitted that need to be sent out
 			SendCompletedPendingSnap(p);
 		}
 		else if (IsHost()) {
-			NET_VERBOSESNAPSHOT_PRINT_LEVEL(7, va("  ^8Peer %d pendingSnap not ready to send\n", p).c_str());
+			//NET_VERBOSESNAPSHOT_PRINT_LEVEL(7, va("  ^8Peer %d pendingSnap not ready to send\n", p).c_str());
 		}
 
 		if (!peer.IsConnected()) { // peer may have been dropped in "SendCompletedPendingSnap". ugh.
 			continue;
 		}
 
-		//if (peer.snapProc->PendingSnapReadyToSend()) {
-		//	// If we still have a submitted snap, we know we're not done
-		//	sentAllSubmitted = false;
-		//	if (IsHost()) {
-		//		NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("  ^2Peer %d did not send all submitted snapshots.\n", p).c_str());
-		//	}
-		//}
+		if (peer.snapProc->PendingSnapReadyToSend()) {
+			// If we still have a submitted snap, we know we're not done
+			sentAllSubmitted = false;
+			if (IsHost()) {
+				NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("  ^2Peer %d did not send all submitted snapshots.\n", p).c_str());
+			}
+		}
 	}
 
 	return sentAllSubmitted;
@@ -83,7 +83,7 @@ idLobby::SubmitPendingSnap
 */
 bool idLobby::SubmitPendingSnap(int p) {
 
-	assert(lobbyType == GetActingGameStateLobbyType());
+	idassert(lobbyType == GetActingGameStateLobbyType());
 
 	peer_t& peer = peers[p];
 
@@ -114,13 +114,13 @@ bool idLobby::SubmitPendingSnap(int p) {
 		return false;
 	}
 
-	peer.lastSnapJobTime = time;
-	assert(!peer.snapProc->PendingSnapReadyToSend());*/
+	peer.lastSnapJobTime = time;*/
+	idassert(!peer.snapProc->PendingSnapReadyToSend());
 
 	// Submit snapshot delta to jobs
-	peer.snapProc->SubmitPendingSnap();
+	peer.snapProc->SubmitPendingSnap(objMemory.data(), SNAP_OBJ_JOB_MEMORY);
 
-	//NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("  Submitted snapshot to jobList for peer %d. Since last jobsub: %d\n", p, timeFromLastSub));
+	NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("NET: Submitted snapshot to jobList for peer %d\n", p).c_str());
 
 	return true;
 }
@@ -132,7 +132,7 @@ idLobby::SendCompletedPendingSnap
 */
 void idLobby::SendCompletedPendingSnap(int p) {
 
-	assert(lobbyType == GetActingGameStateLobbyType());
+	idassert(lobbyType == GetActingGameStateLobbyType());
 
 	int time = Sys_Milliseconds();
 
@@ -142,12 +142,12 @@ void idLobby::SendCompletedPendingSnap(int p) {
 		return;
 	}
 
-	if (!peer.snapProc /* || !peer.snapProc->PendingSnapReadyToSend()*/) {
+	if (!peer.snapProc || !peer.snapProc->PendingSnapReadyToSend()) {
 		return;
 	}
 
 	// If we have a pending snap ready to send, we better have a pending snap
-	assert(peer.snapProc->HasPendingSnap());
+	idassert(peer.snapProc->HasPendingSnap());
 
 	// Get the snap data blob now, even if we don't send it.  
 	// This is somewhat wasteful, but we have to do this to keep the snap job pipe ready to keep doing work
@@ -212,8 +212,8 @@ void idLobby::SendCompletedPendingSnap(int p) {
 
 	if (size != 0) {
 		if (size > 0) {
-			/*NET_VERBOSESNAPSHOT_PRINT_LEVEL(3, va("NET: (peer %d) Sending snapshot %d delta'd against %d. Since JobSub: %d Since LastSend: %d. Size: %d\n", p,
-				peer.snapProc->GetSnapSequence(), peer.snapProc->GetBaseSequence(), timeFromJobSub, timeFromLastSend, size).c_str());*/
+			NET_VERBOSESNAPSHOT_PRINT_LEVEL(3, va("NET: (peer %d) Sending snapshot %d delta'd against %d. Size: %d\n", p,
+				peer.snapProc->GetSnapSequence(), peer.snapProc->GetBaseSequence(), size).c_str());
 			ProcessOutgoingMsg(p, buffer.data(), size, false, 0);
 		}
 		//else if (size < 0) {	// Size < 0 indicates the delta buffer filled up
@@ -236,7 +236,7 @@ idLobby::SendSnapshotToPeer
 ========================
 */
 void idLobby::SendSnapshotToPeer(idSnapShot& ss, int p) {
-	assert(lobbyType == GetActingGameStateLobbyType());
+	idassert(lobbyType == GetActingGameStateLobbyType());
 
 	peer_t& peer = peers[p];
 
@@ -261,7 +261,8 @@ void idLobby::SendSnapshotToPeer(idSnapShot& ss, int p) {
 			baseState->UpdateExpectedSeq(peers[p].snapProc->GetSnapSequence());
 		}*/
 
-	}
+
+	} 
 	else {
 		NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("  ^2FAILED Set next pending snapshot peer %d\n", 0).c_str());
 	}

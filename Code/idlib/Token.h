@@ -1,8 +1,6 @@
 #ifndef IDLIB_TEXT_TOKEN_H_
 #define IDLIB_TEXT_TOKEN_H_
 
-#include <string>
-
 // token types
 #define TT_STRING					1		// string
 #define TT_LITERAL					2		// literal

@@ -1,7 +1,7 @@
 #ifndef IDLIB_TEXT_STR_H_
 #define IDLIB_TEXT_STR_H_
 
-#define ASSERT_ENUM_STRING( string, index )		( 1 / (int)!( static_cast<int>(string) - index ) ) ? #string : ""
+#define idassert_ENUM_STRING( string, index )		( 1 / (int)!( static_cast<int>(string) - index ) ) ? #string : ""
 
 class idStr {
 public:

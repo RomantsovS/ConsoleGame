@@ -12,12 +12,15 @@ Version 2
 {
  brushDef3
  {
-  ( 0 0 215 150 )
+  ( 0 0 215 115 )
  }
 }
 }
-
+/*
 {
-"classname" "block"
-"origin" "25 25"
-}
+"classname" "mushroom"
+"name" "mushroom1"
+"origin" "140 75"
+"color" "1"
+"linearVelocity" "0 10"
+}*/

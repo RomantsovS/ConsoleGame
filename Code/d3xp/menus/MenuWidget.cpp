@@ -102,7 +102,7 @@ void idMenuWidget::ReceiveEvent(const idWidgetEvent& event) {
 
 	// If hitting this then more than likely you have a self-referential chain.  If that's not
 	// the case, then you may need to increase the size of the focusChain list.
-	//assert(focusRunawayCounter != 0);
+	//idassert(focusRunawayCounter != 0);
 	for (int focusIndex = focusChain.size() - 1; focusIndex >= 0; --focusIndex) {
 		std::shared_ptr<idMenuWidget> const focusedWidget = focusChain[focusIndex];
 
@@ -196,7 +196,7 @@ SWFs aren't necessarily loaded at the time widgets are instantiated.
 */
 bool idMenuWidget::BindSprite(gsl::not_null<idSWFScriptObject*> root) {
 	const char* args[6] = { NULL };
-	assert(GetSpritePath().size() > 0);
+	idassert(GetSpritePath().size() > 0);
 	for (size_t i = 0; i < GetSpritePath().size(); ++i) {
 		args[i] = GetSpritePath()[i].c_str();
 	}
@@ -221,7 +221,7 @@ void idMenuWidget::SetFocusIndex(const size_t index, bool skipSound) {
 
 	const size_t oldIndex = focusIndex;
 
-	//assert(index >= 0 && index < GetChildren().size()); //&& oldIndex >= 0 && oldIndex < GetChildren().Num() );
+	//idassert(index >= 0 && index < GetChildren().size()); //&& oldIndex >= 0 && oldIndex < GetChildren().Num() );
 
 	focusIndex = index;
 
@@ -234,7 +234,7 @@ void idMenuWidget::SetFocusIndex(const size_t index, bool skipSound) {
 		GetChildByIndex(oldIndex)->ReceiveEvent(idWidgetEvent(widgetEvent_t::WIDGET_EVENT_FOCUS_OFF, 0, nullptr, parms));
 	}
 
-	//assert( GetChildByIndex( index ).GetState() != WIDGET_STATE_HIDDEN );
+	//idassert( GetChildByIndex( index ).GetState() != WIDGET_STATE_HIDDEN );
 	GetChildByIndex(index)->ReceiveEvent(idWidgetEvent(widgetEvent_t::WIDGET_EVENT_FOCUS_ON, 0, nullptr, parms));
 }
 

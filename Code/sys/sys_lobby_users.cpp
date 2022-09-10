@@ -19,7 +19,7 @@ lobbyUser_t* idLobby::AllocUser(const lobbyUser_t& defaults) {
 
 	userList.push_back(user);
 
-	assert(userList.size() == userPool.size() - freeUsers.size());
+	idassert(userList.size() == userPool.size() - freeUsers.size());
 
 	return user;
 }
@@ -55,8 +55,8 @@ void idLobby::FreeAllUsers() {
 		FreeUser(userList[i]);
 	}
 
-	assert(userList.empty());
-	assert(freeUsers.size() == userPool.size());
+	idassert(userList.empty());
+	idassert(freeUsers.size() == userPool.size());
 }
 
 /*
@@ -97,7 +97,7 @@ This functions just defaults the session users to the signin manager local users
 ========================
 */
 void idLobby::InitSessionUsersFromLocalUsers(bool onlineMatch) {
-	assert(lobbyBackend);
+	idassert(lobbyBackend);
 
 	// First, clear all session users of this session type
 	FreeAllUsers();

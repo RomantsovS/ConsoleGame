@@ -274,7 +274,7 @@ void idCommonLocal::Frame() {
 
 		if (mapSpawned && !pauseGame) {
 			if (IsClient()) {
-				RunNetworkSnapshotFrame();
+				//RunNetworkSnapshotFrame();
 			}
 		}
 

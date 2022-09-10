@@ -17,7 +17,7 @@ public:
 	int ItemLength(int i) const { return items[i].length; }
 	const std::byte* ItemData(int i) const { return &data[items[i].dataOffset]; }
 
-	void Clear() { dataLength = 0; items.Clear(); memset(data, 0, sizeof(data)); }
+	void Clear() { dataLength = 0; items.clear(); std::fill(data.begin(), data.end(), std::byte(0)); }
 
 private:
 	struct msgItem_t {
@@ -43,8 +43,8 @@ void idDataQueue< maxItems, maxBuffer >::RemoveOlderThan(int sequence) {
 		items.pop_front();
 	}
 	if (length >= dataLength) {
-		assert(items.size() == 0);
-		assert(dataLength == length);
+		idassert(items.size() == 0);
+		idassert(dataLength == length);
 		dataLength = 0;
 	}
 	else if (length > 0) {
@@ -56,7 +56,7 @@ void idDataQueue< maxItems, maxBuffer >::RemoveOlderThan(int sequence) {
 		items[i].dataOffset = length;
 		length += items[i].length;
 	}
-	assert(length == dataLength);
+	idassert(length == dataLength);
 }
 
 /*

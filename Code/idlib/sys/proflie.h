@@ -1,12 +1,5 @@
-#pragma once
-
-#include <chrono>
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <map>
-#include <algorithm>
-#include <vector>
+#ifndef PROFILE_H
+#define PROFILE_H
 
 struct CountTime {
     uint64_t cnt = 0;
@@ -128,3 +121,5 @@ private:
     do {              \
         (void)(expr); \
     } while (0)
+
+#endif

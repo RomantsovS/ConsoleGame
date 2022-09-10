@@ -188,8 +188,8 @@ void idPlayer::Weapon_Combat() {
 		}*/
 
 		if (weapon->IsHolstered()) {
-			assert(idealWeapon >= 0);
-			assert(idealWeapon < MAX_WEAPONS);
+			idassert(idealWeapon >= 0);
+			idassert(idealWeapon < MAX_WEAPONS);
 
 			currentWeapon = idealWeapon;
 			std::string animPrefix = spawnArgs.GetString(va("def_weapon%d", currentWeapon));
@@ -507,6 +507,52 @@ void idPlayer::HandleUserCmds(const usercmd_t& newcmd) noexcept {
 	//oldCmd = usercmd;
 	//oldImpulseSequence = usercmd.impulseSequence;
 	usercmd = newcmd;
+}
+
+/*
+================
+idPlayer::ClientThink
+================
+*/
+void idPlayer::ClientThink(/*const int curTime, const float fraction, const bool predict*/) {
+	AdjustSpeed();
+
+	//if (!isLagged) {
+	//	// don't allow client to move when lagged
+	//	if (IsLocallyControlled()) {
+	//		// Locally-controlled clients are authoritative on their positions, so they can move normally.			
+	//		Move();
+	//		usercmd.pos = physicsObj.GetOrigin();
+	//	}
+	//	else {
+	//		// Non-locally controlled players are interpolated.
+	//		Move_Interpolated(fraction);
+	//	}
+	//}
+
+	Present();
+}
+
+/*
+================
+idPlayer::WriteToSnapshot
+================
+*/
+void idPlayer::WriteToSnapshot(idBitMsg& msg) const {
+	physicsObj->WriteToSnapshot(msg);
+}
+
+/*
+================
+idPlayer::ReadFromSnapshot
+================
+*/
+void idPlayer::ReadFromSnapshot(const idBitMsg& msg) {
+	physicsObj->ReadFromSnapshot(msg);
+
+	if (true/*msg.HasChanged()*/) {
+		UpdateVisuals();
+	}
 }
 
 bool idPlayer::IsLocallyControlled() const noexcept {

@@ -38,6 +38,8 @@ extern unsigned short colorLightMagenta;
 extern unsigned short colorYellow;
 extern unsigned short colorWhite;
 
+#include <cwchar>
+
 /*
 ===============================================================================
 
@@ -64,7 +66,6 @@ extern unsigned short colorWhite;
 #include "geometry/TraceModel.h"
 
 // text manipulation
-#include <cwchar>
 #include "Str.h"
 #include "CmdArgs.h"
 #include "Token.h"

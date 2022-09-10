@@ -43,6 +43,32 @@ enum gameState_t {
 	GAMESTATE_SHUTDOWN				// inside MapShutdown().  clearing memory.
 };
 
+template< class type >
+class idEntityPtr {
+public:
+	idEntityPtr();
+
+	idEntityPtr& operator=(const type* ent);
+	idEntityPtr& operator=(const idEntityPtr& ep);
+
+	bool operator==(const idEntityPtr& ep) { return spawnId == ep.spawnId; }
+
+	type* operator->() const { return GetEntity(); }
+	operator type* () const { return GetEntity(); }
+
+	// synchronize entity pointers over the network
+	int GetSpawnId() const { return spawnId; }
+	bool SetSpawnId(int id);
+	bool UpdateSpawnId();
+
+	bool IsValid() const;
+	type* GetEntity() const;
+	int GetEntityNum() const;
+
+private:
+	int spawnId;
+};
+
 using game_time_type = int;
 
 struct timeState_t {
@@ -59,6 +85,7 @@ struct timeState_t {
 class idGameLocal : public idGame {
 public:
 	std::vector<std::shared_ptr<idEntity>> entities;
+	std::vector<int> spawnIds;// for use in idEntityPtr
 	std::array<int, 2> firstFreeEntityIndex;	// first free index in the entities array. [0] for replicated entities, [1] for non-replicated
 	idLinkList<idEntity> spawnedEntities; // all spawned entities
 	idLinkList<idEntity> activeEntities; // all thinking entities (idEntity::thinkFlags != 0)
@@ -245,6 +272,62 @@ T idGameLocal::GetRandomValue(std::initializer_list<T> values) {
 }
 
 extern idGameLocal gameLocal;
+
+template< class type >
+inline idEntityPtr<type>::idEntityPtr() {
+	spawnId = 0;
+}
+
+template< class type >
+inline idEntityPtr<type>& idEntityPtr<type>::operator=(const type* ent) {
+	if (ent == NULL) {
+		spawnId = 0;
+	}
+	else {
+		spawnId = (gameLocal.spawnIds[ent->entityNumber] << GENTITYNUM_BITS) | ent->entityNumber;
+	}
+	return *this;
+}
+
+template< class type >
+inline idEntityPtr< type >& idEntityPtr<type>::operator=(const idEntityPtr& ep) {
+	spawnId = ep.spawnId;
+	return *this;
+}
+
+
+template< class type >
+inline bool idEntityPtr<type>::SetSpawnId(int id) {
+	// the reason for this first check is unclear:
+	// the function returning false may mean the spawnId is already set right, or the entity is missing
+	if (id == spawnId) {
+		return false;
+	}
+	if ((id >> GENTITYNUM_BITS) == gameLocal.spawnIds[id & ((1 << GENTITYNUM_BITS) - 1)]) {
+		spawnId = id;
+		return true;
+	}
+	return false;
+}
+
+template< class type >
+inline bool idEntityPtr<type>::IsValid() const {
+	return (gameLocal.spawnIds[spawnId & ((1 << GENTITYNUM_BITS) - 1)] == (spawnId >> GENTITYNUM_BITS));
+}
+
+template< class type >
+inline type* idEntityPtr<type>::GetEntity() const {
+	int entityNum = spawnId & ((1 << GENTITYNUM_BITS) - 1);
+	if ((gameLocal.spawnIds[entityNum] == (spawnId >> GENTITYNUM_BITS))) {
+		return static_cast<type*>(gameLocal.entities[entityNum].get());
+	}
+	return NULL;
+}
+
+template< class type >
+inline int idEntityPtr<type>::GetEntityNum() const {
+	return (spawnId & ((1 << GENTITYNUM_BITS) - 1));
+}
 
 // content masks
 constexpr auto MASK_ALL = (-1);

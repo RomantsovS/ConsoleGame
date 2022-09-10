@@ -57,6 +57,8 @@ int idPacketProcessor::FinalizeRead(idBitMsg& inMsg, idBitMsg& outMsg, int& user
 		if (numReliableRecv > 0) {
 			int reliableSequence = inMsg.ReadLong();
 
+			idLib::Printf("NET: got %d msgs reliableSequence %d / reliableSequenceRecv %d\n", numReliableRecv, reliableSequence, reliableSequenceRecv);
+
 			for (int r = 0; r < numReliableRecv; r++) {
 				uint16_t reliableDataLength = inMsg.ReadLong();
 
@@ -98,6 +100,7 @@ idPacketProcessor::QueueReliableMessage
 ================================================
 */
 bool idPacketProcessor::QueueReliableMessage(std::byte type, const std::byte* data, int dataLen) {
+	idLib::Printf("NET: peer queued reliable type %d reliableSequenceSend %d\n", static_cast<int>(type), reliableSequenceSend);
 	return reliable.Append(reliableSequenceSend++, &type, 1, data, dataLen);
 }
 
@@ -148,7 +151,7 @@ bool idPacketProcessor::ProcessOutgoing(const int time, const idBitMsg& msg, boo
 	if (isOOB) {
 		if (msg.GetSize() + unsentMsg.GetSize() > MAX_OOB_MSG_SIZE) {		// Fragmentation not allowed for out-of-band msg's
 			idLib::Printf("Out-of-band packet too large %i\n", unsentMsg.GetSize());
-			assert(0);
+			idassert(0);
 			return false;
 		}
 		// We don't need to worry about reliable for out of band packets
@@ -207,14 +210,14 @@ bool idPacketProcessor::GetSendFragment(const int time, sessionId_t sessionID, i
 	//}
 	//else {
 	//	int currentSize = idMath::ClampInt(0, MAX_PACKET_SIZE, unsentMsg.GetRemainingData());
-	//	assert(currentSize > 0);
-	//	assert(unsentMsg.GetRemainingData() - currentSize >= 0);
+	//	idassert(currentSize > 0);
+	//	idassert(unsentMsg.GetRemainingData() - currentSize >= 0);
 
 	//	// See if we'll have more fragments once we subtract off how much we're about to write
 	//	bool moreFragments = (unsentMsg.GetRemainingData() - currentSize > 0) ? true : false;
 
 	//	if (!unsentMsg.GetReadCount()) {		// If this is the first read, then we know it's the first fragment
-	//		assert(moreFragments);			// If we have a first, we must have more or something went wrong
+	//		idassert(moreFragments);			// If we have a first, we must have more or something went wrong
 	//		idInnerPacketHeader header(PACKET_TYPE_FRAGMENTED, FRAGMENT_START);
 	//		header.WriteToMsg(outMsg);
 	//	}
@@ -227,7 +230,7 @@ bool idPacketProcessor::GetSendFragment(const int time, sessionId_t sessionID, i
 	//	outMsg.WriteData(unsentMsg.GetReadData() + unsentMsg.GetReadCount(), currentSize);
 	//	unsentMsg.ReadData(NULL, currentSize);
 
-	//	assert(moreFragments == unsentMsg.GetRemainingData() > 0);
+	//	idassert(moreFragments == unsentMsg.GetRemainingData() > 0);
 	//	fragmentedSend = moreFragments;
 
 	//	fragmentSequence++;				// Advance sequence
@@ -248,7 +251,7 @@ idPacketProcessor::ProcessIncoming
 ================================================
 */
 int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, idBitMsg& msg, idBitMsg& out, int& userData, const int peerNum) {
-	assert(msg.GetSize() <= MAX_FINAL_PACKET_SIZE);
+	idassert(msg.GetSize() <= MAX_FINAL_PACKET_SIZE);
 
 	//UpdateIncomingRate(time, msg.GetSize());
 
@@ -256,7 +259,7 @@ int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, 
 	outerHeader.ReadFromMsg(msg);
 
 	sessionId_t sessionID = outerHeader.GetSessionID();
-	assert(sessionID == expectedSessionID);
+	idassert(sessionID == expectedSessionID);
 
 	if (!verify(sessionID != SESSION_ID_CONNECTIONLESS_PARTY && sessionID != SESSION_ID_CONNECTIONLESS_GAME && sessionID != SESSION_ID_CONNECTIONLESS_GAME_STATE)) {
 		idLib::Printf("Expected non connectionless ID, but got a connectionless one\n");
@@ -295,7 +298,7 @@ int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, 
 	//	return RETURN_TYPE_NONE;		// Out of sequence
 	//}
 	//fragmentSequence = readSequence;
-	//assert(msg.GetRemainingData() > 0);
+	//idassert(msg.GetRemainingData() > 0);
 
 	//if (!verify(msgWritePos + msg.GetRemainingData() < sizeof(msgBuffer))) {
 	//	idLib::Error("ProcessIncoming: Fragmented msg buffer overflow.");

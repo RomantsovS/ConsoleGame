@@ -35,13 +35,15 @@ idEntity::idEntity() :
 	originDelta(vec2_origin),
 	axisDelta(vec2_origin) {
 	entityNumber = ENTITYNUM_NONE;
-	//entityDefNumber = -1;
+	entityDefNumber = -1;
 
 	thinkFlags = 0;
 
 	physics = nullptr;
 
 	modelDefHandle = -1;
+
+	spawnId = 0;
 }
 
 idEntity::~idEntity() {
@@ -55,11 +57,18 @@ void idEntity::Spawn() {
 	std::string temp;
 	Vector2 origin;
 	Vector2 axis;
+	std::string classname;
 
 	spawnNode.SetOwner(shared_from_this());
 	activeNode.SetOwner(shared_from_this());
 
 	gameLocal.RegisterEntity(shared_from_this(), -1, gameLocal.GetSpawnArgs());
+
+	spawnArgs.GetString("classname", "", &classname);
+	const auto def = gameLocal.FindEntityDef(classname, false);
+	if (def) {
+		entityDefNumber = def->Index();
+	}
 
 	// parse static models the same way the editor display does
 	gameEdit->ParseSpawnArgsToRenderEntity(&spawnArgs, &renderEntity);
@@ -250,6 +259,18 @@ void idEntity::Hide() {
 	if (!IsHidden()) {
 		fl.hidden = true;
 		FreeModelDef();
+		UpdateVisuals();
+	}
+}
+
+/*
+================
+idEntity::Show
+================
+*/
+void idEntity::Show() {
+	if (IsHidden()) {
+		fl.hidden = false;
 		UpdateVisuals();
 	}
 }
@@ -559,6 +580,16 @@ int idEntity::GetPhysicsTimeStep() const noexcept {
 
 /*
 ================
+idEntity::ClientThink
+================
+*/
+void idEntity::ClientThink(/*const int curTime, const float fraction, const bool predict*/ ) {
+	//InterpolatePhysics(fraction);
+	Present();
+}
+
+/*
+================
 idEntity::WriteToSnapshot
 ================
 */
@@ -571,6 +602,17 @@ idEntity::ReadFromSnapshot
 ================
 */
 void idEntity::ReadFromSnapshot(const idBitMsg& msg) {
+}
+
+/*
+================
+idEntity::ReadFromSnapshot_Ex
+Increments the snapshot counter for the entity.
+================
+*/
+void idEntity::ReadFromSnapshot_Ex(const idBitMsg& msg) {
+	//snapshotsReceived += 1;
+	ReadFromSnapshot(msg);
 }
 
 CLASS_DECLARATION(idEntity, idAnimatedEntity)

@@ -91,7 +91,7 @@ void idCollisionModelManagerLocal::FreeBrushReference(std::shared_ptr<cm_brushRe
 void idCollisionModelManagerLocal::FreeTrmModelStructure() {
 	//int i;
 
-	//assert(!models.empty());
+	//idassert(!models.empty());
 	if (!models[MAX_SUBMODELS]) {
 		return;
 	}
@@ -482,7 +482,7 @@ void idCollisionModelManagerLocal::SetupTrmModelStructure() {
 	// setup model
 	model = AllocModel();
 
-	//assert(models);
+	//idassert(models);
 	models[MAX_SUBMODELS] = model;
 	// create node to hold the collision data
 	node = AllocNode(model.get(), 1);

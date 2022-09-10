@@ -51,10 +51,10 @@ void idStaticEntity::ReadFromSnapshot(const idBitMsg& msg) {
 		else {
 			Show();
 		}
-	}
-	if (msg.HasChanged()) {
-		UpdateVisuals();
 	}*/
+	if (true/*msg.HasChanged()*/) {
+		UpdateVisuals();
+	}
 }
 
 CLASS_DECLARATION(idAnimatedEntity, idSimpleObject)

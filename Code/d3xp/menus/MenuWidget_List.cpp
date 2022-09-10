@@ -79,7 +79,7 @@ chose to move through the list.
 ========================
 */
 void idMenuWidget_List::CalculatePositionFromIndexDelta(int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int indexDelta, const bool allowWrapping, const bool wrapAround) const {
-	assert(indexDelta != 0);
+	idassert(indexDelta != 0);
 
 	int newIndex = currentIndex + indexDelta;
 	bool wrapped = false;
@@ -138,8 +138,8 @@ void idMenuWidget_List::CalculatePositionFromIndexDelta(int& outIndex, int& outO
 
 	// the intended behavior is that outOffset and outIndex are always within maxSize of each
 	// other, as they are meant to model a window of items that should be visible in the list.
-	assert(outIndex - outOffset < windowSize);
-	assert(outIndex >= outOffset && outIndex >= 0 && outOffset >= 0);
+	idassert(outIndex - outOffset < windowSize);
+	idassert(outIndex >= outOffset && outIndex >= 0 && outOffset >= 0);
 }
 
 /*
@@ -150,7 +150,7 @@ idMenuWidget_List::CalculatePositionFromOffsetDelta
 void idMenuWidget_List::CalculatePositionFromOffsetDelta(int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int offsetDelta) const {
 	// shouldn't be setting both indexDelta AND offsetDelta
 	// FIXME: make this simpler code - just pass a boolean to control it?
-	assert(offsetDelta != 0);
+	idassert(offsetDelta != 0);
 
 	const int newOffset = std::max(currentIndex + offsetDelta, 0);
 
@@ -170,8 +170,8 @@ void idMenuWidget_List::CalculatePositionFromOffsetDelta(int& outIndex, int& out
 
 	// the intended behavior is that outOffset and outIndex are always within maxSize of each
 	// other, as they are meant to model a window of items that should be visible in the list.
-	assert(outIndex - outOffset < windowSize);
-	assert(outIndex >= outOffset && outIndex >= 0 && outOffset >= 0);
+	idassert(outIndex - outOffset < windowSize);
+	idassert(outIndex >= outOffset && outIndex >= 0 && outOffset >= 0);
 }
 
 /*

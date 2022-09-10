@@ -23,7 +23,7 @@ long long Sys_Microseconds() {
 
 	if (ticksPerMicrosecondTimes1024 == 0) {
 		ticksPerMicrosecondTimes1024 = ((long long)Sys_ClockTicksPerSecond() << 10) / 1000000;
-		assert(ticksPerMicrosecondTimes1024 > 0);
+		idassert(ticksPerMicrosecondTimes1024 > 0);
 	}
 
 	return ((long long)((long long)Sys_GetClockTicks() << 10)) / ticksPerMicrosecondTimes1024;

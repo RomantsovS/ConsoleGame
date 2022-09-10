@@ -158,8 +158,8 @@ idSessionLocalWin::DestroyLobbyBackend
 ========================
 */
 void idSessionLocalWin::DestroyLobbyBackend(idLobbyBackend* lobbyBackend) {
-	assert(lobbyBackend);
-	assert(lobbyBackends[lobbyBackend->GetLobbyType()].get() == lobbyBackend);
+	idassert(lobbyBackend);
+	idassert(lobbyBackends[lobbyBackend->GetLobbyType()].get() == lobbyBackend);
 
 	lobbyBackend->Shutdown();
 	lobbyBackends[lobbyBackend->GetLobbyType()] = nullptr;
@@ -171,9 +171,9 @@ idSessionLocalWin::PumpLobbies
 ========================
 */
 void idSessionLocalWin::PumpLobbies() {
-	assert(lobbyBackends[idLobbyBackend::TYPE_PARTY] == nullptr || lobbyBackends[idLobbyBackend::TYPE_PARTY]->GetLobbyType() == idLobbyBackend::TYPE_PARTY);
-	assert(lobbyBackends[idLobbyBackend::TYPE_GAME] == nullptr || lobbyBackends[idLobbyBackend::TYPE_GAME]->GetLobbyType() == idLobbyBackend::TYPE_GAME);
-	assert(lobbyBackends[idLobbyBackend::TYPE_GAME_STATE] == nullptr || lobbyBackends[idLobbyBackend::TYPE_GAME_STATE]->GetLobbyType() == idLobbyBackend::TYPE_GAME_STATE);
+	idassert(lobbyBackends[idLobbyBackend::TYPE_PARTY] == nullptr || lobbyBackends[idLobbyBackend::TYPE_PARTY]->GetLobbyType() == idLobbyBackend::TYPE_PARTY);
+	idassert(lobbyBackends[idLobbyBackend::TYPE_GAME] == nullptr || lobbyBackends[idLobbyBackend::TYPE_GAME]->GetLobbyType() == idLobbyBackend::TYPE_GAME);
+	idassert(lobbyBackends[idLobbyBackend::TYPE_GAME_STATE] == nullptr || lobbyBackends[idLobbyBackend::TYPE_GAME_STATE]->GetLobbyType() == idLobbyBackend::TYPE_GAME_STATE);
 
 	// Pump lobbyBackends
 	for (int i = 0; i < lobbyBackends.size(); i++) {
@@ -194,7 +194,7 @@ idLobbyBackend* idSessionLocalWin::CreateLobbyInternal(idLobbyBackend::lobbyBack
 
 	lobbyBackend->SetLobbyType(lobbyType);
 
-	assert(!lobbyBackends[lobbyType]);
+	idassert(!lobbyBackends[lobbyType]);
 	lobbyBackends[lobbyType] = std::move(lobbyBackend);
 
 	return lobbyBackends[lobbyType].get();

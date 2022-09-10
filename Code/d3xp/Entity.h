@@ -14,7 +14,7 @@ enum {
 class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
 public:
 	int entityNumber;			// index into the entity list
-	//int entityDefNumber;		// index into the entity def list
+	int entityDefNumber;		// index into the entity def list
 
 	idLinkList<idEntity> spawnNode; // for being linked into spawnedEntities list
 	idLinkList<idEntity> activeNode; // for being linked into activeEntities list
@@ -75,6 +75,7 @@ public:
 	virtual void SetColor(const Screen::color_type color);
 	virtual void FreeModelDef();
 	virtual void Hide();
+	virtual void Show();
 	bool IsHidden() const noexcept;
 
 	// animation
@@ -110,8 +111,17 @@ public:
 	// notifies this entity that is has been killed
 	virtual void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept;
 
+	// Called on clients in an MP game, does the actual interpolation for the entity.
+	// This function will eventually replace ClientPredictionThink completely.
+	virtual void ClientThink(/*const int curTime, const float fraction, const bool predict*/);
+
 	virtual void WriteToSnapshot(idBitMsg& msg) const;
+	void ReadFromSnapshot_Ex(const idBitMsg& msg);
 	virtual void ReadFromSnapshot(const idBitMsg& msg);
+
+	// synchronize entity pointers over the network
+	int GetSpawnId() const { return spawnId; }
+	bool SetSpawnId(int id);
 protected:
 	renderEntity_t renderEntity;
 	int modelDefHandle;
@@ -131,6 +141,8 @@ private:
 	void UpdateFromPhysics(bool moveBack);
 	// get physics timestep
 	virtual int GetPhysicsTimeStep() const noexcept;
+
+	int spawnId;
 };
 
 class idAnimatedEntity : public idEntity {
@@ -144,6 +156,7 @@ public:
 	idAnimatedEntity(idAnimatedEntity&&) = default;
 	idAnimatedEntity& operator=(idAnimatedEntity&&) = default;
 
+	//void ClientThink(const int curTime, const float fraction, const bool predict) override;
 	void Think() override;
 
 	void SetModel(const std::string& modelname) override;

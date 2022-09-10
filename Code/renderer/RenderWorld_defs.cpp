@@ -92,7 +92,7 @@ void R_CheckForEntityDefsUsingModel(idRenderModel* model) noexcept {
 				continue;
 			}
 			if (def->parms.hModel == model) {
-				//assert( 0 );
+				//idassert( 0 );
 				// this should never happen but Radiant messes it up all the time so just free the derived data
 				R_FreeEntityDefDerivedData(def.get(), false, false);
 			}

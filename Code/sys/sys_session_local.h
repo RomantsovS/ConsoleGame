@@ -193,6 +193,8 @@ public:
 
 	idSession::sessionState_t GetState() const override { return sessionLocal->GetState(); }
 
+	void ReceivedFullSnap() override;
+
 	idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
 	idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
 	idLobbyBackend* JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) override;

@@ -103,17 +103,19 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	physicsObj->SetLinearVelocity(tmpDir * speed + pushVelocity);
 	physicsObj->SetOrigin(start);
 
-	if (fuse <= 0) {
-		// run physics for 1 second
-		RunPhysics();
-		PostEventMS(&EV_Remove, spawnArgs.GetInt("remove_time", "1500"));
-	}
-	else if (spawnArgs.GetBool("detonate_on_fuse")) {
-		fuse -= timeSinceFire;
-		if (fuse < 0.0f) {
-			fuse = 0.0f;
+	if (!common->IsClient() || fl.skipReplication) {
+		if (fuse <= 0) {
+			// run physics for 1 second
+			RunPhysics();
+			PostEventMS(&EV_Remove, spawnArgs.GetInt("remove_time", "1500"));
 		}
-		PostEventSec(&EV_Explode, fuse);
+		else if (spawnArgs.GetBool("detonate_on_fuse")) {
+			fuse -= timeSinceFire;
+			if (fuse < 0.0f) {
+				fuse = 0.0f;
+			}
+			PostEventSec(&EV_Explode, fuse);
+		}
 	}
 
 	UpdateVisuals();
@@ -367,5 +369,84 @@ void idProjectile::Damage(idEntity* inflictor, idEntity* attacker, const Vector2
 		else {
 			//Pain(inflictor, attacker, damage, dir, location);
 		}
+	}
+}
+
+/*
+================
+idProjectile::ClientThink
+================
+*/
+void idProjectile::ClientThink(/*const int curTime, const float fraction, const bool predict*/) {
+	Present();
+}
+
+/*
+================
+idProjectile::WriteToSnapshot
+================
+*/
+void idProjectile::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteLong(owner.GetSpawnId());
+	msg.WriteBytes(static_cast<int>(state), 1);
+	msg.WriteBytes(fl.hidden, 1);
+
+	physicsObj->WriteToSnapshot(msg);
+}
+
+/*
+================
+idProjectile::ReadFromSnapshot
+================
+*/
+void idProjectile::ReadFromSnapshot(const idBitMsg& msg) {
+	projectileState_t newState;
+
+	owner.SetSpawnId(msg.ReadLong());
+	newState = static_cast<projectileState_t>(msg.ReadBytes(1));
+
+	if (msg.ReadBytes(1)) {
+		Hide();
+	}
+	else {
+		Show();
+	}
+
+	while (state != newState) {
+		switch (state) {
+		case projectileState_t::SPAWNED: {
+			Create(owner.GetEntity(), vec2_origin, vec2_origin);
+			break;
+		}
+		case projectileState_t::CREATED: {
+			// the right origin and direction are required if you want bullet traces
+			Launch(vec2_origin, vec2_origin, vec2_origin);
+			break;
+		}
+		case projectileState_t::LAUNCHED: {
+			if (newState == projectileState_t::FIZZLED) {
+				//Fizzle();
+			}
+			else {
+				trace_t collision;
+				memset(&collision, 0, sizeof(collision));
+				collision.endpos = GetPhysics()->GetOrigin();
+				Explode(collision, NULL);
+			}
+			break;
+		}
+		case projectileState_t::FIZZLED:
+		case projectileState_t::EXPLODED: {
+			gameEdit->ParseSpawnArgsToRenderEntity(&spawnArgs, &renderEntity);
+			state = projectileState_t::SPAWNED;
+			break;
+		}
+		}
+	}
+
+	physicsObj->ReadFromSnapshot(msg);
+
+	if (true/*msg.HasChanged()*/) {
+		UpdateVisuals();
 	}
 }

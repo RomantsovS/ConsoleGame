@@ -11,24 +11,24 @@ idCVar net_headlessServer("net_headlessServer", "0", CVAR_BOOL, "toggle to autom
 static const size_t MAX_BUF_SIZE = 1024;
 
 const std::string idSessionLocal::stateToString[static_cast<int>(state_t::NUM_STATES)] = {
-	ASSERT_ENUM_STRING(state_t::STATE_PRESS_START, 0),
-	ASSERT_ENUM_STRING(state_t::STATE_IDLE, 1),
-	ASSERT_ENUM_STRING(state_t::STATE_PARTY_LOBBY_HOST, 2),
-	ASSERT_ENUM_STRING(state_t::STATE_PARTY_LOBBY_PEER, 3),
-	ASSERT_ENUM_STRING(state_t::STATE_GAME_LOBBY_HOST, 4),
-	ASSERT_ENUM_STRING(state_t::STATE_GAME_LOBBY_PEER, 5),
-	ASSERT_ENUM_STRING(state_t::STATE_GAME_STATE_LOBBY_HOST, 6),
-	ASSERT_ENUM_STRING(state_t::STATE_GAME_STATE_LOBBY_PEER, 7),
-	ASSERT_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY, 8),
-	ASSERT_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY, 9),
-	ASSERT_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY, 10),
-	ASSERT_ENUM_STRING(state_t::STATE_FIND_OR_CREATE_MATCH, 11),
-	ASSERT_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_PARTY, 12),
-	ASSERT_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_GAME, 13),
-	ASSERT_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE, 14),
-	ASSERT_ENUM_STRING(state_t::STATE_BUSY, 15),
-	ASSERT_ENUM_STRING(state_t::STATE_LOADING, 16),
-	ASSERT_ENUM_STRING(state_t::STATE_INGAME, 17),
+	idassert_ENUM_STRING(state_t::STATE_PRESS_START, 0),
+	idassert_ENUM_STRING(state_t::STATE_IDLE, 1),
+	idassert_ENUM_STRING(state_t::STATE_PARTY_LOBBY_HOST, 2),
+	idassert_ENUM_STRING(state_t::STATE_PARTY_LOBBY_PEER, 3),
+	idassert_ENUM_STRING(state_t::STATE_GAME_LOBBY_HOST, 4),
+	idassert_ENUM_STRING(state_t::STATE_GAME_LOBBY_PEER, 5),
+	idassert_ENUM_STRING(state_t::STATE_GAME_STATE_LOBBY_HOST, 6),
+	idassert_ENUM_STRING(state_t::STATE_GAME_STATE_LOBBY_PEER, 7),
+	idassert_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY, 8),
+	idassert_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY, 9),
+	idassert_ENUM_STRING(state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY, 10),
+	idassert_ENUM_STRING(state_t::STATE_FIND_OR_CREATE_MATCH, 11),
+	idassert_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_PARTY, 12),
+	idassert_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_GAME, 13),
+	idassert_ENUM_STRING(state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE, 14),
+	idassert_ENUM_STRING(state_t::STATE_BUSY, 15),
+	idassert_ENUM_STRING(state_t::STATE_LOADING, 16),
+	idassert_ENUM_STRING(state_t::STATE_INGAME, 17),
 };
 
 /*
@@ -309,9 +309,9 @@ This function will create the lobby, then wait for it to either succeed or fail.
 */
 bool idSessionLocal::WaitOnLobbyCreate(idLobby& lobby) {
 
-	assert(localState == state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY || localState == state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY
+	idassert(localState == state_t::STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY || localState == state_t::STATE_CREATE_AND_MOVE_TO_GAME_LOBBY
 		|| localState == state_t::STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY);
-	//assert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_NONE);
+	//idassert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_NONE);
 
 	if (lobby.GetState() == idLobby::lobbyState_t::STATE_FAILED) {
 		NET_VERBOSE_PRINT("NET: idSessionLocal::WaitOnLobbyCreate lobby.GetState() == idLobby::STATE_FAILED (%s)\n", lobby.GetLobbyName().c_str());
@@ -364,9 +364,9 @@ Called anytime a connection fails, and does the right thing.
 ========================
 */
 void idSessionLocal::HandleConnectionFailed(idLobby& lobby, bool wasFull) {
-	assert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
+	idassert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
 		|| localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE);
-	//assert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
+	//idassert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
 
 	MoveToMainMenu();
 }
@@ -378,9 +378,9 @@ Called from State_Connect_And_Move_To_Party/State_Connect_And_Move_To_Game
 ========================
 */
 bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
-	assert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
+	idassert(localState == state_t::STATE_CONNECT_AND_MOVE_TO_PARTY || localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME
 		|| localState == state_t::STATE_CONNECT_AND_MOVE_TO_GAME_STATE);
-	//assert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
+	//idassert(connectType == CONNECT_FIND_OR_CREATE || connectType == CONNECT_DIRECT);
 
 	if (lobby.GetState() == idLobby::lobbyState_t::STATE_FAILED) {
 		// If we get here, we were trying to connect to a lobby (from state State_Connect_And_Move_To_Party/State_Connect_And_Move_To_Game)
@@ -425,7 +425,7 @@ bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
 					}
 				}
 
-				assert(!GetPartyLobby().IsSessionUserIndexLocal(i) || foundUser);*/
+				idassert(!GetPartyLobby().IsSessionUserIndexLocal(i) || foundUser);*/
 			}
 
 			if (numUsersIn != GetPartyLobby().GetNumLobbyUsers()) {
@@ -564,7 +564,7 @@ idSessionLocal::State_Find_Or_Create_Match
 ========================
 */
 bool idSessionLocal::State_Find_Or_Create_Match() {
-	//assert(connectType == CONNECT_FIND_OR_CREATE);
+	//idassert(connectType == CONNECT_FIND_OR_CREATE);
 
 	if (GetGameLobby().GetState() == idLobby::lobbyState_t::STATE_FAILED) {
 		// Failed to find any games.  Create one instead (we're assuming this always gets called from FindOrCreateMatch
@@ -730,7 +730,7 @@ idSessionLocal::EndMatchInternal
 ========================
 */
 void idSessionLocal::EndMatchInternal(bool premature/*=false*/) {
-	assert(GetGameStateLobby().IsLobbyActive() == net_useGameStateLobby.GetBool());
+	idassert(GetGameStateLobby().IsLobbyActive() == net_useGameStateLobby.GetBool());
 
 	for (int p = 0; p < GetActingGameStateLobby().peers.size(); p++) {
 		// If we are the host, increment the session ID.  The client will use a rolling check to catch it
@@ -1071,9 +1071,20 @@ Only called by idCommonLocal::FinalizeMapChange
 ========================
 */
 void idSessionLocal::LoadingFinished() noexcept {
-	assert(GetState() == idSession::sessionState_t::LOADING);
+	NET_VERBOSE_PRINT("NET: Loading Finished\n");
 
-	SetState(state_t::STATE_INGAME);
+	idassert(GetState() == idSession::sessionState_t::LOADING);
+
+	GetActingGameStateLobby().loaded = true;
+
+	if (!GetActingGameStateLobby().IsHost()) {	// Tell game host we're done loading
+		std::array<std::byte, idPacketProcessor::MAX_PACKET_SIZE> buffer;
+		idBitMsg msg(buffer.data(), sizeof(buffer));
+		GetActingGameStateLobby().QueueReliableMessage(GetActingGameStateLobby().host, idLobby::reliableType_t::RELIABLE_LOADING_DONE, msg.GetReadData(), msg.GetSize());
+	}
+	else {
+		SetState(state_t::STATE_INGAME);
+	}
 }
 
 /*
@@ -1082,8 +1093,8 @@ idSessionLocal::SetState
 ========================
 */
 void idSessionLocal::SetState(state_t newState) noexcept {
-	//assert(newState < NUM_STATES);
-	//assert(localState < NUM_STATES);
+	//idassert(newState < NUM_STATES);
+	//idassert(localState < NUM_STATES);
 
 	localState = newState;
 }
@@ -1128,7 +1139,7 @@ bool idSessionLocal::HandlePackets() {
 				GetGameLobby().HandlePacket(remoteAddress, fragMsg, sessionID);
 				break;
 			default:
-				assert(0);
+				idassert(0);
 		}
 	}
 

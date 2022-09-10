@@ -1,47 +1,47 @@
 #include "precompiled.h"
 
-struct skippedAssertion_t {
-	skippedAssertion_t() {
+struct skippedidassertion_t {
+	skippedidassertion_t() {
 	}
 
 	std::string file = "";
 	int				line = -1;
 };
-static std::vector<skippedAssertion_t> skippedAssertions;
+static std::vector<skippedidassertion_t> skippedidassertions;
 
-bool AssertFailed(const std::string& file, int line, const std::string& expression) {
-	// Set this to true to skip ALL assertions, including ones YOU CAUSE!
-	static volatile bool skipAllAssertions = false;
-	if (skipAllAssertions) {
+bool idassertFailed(const std::string& file, int line, const std::string& expression) {
+	// Set this to true to skip ALL idassertions, including ones YOU CAUSE!
+	static volatile bool skipAllidassertions = false;
+	if (skipAllidassertions) {
 		return false;
 	}
 
-	// Set this to true to skip ONLY this assertion
-	static volatile bool skipThisAssertion = false;
-	skipThisAssertion = false;
+	// Set this to true to skip ONLY this idassertion
+	static volatile bool skipThisidassertion = false;
+	skipThisidassertion = false;
 
-	for (size_t i = 0; i < skippedAssertions.size(); i++) {
-		if (skippedAssertions[i].file == file && skippedAssertions[i].line == line) {
-			skipThisAssertion = true;
+	for (size_t i = 0; i < skippedidassertions.size(); i++) {
+		if (skippedidassertions[i].file == file && skippedidassertions[i].line == line) {
+			skipThisidassertion = true;
 			// Set breakpoint here to re-enable
-			if (!skipThisAssertion) {
+			if (!skipThisidassertion) {
 			}
 			return false;
 		}
 	}
 
-	idLib::Warning("ASSERTION FAILED! %s(%d): '%s'", file.c_str(), line, expression.c_str());
+	idLib::Warning("idassertION FAILED! %s(%d): '%s'", file.c_str(), line, expression.c_str());
 
 	if (IsDebuggerPresent()) {
 		__debugbreak();
 	}
 
-	if (skipThisAssertion) {
-		skippedAssertion_t skipped;
+	if (skipThisidassertion) {
+		skippedidassertion_t skipped;
 		skipped.file = file;
 		skipped.line = line;
 
-		skippedAssertions.push_back(skipped);
+		skippedidassertions.push_back(skipped);
 	}
 
 	return true;

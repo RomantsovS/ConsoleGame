@@ -30,6 +30,7 @@ public:
 	idDeclLocal& operator=(idDeclLocal&&) = default;
 
 	const std::string& GetName() const noexcept override;
+	int Index() const override;
 	int GetLineNum() const noexcept override;
 	std::string GetFileName() const override;
 	void GetText(char* text) const override;
@@ -61,6 +62,7 @@ private:
 	int sourceLine;				// this is where the actual declaration token starts
 	declType_t type; // decl type
 	declState_t declState; // decl state
+	int index; // index in the per-type list
 
 	bool everReferenced; // set to true if the decl was ever used
 	bool referencedThisLevel; // set to true when the decl is used for the current level
@@ -573,7 +575,7 @@ const std::shared_ptr<idDecl> idDeclManagerLocal::DeclByIndex(declType_t type, i
 
 	if (typeIndex < 0 || typeIndex >= declTypes.size() || !declTypes[typeIndex]) {
 		common->FatalError("idDeclManager::DeclByIndex: bad type: %i", typeIndex);
-		return NULL;
+		return nullptr;
 	}
 	if (index < 0 || index >= linearLists[typeIndex].size()) {
 		common->Error("idDeclManager::DeclByIndex: out of range");
@@ -852,7 +854,7 @@ std::shared_ptr<idDeclLocal> idDeclManagerLocal::FindTypeWithoutParsing(declType
 	//decl->parsedOutsideLevelLoad = !insideLevelLoad;
 
 	// add it to the linear list and hash table
-	//decl->index = linearLists[typeIndex].size();
+	decl->index = linearLists[typeIndex].size();
 	linearLists.at(typeIndex).push_back(decl);
 
 	return decl;
@@ -881,7 +883,7 @@ idDeclLocal::idDeclLocal() {
 	sourceLine = 0;
 	//checksum = 0;
 	type = declType_t::DECL_ENTITYDEF;
-	//index = 0;
+	index = 0;
 	declState = declState_t::DS_UNPARSED;
 	//parsedOutsideLevelLoad = false;
 	referencedThisLevel = false;
@@ -897,6 +899,15 @@ idDeclLocal::GetName
 */
 const std::string& idDeclLocal::GetName() const noexcept {
 	return name;
+}
+
+/*
+=================
+idDeclLocal::Index
+=================
+*/
+int idDeclLocal::Index() const {
+	return index;
 }
 
 /*

@@ -10,7 +10,7 @@ void idToken::NumberValue() {
 	int i, pow, div, c;
 	double m;
 
-	assert(type == TT_NUMBER);
+	idassert(type == TT_NUMBER);
 	gsl::czstring<> p = c_str();
 	floatvalue = 0;
 	intvalue = 0;

@@ -318,3 +318,35 @@ Physics_PlayerMy::GetLinearVelocity
 const Vector2& Physics_PlayerMy::GetLinearVelocity(int id) const noexcept {
 	return current.velocity;
 }
+
+/*
+================
+Physics_PlayerMy::WriteToSnapshot
+================
+*/
+void Physics_PlayerMy::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteFloat(current.origin[0]);
+	msg.WriteFloat(current.origin[1]);
+	msg.WriteFloat(current.velocity[0]);
+	msg.WriteFloat(current.velocity[1]);
+}
+
+/*
+================
+Physics_PlayerMy::ReadFromSnapshot
+================
+*/
+void Physics_PlayerMy::ReadFromSnapshot(const idBitMsg& msg) {
+
+	saved = current;
+
+	current.origin[0] = msg.ReadFloat();
+	current.origin[1] = msg.ReadFloat();
+	current.velocity[0] = msg.ReadFloat();
+	current.velocity[1] = msg.ReadFloat();
+
+	if (clipModel) {
+		clipModel->Link(gameLocal.clip, self, 0, current.origin);
+	}
+
+}

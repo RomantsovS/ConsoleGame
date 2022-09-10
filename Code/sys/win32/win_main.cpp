@@ -79,7 +79,7 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 		break;
 
 	case	_HOOK_FREE:
-		assert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
+		idassert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
 
 		debug_current_alloc -= pHead->nDataSize;
 		debug_current_alloc_count--;
@@ -88,7 +88,7 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 		break;
 
 	case	_HOOK_REALLOC:
-		assert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
+		idassert(pHead->gap[0] == 0xfd && pHead->gap[1] == 0xfd && pHead->gap[2] == 0xfd && pHead->gap[3] == 0xfd);
 
 		debug_current_alloc -= pHead->nDataSize;
 		debug_total_alloc += nSize;
@@ -103,8 +103,8 @@ int Sys_AllocHook(int nAllocType, void* pvData, size_t nSize, int nBlockUse, lon
 	const char* operation[] = { "", "allocating", "re-allocating", "freeing" };
 	const char* blockType[] = { "Free", "Normal", "CRT", "Ignore", "Client" };
 	
-	_ASSERT((nAllocType > 0) && (nAllocType < 4));
-	_ASSERT((nBlockUse >= 0) && (nBlockUse < 5));
+	_idassert((nAllocType > 0) && (nAllocType < 4));
+	_idassert((nBlockUse >= 0) && (nBlockUse < 5));
 
 	fprintf(logFile,
 		"Memory operation in %s, line %d: %s a %d-byte '%s' block (#%ld)\n",

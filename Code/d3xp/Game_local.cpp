@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "Game_local.h"
 
 std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this world
@@ -277,7 +276,7 @@ void idGameLocal::RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr) {
 void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
 #ifdef _DEBUG
 	if (common->IsMultiplayer()) {
-		assert(!common->IsClient());
+		idassert(!common->IsClient());
 	}
 #endif
 
@@ -429,7 +428,7 @@ so that we have something to process while we wait for more from the network.
 */
 void idGameLocal::RunAllUserCmdsForPlayer(idUserCmdMgr& cmdMgr, const int playerNumber) {
 	// Run thinks on any players that have queued up usercmds for networking.
-	assert(playerNumber < MAX_PLAYERS);
+	idassert(playerNumber < MAX_PLAYERS);
 
 	if (!entities.at(playerNumber)) {
 		return;
@@ -761,6 +760,7 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 
 	entities.clear();
 	entities.resize(MAX_GENTITIES);
+	std::fill(spawnIds.begin(), spawnIds.end(), -1);
 	spawnedEntities.Clear();
 	activeEntities.Clear();
 	numEntitiesToDeactivate = 0;
@@ -791,6 +791,8 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 void idGameLocal::Clear() {
 	entities.clear();
 	entities.resize(MAX_GENTITIES);
+	spawnIds.resize(MAX_GENTITIES);
+	std::fill(spawnIds.begin(), spawnIds.end(), -1);
 	firstFreeEntityIndex[0] = 0;
 	firstFreeEntityIndex[1] = ENTITYNUM_FIRST_NON_REPLICATED;
 	num_entities = 0;
@@ -1043,7 +1045,7 @@ void idGameLocal::MapClear(bool clearClients) noexcept {
 		if (ent) {
 			ent->Remove();
 		}
-
+		spawnIds[i] = -1;
 	}
 }
 
@@ -1150,11 +1152,11 @@ idGameLocal::SpawnEntityType
 std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const idDict* args, bool bIsClientReadSnapshot) {
 	std::shared_ptr<idClass> obj;
 
-#if _DEBUG
-	if (common->IsClient()) {
-		assert(bIsClientReadSnapshot);
-	}
-#endif
+//#if _DEBUG
+//	if (common->IsClient()) {
+//		idassert(bIsClientReadSnapshot);
+//	}
+//#endif
 
 	if (!classdef.IsType(idEntity::Type)) {
 		Error("Attempted to spawn non-entity class '%s'", classdef.classname.c_str());
@@ -1297,7 +1299,7 @@ void idGameLocal::RegisterEntity(std::shared_ptr<idEntity> ent, int forceSpawnId
 	}
 
 	entities[spawn_entnum] = ent;
-	//spawnIds[spawn_entnum] = (forceSpawnId >= 0) ? forceSpawnId : spawnCount++;
+	spawnIds[spawn_entnum] = (forceSpawnId >= 0) ? forceSpawnId : spawnCount++;
 	ent->entityNumber = spawn_entnum;
 	ent->spawnNode.AddToEnd(spawnedEntities);
 
@@ -1320,6 +1322,7 @@ void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept {
 			DPrintf("Unregister ent %d %s %s\n", ent->entityNumber, ent->GetClassname().c_str(), ent->name.c_str());
 
 		entities[ent->entityNumber] = nullptr;
+		spawnIds[ent->entityNumber] = -1;
 
 		int freeListType = (ent->entityNumber >= ENTITYNUM_FIRST_NON_REPLICATED) ? 1 : 0;
 

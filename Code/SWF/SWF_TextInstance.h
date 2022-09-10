@@ -1,8 +1,6 @@
 #ifndef GUI_GUI_TEXTINSTANCE_H_
 #define GUI_GUI_TEXTINSTANCE_H_
 
-#include <string>
-
 #include "../renderer/Screen.h"
 
 class idSWFTextInstance :public std::enable_shared_from_this<idSWFTextInstance> {

@@ -194,7 +194,7 @@ IsOSPath
 ========================
 */
 static bool IsOSPath(const std::string path) noexcept {
-	//assert(path);
+	//idassert(path);
 
 	if (path.size() >= 2) {
 		if (path[1] == ':') {

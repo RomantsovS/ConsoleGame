@@ -29,7 +29,7 @@ idTypeInfo::idTypeInfo(const std::string& classname, const std::string& supercla
 
 	// Insert sorted
 	for (insert = &typelist; insert && *insert; insert = &(*insert)->next) {
-		assert(classname != (*insert)->classname);
+		idassert(classname != (*insert)->classname);
 
 		if (classname < (*insert)->classname) {
 			next = *insert;
@@ -307,7 +307,7 @@ idClass::PostEventArgs
 bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {
 	va_list		args;
 
-	assert(ev);
+	idassert(ev);
 
 	if (!idEvent::initialized) {
 		return false;
@@ -319,12 +319,21 @@ bool idClass::PostEventArgs(const idEventDef* ev, int time, int numargs, ...) {
 		return false;
 	}
 
+	bool isReplicated = true;
+	// If this is an entity with skipReplication, we want to process the event normally even on clients.
+	if (IsType(idEntity::Type)) {
+		idEntity* thisEnt = static_cast<idEntity*>(this);
+		if (thisEnt->fl.skipReplication) {
+			isReplicated = false;
+		}
+	}
+
 	// we service events on the client to avoid any bad code filling up the event pool
 	// we don't want them processed usually, unless when the map is (re)loading.
 	// we allow threads to run fine, though.
-	/*if (gameLocal.GameState() != GAMESTATE_STARTUP) {
+	if (common->IsClient() && isReplicated && (gameLocal.GameState() != GAMESTATE_STARTUP)/* && !IsType(idThread::Type)*/) {
 		return true;
-	}*/
+	}
 
 	va_start(args, numargs);
 	auto event = idEvent::Alloc(ev, numargs, args);
@@ -377,8 +386,8 @@ idClass::ProcessEventArgPtr
 ================
 */
 bool idClass::ProcessEventArgPtr(const idEventDef* ev, int* data) {
-	assert(ev);
-	assert(idEvent::initialized);
+	idassert(ev);
+	idassert(idEvent::initialized);
 
 	/*SetTimeState ts;
 

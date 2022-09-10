@@ -32,10 +32,10 @@ public:
 	void SetSize(int size);
 
 	// returns number of bits written
-	int GetNumBitsWritten() const;
+	int GetNumBytesWritten() const;
 
 	// space left in bits for writing
-	int GetRemainingWriteBits() const;
+	int GetRemainingWriteBytes() const;
 
 	//------------------------
 	// Write State
@@ -55,8 +55,14 @@ public:
 	// bytes read so far
 	int GetReadCount() const;
 
+	// returns number of bits read
+	int GetNumBytesRead() const;
+
 	// number of bytes left to read
 	int GetRemainingData() const;
+
+	// number of bits left to read
+	int GetRemainingReadBytes() const;
 
 	//------------------------
 	// Writing
@@ -81,12 +87,13 @@ public:
 	// read the specified number of bits
 	int ReadBytes(int numBytes) const;
 
-	int ReadByte();
-	uint16_t ReadUShort();
-	uint32_t ReadLong();
-	uint64_t ReadLongLong();
+	int ReadByte() const;
+	uint16_t ReadUShort() const;
+	uint32_t ReadLong() const;
+	uint64_t ReadLongLong() const;
 	float ReadFloat() const;
-	bool ReadProtobufMessage(google::protobuf::Message* proto_msg);
+	void ReadData(std::byte* buf, int length) const;
+	bool ReadProtobufMessage(google::protobuf::Message* proto_msg) const;
 private:
 	std::byte* writeData;		// pointer to data for writing
 	const std::byte* readData;		// pointer to data for reading
@@ -97,7 +104,7 @@ private:
 
 	mutable uint64_t tempValue;
 private:
-	bool CheckOverflow(int numBits);
+	bool CheckOverflow(int numBytes);
 	std::byte* GetByteSpace(int length);
 };
 
@@ -177,7 +184,7 @@ idBitMsg::SetSize
 ========================
 */
 inline void idBitMsg::SetSize(int size) {
-	assert(writeBit == 0);
+	idassert(writeBit == 0);
 
 	if (size > maxSize) {
 		curSize = maxSize;
@@ -192,8 +199,8 @@ inline void idBitMsg::SetSize(int size) {
 idBitMsg::GetNumBitsWritten
 ========================
 */
-inline int idBitMsg::GetNumBitsWritten() const {
-	return (curSize << 3) + writeBit;
+inline int idBitMsg::GetNumBytesWritten() const {
+	return curSize;
 }
 
 /*
@@ -201,8 +208,8 @@ inline int idBitMsg::GetNumBitsWritten() const {
 idBitMsg::GetRemainingWriteBits
 ========================
 */
-inline  int idBitMsg::GetRemainingWriteBits() const {
-	return (maxSize << 3) - GetNumBitsWritten();
+inline int idBitMsg::GetRemainingWriteBytes() const {
+	return maxSize - GetNumBytesWritten();
 }
 
 /*
@@ -216,12 +223,31 @@ inline int idBitMsg::GetReadCount() const {
 
 /*
 ========================
+idBitMsg::GetNumBitsRead
+========================
+*/
+inline int idBitMsg::GetNumBytesRead() const {
+	return readCount;
+}
+
+/*
+========================
 idBitMsg::GetRemainingData
 ========================
 */
 inline int idBitMsg::GetRemainingData() const {
-	assert(writeBit == 0);
+	idassert(writeBit == 0);
 	return curSize - readCount;
+}
+
+/*
+========================
+idBitMsg::GetRemainingReadBits
+========================
+*/
+inline int idBitMsg::GetRemainingReadBytes() const {
+	idassert(writeBit == 0);
+	return curSize - GetNumBytesRead();
 }
 
 /*
@@ -230,7 +256,7 @@ idBitMsg::SaveReadState
 ========================
 */
 inline void idBitMsg::SaveReadState(int& c, int& b) const {
-	assert(writeBit == 0);
+	idassert(writeBit == 0);
 	c = readCount;
 }
 
@@ -240,7 +266,7 @@ idBitMsg::RestoreReadState
 ========================
 */
 inline void idBitMsg::RestoreReadState(int c, int b) {
-	assert(writeBit == 0);
+	idassert(writeBit == 0);
 	readCount = c;
 }
 
@@ -312,19 +338,19 @@ inline void idBitMsg::BeginReading() const {
 idBitMsg::ReadByte
 ========================
 */
-inline int idBitMsg::ReadByte() {
+inline int idBitMsg::ReadByte() const {
 	return ReadBytes(1);
 }
 
-inline uint16_t idBitMsg::ReadUShort() {
+inline uint16_t idBitMsg::ReadUShort() const {
 	return ReadBytes(2);
 }
 
-inline uint32_t idBitMsg::ReadLong() {
+inline uint32_t idBitMsg::ReadLong() const {
 	return ReadBytes(4);
 }
 
-inline uint64_t idBitMsg::ReadLongLong() {
+inline uint64_t idBitMsg::ReadLongLong() const {
 	int64 a = ReadBytes(4);
 	int64 b = ReadBytes(4);
 	int64 c = (a << 32) | (0x00000000ffffffff & b);
@@ -340,6 +366,12 @@ inline float idBitMsg::ReadFloat() const {
 	float value;
 	*reinterpret_cast<int*>(&value) = ReadBytes(4);
 	return value;
+}
+
+inline void idBitMsg::ReadData(std::byte* buf, int length) const {
+	for (size_t i = 0; i < length; ++i) {
+		buf[i] = static_cast<std::byte>(ReadByte());
+	}
 }
 
 #endif

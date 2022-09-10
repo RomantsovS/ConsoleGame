@@ -41,6 +41,9 @@ public:
 	void Remove() noexcept override;
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 private:
 	int lastChangeDirection{};
 	int directionChangePeriod = 0;

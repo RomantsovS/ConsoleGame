@@ -22,8 +22,12 @@ public:
 	static void CacheProjectille(const std::string& objectname, idDeclEntityDef* declEntDef);
 
 	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) override;
+
+	void ClientThink(/*const int curTime, const float fraction, const bool predict*/) override;
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 protected:
-	idEntity* owner;
+	idEntityPtr<idEntity> owner;
 
 	std::shared_ptr<idPhysics_RigidBody> physicsObj;
 

@@ -221,7 +221,7 @@ public:
 		if (host == -1) {
 			return false;		// Can't possibly be a peer if we haven't setup a host
 		}
-		assert(!IsHost());
+		idassert(!IsHost());
 		return peers[host].IsConnected();
 	}
 
@@ -248,8 +248,8 @@ public:
 	void SetPeerConnectionState(int p, connectionState_t newState, bool skipGoodbye = false);
 
 	void SendGoodbye(const lobbyAddress_t& remoteAddress, bool wasFull = false);
-	void QueueReliableMessage(int peerNum, std::byte type) { QueueReliableMessage(peerNum, type, nullptr, 0); }
-	void QueueReliableMessage(int p, std::byte type, const std::byte* data, int dataLen);
+	void QueueReliableMessage(int peerNum, reliableType_t type) { QueueReliableMessage(peerNum, type, nullptr, 0); }
+	void QueueReliableMessage(int p, reliableType_t type, const std::byte* data, int dataLen);
 
 	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type) { SendConnectionLess(remoteAddress, type, nullptr, 0); }
 	void SendConnectionLess(const lobbyAddress_t& remoteAddress, std::byte type, const std::byte* data, int dataLen);
@@ -345,8 +345,13 @@ public:
 	idMatchParameters parms;
 
 	bool loaded; // Used for game sessions, whether this machine is loaded or not
-
 	bool startLoadingFromHost;
+
+	//------------------------
+	// Snapshot jobs
+	//------------------------
+	static const int SNAP_OBJ_JOB_MEMORY = 1024 * 128;			// 128k of obj memory
+	std::array<std::byte, SNAP_OBJ_JOB_MEMORY> objMemory;		// Shared across all snapshot jobs
 };
 
 /*
@@ -366,6 +371,9 @@ public:
 	virtual void GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) = 0;
 
 	virtual idSession::sessionState_t GetState() const = 0;
+
+	// Called once the lobby received its first full snap (used to advance from LOADING to INGAME state)
+	virtual void ReceivedFullSnap() = 0;
 
 	virtual idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;
 	virtual idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) = 0;

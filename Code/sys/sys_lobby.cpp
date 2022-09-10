@@ -41,7 +41,7 @@ idLobby::Initialize
 ========================
 */
 void idLobby::Initialize(lobbyType_t sessionType_, idSessionCallbacks* callbacks) {
-	assert(callbacks != nullptr);
+	idassert(callbacks != nullptr);
 
 	lobbyType = sessionType_;
 	sessionCB = callbacks;
@@ -66,8 +66,8 @@ void idLobby::StartHosting(const idMatchParameters& parms_) {
 
 	Shutdown();		// Make sure we're in a shutdown state before proceeding
 
-	assert(GetNumLobbyUsers() == 0);
-	assert(!lobbyBackend);
+	idassert(GetNumLobbyUsers() == 0);
+	idassert(!lobbyBackend);
 
 	// Get the skill level of all the players that will eventually go into the lobby
 	StartCreating();
@@ -83,8 +83,8 @@ void idLobby::StartFinding(const idMatchParameters& parms_) {
 
 	Shutdown();		// Make sure we're in a shutdown state before proceeding
 
-	assert(GetNumLobbyUsers() == 0);
-	assert(!lobbyBackend);
+	idassert(GetNumLobbyUsers() == 0);
+	idassert(!lobbyBackend);
 
 	// Clear search results
 	searchResults.clear();
@@ -130,17 +130,17 @@ void idLobby::Shutdown(bool retainMigrationInfo, bool skipGoodbye) {
 		NET_VERBOSE_PRINT("NET: ShutdownLobby (already shutdown) (%s)\n", GetLobbyName().c_str());
 
 		// If we don't have this lobbyBackend type, we better be properly shutdown for this lobby
-		assert(GetNumLobbyUsers() == 0);
-		assert(host == -1);
-		//assert(peerIndexOnHost == -1);
-		assert(!isHost);
-		assert(lobbyType != GetActingGameStateLobbyType() || !loaded);
-		//assert(lobbyType != GetActingGameStateLobbyType() || !respondToArbitrate);
-		//assert(snapDeltaAckQueue.Num() == 0);
+		idassert(GetNumLobbyUsers() == 0);
+		idassert(host == -1);
+		//idassert(peerIndexOnHost == -1);
+		idassert(!isHost);
+		idassert(lobbyType != GetActingGameStateLobbyType() || !loaded);
+		//idassert(lobbyType != GetActingGameStateLobbyType() || !respondToArbitrate);
+		//idassert(snapDeltaAckQueue.Num() == 0);
 
 		// Make sure we don't have old peers connected to this lobby
 		/*for (int p = 0; p < peers.Num(); p++) {
-			assert(peers[p].GetConnectionState() == CONNECTION_FREE);
+			idassert(peers[p].GetConnectionState() == CONNECTION_FREE);
 		}*/
 
 		state = lobbyState_t::STATE_IDLE;
@@ -302,9 +302,32 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 
 			if (peerNum == host) {
 				idSnapShot localSnap;
+				int sequence = -1;
+				int baseseq = -1;
+				bool fullSnap = false;
+				//localReadSS = &localSnap;
 
-				//sessionCB->ReceivedFullSnap();
-				common->NetReceiveSnapshot(localSnap);
+				// If we are the peer, we assume we only receive snapshot data on the in-band channel
+				const std::byte* deltaData = msg.GetReadData() + msg.GetReadCount();
+				int deltaLength = msg.GetRemainingData();
+
+				if (peers[peerNum].snapProc->ReceiveSnapshotDelta(deltaData, deltaLength, sequence, baseseq, localSnap, fullSnap)) {
+
+					NET_VERBOSESNAPSHOT_PRINT_LEVEL(2, va("NET: Got %s snapshot %d delta'd against %d. SS Time: %d\n", (!fullSnap ? "partial" : "full"),
+						sequence, baseseq, localSnap.GetTime()).c_str());
+
+					//if (sessionCB->GetState() != idSession::INGAME && sequence != -1) {
+					//	int seq = peers[peerNum].snapProc->GetLastAppendedSequence();
+
+					//	// When we aren't in the game, we need to send this as reliable msg's, since usercmds won't be taking care of it for us
+					//	QueueReliableMessage(host, RELIABLE_SNAPSHOT_ACK, ackbuffer, sizeof(ackbuffer));
+					//}
+				}
+
+				if (fullSnap) {
+					sessionCB->ReceivedFullSnap();
+					common->NetReceiveSnapshot(localSnap);
+				}
 			}
 		}
 	}
@@ -327,13 +350,13 @@ bool idLobby::HasActivePeers() const {
 }
 
 const std::string idLobby::stateToString[static_cast<int>(lobbyState_t::NUM_STATES)] = {
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_IDLE, 0),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_CREATE_LOBBY_BACKEND, 1),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_SEARCHING, 2),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_OBTAINING_ADDRESS, 3),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_CONNECT_HELLO_WAIT, 4),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_FINALIZE_CONNECT, 5),
-	ASSERT_ENUM_STRING(lobbyState_t::STATE_FAILED, 6),
+	idassert_ENUM_STRING(lobbyState_t::STATE_IDLE, 0),
+	idassert_ENUM_STRING(lobbyState_t::STATE_CREATE_LOBBY_BACKEND, 1),
+	idassert_ENUM_STRING(lobbyState_t::STATE_SEARCHING, 2),
+	idassert_ENUM_STRING(lobbyState_t::STATE_OBTAINING_ADDRESS, 3),
+	idassert_ENUM_STRING(lobbyState_t::STATE_CONNECT_HELLO_WAIT, 4),
+	idassert_ENUM_STRING(lobbyState_t::STATE_FINALIZE_CONNECT, 5),
+	idassert_ENUM_STRING(lobbyState_t::STATE_FAILED, 6),
 };
 
 /*
@@ -360,7 +383,7 @@ void idLobby::State_Create_Lobby_Backend() {
 		return;
 	}
 
-	assert(lobbyBackend);
+	idassert(lobbyBackend);
 
 	if (lobbyBackend->GetState() == idLobbyBackend::lobbyBackendState_t::STATE_CREATING) {
 		return;		// Busy but valid
@@ -480,7 +503,7 @@ void idLobby::State_Connect_Hello_Wait() {
 	}
 
 	if (connectionAttempts < MAX_CONNECT_ATTEMPTS) {
-		assert(connectionAttempts >= 1);		// Should have at least the initial connection attempt
+		idassert(connectionAttempts >= 1);		// Should have at least the initial connection attempt
 
 		// See if we need to send another hello request
 		// (keep getting more frequent to increase chance due to possible packet loss, but clamp to MIN_CONNECT_FREQUENCY seconds)
@@ -521,8 +544,8 @@ idLobby::SetState
 ========================
 */
 void idLobby::SetState(lobbyState_t newState) {
-	assert(static_cast<int>(newState) < static_cast<int>(lobbyState_t::NUM_STATES));
-	assert(static_cast<int>(state) < static_cast<int>(lobbyState_t::NUM_STATES));
+	idassert(static_cast<int>(newState) < static_cast<int>(lobbyState_t::NUM_STATES));
+	idassert(static_cast<int>(state) < static_cast<int>(lobbyState_t::NUM_STATES));
 
 	if (state == newState) {
 		NET_VERBOSE_PRINT("NET: idLobby::SetState: State SAME %s for session %s\n", stateToString[static_cast<int>(newState)], GetLobbyName().c_str());
@@ -542,8 +565,8 @@ idLobby::StartCreating
 ========================
 */
 void idLobby::StartCreating() {
-	assert(lobbyBackend == nullptr);
-	assert(state == lobbyState_t::STATE_IDLE);
+	idassert(lobbyBackend == nullptr);
+	idassert(state == lobbyState_t::STATE_IDLE);
 
 	lobbyBackend = sessionCB->CreateLobbyBackend(parms, 0, (idLobbyBackend::lobbyBackendType_t)lobbyType);
 
@@ -631,7 +654,7 @@ idLobby::AddPeer
 int idLobby::AddPeer(const lobbyAddress_t& remoteAddress, idPacketProcessor::sessionId_t sessionID) {
 	// First, make sure we don't already have this peer
 	int p = FindPeer(remoteAddress, sessionID);
-	assert(p == -1);		// When using session ID's, we SHOULDN'T find this remoteAddress/sessionID combo
+	idassert(p == -1);		// When using session ID's, we SHOULDN'T find this remoteAddress/sessionID combo
 
 	if (p == -1) {
 		// If we didn't find the peer, we need to add a new one
@@ -648,7 +671,7 @@ int idLobby::AddPeer(const lobbyAddress_t& remoteAddress, idPacketProcessor::ses
 
 		peer.ResetAllData();
 
-		assert(peer.connectionState == connectionState_t::CONNECTION_FREE);
+		idassert(peer.connectionState == connectionState_t::CONNECTION_FREE);
 
 		peer.address = remoteAddress;
 
@@ -727,25 +750,25 @@ void idLobby::SetPeerConnectionState(int p, connectionState_t newState, bool ski
 
 	if (peer.GetConnectionState() == newState) {
 		idLib::Printf("NET: SetPeerConnectionState: Peer already in state %i\n", newState);
-		assert(0);	// This case means something is most likely bad, and it's the programmers fault
+		idassert(0);	// This case means something is most likely bad, and it's the programmers fault
 		return;
 	}
 
 	if (newState == connectionState_t::CONNECTION_CONNECTING) {
 		// We better be coming from a free connection state if we are trying to connect
-		assert(peer.GetConnectionState() == connectionState_t::CONNECTION_FREE);
+		idassert(peer.GetConnectionState() == connectionState_t::CONNECTION_FREE);
 
-		assert(!peer.packetProc);
+		idassert(!peer.packetProc);
 		peer.packetProc = std::make_unique<idPacketProcessor>();
 
 		if (lobbyType == actingGameStateLobbyType) {
-			assert(peer.snapProc == NULL);
+			idassert(peer.snapProc == NULL);
 			peer.snapProc = std::make_unique<idSnapshotProcessor>();
 		}
 	}
 	else if (newState == connectionState_t::CONNECTION_ESTABLISHED) {
 		// If we are marking this peer as connected for the first time, make sure this peer was actually trying to connect.
-		assert(peer.GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
+		idassert(peer.GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
 	}
 	else if (newState == connectionState_t::CONNECTION_FREE) {
 		// If we are freeing this connection and we had an established connection before, make sure to send a goodbye
@@ -774,7 +797,7 @@ void idLobby::SetPeerConnectionState(int p, connectionState_t newState, bool ski
 idLobby::QueueReliableMessage
 ========================
 */
-void idLobby::QueueReliableMessage(int p, std::byte type, const std::byte* data, int dataLen) {
+void idLobby::QueueReliableMessage(int p, reliableType_t type, const std::byte* data, int dataLen) {
 	if (!verify(p >= 0 && p < peers.size())) {
 		return;
 	}
@@ -791,7 +814,7 @@ void idLobby::QueueReliableMessage(int p, std::byte type, const std::byte* data,
 		idLib::Printf( "NET: peer.packetProc->NumQueuedReliables() > 2: %i (%i / %s)\n", peer.packetProc->NumQueuedReliables(), p, peer.address.ToString().c_str());
 	}
 
-	if (!peer.packetProc->QueueReliableMessage(type, data, dataLen)) {
+	if (!peer.packetProc->QueueReliableMessage(static_cast<std::byte>(type), data, dataLen)) {
 		// For now, when this happens, disconnect from all session types
 		NET_VERBOSE_PRINT("NET: Dropping peer because we overflowed his reliable message queue\n");
 		if (IsHost()) {
@@ -845,9 +868,9 @@ idLobby::SendConnectionRequest
 */
 void idLobby::SendConnectionRequest() {
 	// Some sanity checking
-	assert(state == lobbyState_t::STATE_CONNECT_HELLO_WAIT);
-	assert(peers[host].GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
-	assert(GetNumLobbyUsers() == 0);
+	idassert(state == lobbyState_t::STATE_CONNECT_HELLO_WAIT);
+	idassert(peers[host].GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
+	idassert(GetNumLobbyUsers() == 0);
 
 	// Buffer to hold connect msg
 	std::array<std::byte, idPacketProcessor::MAX_PACKET_SIZE - 2> buffer;
@@ -1039,7 +1062,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 	if (peerNum >= 0) {
 		peer_t& existingPeer = peers[peerNum];
 
-		assert(existingPeer.GetConnectionState() != connectionState_t::CONNECTION_FREE);
+		idassert(existingPeer.GetConnectionState() != connectionState_t::CONNECTION_FREE);
 
 		if (existingPeer.sessionID == proto_msg.sessionid()) {
 			return peerNum;		// If this is the same sessionID, then assume redundant connection attempt
@@ -1060,7 +1083,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 		}
 
 		if (existingPeer.snapProc != NULL) {
-			assert(lobbyType == lobbyType_t::TYPE_GAME);		// Only games sessions should be creating snap processors
+			idassert(lobbyType == lobbyType_t::TYPE_GAME);		// Only games sessions should be creating snap processors
 			existingPeer.snapProc = nullptr;
 		}
 
@@ -1074,8 +1097,8 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 
 	peer_t& newPeer = peers[peerNum];
 
-	assert(newPeer.GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
-	assert(lobbyType != GetActingGameStateLobbyType() || newPeer.snapProc);
+	idassert(newPeer.GetConnectionState() == connectionState_t::CONNECTION_CONNECTING);
+	idassert(lobbyType != GetActingGameStateLobbyType() || newPeer.snapProc);
 
 	// First, add users from this new peer to our user list 
 	// (which will then forward the list to all peers except peerNum)
@@ -1101,16 +1124,16 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 
 	outmsg.WriteProtobufMessage(&proto_out_msg);
 
-	QueueReliableMessage(peerNum, static_cast<std::byte>(reliableType_t::RELIABLE_HELLO), outmsg.GetReadData(), outmsg.GetSize());
+	QueueReliableMessage(peerNum, reliableType_t::RELIABLE_HELLO, outmsg.GetReadData(), outmsg.GetSize());
 
-	if (true) {
+	if (true/*MatchTypeIsJoinInProgress( parms.matchFlags )*/) {
 		// We are are ingame, then start the client loading immediately
 		if ((lobbyType == lobbyType_t::TYPE_GAME || lobbyType == lobbyType_t::TYPE_GAME_STATE) && sessionCB->GetState() >= idSession::sessionState_t::LOADING) {
 			idLib::Printf("******* JOIN IN PROGRESS ********\n");
 			if (sessionCB->GetState() == idSession::sessionState_t::INGAME) {
 				//newPeer.pauseSnapshots = true;		// Since this player joined in progress, let game dictate when to start sending snaps
 			}
-			QueueReliableMessage(peerNum, static_cast<std::byte>(idLobby::reliableType_t::RELIABLE_START_LOADING));
+			QueueReliableMessage(peerNum, idLobby::reliableType_t::RELIABLE_START_LOADING);
 		}
 	}
 
@@ -1123,7 +1146,7 @@ idLobby::InitStateLobbyHost
 ========================
 */
 void idLobby::InitStateLobbyHost() {
-	assert(lobbyBackend);
+	idassert(lobbyBackend);
 
 	// We will be the host
 	isHost = true;
@@ -1200,8 +1223,8 @@ void idLobby::SendPeerMembersToLobby(int peerIndex, lobbyType_t destLobbyType, c
 		return;
 	}
 
-	assert(peerIndex >= 0);
-	assert(peerIndex < peers.size());
+	idassert(peerIndex >= 0);
+	idassert(peerIndex < peers.size());
 	peer_t& peer = peers[peerIndex];
 
 	NET_VERBOSE_PRINT("NET: Sending peer %i (%s) to game lobby\n", peerIndex, peer.address.ToString().c_str());
@@ -1218,7 +1241,7 @@ idLobby::EncodeSessionID
 ========================
 */
 idPacketProcessor::sessionId_t idLobby::EncodeSessionID(uint32_t key) const {
-	assert(sizeof(uint32_t) >= sizeof(idPacketProcessor::sessionId_t));
+	idassert(sizeof(uint32_t) >= sizeof(idPacketProcessor::sessionId_t));
 	const int numBits = sizeof(idPacketProcessor::sessionId_t) * 8 - idPacketProcessor::NUM_LOBBY_TYPE_BITS;
 	const uint32_t mask = (1 << numBits) - 1;
 	idPacketProcessor::sessionId_t sessionID = (key & mask) << idPacketProcessor::NUM_LOBBY_TYPE_BITS;
@@ -1232,7 +1255,7 @@ idLobby::EncodeSessionID
 ========================
 */
 void idLobby::DecodeSessionID(idPacketProcessor::sessionId_t sessionID, uint32_t& key) const {
-	assert(sizeof(uint32_t) >= sizeof(idPacketProcessor::sessionId_t));
+	idassert(sizeof(uint32_t) >= sizeof(idPacketProcessor::sessionId_t));
 	key = sessionID >> idPacketProcessor::NUM_LOBBY_TYPE_BITS;
 }
 
@@ -1355,7 +1378,7 @@ void idLobby::HandleHelloAck(int p, idBitMsg& msg) {
 		return;
 	}
 
-	assert(GetNumLobbyUsers() == 0);
+	idassert(GetNumLobbyUsers() == 0);
 
 	NET_VERBOSE_PRINT("NET: Hello ack for session type %s from %s\n", GetLobbyName().c_str(), peer.address.ToString().c_str());
 
@@ -1401,13 +1424,13 @@ idLobby::HandleReliableMsg
 void idLobby::HandleReliableMsg(int p, idBitMsg& msg) {
 	peer_t& peer = peers[p];
 
-	int reliableType = msg.ReadByte();
+	reliableType_t reliableType = static_cast<reliableType_t>(msg.ReadByte());
 
-	//idLib::Printf(" Received reliable msg: %i \n", reliableType );
+	idLib::Printf("NET: Received reliable msg type: %i \n", static_cast<int>(reliableType));
 
 	const lobbyType_t actingGameStateLobbyType = GetActingGameStateLobbyType();
 
-	if (reliableType == static_cast<int>(reliableType_t::RELIABLE_HELLO)) {
+	if (reliableType == reliableType_t::RELIABLE_HELLO) {
 		VERIFY_FROM_CONNECTING_HOST(p, lobbyType, RELIABLE_HELLO);
 		// This is sent from the host acking a request to join the game lobby
 		HandleHelloAck(p, msg);
@@ -1472,7 +1495,7 @@ void idLobby::HandleReliableMsg(int p, idBitMsg& msg) {
 	//		lobbyBackend->UpdateMatchParms(parms);
 	//	}
 	//}
-	else if (reliableType == static_cast<int>(reliableType_t::RELIABLE_START_LOADING)) {
+	else if (reliableType == reliableType_t::RELIABLE_START_LOADING) {
 		// This message is sent from the host to start loading a map
 		VERIFY_FROM_HOST(p, actingGameStateLobbyType, RELIABLE_START_LOADING);
 
@@ -1480,21 +1503,21 @@ void idLobby::HandleReliableMsg(int p, idBitMsg& msg) {
 
 		startLoadingFromHost = true;
 	}
-	//else if (reliableType == RELIABLE_LOADING_DONE) {
-	//	// This message is sent from the peers to state they are done loading the map
-	//	VERIFY_CONNECTED_PEER(p, actingGameStateLobbyType, RELIABLE_LOADING_DONE);
+	else if (reliableType == reliableType_t::RELIABLE_LOADING_DONE) {
+		// This message is sent from the peers to state they are done loading the map
+		VERIFY_CONNECTED_PEER(p, actingGameStateLobbyType, RELIABLE_LOADING_DONE);
 
-	//	unsigned long networkChecksum = 0;
-	//	networkChecksum = msg.ReadLong();
+		unsigned long networkChecksum = 0;
+		networkChecksum = msg.ReadLong();
 
-	//	peer.networkChecksum = networkChecksum;
-	//	peer.loaded = true;
-	//}
-	//else if (reliableType == RELIABLE_IN_GAME) {
-	//	VERIFY_CONNECTED_PEER(p, actingGameStateLobbyType, RELIABLE_IN_GAME);
+		//peer.networkChecksum = networkChecksum;
+		peer.loaded = true;
+	}
+	else if (reliableType == reliableType_t::RELIABLE_IN_GAME) {
+		VERIFY_CONNECTED_PEER(p, actingGameStateLobbyType, RELIABLE_IN_GAME);
 
-	//	peer.inGame = true;
-	//}
+		peer.inGame = true;
+	}
 	//else if (reliableType == RELIABLE_SNAPSHOT_ACK) {
 	//	VERIFY_CONNECTED_PEER(p, actingGameStateLobbyType, RELIABLE_SNAPSHOT_ACK);
 
@@ -1621,7 +1644,7 @@ void idLobby::HandleReliableMsg(int p, idBitMsg& msg) {
 	//	const lobbyType_t	destLobbyType = (lobbyType_t)msg.ReadByte();
 	//	const bool			waitForMembers = msg.ReadBool();
 
-	//	assert(destLobbyType > lobbyType);		// Make sure this is a proper transition (i.e. TYPE_PARTY moves to TYPE_GAME, TYPE_GAME moves to TYPE_GAME_STATE)
+	//	idassert(destLobbyType > lobbyType);		// Make sure this is a proper transition (i.e. TYPE_PARTY moves to TYPE_GAME, TYPE_GAME moves to TYPE_GAME_STATE)
 
 	//	sessionCB->ConnectAndMoveToLobby(destLobbyType, connectInfo, waitForMembers);
 	//}

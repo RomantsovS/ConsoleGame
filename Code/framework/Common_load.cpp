@@ -112,6 +112,7 @@ void idCommonLocal::ExecuteMapChange() {
 
 		while (session->GetState() == idSession::sessionState_t::LOADING) {
 			session->UpdateSignInManager();
+			session->Pump();
 			Sys_Sleep(10);
 		}
 	}
@@ -125,7 +126,7 @@ void idCommonLocal::ExecuteMapChange() {
 			emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
 		}
 		if (IsClient()) {
-			//game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
+			game->ClientRunFrame(emptyCommandManager, false, emptyGameReturn);
 		}
 		else {
 			game->RunFrame(emptyCommandManager, emptyGameReturn);

@@ -34,7 +34,7 @@ enum cvarFlags_t {
 class idCVar {
 public:
 	// Never use the default constructor.
-	idCVar() { assert(typeid(this) != typeid(idCVar)); }
+	idCVar() { idassert(typeid(this) != typeid(idCVar)); }
 
 	// Always use one of the following constructors.
 	idCVar(const std::string &name, const std::string &value, int flags, const std::string &description);

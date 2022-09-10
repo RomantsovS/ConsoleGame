@@ -28,8 +28,8 @@ idAFBody::idAFBody
 */
 idAFBody::idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipModel, float density) {
 
-	//assert(clipModel);
-	//assert(clipModel->IsTraceModel());
+	//idassert(clipModel);
+	//idassert(clipModel->IsTraceModel());
 
 	Init();
 

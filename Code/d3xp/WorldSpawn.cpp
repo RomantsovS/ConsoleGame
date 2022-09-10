@@ -20,7 +20,7 @@ idWorldspawn::Spawn
 ================
 */
 void idWorldspawn::Spawn() {
-	assert(!gameLocal.world);
+	idassert(!gameLocal.world);
 	gameLocal.world = std::dynamic_pointer_cast<idWorldspawn>(shared_from_this());
 }
 

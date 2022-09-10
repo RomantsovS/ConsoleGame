@@ -511,3 +511,29 @@ idPhysics_RigidBody::GetOrigin
 const Vector2& idPhysics_RigidBody::GetOrigin(int id) const noexcept {
 	return current.i.position;
 }
+
+/*
+================
+idPhysics_Static::WriteToSnapshot
+================
+*/
+void idPhysics_RigidBody::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteFloat(current.i.position[0]);
+	msg.WriteFloat(current.i.position[1]);
+
+	msg.WriteFloat(current.i.linearMomentum[0]);
+	msg.WriteFloat(current.i.linearMomentum[1]);
+}
+
+/*
+================
+idPhysics_Base::ReadFromSnapshot
+================
+*/
+void idPhysics_RigidBody::ReadFromSnapshot(const idBitMsg& msg) {
+	current.i.position[0] = msg.ReadFloat();
+	current.i.position[1] = msg.ReadFloat();
+
+	current.i.linearMomentum[0] = msg.ReadFloat();
+	current.i.linearMomentum[1] = msg.ReadFloat();
+}

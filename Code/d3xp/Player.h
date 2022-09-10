@@ -40,6 +40,10 @@ public:
 
 	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
 
+	void ClientThink(/*const int curTime, const float fraction, const bool predict*/) override;
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
+
 	void HandleUserCmds(const usercmd_t& newcmd) noexcept;
 
 	bool IsLocallyControlled() const noexcept;

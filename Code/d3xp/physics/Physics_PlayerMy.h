@@ -53,6 +53,9 @@ public:	// common physics interface
 
 	void SetLinearVelocity(const Vector2& newLinearVelocity, int id = 0) noexcept override;
 	const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
+
+	void WriteToSnapshot(idBitMsg& msg) const override;
+	void ReadFromSnapshot(const idBitMsg& msg) override;
 private:
 	// player physics state
 	playerMyPState_t current;

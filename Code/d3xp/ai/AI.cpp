@@ -123,3 +123,35 @@ void AISimple::Hide() {
 void AISimple::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
 	idAI::Killed(inflictor, attacker, damage, dir);
 }
+
+/*
+================
+idStaticEntity::WriteToSnapshot
+================
+*/
+void AISimple::WriteToSnapshot(idBitMsg& msg) const {
+	GetPhysics()->WriteToSnapshot(msg);
+}
+
+/*
+================
+idStaticEntity::ReadFromSnapshot
+================
+*/
+void AISimple::ReadFromSnapshot(const idBitMsg& msg) {
+	bool hidden;
+
+	GetPhysics()->ReadFromSnapshot(msg);
+	/*hidden = msg.ReadBits(1) == 1;
+	if (hidden != IsHidden()) {
+		if (hidden) {
+			Hide();
+		}
+		else {
+			Show();
+		}
+	}*/
+	if (true/*msg.HasChanged()*/) {
+		UpdateVisuals();
+	}
+}

@@ -99,8 +99,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 	}
 }
 
-void idCommonLocal::DPrintf(const char* fmt, ...)
-{
+void idCommonLocal::DPrintf(const char* fmt, ...) {
 	va_list		argptr;
 	char		msg[MAX_PRINT_MSG_SIZE];
 
@@ -131,8 +130,7 @@ void idCommonLocal::DWarning(const char* fmt, ...) {
 	Printf("WARNING: %s\n", msg);
 }
 
-void idCommonLocal::CloseLogFile()
-{
+void idCommonLocal::CloseLogFile() {
 	if (logFile) {
 		com_logFile.SetBool(false); // make sure no further VPrintf attempts to open the log file again
 
@@ -143,8 +141,7 @@ void idCommonLocal::CloseLogFile()
 	}
 }
 
-void idCommonLocal::Warning(const char* fmt, ...)
-{
+void idCommonLocal::Warning(const char* fmt, ...) {
 	va_list		argptr;
 	char		msg[MAX_PRINT_MSG_SIZE];
 
@@ -156,8 +153,7 @@ void idCommonLocal::Warning(const char* fmt, ...)
 	Printf("WARNING: " "%s\n", msg);
 }
 
-void idCommonLocal::Error(const char* fmt, ...)
-{
+void idCommonLocal::Error(const char* fmt, ...) {
 	va_list		argptr;
 	static int	lastErrorTime;
 	static int	errorCount;

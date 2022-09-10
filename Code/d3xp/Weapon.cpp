@@ -44,7 +44,7 @@ Only called at player spawn time, not each weapon switch
 ================
 */
 void idWeapon::SetOwner(idPlayer* _owner) {
-	assert(owner);
+	idassert(owner);
 	owner = _owner;
 	SetName(va("%s_weap", _owner->name.c_str()));
 }
@@ -85,7 +85,7 @@ void idWeapon::GetWeaponDef(const std::string& objectname, int ammoinclip) {
 		return;
 	}
 
-	assert(owner);
+	idassert(owner);
 
 	weaponDef = gameLocal.FindEntityDef(objectname).get();
 

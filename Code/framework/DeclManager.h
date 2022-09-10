@@ -39,6 +39,7 @@ public:
 	idDeclBase& operator=(idDeclBase&&) = default;
 
 	virtual const std::string& GetName() const = 0;
+	virtual int Index() const = 0;
 	virtual int GetLineNum() const = 0;
 	virtual std::string GetFileName() const = 0;
 	virtual void GetText(char* text) const = 0;
@@ -63,6 +64,9 @@ public:
 
 	// Returns the name of the decl.
 	const std::string& GetName() const { return base.lock()->GetName(); }
+
+	// Returns the index in the per-type list.
+	int Index() const { return base.lock()->Index(); }
 
 	// Returns the line number the decl starts.
 	int GetLineNum() const { return base.lock()->GetLineNum(); }

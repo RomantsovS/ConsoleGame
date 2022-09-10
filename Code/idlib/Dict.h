@@ -1,12 +1,6 @@
 #ifndef DICT_H
 #define DICT_H
 
-#include <map>
-#include <string>
-
-#include "Math/Vector2.h"
-#include "Str.h"
-
 class idDict {
 public:
 	using map_type = std::map<std::string, std::string>;
