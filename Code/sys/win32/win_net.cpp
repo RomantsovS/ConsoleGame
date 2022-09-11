@@ -105,7 +105,11 @@ idUDP::InitForPort
 ========================
 */
 bool idUDP::InitForPort(int portNumber) {
-	idLib::Printf("Opening IP socket: localhost:%i\n", portNumber);
+	const std::string net_interface = net_ip.GetString();
+
+	if (portNumber != PORT_ANY) {
+		idLib::Printf("Opening IP socket: %s:%i\n", net_interface.c_str(), portNumber);
+	}
 
 	boost::system::error_code ec;
 	
@@ -117,7 +121,12 @@ bool idUDP::InitForPort(int portNumber) {
 		return false;
 	}
 	
-	ba::ip::udp::endpoint ep(ba::ip::address_v4::any(), portNumber == PORT_ANY ? 0 : portNumber);
+	ba::ip::udp::endpoint ep;
+
+	if(net_interface.empty() || net_interface == "localhost")
+		ep = ba::ip::udp::endpoint(ba::ip::address_v4::any(), portNumber == PORT_ANY ? 0 : portNumber);
+	else
+		ep = ba::ip::udp::endpoint(boost::asio::ip::address::from_string(net_interface), portNumber == PORT_ANY ? 0 : portNumber);
 
 	socket->bind(ep, ec);
 	if (ec) {
@@ -125,12 +134,6 @@ bool idUDP::InitForPort(int portNumber) {
 		
 		return false;
 	}
-
-	/*sockaddr_in address;
-	int len = sizeof(address);
-	getsockname(socket.native_handle(), (sockaddr*)&address, &len);
-	int p = htons(address.sin_port);
-	socket->local_endpoint()*/
 
 	idLib::Printf("NET: Socket bound to port: %d\n", socket->local_endpoint().port());
 
@@ -189,6 +192,9 @@ bool idUDP::GetPacket(netadr_t& from, void* data, int& size, int maxSize) {
 				return false;
 			
 			idLib::Warning("NET: socket receive warning %d %s\n", ec.value(), NET_ErrorString(ec.value()));
+
+			idassert(0);
+
 			return false;
 		}
 		else {
@@ -226,11 +232,15 @@ void idUDP::SendPacket(const netadr_t to, const void* data, int size) {
 	boost::system::error_code ec;
 	size_t len = socket->send_to(boost::asio::buffer(data, size), destination, 0, ec);
 
+	idassert(size == len);
+
 	if (ec) {
 		if (ec.value() == WSAEADDRNOTAVAIL)
 			return;
 
 		idLib::Printf("NET: UDP sendto error - packet dropped: %s\n", NET_ErrorString(ec.value()));
+
+		idassert(0);
 	}
 	else {
 		idLib::Printf("NET: socket sent %d bytes\n", len);

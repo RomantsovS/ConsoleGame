@@ -3,6 +3,7 @@
 #include "sys_lobby_backend_direct.h"
 
 extern idCVar net_port;
+idCVar host_net_ip("host_net_ip", "localhost", 0, "local IP address");
 
 extern idLobbyToSessionCB* lobbyToSessionCB;
 
@@ -39,12 +40,12 @@ void idLobbyBackendDirect::StartFinding(const idMatchParameters& p, int numParty
 	isLocal = true;
 	isHost = false;
 
-	if (lobbyToSessionCB->CanJoinLocalHost()) {
+	//if (lobbyToSessionCB->CanJoinLocalHost()) {
 		state = lobbyBackendState_t::STATE_READY;
-	}
+	/*}
 	else {
 		state = lobbyBackendState_t::STATE_FAILED;
-	}
+	}*/
 }
 
 /*
@@ -54,6 +55,12 @@ idLobbyBackendDirect::GetSearchResults
 */
 void idLobbyBackendDirect::GetSearchResults(std::vector<lobbyConnectInfo_t>& searchResults) {
 	lobbyConnectInfo_t fakeResult;
+
+	boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string(host_net_ip.GetString()), net_port.GetInteger());
+	fakeResult.netAddr.address = ep.address();
+	fakeResult.netAddr.port = ep.port();
+	fakeResult.netAddr.type = netadrtype_t::NA_IP;
+
 	searchResults.clear();
 	searchResults.push_back(fakeResult);
 }
