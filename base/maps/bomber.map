@@ -4,7 +4,7 @@ Version 2
 "classname"				"worldspawn"
 "call"					"map_marscity1::main"
 "def_player"			"player"
-"player_origin"			"41.6 24.4"
+"player_origin"			"8 8"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
 "r_background_color"	"0"
@@ -12,213 +12,163 @@ Version 2
 {
  brushDef3
  {
-  ( 0 0 215 115 )
+  ( 0 0 216 112 )
  }
 }
 }
 
 {
 "classname" "block"
-"origin" "25 25"
+"origin" "24 24"
 }
 
 {
 "classname" "block"
-"origin" "58 25"
+"origin" "56 24"
 }
 
 {
 "classname" "block"
-"origin" "91 25"
+"origin" "88 24"
 }
 
 {
 "classname" "block"
-"origin" "124 25"
+"origin" "120 24"
 }
 
 {
 "classname" "block"
-"origin" "157 25"
+"origin" "152 24"
 }
 
 {
 "classname" "block"
-"origin" "190 25"
+"origin" "184 24"
 }
 
 {
 "classname" "block"
-"origin" "25 58"
+"origin" "24 56"
 }
 
 {
 "classname" "block"
-"origin" "58 58"
+"origin" "56 56"
 }
 
 {
 "classname" "block"
-"origin" "91 58"
+"origin" "88 56"
 }
 
 {
 "classname" "block"
-"origin" "124 58"
+"origin" "120 56"
 }
 
 {
 "classname" "block"
-"origin" "157 58"
+"origin" "152 56"
 }
 
 {
 "classname" "block"
-"origin" "190 58"
+"origin" "184 56"
 }
 
 {
 "classname" "block"
-"origin" "25 91"
+"origin" "24 88"
 }
 
 {
 "classname" "block"
-"origin" "58 91"
+"origin" "56 88"
 }
 
 {
 "classname" "block"
-"origin" "91 91"
+"origin" "88 88"
 }
 
 {
 "classname" "block"
-"origin" "124 91"
+"origin" "120 88"
 }
 
 {
 "classname" "block"
-"origin" "157 91"
+"origin" "152 88"
 }
 
 {
 "classname" "block"
-"origin" "190 91"
-}
-
-{
-"classname" "block"
-"origin" "25 124"
-}
-
-{
-"classname" "block"
-"origin" "58 124"
-}
-
-{
-"classname" "block"
-"origin" "91 124"
-}
-
-{
-"classname" "block"
-"origin" "124 124"
-}
-
-{
-"classname" "block"
-"origin" "157 124"
-}
-
-{
-"classname" "block"
-"origin" "190 124"
+"origin" "184 88"
 }
 
 {
 "classname" "brick"
-"origin" "41 41"
+"origin" "40 40"
 }
 
 {
 "classname" "brick"
-"origin" "41 58"
+"origin" "40 72"
 }
 
 {
 "classname" "brick"
-"origin" "41 75"
+"origin" "72 72"
 }
 
 {
 "classname" "brick"
-"origin" "108 108"
+"origin" "104 104"
 }
 
 {
 "classname" "brick"
-"origin" "125 108"
+"origin" "136 104"
 }
 
 {
 "classname" "brick"
-"origin" "142 108"
+"origin" "168 72"
 }
 
 {
 "classname" "brick"
-"origin" "108 75"
+"origin" "8 104"
 }
 
 {
 "classname" "brick"
-"origin" "8 108"
+"origin" "104 8"
 }
 
 {
 "classname" "brick"
-"origin" "142 8"
+"origin" "136 72"
 }
 
 {
 "classname" "brick"
-"origin" "157 75"
-}
-
-{
-"classname" "brick"
-"origin" "174 75"
-}
-
-{
-"classname" "brick"
-"origin" "191 75"
-}
-
-{
-"classname" "brick"
-"origin" "208 75"
-}
-
-{
-"classname" "brick"
-"origin" "208 58"
+"origin" "168 104"
 }
 
 {
 "classname" "mushroom"
 "name" "mushroom1"
-"origin" "140 75"
+"origin" "104 40"
 "color" "1"
 "linearVelocity" "0 10"
 }
 
 {
-"classname" "mushroom"
-"name" "mushroom2"
-"origin" "9 40"
+"classname" "turtle"
+"name" "turtle1"
+"origin" "8 40"
 "color" "2"
 "linearVelocity" "0 10"
 }
@@ -226,7 +176,7 @@ Version 2
 {
 "classname" "mushroom"
 "name" "mushroom3"
-"origin" "92 9"
+"origin" "72 8"
 "color" "3"
 "linearVelocity" "10 0"
 }

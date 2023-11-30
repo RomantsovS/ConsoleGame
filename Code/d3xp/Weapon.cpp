@@ -188,7 +188,10 @@ void idWeapon::UpdateScript() {
 		std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
 		proj->Create(owner, owner->GetPhysics()->GetOrigin(), vec2_origin);
 
-		proj->Launch(owner->GetPhysics()->GetOrigin(), owner->GetPhysics()->GetLinearVelocity(), vec2_origin);
+		Vector2 pos = owner->GetPhysics()->GetOrigin();
+		pos.x = 8 + static_cast<int>(pos.x) / 16 * 16;
+		pos.y = 8 + static_cast<int>(pos.y) / 16 * 16;
+		proj->Launch(pos, owner->GetPhysics()->GetLinearVelocity(), vec2_origin);
 
 		PostEventMS(&EV_Weapon_WeaponReady, spawnArgs.GetInt("ready_time", "500"));
 

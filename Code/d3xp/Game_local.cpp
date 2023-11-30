@@ -508,7 +508,7 @@ void idGameLocal::RunDebugInfo() {
 	if (g_showEntityInfo.GetBool()) {
 		gameRenderWorld->DrawTextToScreen(string_format("ents: %3d, active: %3d", num_spawned_entities,
 			num_active_entities), Vector2(), colorYellow, info_update_time + 1);
-		
+
 		if (g_showCollisionTraces.GetBool()) {
 			clip.PrintStatistics(info_update_time + 1);
 		}
@@ -1005,7 +1005,7 @@ void idGameLocal::SpawnMapEntities() {
 	std::shared_ptr<idMapEntity> mapEnt = mapFile->GetEntity(0);
 	args = mapEnt->epairs;
 	args.SetInt("spawn_entnum", ENTITYNUM_WORLD);
-	if (!SpawnEntityDef(args) || !entities[ENTITYNUM_WORLD] /*|| !entities[ENTITYNUM_WORLD]->IsType(idWorldspawn::Type)*/) {
+	if (!SpawnEntityDef(args) || !entities[ENTITYNUM_WORLD] || !entities[ENTITYNUM_WORLD]->IsType(idWorldspawn::Type)) {
 		Error("Problem spawning world entity");
 	}
 
@@ -1152,11 +1152,11 @@ idGameLocal::SpawnEntityType
 std::shared_ptr<idEntity> idGameLocal::SpawnEntityType(const idTypeInfo& classdef, const idDict* args, bool bIsClientReadSnapshot) {
 	std::shared_ptr<idClass> obj;
 
-//#if _DEBUG
-//	if (common->IsClient()) {
-//		idassert(bIsClientReadSnapshot);
-//	}
-//#endif
+	//#if _DEBUG
+	//	if (common->IsClient()) {
+	//		idassert(bIsClientReadSnapshot);
+	//	}
+	//#endif
 
 	if (!classdef.IsType(idEntity::Type)) {
 		Error("Attempted to spawn non-entity class '%s'", classdef.classname.c_str());
