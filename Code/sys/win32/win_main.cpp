@@ -400,7 +400,6 @@ int main(int argc, const char * const * argv) {
 		common->Frame();
 	}
 
-	common->Quit();
-
+	// never gets here
 	return 0;
 }
