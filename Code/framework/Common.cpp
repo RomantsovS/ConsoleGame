@@ -48,10 +48,6 @@ void idCommonLocal::Quit() {
 	if (!com_errorEntered) {
 		Shutdown();
 	}
-	
-#ifdef DEBUG
-	Sys_DebugMemory_f();
-#endif
 
 	isCommonExists = false;
 
@@ -105,8 +101,6 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		// exec the startup scripts
 		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec default.cfg\n");
 
-		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec autoexec.cfg\n");
-
 		// run cfg execution
 		cmdSystem->ExecuteCommandBuffer();
 
@@ -145,6 +139,11 @@ void idCommonLocal::Init(int argc, const char * const * argv, const char * cmdli
 		FPSupdateMilliseconds = 1000;
 
 		Printf("--- Common Initialization Complete ---\n");
+
+		cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec autoexec.cfg\n");
+
+		// run cfg execution
+		cmdSystem->ExecuteCommandBuffer();
 	}
 	catch (const std::exception& msg) {
 		Sys_Error("Error during initialization %s", msg.what());
@@ -177,15 +176,15 @@ void idCommonLocal::Shutdown() {
 	session->Shutdown();
 
 	// shut down the user command input code
-	printf("usercmdGen->Shutdown();\n");
+	Printf("usercmdGen->Shutdown();\n");
 	usercmdGen->Shutdown();
 
 	// shut down the event loop
-	printf("eventLoop->Shutdown();\n");
+	Printf("eventLoop->Shutdown();\n");
 	eventLoop->Shutdown();
 
 	// shutdown the decl manager
-	printf("declManager->Shutdown();\n");
+	Printf("declManager->Shutdown();\n");
 	declManager->Shutdown();
 
 	// shut down the renderSystem
