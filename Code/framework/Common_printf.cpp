@@ -23,7 +23,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 	if (true) {
 		int	t = Sys_Milliseconds();
 		if (true) {
-			sprintf_s(msg, MAX_PRINT_MSG_SIZE, "[%5.2f]", t * 0.001f);
+			sprintf_s(msg, MAX_PRINT_MSG_SIZE, "[%5.2f] thread:%d ", t * 0.001f, std::this_thread::get_id());
 		}
 		else {
 			sprintf_s(msg, MAX_PRINT_MSG_SIZE, "[%i]", t);
