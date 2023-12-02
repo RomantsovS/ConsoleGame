@@ -5,7 +5,7 @@
 const idEventDef EV_Explode("<explode>", "");
 
 CLASS_DECLARATION(idEntity, idProjectile)
-	EVENT(EV_Explode, idProjectile::Event_Explode)
+EVENT(EV_Explode, idProjectile::Event_Explode)
 END_CLASS
 
 /*
@@ -102,6 +102,9 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	physicsObj->SetClipMask(MASK_PLAYERSOLID);
 	physicsObj->SetLinearVelocity(tmpDir * speed + pushVelocity);
 	physicsObj->SetOrigin(start);
+
+	if (g_debugSpawn.GetBool())
+		gameLocal.DPrintf("Launch proj %d %s %f %f\n", entityNumber, GetName().c_str(), start.x, start.y);
 
 	if (!common->IsClient() || fl.skipReplication) {
 		if (fuse <= 0) {
@@ -232,12 +235,13 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 
 	fl.takedamage = false;
 	physicsObj->SetContents(0);
+	physicsObj->ClearContacts();
 	physicsObj->PutToRest();
 
 	if (!spawnArgs.GetString("def_projectile").empty()) {
 		size_t num_projectiles = spawnArgs.GetInt("num_projectiles");
 		Vector2 size = spawnArgs.GetVector("size");
-		int projSize = projectileDict.GetInt("shift");
+		int projShift = projectileDict.GetInt("shift");
 
 		std::shared_ptr<idEntity> ent;
 		gameLocal.SpawnEntityDef(projectileDict, &ent);
@@ -253,9 +257,18 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 		proj->Create(owner, GetPhysics()->GetOrigin(), vec2_origin);
 		proj->Launch(GetPhysics()->GetOrigin(), vec2_origin, vec2_origin);
 
-
 		for (size_t i = 0; i < num_projectiles; ++i) {
 			for (size_t j = 0; j < num_firebals; ++j) {
+				Vector2 shift = spawnArgs.GetVector(va("projectile%d_shift", i));
+				if (shift.x == 0 && shift.y == 0)
+					continue;
+				shift.x *= (size.x + projShift) / 2 * (j + 1);
+				shift.y *= (size.y + projShift) / 2 * (j + 1);
+
+				const auto proj_origin = GetPhysics()->GetOrigin() + shift;
+				if (proj_origin.x < 0 || proj_origin.y < 0)
+					continue;
+
 				std::shared_ptr<idEntity> ent;
 				gameLocal.SpawnEntityDef(projectileDict, &ent);
 
@@ -267,18 +280,19 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 
 				std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
 
-				Vector2 shift = spawnArgs.GetVector(va("projectile%d_shift", i));
-				shift.x *= (size.x + projSize) / 2 * (j + 1);
-				shift.y *= (size.y + projSize) / 2 * (j + 1);
-				
-				proj->Create(owner, GetPhysics()->GetOrigin() + shift, vec2_origin);
-				proj->Launch(GetPhysics()->GetOrigin() + shift, vec2_origin, vec2_origin);
+				proj->Create(owner, proj_origin, vec2_origin);
+				proj->Launch(proj_origin, vec2_origin, vec2_origin);
+
+				proj->Think();
 
 				bool collided = false;
 				for (int i = 0; i < proj->physicsObj->GetNumContacts(); ++i) {
 					auto ent = gameLocal.entities[proj->physicsObj->GetContact(i).entityNum].get();
 					if (gameLocal.entities[proj->physicsObj->GetContact(i).entityNum]->IsType(idStaticEntity::Type)) {
-						if(!ent->fl.takedamage)
+						gameLocal.DPrintf("contact proj %d %s %f %f with %d %s %f %f\n", proj->entityNumber, proj->GetName().c_str(), proj->GetPhysics()->GetOrigin().x,
+							proj->GetPhysics()->GetOrigin().y, ent->entityNumber, ent->GetName().c_str(), ent->GetPhysics()->GetOrigin().x,
+							ent->GetPhysics()->GetOrigin().y);
+						if (!ent->fl.takedamage)
 							proj->PostEventSec(&EV_Explode, 0);
 						collided = true;
 						break;
@@ -301,7 +315,7 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 idProjectile::Event_Explode
 ================
 */
-void idProjectile::Event_Explode() { 
+void idProjectile::Event_Explode() {
 	trace_t collision;
 
 	memset(&collision, 0, sizeof(collision));
