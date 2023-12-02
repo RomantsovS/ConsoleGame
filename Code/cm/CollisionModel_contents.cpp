@@ -28,7 +28,7 @@ bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t* tw, cm_br
 	}
 
 	// if the brush bounds don't intersect the trace bounds
-	if (!b->bounds.IntersectsBounds(tw->bounds) || b->bounds.ContainsBounds(tw->bounds)) {
+	if (!b->bounds.IntersectsBounds(tw->bounds) || tw->can_contain && b->bounds.ContainsBounds(tw->bounds)) {
 		return false;
 	}
 

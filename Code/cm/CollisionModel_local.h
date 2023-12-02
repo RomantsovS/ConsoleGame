@@ -171,6 +171,7 @@ struct cm_traceWork_t {
 	//bool axisIntersectsTrm;							// true if the rotation axis intersects the trace model
 	bool getContacts;								// true if retrieving contacts
 	bool quickExit;									// set to quickly stop the collision detection calculations
+	bool can_contain = false;
 
 	Vector2 origin;									// origin of rotation in model space
 	//idVec3 axis;									// rotation axis in model space

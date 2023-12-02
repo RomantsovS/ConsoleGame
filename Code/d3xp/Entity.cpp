@@ -96,7 +96,7 @@ void idEntity::Spawn() {
 	renderEntity.color = spawnArgs.GetInt("color", 15);
 
 	if (g_debugSpawn.GetBool())
-		gameLocal.DPrintf("Spawned ent %d %s %s\n", entityNumber, GetClassname().c_str(), name.c_str());
+		gameLocal.DPrintf("Spawned ent %d %s %s %f %f\n", entityNumber, GetClassname().c_str(), name.c_str(), origin.x, origin.y);
 }
 
 void idEntity::Remove() noexcept {
@@ -410,6 +410,7 @@ void idEntity::ActivatePhysics(idEntity* ent) {
 }
 
 void idEntity::AddContactEntity(idEntity* ent) {
+	//gameLocal.DPrintf("ent %d %s AddContactEntity %d %s\n", entityNumber, GetClassname().c_str(), ent->entityNumber, ent->GetName().c_str());
 	GetPhysics()->AddContactEntity(ent);
 }
 

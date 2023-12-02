@@ -114,6 +114,7 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results, const Vecto
 	tw.start = start - modelOrigin;// .GetIntegerVectorFloor();
 	tw.end = end - modelOrigin;// .GetIntegerVectorFloor();
 	tw.dir = end - start;
+	tw.can_contain = model == 0;
 
 	// the trace fraction is too inaccurate to describe translations over huge distances
 	if (tw.dir.LengthSqr() > Square(CM_MAX_TRACE_DIST)) {

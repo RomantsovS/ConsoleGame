@@ -37,7 +37,7 @@ entityDef block {
 entityDef mushroom {
 	"spawnclass"			"AISimple"
 	"model"					"models/mushroom16x16.bmp"
-	"size"					"14 14"
+	"size"					"15 15"
 	"speed"					"10"
 	"color"					"10"
 	"health"				"1"
@@ -47,7 +47,7 @@ entityDef mushroom {
 entityDef turtle {
 	"spawnclass"			"AISimple"
 	"model"					"models/turtle16x23.bmp"
-	"size"					"14 23"
+	"size"					"15 23"
 	"speed"					"10"
 	"color"					"11"
 	"directionChangePeriod" "5000"
@@ -158,8 +158,8 @@ entityDef damage_grenadeDirect {
 
 entityDef projectile_grenade_explosion {
 	"spawnclass"				"idProjectile"
-	"size"						"15 15"
-	"shift"						"15"
+	"size"						"15.8 15.8"
+	"shift"						"16"
 	"model"						"models/fireball16x16.bmp"
 
 	"def_damage"				"damage_grenadeExplosion"
