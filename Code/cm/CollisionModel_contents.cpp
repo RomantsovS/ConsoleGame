@@ -88,6 +88,7 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results, const Vector2& s
 	tw.model = idCollisionModelManagerLocal::models[model];
 	tw.start = start - modelOrigin;
 	tw.end = tw.start;
+	tw.can_contain = model == 0;
 
 	// setup trm structure
 	idCollisionModelManagerLocal::SetupTrm(&tw, trm);

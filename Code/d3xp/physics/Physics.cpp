@@ -3,7 +3,7 @@
 
 #include "../Game_local.h"
 
-const float CONTACT_EPSILON = 0.05f; // maximum contact seperation distance
+const float CONTACT_EPSILON = 0.01f; // maximum contact seperation distance
 
 ABSTRACT_DECLARATION(idClass, idPhysics)
 END_CLASS
