@@ -4,7 +4,7 @@ Version 2
 "classname"				"worldspawn"
 "call"					"map_marscity1::main"
 "def_player"			"player"
-"player_origin"			"41.6 24.4"
+"player_origin"			"28 8"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
 "r_background_color"	"0"
@@ -12,15 +12,15 @@ Version 2
 {
  brushDef3
  {
-  ( 0 0 215 115 )
+  ( 0 0 208 112 )
  }
 }
 }
-/*
+
 {
 "classname" "mushroom"
-"name" "mushroom1"
-"origin" "140 75"
-"color" "1"
-"linearVelocity" "0 10"
-}*/
+"name" "mushroom3"
+"origin" "120 48"
+"color" "3"
+"linearVelocity" "-10 0"
+}
