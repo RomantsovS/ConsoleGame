@@ -93,7 +93,7 @@ RB_DrawText
 /*
 void RB_DrawText(const std::string &text, const Vector2 &origin, const Screen::color_type color) {
 	if (!text.empty()) {
-		tr.screen.writeInColor(text, color);
+		tr.screen->writeInColor(text, color);
 	}
 }*/
 
@@ -180,11 +180,11 @@ void RB_ShowDebugLines() {
 	for (i = 0; i < rb_numDebugLines; i++, line++) {
 		if (!line->depthTest) {
 			for (x_pos = static_cast<Screen::pos_type>(line->start.x); x_pos <= line->end.x; ++x_pos) {
-				tr.screen.set(x_pos/* + tr.borderHeight*/, static_cast<Screen::pos_type>(line->start.y)/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen->set(x_pos/* + tr.borderHeight*/, static_cast<Screen::pos_type>(line->start.y)/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
 			}
 			
 			for (y_pos = static_cast<Screen::pos_type>(line->start.y); y_pos <= line->end.y; ++y_pos) {
-				tr.screen.set(static_cast<Screen::pos_type>(line->start.x) /* + tr.borderHeight*/, y_pos/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
+				tr.screen->set(static_cast<Screen::pos_type>(line->start.x) /* + tr.borderHeight*/, y_pos/* + tr.borderWidth*/, Screen::Pixel(debug_symbol, line->rgb));
 			}
 		}
 	}

@@ -881,7 +881,7 @@ idClip::PrintStatistics
 void idClip::PrintStatistics(int lifetime) noexcept {
 	static char buf[256];
 
-	sprintf_s(buf, "t=%3d, r=%3d, m=%3d, rdr=%3d, cnt=%3d, ctct=%3d",
+	sprintf(buf, "t=%3d, r=%3d, m=%3d, rdr=%3d, cnt=%3d, ctct=%3d",
 		numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts);
 
 	gameRenderWorld->DrawTextToScreen(buf, Vector2(), colorYellow, lifetime);

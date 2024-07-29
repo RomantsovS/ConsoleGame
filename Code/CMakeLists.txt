@@ -14,7 +14,11 @@
 	CryFileContainer("renderer")
 	CryFileContainer("SWF")
 	CryFileContainer("sys")
+	if(WINDOWS)
 	CryFileContainer("sys/win32")
+	else()
+	CryFileContainer("sys/linux")
+	endif()
 
 	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
 	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")

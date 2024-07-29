@@ -29,10 +29,6 @@ long long Sys_Microseconds() {
 	return ((long long)((long long)Sys_GetClockTicks() << 10)) / ticksPerMicrosecondTimes1024;
 }
 
-long Sys_Time() noexcept {
-	return clock();
-}
-
 char* getLastErrorMsg()
 {
 	LPVOID lpMsgBuf;

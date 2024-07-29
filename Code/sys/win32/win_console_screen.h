@@ -1,6 +1,8 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+#ifdef _WIN32
+
 extern idCVar window_font_width;
 extern idCVar window_font_height;
 
@@ -41,7 +43,7 @@ public:
 
 	Screen() = default;
 	Screen(pos_type ht, pos_type wd, Pixel back) noexcept;
-	virtual ~Screen() = default;
+	~Screen() = default;
 	Screen(const Screen&) = default;
 	Screen& operator=(const Screen&) = default;
 	Screen(Screen&&) = default;
@@ -57,8 +59,11 @@ public:
 	pos_type getWidth() const noexcept { return width; }
 	pos_type getHeight() const noexcept { return height; }
 
-	virtual void setBackGroundPixel(const Pixel& pixel) noexcept = 0;
-	virtual const Pixel getBackgroundPixel() const noexcept = 0;
+	void setBackGroundPixel(const Pixel& pixel) noexcept {
+		backgroundPixel.Char.AsciiChar = pixel.value;
+		backgroundPixel.Attributes = pixel.color;
+	}
+	const Pixel getBackgroundPixel() const noexcept { return { backgroundPixel.Char.AsciiChar, backgroundPixel.Attributes }; }
 
 	void clear();
 	void clearTextInfo() noexcept;
@@ -79,12 +84,21 @@ public:
 	void SetConsoleTextTitle(const std::string& str);
 private:
 	pos_type width, height;
+	CHAR_INFO backgroundPixel{};
+
+	//std::vector<char> buffer;
+	std::vector<CHAR_INFO> buffer;
+	HANDLE h_console_std_in;
+	HANDLE h_console_std_out;
+	SMALL_RECT window_rect;
+
+	COORD cur_write_coord;
 };
 
 inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
 
-std::unique_ptr<Screen> MakeScreen();
+#endif
 
 #endif

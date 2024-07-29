@@ -4,9 +4,6 @@
 #include "tr_local.h"
 #include "../d3xp/Game_local.h"
 
-// Vista OpenGL wrapper check
-#include "../sys/win32/win_local.h"
-
 idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
 idCVar r_update_frame_time("r_update_frame_time", "100", CVAR_SYSTEM | CVAR_RENDERER, "");
 idCVar r_console_pos("r_console_pos", "10", CVAR_SYSTEM | CVAR_RENDERER, "");
@@ -30,7 +27,9 @@ void idRenderSystemLocal::Clear() {
 	frameCount = 0;
 	viewCount = 0;
 
-	screen.clear();
+	if(screen) {
+		screen->clear();
+	}
 
 	// free all the entityDefs, lightDefs, portals, etc
 	for (auto& world : worlds)
@@ -70,8 +69,8 @@ void idRenderSystemLocal::Init() {
 
 	borderPixel = Screen::Pixel('#', colorWhite);
 
-	screen = Screen(width, height, Screen::Pixel(' ', colorBlack));
-	screen.init();
+	screen = MakeScreen();
+	screen->init();
 	
 	viewDef = nullptr;
 

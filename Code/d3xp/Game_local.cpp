@@ -1030,7 +1030,8 @@ void idGameLocal::SpawnMapEntities() {
 		Error("Problem spawning world entity");
 	}
 
-	tr.screen.setBackGroundPixel({ '\xDB', static_cast<Screen::color_type>(args.GetInt("r_background_color")) });
+	tr.screen->setBackGroundPixel({ '\xDB',
+	static_cast<Screen::color_type>(args.GetInt("r_background_color")) });
 
 	num = 1;
 

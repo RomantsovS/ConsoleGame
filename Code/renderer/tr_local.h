@@ -229,7 +229,7 @@ public:
 	// GUI drawing variables for surface creation
 	Screen::color_type currentColorNativeBytesOrder;
 
-	Screen screen;
+	std::unique_ptr<Screen> screen;
 
 	Screen::pos_type width, height;// , borderWidth, borderHeight;
 	Screen::Pixel borderPixel;

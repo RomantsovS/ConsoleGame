@@ -981,6 +981,7 @@ bool idSessionLocal::HandleState() {
 	default:
 		idLib::Error("HandleState:  Unknown state in idSessionLocal: %s", stateToString[static_cast<int>(localState)].c_str());
 	}
+	return false;
 }
 
 /*
