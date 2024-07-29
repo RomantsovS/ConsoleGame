@@ -1,4 +1,4 @@
-#include "idLib/precompiled.h"
+#include "idlib/precompiled.h"
 #include "../Game_local.h"
 
 const static int NUM_LOBBY_OPTIONS = 8;

@@ -1,6 +1,8 @@
 #ifndef RENDER_MODEL_H
 #define RENDER_MODEL_H
 
+#include "Screen.h"
+
 #define MD5_MESH_EXT "bmp"
 
 class ModelPixel {

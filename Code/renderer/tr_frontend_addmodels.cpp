@@ -54,7 +54,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
 
 		for (int surfaceNum = 0; surfaceNum != modelNumSurfaces; surfaceNum++) {
 			const ModelPixel& surf = model->Surface(surfaceNum);
-			tr.screen.set(curPos + surf.origin, surf.screenPixel);
+			tr.screen->set(curPos + surf.origin, surf.screenPixel);
 		}
 	}
 }

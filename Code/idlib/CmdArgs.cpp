@@ -27,22 +27,22 @@ const std::string idCmdArgs::Args(size_t start, size_t end, bool escapeArgs) con
 	}
 	cmd_args[0] = '\0';
 	if (escapeArgs) {
-		strcat_s(cmd_args, "\"");
+		strcat(cmd_args, "\"");
 	}
 	for (auto i = start; i <= end; i++) {
 		if (i > start) {
 			if (escapeArgs) {
-				strcat_s(cmd_args, "\" \"");
+				strcat(cmd_args, "\" \"");
 			}
 			else {
-				strcat_s(cmd_args, " ");
+				strcat(cmd_args, " ");
 			}
 		}
 		if (escapeArgs && argv[i].find_first_of('\\') != std::string::npos) {
 			auto p = argv[i].begin();
 			while (p != argv[i].end()) {
 				if (*p == '\\') {
-					strcat_s(cmd_args, "\\\\");
+					strcat(cmd_args, "\\\\");
 				}
 				else {
 					int l = strlen(cmd_args);
@@ -53,11 +53,11 @@ const std::string idCmdArgs::Args(size_t start, size_t end, bool escapeArgs) con
 			}
 		}
 		else {
-			strcat_s(cmd_args, argv[i].c_str());
+			strcat(cmd_args, argv[i].c_str());
 		}
 	}
 	if (escapeArgs) {
-		strcat_s(cmd_args, "\"");
+		strcat(cmd_args, "\"");
 	}
 
 	return cmd_args;

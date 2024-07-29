@@ -16,7 +16,7 @@ RenderCommandBuffers
 void idRenderSystemLocal::RenderCommandBuffers() {
 	// r_skipBackEnd allows the entire time of the back end
 	// to be removed from performance measurements, although
-	// nothing will be drawn to the screen.  If the prints
+	// nothing will be drawn to the screen->  If the prints
 	// are going to a file, or r_skipBackEnd is later disabled,
 	// usefull data can be received.
 
@@ -73,7 +73,7 @@ void idRenderSystemLocal::DrawStretchPic(int x, int y, int w, int h, int s1, int
 				if (pixel.color != colorBlack)
 					pixel.color = currentColorNativeBytesOrder;
 
-				tr.screen.set(x + j, y + i, pixel);
+				tr.screen->set(x + j, y + i, pixel);
 			}
 			catch (const std::exception& err) {
 				common->Error(err.what());
@@ -134,14 +134,14 @@ void idRenderSystemLocal::DrawBigStringExt(int x, int y, std::string_view string
 
 void idRenderSystemLocal::DrawPositionedString(Vector2 pos, const std::string& str, Screen::color_type color) {
 	for (const auto& ch : str) {
-		screen.set(pos, Screen::Pixel(ch, color));
+		screen->set(pos, Screen::Pixel(ch, color));
 		++pos.y;
 	}
 }
 
 void idRenderSystemLocal::DrawString(const std::string& text, const Screen::color_type color) {
 	if (!text.empty()) {
-		//tr.screen.writeInColor(text, color);
+		//tr.screen->writeInColor(text, color);
 	}
 }
 
@@ -160,29 +160,29 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) {
 }
 
 void idRenderSystemLocal::Display() noexcept {
-	screen.display();
+	screen->display();
 }
 /*
 void idRenderSystemLocal::FillBorder() {
 	for (Screen::pos_type y = 0; y < height; ++y) {
 		for (Screen::pos_type x = 0; x < borderWidth; ++x)
-			screen.set(x, y, borderPixel);
+			screen->set(x, y, borderPixel);
 
 		for (Screen::pos_type x = width - 1; x > width - 1 - borderWidth; --x)
-			screen.set(x, y, borderPixel);
+			screen->set(x, y, borderPixel);
 	}
 
 	for (Screen::pos_type x = 0; x < width; ++x) {
 		for (Screen::pos_type y = 0; y < borderHeight; ++y)
-			screen.set(x, y, borderPixel);
+			screen->set(x, y, borderPixel);
 
 		for (Screen::pos_type y = height - 1; y > height - 1 - borderHeight; --y)
-			screen.set(x, y, borderPixel);
+			screen->set(x, y, borderPixel);
 	}
 }
 */
 void idRenderSystemLocal::ClearScreen() {
-	screen.clear();
+	screen->clear();
 }
 
 void idRenderSystemLocal::UpdateTimers() {
@@ -203,5 +203,5 @@ void idRenderSystemLocal::UpdateTimers() {
 }
 
 void idRenderSystemLocal::SetConsoleTextTitle(const std::string& str) {
-	screen.SetConsoleTextTitle(str);
+	screen->SetConsoleTextTitle(str);
 }

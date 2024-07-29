@@ -179,7 +179,7 @@ std::shared_ptr<idMapEntity> idMapEntity::Parse(idLexer& src, bool worldSpawn, f
 			if (key ==  "origin") {
 				// scanf into doubles, then assign, so it is idVec size independent
 				v1 = v2 = 0;
-				sscanf_s(value.c_str(), "%lf %lf", &v1, &v2);
+				sscanf(value.c_str(), "%lf %lf", &v1, &v2);
 				origin.x = static_cast<float>(v1);
 				origin.y = static_cast<float>(v2);
 			}

@@ -22,12 +22,13 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 	msg[0] = '\0';
 	if (true) {
 		int	t = Sys_Milliseconds();
-		if (true) {
-			sprintf_s(msg, MAX_PRINT_MSG_SIZE, "[%5.2f] thread:%d ", t * 0.001f, std::this_thread::get_id());
-		}
-		else {
-			sprintf_s(msg, MAX_PRINT_MSG_SIZE, "[%i]", t);
-		}
+		// if (true) {
+		// 	snprintf(msg, MAX_PRINT_MSG_SIZE, "[%5.2f] thread:%d ", t * 0.001f,
+		// 	std::this_thread::get_id());
+		// }
+		// else {
+			snprintf(msg, MAX_PRINT_MSG_SIZE, "[%i]", t);
+		// }
 	}
 	timeLength = strlen(msg);
 
@@ -61,7 +62,7 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 			char cur_local_time[50];
 			cur_local_time[0] = '\0';
 
-			sprintf_s(cur_local_time, 50, "qconsole_%2d-%2d-%2d", newtime.tm_hour, newtime.tm_min, newtime.tm_sec);
+			snprintf(cur_local_time, 50, "qconsole_%2d-%2d-%2d", newtime.tm_hour, newtime.tm_min, newtime.tm_sec);
 
 			std::string fileName = cur_local_time;
 #else
@@ -85,10 +86,10 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 			}
 
 			time(&aclock);
-			localtime_s(&newtime, &aclock);
+			localtime_r(&aclock, &newtime);
 			char buf[256];
 
-			asctime_s(buf, sizeof buf, &newtime);
+			asctime_r(&newtime, buf);
 
 			Printf("log file '%s' opened on %s\n", fileName.c_str(), buf);
 		}
