@@ -69,7 +69,7 @@ void idRenderSystemLocal::Init() {
 
 	borderPixel = Screen::Pixel('#', colorWhite);
 
-	screen = MakeScreen();
+	screen = Screen::MakeScreen(width, height, Screen::Pixel(' ', colorBlack));
 	screen->init();
 	
 	viewDef = nullptr;

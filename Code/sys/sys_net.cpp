@@ -10,6 +10,7 @@ NET_ErrorString
 ========================
 */
 const char* NET_ErrorString(int code) {
+	#ifdef _WIN32
 	switch (code) {
 	case WSAEINTR: return "WSAEINTR";
 	case WSAEBADF: return "WSAEBADF";
@@ -57,6 +58,9 @@ const char* NET_ErrorString(int code) {
 	case WSANO_DATA: return "WSANO_DATA";
 	default: return "NO ERROR";
 	}
+	#else
+	return "";
+	#endif
 }
 
 /*
@@ -139,8 +143,8 @@ bool idUDP::InitForPort(int portNumber) {
 
 	socket->non_blocking(true, ec);
 	if (ec) {
-		if (ec.value() == WSAEWOULDBLOCK)
-			return false;
+		// if (ec.value() == WSAEWOULDBLOCK)
+		// 	return false;
 
 		idLib::Warning("NET: socket set to non-blocking FAIL: %d %s\n", ec.value(), NET_ErrorString(ec.value()));
 		return false;
@@ -190,8 +194,8 @@ bool idUDP::GetPacket(netadr_t& from, void* data, int& size, int maxSize) {
 		size = socket->receive_from(boost::asio::buffer(data, maxSize), sender_endpoint, flags, ec);
 
 		if (ec) {
-			if(ec.value() == WSAEWOULDBLOCK)
-				return false;
+			// if(ec.value() == WSAEWOULDBLOCK)
+			// 	return false;
 			
 			idLib::Warning("NET: socket receive warning %d %s\n", ec.value(), NET_ErrorString(ec.value()));
 
@@ -237,8 +241,8 @@ void idUDP::SendPacket(const netadr_t to, const void* data, int size) {
 	idassert(size == len);
 
 	if (ec) {
-		if (ec.value() == WSAEADDRNOTAVAIL)
-			return;
+		// if (ec.value() == WSAEADDRNOTAVAIL)
+		// 	return;
 
 		idLib::Printf("NET: UDP sendto error - packet dropped: %s\n", NET_ErrorString(ec.value()));
 

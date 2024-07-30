@@ -114,7 +114,7 @@ public:
 	static const std::string stateToString[static_cast<int>(lobbyState_t::NUM_STATES)];
 
 	static const int CONNECT_REQUEST_FREQUENCY_IN_SECONDS = 5;		// Frequency at which we resend a request to connect to a server (will increase in frequency over time down to MIN_CONNECT_FREQUENCY_IN_SECONDS)
-	static const int MIN_CONNECT_FREQUENCY_IN_SECONDS = 1;		// Min frequency of connection attempts
+	inline static const int MIN_CONNECT_FREQUENCY_IN_SECONDS = 1;		// Min frequency of connection attempts
 	static const int MAX_CONNECT_ATTEMPTS = 5;
 
 	static const int MAX_SNAP_SIZE = idPacketProcessor::MAX_MSG_SIZE;

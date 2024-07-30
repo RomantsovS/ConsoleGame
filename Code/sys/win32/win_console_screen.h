@@ -1,8 +1,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#ifdef _WIN32
-
 extern idCVar window_font_width;
 extern idCVar window_font_height;
 
@@ -78,9 +76,6 @@ public:
 	void writeConsoleOutput(const std::string& text) noexcept;
 	void clearConsoleOutut() noexcept;
 
-	void setDrawOutputBuffer();
-	void setStdOutputBuffer();
-
 	void SetConsoleTextTitle(const std::string& str);
 private:
 	pos_type width, height;
@@ -98,7 +93,5 @@ private:
 inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
-
-#endif
 
 #endif
