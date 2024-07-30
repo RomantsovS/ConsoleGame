@@ -197,7 +197,7 @@ void Sys_Sleep(int msec) noexcept;
 
 // Sys_Milliseconds should only be used for profiling purposes,
 // any game related timing information should come from event timestamps
-int Sys_Milliseconds() noexcept;
+int64_t Sys_Milliseconds() noexcept;
 long long Sys_Microseconds();
 
 int64_t Sys_Time() noexcept;

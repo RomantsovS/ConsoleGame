@@ -268,18 +268,6 @@ void Screen::clearConsoleOutut() noexcept {
 	SetConsoleCursorPosition(h_console_std_out, coord);
 }
 
-void Screen::setDrawOutputBuffer() {
-	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
-			getLastErrorMsg());
-}
-
-void Screen::setStdOutputBuffer() {
-	if (!SetConsoleActiveScreenBuffer(h_console_std_out))
-		common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
-			getLastErrorMsg());
-}
-
 void Screen::SetConsoleTextTitle(const std::string& str) {
 	SetConsoleTitle(str.c_str());
 }

@@ -9,26 +9,6 @@ public:
 	using pos_type = short;
 	using color_type = unsigned short;
 
-	/*enum class ConsoleColor {
-		None = -1,
-		Black = 0,
-		Blue = 1,
-		Green = 2,
-		Cyan = 3,
-		Red = 4,
-		Magenta = 5,
-		Brown = 6,
-		LightGray = 7,
-		DarkGray = 8,
-		LightBlue = 9,
-		LightGreen = 10,
-		LightCyan = 11,
-		LightRed = 12,
-		LightMagenta = 13,
-		Yellow = 14,
-		White = 15
-	};
-	*/
 	struct Pixel {
 		Pixel() = default;
 
@@ -47,11 +27,13 @@ public:
 	Screen(Screen&&) = default;
 	Screen& operator=(Screen&&) = default;
 
-	void init();
+	static std::unique_ptr<Screen> MakeScreen(pos_type ht, pos_type wd, Pixel back);
+
+	virtual void init() = 0;
 
 	inline Screen::Pixel get(pos_type r, pos_type c) const noexcept; // explicitly inline
 
-	Screen &set(pos_type row, pos_type col, const Screen::Pixel& ch);
+	virtual Screen &set(pos_type row, pos_type col, const Screen::Pixel& ch) = 0;
 	Screen &set(const Vector2& pos, const Screen::Pixel& ch);
 	
 	pos_type getWidth() const noexcept { return width; }
@@ -60,10 +42,10 @@ public:
 	virtual void setBackGroundPixel(const Pixel& pixel) noexcept = 0;
 	virtual const Pixel getBackgroundPixel() const noexcept = 0;
 
-	void clear();
-	void clearTextInfo() noexcept;
+	virtual void clear() = 0;
+	virtual void clearTextInfo() noexcept = 0;
 
-	void display() noexcept;
+	virtual void display() noexcept {};
 	//void writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::color_type color_text, Screen::color_type color_background = colorNone);
 	//void writeInColor(const std::string& text, Screen::color_type color_text, Screen::color_type color_background = colorNone);
 
@@ -73,18 +55,13 @@ public:
 	void writeConsoleOutput(const std::string& text) noexcept;
 	void clearConsoleOutut() noexcept;
 
-	void setDrawOutputBuffer();
-	void setStdOutputBuffer();
-
-	void SetConsoleTextTitle(const std::string& str);
-private:
+	virtual void SetConsoleTextTitle(const std::string& str) = 0;
+protected:
 	pos_type width, height;
 };
 
 inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
 	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
-
-std::unique_ptr<Screen> MakeScreen();
 
 #endif

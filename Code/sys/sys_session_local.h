@@ -203,4 +203,50 @@ public:
 	idSessionLocal* sessionLocal;
 };
 
+/*
+========================
+idSessionLocalWin::idSessionLocalWin
+========================
+*/
+class idSessionLocalWin : public idSessionLocal {
+friend class idLobbyToSessionCBLocal;
+public:
+	// idSessionLocal interface
+	void Initialize() noexcept override;
+	void Shutdown() noexcept override;
+
+	idNetSessionPort& GetPort(bool dedicated = false) override;
+	idLobbyBackend* CreateLobbyBackend(const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* FindLobbyBackend(const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+	idLobbyBackend* JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType) override;
+
+	virtual void PumpLobbies();
+private:
+	void EnsurePort();
+
+	idLobbyBackend* CreateLobbyInternal(idLobbyBackend::lobbyBackendType_t lobbyType);
+	void DestroyLobbyBackend(idLobbyBackend* lobbyBackend) override;
+
+	std::array<std::unique_ptr<idLobbyBackend>, 3> lobbyBackends;
+
+	idNetSessionPort port;
+	bool canJoinLocalHost = false;
+};
+
+/*
+========================
+idLobbyToSessionCBLocal
+========================
+*/
+class idLobbyToSessionCBLocal : public idLobbyToSessionCB {
+public:
+	idLobbyToSessionCBLocal(idSessionLocalWin* sessionLocalWin_) : sessionLocalWin(sessionLocalWin_) { }
+
+	bool CanJoinLocalHost() const override { sessionLocalWin->EnsurePort(); return sessionLocalWin->canJoinLocalHost; }
+	idLobbyBackend* GetLobbyBackend(idLobbyBackend::lobbyBackendType_t type) const override { return sessionLocalWin->lobbyBackends[type].get(); }
+
+private:
+	idSessionLocalWin* sessionLocalWin;
+};
+
 #endif

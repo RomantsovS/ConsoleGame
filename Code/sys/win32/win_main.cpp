@@ -166,15 +166,6 @@ void Sys_Error(const char* error, ...) {
 
 /*
 ==============
-Sys_Quit
-==============
-*/
-void Sys_Quit() noexcept {
-	exit(EXIT_SUCCESS);
-}
-
-/*
-==============
 Sys_Printf
 ==============
 */
@@ -193,24 +184,6 @@ void Sys_Printf(const char* fmt, ...) {
 
 /*
 ==============
-Sys_Sleep
-==============
-*/
-void Sys_Sleep(int msec) noexcept {
-	Sleep(msec);
-}
-
-/*
-==============
-Sys_Mkdir
-==============
-*/
-void Sys_Mkdir(const std::filesystem::path& path) noexcept {
-	std::filesystem::create_directory(path);
-}
-
-/*
-==============
 Sys_Cwd
 ==============
 */
@@ -221,33 +194,6 @@ const char* Sys_Cwd() noexcept {
 	cwd[MAX_OSPATH - 1] = 0;
 
 	return cwd;
-}
-
-/*
-==============
-Sys_DefaultBasePath
-==============
-*/
-std::filesystem::path Sys_DefaultBasePath() noexcept {
-	return std::filesystem::current_path();
-}
-
-/*
-==============
-Sys_ListFiles
-==============
-*/
-int Sys_ListFiles(const std::filesystem::path& directory, const std::filesystem::path& extension, std::vector<std::string>& list) {
-	if (!std::filesystem::exists(directory))
-		return 0;
-
-	for (auto const& dir_entry : std::filesystem::directory_iterator{ directory }) {
-		if (dir_entry.path().extension().string() == extension) {
-			list.push_back(dir_entry.path().filename().string());
-		}
-	}
-
-	return list.size();
 }
 
 /*
