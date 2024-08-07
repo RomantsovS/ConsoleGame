@@ -171,7 +171,9 @@ idUDP::Close
 ========================
 */
 void idUDP::Close() {
-	socket->close();
+	if (socket) {
+		socket->close();
+	}
 	socket = nullptr;
 }
 

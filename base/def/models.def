@@ -2,7 +2,7 @@ model pixel {
 	mesh "models/test.bmp"
 }
 
-model test {
+model test_model {
 	mesh "models/test.bmp"
 }
 

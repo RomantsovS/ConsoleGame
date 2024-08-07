@@ -26,6 +26,10 @@ void Screen::init() {
 	// below the actual visual size
 	SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
 
+	auto min_x = GetSystemMetrics(SM_CXMIN);
+	auto min_y = GetSystemMetrics(SM_CYMIN);
+	common->DPrintf("min x: %d, min y: %d\n", min_x, min_y);
+
 	// Set the size of the screen buffer
 	COORD coord = { static_cast<short>(width),
 		static_cast<short>(height + text_info_max_height.GetInteger()) };
