@@ -8,9 +8,6 @@ std::shared_ptr<idRenderWorld> gameRenderWorld; // all drawing is done to this w
 idGameLocal gameLocal;
 idGame* game = &gameLocal;
 
-idCVar game_width("game_width", "120", CVAR_SYSTEM | CVAR_INIT, "");
-idCVar game_height("game_height", "40", CVAR_SYSTEM | CVAR_INIT, "");
-
 idCVar game_add_point_delay("game_add_point_delay", "1000", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar game_add_point_count("game_add_point_count", "1", CVAR_SYSTEM | CVAR_INIT, "");
 
@@ -59,9 +56,6 @@ void idGameLocal::Init() {
 	//have the correct xp binds
 	cmdSystem->BufferCommandText(CMD_EXEC_APPEND, "exec default.cfg\n");
 	cmdSystem->ExecuteCommandBuffer();
-
-	height = game_height.GetInteger();
-	width = game_width.GetInteger();
 
 	colors.push_back(colorGreen);
 	colors.push_back(colorCyan);
@@ -754,6 +748,8 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 	}
 	mapFileName = mapFile->GetName();
 
+	getGameSize(mapFile.get());
+
 	// load the collision map
 	collisionModelManager->LoadMap(mapFile.get());
 	//collisionModelManager->Preload(mapName);
@@ -786,6 +782,31 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
 	if (!sameMap) {
 		mapFile->RemovePrimitiveData();
 	}
+}
+
+void idGameLocal::getGameSize(const idMapFile* mapFile) {
+	if (mapFile->GetNumEntities() == 0) {
+		Error("Map file has zero entities");
+	}
+	const std::shared_ptr<idMapEntity> mapEnt = mapFile->GetEntity(0);
+	if (mapEnt->GetNumPrimitives() != 1) {
+		Error("Map file must have only one primitive");
+	}
+	std::shared_ptr<idMapPrimitive> mapPrim = mapEnt->GetPrimitive(0);
+	if (mapPrim->GetType() != idMapPrimitive::TYPE_BRUSH) {
+		Error("Map file first entity must be brush");
+		
+	}
+	auto mapBrush = dynamic_cast<idMapBrush*>(mapPrim.get());
+	if (mapBrush->GetNumSides() != 1) {
+		Error("Map brush must have only one side");
+	}
+	std::shared_ptr<idMapBrushSide> mapSide = mapBrush->GetSide(0);
+	if (mapSide->GetPoints().size() != 2) {
+		Error("Map brush must have two points");
+	}
+	width = mapSide->GetPoints()[1].x - mapSide->GetPoints()[0].x;
+	width = mapSide->GetPoints()[1].y - mapSide->GetPoints()[0].y;
 }
 
 void idGameLocal::Clear() {

@@ -2,8 +2,6 @@
 #define GAME_LOCAL_H
 
 extern std::shared_ptr<idRenderWorld> gameRenderWorld;
-extern idCVar game_width;
-extern idCVar game_height;
 
 // the "gameversion" client command will print this plus compile date
 const std::string GAME_VERSION = "baseDOOM-1";
@@ -152,6 +150,7 @@ public:
 
 	// Initializes all map variables common to both save games and spawned games
 	void LoadMap(const std::string& mapName, int randseed);
+	void getGameSize(const idMapFile* mapFile);
 
 	bool CheatsOk(bool requirePlayer = true);
 	gameState_t GameState() const noexcept;

@@ -10,6 +10,8 @@
 idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL, "don't draw anything");
 idCVar r_update_frame_time("r_update_frame_time", "100", CVAR_SYSTEM | CVAR_RENDERER, "");
 idCVar r_console_pos("r_console_pos", "10", CVAR_SYSTEM | CVAR_RENDERER, "");
+idCVar screen_width("screen_width", "120", CVAR_SYSTEM | CVAR_INIT, "");
+idCVar screen_height("screen_height", "40", CVAR_SYSTEM | CVAR_INIT, "");
 
 /*
 =================
@@ -63,8 +65,8 @@ void idRenderSystemLocal::Init() {
 	//borderWidth = 0;
 	//borderHeight = 0;
 
-	width = game_width.GetInteger();// +borderWidth * 2;
-	height = game_height.GetInteger();// +borderHeight * 2;
+	width = screen_width.GetInteger();// +borderWidth * 2;
+	height = screen_height.GetInteger();// +borderHeight * 2;
 
 	borderPixel = Screen::Pixel('#', colorWhite);
 
