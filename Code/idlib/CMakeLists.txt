@@ -7,7 +7,7 @@ CryFileContainer("geometry")
 CryFileContainer("math")
 CryFileContainer("sys")
 
-find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost REQUIRED)
 find_package(Threads)
 
 find_package(Protobuf REQUIRED)

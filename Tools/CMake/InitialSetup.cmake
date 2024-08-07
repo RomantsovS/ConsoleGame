@@ -20,10 +20,11 @@ message(STATUS "CRYENGINE_DIR = ${CRYENGINE_DIR}")
 message(STATUS "PROJECT_DIR = ${PROJECT_DIR}")
 message(STATUS "TOOLS_CMAKE_DIR = ${TOOLS_CMAKE_DIR}")
 
+message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 # Including the Toolchain file, as it sets important variables.
-#if(DEFINED CMAKE_TOOLCHAIN_FILE)
-#	include(${CMAKE_TOOLCHAIN_FILE})
-#endif()
+if(DEFINED CMAKE_TOOLCHAIN_FILE)
+	#include(${CMAKE_TOOLCHAIN_FILE})
+endif()
 
 if(WIN32)
 	if(CMAKE_GENERATOR MATCHES "^Visual Studio.*")

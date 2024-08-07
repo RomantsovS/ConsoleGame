@@ -21,10 +21,10 @@
 
 	message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
 
-	find_package(Boost COMPONENTS system REQUIRED)
+	find_package(Boost REQUIRED)
 	find_package(Threads)
 
-	find_package(Protobuf REQUIRED)
+	find_package(Protobuf CONFIG REQUIRED)
 	
 	file(GLOB _proto_source_list LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
 
@@ -44,7 +44,7 @@
 	endif()
 
 	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${Protobuf_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
-	target_link_libraries(${THIS_PROJECT} ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${Protobuf_LIBRARIES} idlib)
+	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} protobuf::libprotobuf idlib)
 
 	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
 endif()

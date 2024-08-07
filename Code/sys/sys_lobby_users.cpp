@@ -7,7 +7,7 @@ idLobby::AllocUser
 ========================
 */
 lobbyUser_t* idLobby::AllocUser(const lobbyUser_t& defaults) {
-	if (!verify(freeUsers.size() > 0)) {
+	if (!idverify(freeUsers.size() > 0)) {
 		idLib::Error("Out of session users");		// This shouldn't be possible
 	}
 
@@ -30,7 +30,7 @@ idLobby::FreeUser
 ========================
 */
 void idLobby::FreeUser(lobbyUser_t* user) {
-	if (!verify(user)) {
+	if (!idverify(user)) {
 		return;
 	}
 
@@ -65,7 +65,7 @@ idLobby::VerifyUser
 ========================
 */
 bool idLobby::VerifyUser(const lobbyUser_t* lobbyUser) const {
-	if (!verify(find(userList.begin(), userList.end(), lobbyUser) != userList.end())) {
+	if (!idverify(find(userList.begin(), userList.end(), lobbyUser) != userList.end())) {
 		return false;
 	}
 
@@ -117,7 +117,7 @@ which will forward the action to the connected peers.
 ========================
 */
 void idLobby::RemoveUsersWithDisconnectedPeers() {
-	if (!verify(IsHost())) {
+	if (!idverify(IsHost())) {
 		// We're not allowed to do this unless we are the host of this session type
 		// If we are the host, RemoveSessionUsersByIDList will forward the call to peers.
 		return;

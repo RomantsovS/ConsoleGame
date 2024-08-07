@@ -260,7 +260,7 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 			return;
 		}
 
-		if (!verify(peers[peerNum].address.Compare(remoteAddress))) {
+		if (!idverify(peers[peerNum].address.Compare(remoteAddress))) {
 			idLib::Printf("NET: Peer with wrong address: %i, %s\n", peerNum, remoteAddress.ToString().c_str());
 			return;
 		}
@@ -295,7 +295,7 @@ void idLobby::HandlePacket(lobbyAddress_t& remoteAddress, idBitMsg& fragMsg, idP
 
 		// Handle unreliable part (if any)
 		if (msg.GetRemainingData() > 0 && loaded) {
-			if (!verify(lobbyType == GetActingGameStateLobbyType())) {
+			if (!idverify(lobbyType == GetActingGameStateLobbyType())) {
 				idLib::Printf("NET: Snapshot msg for non game session lobby %s\n", remoteAddress.ToString().c_str());
 				return;
 			}
@@ -378,7 +378,7 @@ idLobby::State_Create_Lobby_Backend
 ========================
 */
 void idLobby::State_Create_Lobby_Backend() {
-	if (!verify(lobbyBackend)) {
+	if (!idverify(lobbyBackend)) {
 		SetState(lobbyState_t::STATE_FAILED);
 		return;
 	}
@@ -407,7 +407,7 @@ idLobby::State_Searching
 ========================
 */
 void idLobby::State_Searching() {
-	if (!verify(lobbyBackend)) {
+	if (!idverify(lobbyBackend)) {
 		SetState(lobbyState_t::STATE_FAILED);
 		return;
 	}
@@ -699,7 +699,7 @@ idLobby::DisconnectPeerFromSession
 ========================
 */
 void idLobby::DisconnectPeerFromSession(int p) {
-	if (!verify(IsHost())) {
+	if (!idverify(IsHost())) {
 		return;
 	}
 
@@ -739,7 +739,7 @@ idLobby::SetPeerConnectionState
 */
 void idLobby::SetPeerConnectionState(int p, connectionState_t newState, bool skipGoodbye) {
 
-	if (!verify(p >= 0 && p < peers.size())) {
+	if (!idverify(p >= 0 && p < peers.size())) {
 		idLib::Printf("NET: SetPeerConnectionState invalid peer index %i\n", p);
 		return;
 	}
@@ -798,7 +798,7 @@ idLobby::QueueReliableMessage
 ========================
 */
 void idLobby::QueueReliableMessage(int p, reliableType_t type, const std::byte* data, int dataLen) {
-	if (!verify(p >= 0 && p < peers.size())) {
+	if (!idverify(p >= 0 && p < peers.size())) {
 		return;
 	}
 
@@ -1325,7 +1325,7 @@ idPacketProcessor::sessionId_t idLobby::IncrementSessionID(idPacketProcessor::se
 }
 
 #define VERIFY_CONNECTED_PEER( p, sessionType_, msgType )				\
-	if ( !verify( lobbyType == sessionType_ ) ) {						\
+	if ( !idverify( lobbyType == sessionType_ ) ) {						\
 		idLib::Printf( "NET: " #msgType ", peer:%s invalid session type for " #sessionType_ " %i.\n", peer.address.ToString(), sessionType_ );	\
 		return;															\
 	}																	\
@@ -1335,7 +1335,7 @@ idPacketProcessor::sessionId_t idLobby::IncrementSessionID(idPacketProcessor::se
 	}
 
 #define VERIFY_CONNECTING_PEER( p, sessionType_, msgType )				\
-	if ( !verify( lobbyType == sessionType_ ) ) {						\
+	if ( !idverify( lobbyType == sessionType_ ) ) {						\
 		idLib::Printf( "NET: " #msgType ", peer:%s invalid session type for " #sessionType_ " %i.\n", peer.address.ToString(), sessionType_ );	\
 		return;															\
 	}																	\

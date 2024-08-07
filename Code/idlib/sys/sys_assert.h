@@ -20,6 +20,6 @@ bool idassertFailed(const std::string& file, int line, const std::string& expres
 // The VS ultimate editions also get it on win32, but not x86
 #define idassert( x )		__analysis_assume( x ) ; ididassert( x )
 
-#define verify( x )		( ( x ) ? true : ( idassertFailed( __FILE__, __LINE__, #x ), false ) )
+#define idverify( x )		( ( x ) ? true : ( idassertFailed( __FILE__, __LINE__, #x ), false ) )
 
 #endif // ! SYS_idassert_H

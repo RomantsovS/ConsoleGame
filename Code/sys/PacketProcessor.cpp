@@ -24,7 +24,7 @@ int idPacketProcessor::FinalizeRead(idBitMsg& inMsg, idBitMsg& outMsg, int& user
 	idInnerPacketHeader header;
 	header.ReadFromMsg(inMsg);
 
-	if (!verify(header.Type() != PACKET_TYPE_FRAGMENTED)) {		// We shouldn't be fragmented at this point
+	if (!idverify(header.Type() != PACKET_TYPE_FRAGMENTED)) {		// We shouldn't be fragmented at this point
 		idLib::Printf("Received invalid fragmented packet.\n");
 		return RETURN_TYPE_NONE;
 	}
@@ -42,7 +42,7 @@ int idPacketProcessor::FinalizeRead(idBitMsg& inMsg, idBitMsg& outMsg, int& user
 	}
 	else {
 		// At this point, this MUST be an in-band packet
-		if (!verify(header.Type() == PACKET_TYPE_INBAND)) {
+		if (!idverify(header.Type() == PACKET_TYPE_INBAND)) {
 			idLib::Printf("In-band packet expected, received type %i instead.\n", header.Type());
 			return RETURN_TYPE_NONE;
 		}
@@ -63,11 +63,11 @@ int idPacketProcessor::FinalizeRead(idBitMsg& inMsg, idBitMsg& outMsg, int& user
 				uint16_t reliableDataLength = inMsg.ReadLong();
 
 				if (reliableSequence + r > reliableSequenceRecv) {		// Only accept newer reliable msg's than we've currently already received
-					if (!verify(bufferPos + reliableDataLength <= reliableBuffer.size())) {
+					if (!idverify(bufferPos + reliableDataLength <= reliableBuffer.size())) {
 						idLib::Printf("Reliable msg size overflow.\n");
 						return RETURN_TYPE_NONE;
 					}
-					if (!verify(numReliable < MAX_RELIABLE_QUEUE)) {
+					if (!idverify(numReliable < MAX_RELIABLE_QUEUE)) {
 						idLib::Printf("Reliable msg count overflow.\n");
 						return RETURN_TYPE_NONE;
 					}
@@ -131,7 +131,7 @@ bool idPacketProcessor::ProcessOutgoing(const int time, const idBitMsg& msg, boo
 		return false;
 	}*/
 
-	if (!verify(unsentMsg.GetRemainingData() == 0)) {
+	if (!idverify(unsentMsg.GetRemainingData() == 0)) {
 		idLib::Warning("ProcessOutgoing: unsentMsg.GetRemainingData() > 0!");
 		return false;
 	}
@@ -261,7 +261,7 @@ int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, 
 	sessionId_t sessionID = outerHeader.GetSessionID();
 	idassert(sessionID == expectedSessionID);
 
-	if (!verify(sessionID != SESSION_ID_CONNECTIONLESS_PARTY && sessionID != SESSION_ID_CONNECTIONLESS_GAME && sessionID != SESSION_ID_CONNECTIONLESS_GAME_STATE)) {
+	if (!idverify(sessionID != SESSION_ID_CONNECTIONLESS_PARTY && sessionID != SESSION_ID_CONNECTIONLESS_GAME && sessionID != SESSION_ID_CONNECTIONLESS_GAME_STATE)) {
 		idLib::Printf("Expected non connectionless ID, but got a connectionless one\n");
 		return RETURN_TYPE_NONE;
 	}

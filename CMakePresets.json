@@ -8,8 +8,11 @@
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
-        "BOOST_ROOT": "c:/Boost",
-        "Protobuf_ROOT": "c:/Users/roman/source/repos/protobuf/install"
+        "BOOST_ROOT": "c:/Users/roman/source",
+        "Boost_DEBUG": false,
+        "Boost_ADDITIONAL_VERSIONS": "1.85.0",
+        "CMAKE_TOOLCHAIN_FILE": "c:/Users/roman/source/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-static"
       },
       "condition": {
         "type": "equals",

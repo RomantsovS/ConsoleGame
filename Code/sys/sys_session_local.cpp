@@ -440,7 +440,7 @@ bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
 			}
 		}
 		else {
-			if (!verify(lobby.host != -1)) {
+			if (!idverify(lobby.host != -1)) {
 				MoveToMainMenu();
 				//connectType = CONNECT_NONE;
 				return false;
@@ -706,7 +706,7 @@ EndMatch is meant for the host to cleanly end a match and return to the lobby pa
 ========================
 */
 void idSessionLocal::EndMatch(bool premature /*=false*/) {
-	if (verify(GetActingGameStateLobby().IsHost())) {
+	if (idverify(GetActingGameStateLobby().IsHost())) {
 		// Host quits back to game lobby, and will notify peers internally to do the same
 		EndMatchInternal(premature);
 	}
@@ -1126,7 +1126,7 @@ bool idSessionLocal::HandlePackets() {
 
 		const int maskedType = sessionID & idPacketProcessor::LOBBY_TYPE_MASK;
 
-		if (!verify(maskedType > 0)) {
+		if (!idverify(maskedType > 0)) {
 			continue;
 		}
 
@@ -1225,7 +1225,7 @@ idSessionLocal::GoodbyeFromHost
 ========================
 */
 void idSessionLocal::GoodbyeFromHost(idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType) {
-	if (!verify(static_cast<int>(localState) > static_cast<int>(state_t::STATE_IDLE))) {
+	if (!idverify(static_cast<int>(localState) > static_cast<int>(state_t::STATE_IDLE))) {
 		idLib::Printf("NET: Got disconnected from host %s on session %s when we were not in a lobby or game.\n", remoteAddress.ToString().c_str(),
 			lobby.GetLobbyName().c_str());
 		MoveToMainMenu();
