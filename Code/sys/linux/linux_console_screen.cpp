@@ -33,12 +33,19 @@ Screen &LinuxConsoleScreen::set(pos_type row, pos_type col, const Screen::Pixel 
 }
 
 void LinuxConsoleScreen::clear() {
+	std::system("clear");
 }
 
 void LinuxConsoleScreen::clearTextInfo() noexcept {
 }
 
 void LinuxConsoleScreen::display() noexcept {
+	for(pos_type i = 0; i < height; ++i) {
+		for(pos_type j = 0; j < width; ++j) {
+			std::cout << buffer[i * width + j];
+		}
+		std::cout << '\n';
+	}
 }
 
 void LinuxConsoleScreen::SetConsoleTextTitle(const std::string &str) {
