@@ -102,12 +102,12 @@ idSessionLocal::CreateMatch
 void idSessionLocal::CreateMatch(const idMatchParameters& p) {
 	NET_VERBOSE_PRINT("NET: CreateMatch\n");
 
-	/*if ((p.matchFlags & MATCH_PARTY_INVITE_PLACEHOLDER) && !GetPartyLobby().IsLobbyActive()) {
+	if ((p.matchFlags & static_cast<int>(matchFlags_t::MATCH_PARTY_INVITE_PLACEHOLDER)) && !GetPartyLobby().IsLobbyActive()) {
 		NET_VERBOSE_PRINT("NET: CreateMatch MATCH_PARTY_INVITE_PLACEHOLDER\n");
 		CreatePartyLobby(p);
-		connectType = CONNECT_NONE;
+		//connectType = CONNECT_NONE;
 		return;
-	}*/
+	}
 
 	// Shutdown any possible game lobby
 	GetGameLobby().Shutdown();
@@ -1093,6 +1093,9 @@ idSessionLocal::SetState
 void idSessionLocal::SetState(state_t newState) noexcept {
 	//idassert(newState < NUM_STATES);
 	//idassert(localState < NUM_STATES);
+
+	idLib::Printf("idSessionLocal::SetState: State changing from %s to %s\n", stateToString[static_cast<int>(localState)].c_str(),
+		stateToString[static_cast<int>(newState)].c_str());
 
 	localState = newState;
 }
