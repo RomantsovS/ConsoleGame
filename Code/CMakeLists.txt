@@ -28,7 +28,11 @@
 	find_package(Boost REQUIRED)
 	find_package(Threads)
 
-	find_package(Protobuf CONFIG REQUIRED)
+	if(WINDOWS AND MSVC)
+		find_package(Protobuf CONFIG REQUIRED) # vcpkg protobuf found this way only
+	else()
+		find_package(Protobuf REQUIRED)
+	endif()
 	
 	file(GLOB _proto_source_list LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
 

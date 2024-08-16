@@ -16,8 +16,8 @@
 #endif
 
 #include <array>
-#include <fstream>
 #include <cstdarg>
+#include <fstream>
 #include <iostream>
 #include <list>
 #include <map>
@@ -76,6 +76,7 @@
 #include "../renderer/Model_bmp.h"
 #include "../renderer/RenderSystem.h"
 #include "../renderer/RenderWorld.h"
+#include "../renderer/Screen.h"
 
 #include "../SWF/SWF.h"
 
