@@ -61,12 +61,14 @@
     },
     {
       "name": "Linux-GCC",
-      "displayName": "GCC 11.2.0 x86_64-linux-gnu",
+      "displayName": "Linux GCC",
       "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
       "generator": "Unix Makefiles",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "USE_CCACHE": true
       }
     }
   ]

@@ -1,6 +1,8 @@
 #ifndef FRAMEWORK_DECLENTITYDEF_H_
 #define FRAMEWORK_DECLENTITYDEF_H_
 
+#include "DeclManager.h"
+
 /*
 ===============================================================================
 

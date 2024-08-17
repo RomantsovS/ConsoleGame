@@ -6,7 +6,7 @@ std::string idStr::GetFromValue<int>(const int i)
 {
 	char text[64];
 
-	sprintf_s(text, "%d", i);
+	sprintf(text, "%d", i);
 
 	return std::string(text);
 }
@@ -16,7 +16,7 @@ std::string idStr::GetFromValue<float>(const float i)
 {
 	char text[64];
 
-	sprintf_s(text, "%f", i);
+	sprintf(text, "%f", i);
 
 	return std::string(text);
 }
@@ -52,12 +52,12 @@ void idStr::Copynz(gsl::not_null<gsl::zstring<>> dest, gsl::czstring<> src, int 
 		return;
 	}
 
-	strncpy_s(dest, destsize - 1, src, 256);
+	strncpy(dest, src, destsize - 1);
 	dest.operator->()[destsize - 1] = 0;
 }
 
 int idStr::vsnPrintf(gsl::not_null<gsl::zstring<>> dest, int size, gsl::czstring<> fmt, va_list argptr) {
-	int ret = vsnprintf_s(dest, size, size, fmt, argptr);
+	int ret = vsnprintf(dest, size, fmt, argptr);
 
 	dest.operator->()[size - 1] = '\0';
 

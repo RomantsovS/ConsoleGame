@@ -28,7 +28,7 @@ idEventDef::idEventDef(const std::string& command, const std::string& formatspec
 	numargs = formatspec.size();
 	if (numargs > D_EVENT_MAXARGS) {
 		eventError = true;
-		sprintf_s(eventErrorMsg, "idEventDef::idEventDef : Too many args for '%s' event.", name.c_str());
+		sprintf(eventErrorMsg, "idEventDef::idEventDef : Too many args for '%s' event.", name.c_str());
 		return;
 	}
 
@@ -70,7 +70,7 @@ idEventDef::idEventDef(const std::string& command, const std::string& formatspec
 
 		default:
 			eventError = true;
-			sprintf_s(eventErrorMsg, "idEventDef::idEventDef : Invalid arg format '%s' string for '%s' event.", formatspec.c_str(), name.c_str());
+			sprintf(eventErrorMsg, "idEventDef::idEventDef : Invalid arg format '%s' string for '%s' event.", formatspec.c_str(), name.c_str());
 			return;
 			break;
 		}
@@ -87,7 +87,7 @@ idEventDef::idEventDef(const std::string& command, const std::string& formatspec
 		if (command == ev->name) {
 			if (formatspec != ev->formatspec) {
 				eventError = true;
-				sprintf_s(eventErrorMsg, "idEvent '%s' defined twice with same name but differing format strings ('%s'!='%s').",
+				sprintf(eventErrorMsg, "idEvent '%s' defined twice with same name but differing format strings ('%s'!='%s').",
 					command.c_str(), formatspec.c_str(), ev->formatspec.c_str());
 				return;
 			}
@@ -108,7 +108,7 @@ idEventDef::idEventDef(const std::string& command, const std::string& formatspec
 
 	if (numEventDefs >= MAX_EVENTS) {
 		eventError = true;
-		sprintf_s(eventErrorMsg, "numEventDefs >= MAX_EVENTS");
+		sprintf(eventErrorMsg, "numEventDefs >= MAX_EVENTS");
 		return;
 	}
 	eventDefList[numEventDefs] = ev;

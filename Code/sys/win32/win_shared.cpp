@@ -13,26 +13,6 @@ int Sys_Milliseconds() noexcept {
 	return clock() - sys_timeBase;
 }
 
-/*
-========================
-Sys_Microseconds
-========================
-*/
-long long Sys_Microseconds() {
-	static long long ticksPerMicrosecondTimes1024 = 0;
-
-	if (ticksPerMicrosecondTimes1024 == 0) {
-		ticksPerMicrosecondTimes1024 = ((long long)Sys_ClockTicksPerSecond() << 10) / 1000000;
-		idassert(ticksPerMicrosecondTimes1024 > 0);
-	}
-
-	return ((long long)((long long)Sys_GetClockTicks() << 10)) / ticksPerMicrosecondTimes1024;
-}
-
-long Sys_Time() noexcept {
-	return clock();
-}
-
 char* getLastErrorMsg()
 {
 	LPVOID lpMsgBuf;

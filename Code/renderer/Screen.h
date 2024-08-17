@@ -6,95 +6,73 @@ extern idCVar window_font_height;
 
 class Screen {
 public:
-	using pos_type = short;
-	using color_type = unsigned short;
+    using pos_type = short;
+    using color_type = unsigned short;
 
-	/*enum class ConsoleColor {
-		None = -1,
-		Black = 0,
-		Blue = 1,
-		Green = 2,
-		Cyan = 3,
-		Red = 4,
-		Magenta = 5,
-		Brown = 6,
-		LightGray = 7,
-		DarkGray = 8,
-		LightBlue = 9,
-		LightGreen = 10,
-		LightCyan = 11,
-		LightRed = 12,
-		LightMagenta = 13,
-		Yellow = 14,
-		White = 15
-	};
-	*/
-	struct Pixel {
-		Pixel() = default;
+    struct Pixel {
+        Pixel() = default;
 
-		Pixel(char val, color_type col) noexcept : value(val), color(col) {}
-		Pixel(const Pixel &p, color_type col) noexcept : value(p.value), color(col) {}
-		
-		char value;
-		Screen::color_type color;
-	};
+        Pixel(char val, color_type col) noexcept : value(val), color(col) {}
+        Pixel(const Pixel &p, color_type col) noexcept : value(p.value), color(col) {}
 
-	Screen() = default;
-	Screen(pos_type ht, pos_type wd, Pixel back) noexcept;
-	~Screen() = default;
-	Screen(const Screen&) = default;
-	Screen& operator=(const Screen&) = default;
-	Screen(Screen&&) = default;
-	Screen& operator=(Screen&&) = default;
+        char value;
+        Screen::color_type color;
+    };
 
-	void init();
+    Screen() = default;
+    Screen(pos_type ht, pos_type wd, Pixel back) noexcept;
+    virtual ~Screen() = default;
+    Screen(const Screen &) = default;
+    Screen &operator=(const Screen &) = default;
+    Screen(Screen &&) = default;
+    Screen &operator=(Screen &&) = default;
 
-	inline Screen::Pixel get(pos_type r, pos_type c) const noexcept; // explicitly inline
+    virtual void init() = 0;
 
-	Screen &set(pos_type row, pos_type col, const Screen::Pixel& ch);
-	Screen &set(const Vector2& pos, const Screen::Pixel& ch);
-	
-	pos_type getWidth() const noexcept { return width; }
-	pos_type getHeight() const noexcept { return height; }
+    inline Screen::Pixel get(pos_type r, pos_type c) const noexcept; // explicitly inline
 
-	void setBackGroundPixel(const Pixel& pixel) noexcept {
-		backgroundPixel.Char.AsciiChar = pixel.value;
-		backgroundPixel.Attributes = pixel.color;
-	}
-	const Pixel getBackgroundPixel() const noexcept { return { backgroundPixel.Char.AsciiChar, backgroundPixel.Attributes }; }
+    virtual Screen &set(pos_type row, pos_type col, const Screen::Pixel &ch) = 0;
+    Screen &set(const Vector2 &pos, const Screen::Pixel &ch);
 
-	void clear();
-	void clearTextInfo() noexcept;
+    pos_type getWidth() const noexcept { return width; }
+    pos_type getHeight() const noexcept { return height; }
 
-	void display() noexcept;
-	//void writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::color_type color_text, Screen::color_type color_background = colorNone);
-	//void writeInColor(const std::string& text, Screen::color_type color_text, Screen::color_type color_background = colorNone);
+    virtual void setBackGroundPixel(const Pixel &pixel) noexcept = 0;
+    virtual const Pixel getBackgroundPixel() const noexcept = 0;
 
-	bool readInput(unsigned& key) noexcept;
-	std::string waitConsoleInput();
+    virtual void clear() = 0;
+    virtual void clearTextInfo() noexcept = 0;
 
-	void writeConsoleOutput(const std::string& text) noexcept;
-	void clearConsoleOutut() noexcept;
+    virtual void display() noexcept {};
+    // void writeInColor(COORD coord, const char* symbol, size_t lenght, Screen::color_type color_text, Screen::color_type color_background = colorNone);
+    // void writeInColor(const std::string& text, Screen::color_type color_text, Screen::color_type color_background = colorNone);
 
-	void setDrawOutputBuffer();
-	void setStdOutputBuffer();
+    bool readInput(unsigned &key) noexcept;
+    std::string waitConsoleInput();
 
-	void SetConsoleTextTitle(const std::string& str);
-private:
-	pos_type width, height;
-	CHAR_INFO backgroundPixel{};
+    void writeConsoleOutput(const std::string &text) noexcept;
+    void clearConsoleOutut() noexcept;
 
-	//std::vector<char> buffer;
-	std::vector<CHAR_INFO> buffer;
-	HANDLE h_console_std_in;
-	HANDLE h_console_std_out;
-	SMALL_RECT window_rect;
+    virtual void SetConsoleTextTitle(const std::string &str) = 0;
 
-	COORD cur_write_coord;
+protected:
+    pos_type width, height;
 };
 
-inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
-	return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
+inline Screen &Screen::set(const Vector2 &pos, const Screen::Pixel &ch) {
+    return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
+
+std::unique_ptr<Screen> MakeScreen(Screen::pos_type ht, Screen::pos_type wd, Screen::Pixel back);
+
+#ifdef _WIN32
+
+#include "../sys/win32/win_console_screen.h"
+
+#else
+
+#include "../sys/linux/linux_console_screen.h"
+
+#endif
 
 #endif
