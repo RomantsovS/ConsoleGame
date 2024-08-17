@@ -185,6 +185,12 @@ entityDef damage_entityCollide {
 	"damage"					"999"
 }
 
+entityDef test_def {
+	"spawnclass"			"idStaticEntity"
+	"model"					"models/test.textmodel"
+	"size"					"4 2"
+}
+
 mapDef bomber {
 	"name"		"bomber"
 	"Deathmatch"		"0"

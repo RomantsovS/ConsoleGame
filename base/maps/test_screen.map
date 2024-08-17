@@ -1,0 +1,22 @@
+Version 2
+// entity 0
+{
+"classname"				"worldspawn"
+"game_add_point_delay"	"0"
+"game_add_point_count"	"0"
+"r_background_color"	"0"
+// primitive 2
+{
+ brushDef3
+ {
+  ( 0 0 5 5)
+ }
+}
+}
+
+{
+"classname" "test_def"
+"name" "test"
+"origin" "2 2"
+"linearVelocity" "0 0"
+}
