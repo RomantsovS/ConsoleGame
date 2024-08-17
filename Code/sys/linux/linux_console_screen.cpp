@@ -26,7 +26,7 @@ Screen &LinuxConsoleScreen::set(pos_type col, pos_type row, const Screen::Pixel 
         common->Error("Screen width: %d out of range: %d", col, width);
     }
 
-    buffer[row * width + col] = ch.value;
+    buffer[row * width + col] = ch.value == -37 ? '#' : ch.value;
 
     return *this; // return this object as an lvalue
 }
