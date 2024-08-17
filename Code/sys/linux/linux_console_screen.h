@@ -18,7 +18,7 @@ public:
     void setBackGroundPixel(const Pixel &pixel) noexcept override {
         backgroundPixel = pixel;
     }
-    const Pixel getBackgroundPixel() const noexcept override { return {}; }
+    const Pixel getBackgroundPixel() const noexcept override { return backgroundPixel; }
 
     void clear() override;
     void clearTextInfo() noexcept override;

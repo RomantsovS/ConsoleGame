@@ -17,13 +17,17 @@ void LinuxConsoleScreen::init() {
 
 Screen &LinuxConsoleScreen::set(pos_type col, pos_type row, const Screen::Pixel &ch) {
     if (row >= height || row < 0) {
+        common->Warning("Screen height: %d out of range: %d", row, height);
         return *this;
-        common->Error("Screen height: %d out of range: %d", row, height);
     }
 
     if (col >= width || col < 0) {
+        common->Warning("Screen width: %d out of range: %d", col, width);
         return *this;
-        common->Error("Screen width: %d out of range: %d", col, width);
+    }
+
+    if(ch.color == colorBlack) {
+        return *this;
     }
 
     buffer[row * width + col] = ch.value == -37 ? '#' : ch.value;
