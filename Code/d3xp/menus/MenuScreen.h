@@ -84,16 +84,13 @@ private:
 //*/
 class idMenuScreen_Shell_PressStart : public idMenuScreen {
 public:
-	idMenuScreen_Shell_PressStart() :
-	startButton(nullptr) {
-	}
+	idMenuScreen_Shell_PressStart() = default;
+
 	void Initialize(std::shared_ptr<idMenuHandler> data) noexcept override;
 	void Update() noexcept override;
 	void ShowScreen() override;
 	void HideScreen() override;
 	bool HandleAction(idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false) override;
-private:
-	std::shared_ptr<idMenuWidget_Button> startButton;
 };
 
 //*

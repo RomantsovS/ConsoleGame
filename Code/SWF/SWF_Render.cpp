@@ -17,8 +17,8 @@ void idSWF::Render(idRenderSystem* gui, int time) {
 	const auto sysHeight = renderSystem->GetHeight();
 
 	swfRenderState_t renderState;
-	renderState.pos.y = static_cast<float>(sysWidth / 2);
-	renderState.pos.x = static_cast<float>(sysHeight / 2);
+	renderState.pos.y = static_cast<float>(sysHeight / 2);
+	renderState.pos.x = static_cast<float>(sysWidth / 2);
 
 	RenderSprite(gui, mainspriteInstance.get(), renderState, time);
 }

@@ -16,10 +16,6 @@ void idMenuScreen_Shell_PressStart::Initialize(std::shared_ptr<idMenuHandler> da
 	}
 
 	SetSpritePath("menuStart");
-
-	startButton = std::make_shared<idMenuWidget_Button>();
-	startButton->SetSpritePath(GetSpritePath(), "info", "btnStart");
-	AddChild(startButton);
 }
 
 /*
@@ -48,11 +44,6 @@ idMenuScreen_Shell_PressStart::ShowScreen
 ========================
 */
 void idMenuScreen_Shell_PressStart::ShowScreen() {
-
-	if (startButton) {
-		startButton->SetLabel("press start");
-	}
-
 	idMenuScreen::ShowScreen();
 }
 
