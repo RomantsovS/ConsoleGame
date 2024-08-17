@@ -1,16 +1,13 @@
 #include "idlib/precompiled.h"
 
-#include "tr_local.h"
-
 idCVar window_font_width("window_font_width", "8", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar window_font_height("window_font_height", "8", CVAR_SYSTEM | CVAR_INIT,
                           "");
 idCVar text_info_max_height("text_info_max_height", "10",
                             CVAR_SYSTEM | CVAR_INIT, "");
 
-WinConsoleWinConsoleScreen::WinConsoleScreen(pos_type wd, pos_type ht, Pixel back) noexcept
-    : width(wd),
-      height(ht),
+WinConsoleScreen::WinConsoleScreen(pos_type wd, pos_type ht, Pixel back) noexcept
+    : Screen(wd, ht, back),
       cur_write_coord({0, 0}),
       window_rect({0, 0, 1, 1}) {
     setBackGroundPixel(back);
@@ -22,20 +19,20 @@ void WinConsoleScreen::init() {
     if (h_console_std_out == INVALID_HANDLE_VALUE)
         common->FatalError("Bad h_console_std_out");
 
-    // Change console visual size to a minimum so WinConsoleScreenBuffer can shrink
+    // Change console visual size to a minimum so ScreenBuffer can shrink
     // below the actual visual size
     SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
 
-    // Set the size of the WinConsoleScreen buffer
+    // Set the size of the Screen buffer
     COORD coord = {static_cast<short>(width),
                    static_cast<short>(height + text_info_max_height.GetInteger())};
-    if (!SetConsoleWinConsoleScreenBufferSize(h_console_std_out, coord)) {
-        common->FatalError("SetConsoleWinConsoleScreenBufferSize failed - (%s)\n",
+    if (!SetConsoleScreenBufferSize(h_console_std_out, coord)) {
+        common->FatalError("SetConsoleScreenBufferSize failed - (%s)\n",
                            getLastErrorMsg());
     }
 
-    if (!SetConsoleActiveWinConsoleScreenBuffer(h_console_std_out))
-        common->FatalError("SetConsoleActiveWinConsoleScreenBuffer  failed - (%s)\n",
+    if (!SetConsoleActiveScreenBuffer(h_console_std_out))
+        common->FatalError("SetConsoleActiveScreenBuffer  failed - (%s)\n",
                            getLastErrorMsg());
 
     CONSOLE_CURSOR_INFO cursorInfo;
@@ -57,15 +54,15 @@ void WinConsoleScreen::init() {
         common->FatalError("SetCurrentConsoleFontEx  failed - (%s)\n",
                            getLastErrorMsg());
 
-    // Get WinConsoleScreen buffer info and check the maximum allowed window size. Return
+    // Get Screen buffer info and check the maximum allowed window size. Return
     // error if exceeded, so user knows their dimensions/fontsize are too large
-    CONSOLE_WinConsoleScreen_BUFFER_INFO csbi;
-    if (!GetConsoleWinConsoleScreenBufferInfo(h_console_std_out, &csbi))
-        common->FatalError("GetConsoleWinConsoleScreenBufferInfo");
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (!GetConsoleScreenBufferInfo(h_console_std_out, &csbi))
+        common->FatalError("GetConsoleScreenBufferInfo");
     if (height > csbi.dwMaximumWindowSize.Y)
-        common->FatalError("WinConsoleScreen Height / Font Height Too Big. Max %d", csbi.dwMaximumWindowSize.Y);
+        common->FatalError("Screen Height / Font Height Too Big. Max %d", csbi.dwMaximumWindowSize.Y);
     if (width > csbi.dwMaximumWindowSize.X)
-        common->FatalError("WinConsoleScreen Width / Font Width Too Big");
+        common->FatalError("Screen Width / Font Width Too Big");
 
     // Set Physical Console Window Size
     window_rect = {0, 0, static_cast<short>(width - 1),
@@ -77,7 +74,7 @@ void WinConsoleScreen::init() {
     if (!SetConsoleMode(h_console_std_in, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT))
         common->FatalError("SetConsoleMode std in");
 
-    // Allocate memory for WinConsoleScreen buffer
+    // Allocate memory for Screen buffer
     buffer.resize(width * height);
     // memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
 
@@ -112,22 +109,22 @@ void WinConsoleScreen::init() {
     d = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
     common->DPrintf("time: %d\n", d);*/
     /*
-    for (float i = 0; i < tr.WinConsoleScreen.getHeight(); ++i) {
-            for (float j = 0; j < tr.WinConsoleScreen.getWidth(); ++j) {
+    for (float i = 0; i < tr.Screen.getHeight(); ++i) {
+            for (float j = 0; j < tr.Screen.getWidth(); ++j) {
                     set(Vector2(j, i), WinConsoleScreen::Pixel('*', int(i) % 15));
             }
     }*/
 }
 
-WinConsoleScreen &WinConsoleScreen::set(pos_type col, pos_type row, const WinConsoleScreen::Pixel &ch) {
+WinConsoleScreen&WinConsoleScreen::set(pos_type col, pos_type row, const WinConsoleScreen::Pixel &ch) {
     if (row >= height || row < 0) {
         return *this;
-        common->Error("WinConsoleScreen height: %d out of range: %d", row, height);
+        common->Error("Screen height: %d out of range: %d", row, height);
     }
 
     if (col >= width || col < 0) {
         return *this;
-        common->Error("WinConsoleScreen width: %d out of range: %d", col, width);
+        common->Error("Screen width: %d out of range: %d", col, width);
     }
 
     auto &char_info = buffer[row * width + col];
@@ -270,6 +267,6 @@ void WinConsoleScreen::SetConsoleTextTitle(const std::string &str) {
     SetConsoleTitle(str.c_str());
 }
 
-std::unique_ptr<Screen> MakeScreen(Screen::pos_type ht, Screen::pos_type wd, Screen::Pixel back) {
+std::unique_ptr<Screen> MakeScreen(WinConsoleScreen::pos_type ht, WinConsoleScreen::pos_type wd, WinConsoleScreen::Pixel back) {
     return std::make_unique<WinConsoleScreen>(ht, wd, back);
 }

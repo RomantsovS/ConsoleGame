@@ -3,16 +3,6 @@
 
 #include "win_local.h"
 
-/*
-================
-Sys_Milliseconds
-================
-*/
-int Sys_Milliseconds() noexcept {
-	static auto sys_timeBase = clock();
-	return clock() - sys_timeBase;
-}
-
 char* getLastErrorMsg()
 {
 	LPVOID lpMsgBuf;

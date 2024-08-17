@@ -194,8 +194,11 @@ bool idUDP::GetPacket(netadr_t& from, void* data, int& size, int maxSize) {
 		size = socket->receive_from(boost::asio::buffer(data, maxSize), sender_endpoint, flags, ec);
 
 		if (ec) {
-			// if(ec.value() == WSAEWOULDBLOCK)
-			// 	return false;
+			#ifdef _WIN32
+			if (ec.value() == WSAEWOULDBLOCK) {
+				return false;
+			}
+			#endif
 			
 			idLib::Warning("NET: socket receive warning %d %s\n", ec.value(), NET_ErrorString(ec.value()));
 

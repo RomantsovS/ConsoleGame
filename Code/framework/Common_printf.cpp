@@ -85,13 +85,10 @@ void idCommonLocal::VPrintf(const char* fmt, va_list args) {
 				logFile->ForceFlush();
 			}
 
-			time(&aclock);
-			localtime_r(&aclock, &newtime);
-			char buf[256];
+			auto time_now = std::chrono::system_clock::now();
+			std::time_t time = std::chrono::system_clock::to_time_t(time_now);
 
-			asctime_r(&newtime, buf);
-
-			Printf("log file '%s' opened on %s\n", fileName.c_str(), buf);
+			Printf("log file '%s' opened on %s\n", fileName.c_str(), std::ctime(&time));
 		}
 		if (logFile) {
 			logFile->Write(msg, strlen(msg));

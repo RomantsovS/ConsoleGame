@@ -6,39 +6,6 @@ extern idCVar window_font_height;
 
 class WinConsoleScreen : public Screen {
 public:
-    using pos_type = short;
-    using color_type = unsigned short;
-
-    /*enum class ConsoleColor {
-        None = -1,
-        Black = 0,
-        Blue = 1,
-        Green = 2,
-        Cyan = 3,
-        Red = 4,
-        Magenta = 5,
-        Brown = 6,
-        LightGray = 7,
-        DarkGray = 8,
-        LightBlue = 9,
-        LightGreen = 10,
-        LightCyan = 11,
-        LightRed = 12,
-        LightMagenta = 13,
-        Yellow = 14,
-        White = 15
-    };
-    */
-    struct Pixel {
-        Pixel() = default;
-
-        Pixel(char val, color_type col) noexcept : value(val), color(col) {}
-        Pixel(const Pixel &p, color_type col) noexcept : value(p.value), color(col) {}
-
-        char value;
-        WinConsoleScreen::color_type color;
-    };
-
     WinConsoleScreen() = default;
     WinConsoleScreen(pos_type ht, pos_type wd, Pixel back) noexcept;
     ~WinConsoleScreen() = default;
@@ -79,7 +46,6 @@ public:
     void SetConsoleTextTitle(const std::string &str);
 
 private:
-    pos_type width, height;
     CHAR_INFO backgroundPixel{};
 
     // std::vector<char> buffer;
