@@ -266,8 +266,6 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 				shift.y *= (size.y + projShift) / 2 * (j + 1);
 
 				const auto proj_origin = GetPhysics()->GetOrigin() + shift;
-				if (proj_origin.x < 0 || proj_origin.y < 0)
-					continue;
 
 				std::shared_ptr<idEntity> ent;
 				gameLocal.SpawnEntityDef(projectileDict, &ent);

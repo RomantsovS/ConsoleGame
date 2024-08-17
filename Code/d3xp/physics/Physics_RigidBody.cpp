@@ -247,6 +247,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 		gameLocal.Warning("rigid body moved outside world bounds for entity '%s' type '%s' at (%s)",
 			self->name.c_str(), self->GetType()->classname.c_str(), current.i.position.ToString(0).c_str());
 		Rest();
+		self->Hide();
 	}
 
 	return true;
