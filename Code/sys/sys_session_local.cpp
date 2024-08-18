@@ -1135,7 +1135,7 @@ bool idSessionLocal::HandlePackets() {
 			continue;
 		}
 
-		idLobby::lobbyType_t lobbyType = (idLobby::lobbyType_t)(maskedType - 1);
+		idLobby::lobbyType_t lobbyType = static_cast<idLobby::lobbyType_t>(maskedType - 1);
 
 		switch (lobbyType) {
 			case idLobby::lobbyType_t::TYPE_GAME:

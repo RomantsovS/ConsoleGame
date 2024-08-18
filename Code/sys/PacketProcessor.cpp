@@ -283,8 +283,10 @@ int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, 
 		return FinalizeRead(msg, out, userData);
 	}
 
+	idassert(false);
+
 	// Decode fragmented packet
-	int readSequence = msg.ReadLong();	// Read sequence of fragment
+	//int readSequence = msg.ReadLong();	// Read sequence of fragment
 
 	//if (header.Value() == FRAGMENT_START) {
 	//	msgWritePos = 0;				// Reset msg reconstruction write pos

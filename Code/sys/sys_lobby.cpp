@@ -1110,8 +1110,6 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 	std::array<std::byte, idPacketProcessor::MAX_PACKET_SIZE> buffer;
 	idBitMsg outmsg(buffer.data(), sizeof(buffer));
 
-	NET_VERBOSE_PRINT("NET: Sending response to %s, lobbyType %s, sessionID %i\n", peerAddress.ToString().c_str(), GetLobbyName().c_str(), 0);
-
 	Serialize::ReliableHello proto_out_msg;
 	proto_out_msg.set_peernum(peerNum);
 
@@ -1123,6 +1121,8 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 	*proto_out_msg.mutable_matchparams() = proto_match_params;
 
 	outmsg.WriteProtobufMessage(&proto_out_msg);
+
+	NET_VERBOSE_PRINT("NET: Sending response to %s, lobbyType %s, sessionID %i\n", peerAddress.ToString().c_str(), GetLobbyName().c_str(), 0);
 
 	QueueReliableMessage(peerNum, reliableType_t::RELIABLE_HELLO, outmsg.GetReadData(), outmsg.GetSize());
 
