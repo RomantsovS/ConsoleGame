@@ -1,6 +1,10 @@
 #ifndef COMMON_LOCAL_H
 #define COMMON_LOCAL_H
 
+static const int initialHz = 60;
+static const int initialBaseTicks = 1000 / initialHz;
+static const int initialBaseTicksPerSec = initialHz * initialBaseTicks;
+
 class idGameThread : public idSysThread {
 public:
 	idGameThread() :
@@ -28,6 +32,11 @@ enum errorParm_t {
 	ERP_FATAL,						// exit the entire game with a popup window
 	ERP_DROP,						// print to console and disconnect from game
 	ERP_DISCONNECT					// don't kill server
+};
+
+struct netTimes_t {
+	int localTime;
+	int serverTime;
 };
 
 #define	MAX_PRINT_MSG_SIZE	4096
@@ -104,6 +113,22 @@ private:
 	//int nextUsercmdSendTime;	// Next time to send usercmds
 	int nextSnapshotSendTime;	// Next time to send a snapshot
 
+	idSnapShot			lastSnapShot;		// last snapshot we received from the server
+	struct reliableMsg_t {
+		int	client;
+		int type;
+		int dataSize;
+		std::byte* data;
+	};
+	std::vector<reliableMsg_t> reliableQueue;
+
+
+	// Snapshot interpolation
+	idSnapShot		oldss;				// last local snapshot
+	// (ie on server this is the last "master" snapshot  we created)
+	// (on clients this is the last received snapshot)
+	// used for comparisons with the new snapshot for com_drawSnapshot
+
 	// This is ultimately controlled by net_maxBufferedSnapshots by running double speed, but this is the hard max before seeing visual popping
 	static const int RECEIVE_SNAPSHOT_BUFFER_SIZE = 16;
 
@@ -111,12 +136,32 @@ private:
 	int writeSnapshotIndex;
 	std::array<idSnapShot, RECEIVE_SNAPSHOT_BUFFER_SIZE> receivedSnaps;
 
+	uint64_t snapRate;
+
+	uint64_t snapTime;			// time we got the most recent snapshot
+	uint64_t snapTimeDelta;		// time interval that current ss was sent in
+
+	uint64_t snapCurrentTime;	// realtime playback time
+	netTimes_t snapCurrent;		// current snapshot
+	netTimes_t snapPrevious;		// previous snapshot
+
+	float snapTimeBuffered;
+	float effectiveSnapRate;
+	int totalBufferedTime;
+	int totalRecvTime;
+
 	int gameFrame;			// Frame number of the local game
 	double gameTimeResidual;	// left over msec from the last game frame
 
 	std::vector<mpMap_t> mpGameMaps;
 
 	idGameThread gameThread; // the game and draw code can be run in parallel
+
+	// com_speeds times
+	int count_numGameFrames;	// total number of game frames that were run
+	int time_gameFrame;			// game logic time
+	int time_maxGameFrame;		// maximum single frame game logic time
+	int time_gameDraw;			// game present time
 
 	size_t FPSupdateMilliseconds;
 	int delayMilliseconds;
@@ -140,9 +185,9 @@ private:
 
 	// Snapshot interpolation
 	void ProcessSnapshot(idSnapShot& ss);
-	//int		CalcSnapTimeBuffered(int& totalBufferedTime, int& totalRecvTime);
+	int CalcSnapTimeBuffered(int& totalBufferedTime, int& totalRecvTime);
 	void ProcessNextSnapshot();
-	//void	InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);*/
+	void InterpolateSnapshot(netTimes_t& prev, netTimes_t& next, float fraction, bool predict);
 	void ResetNetworkingState();
 
 	void SendSnapshots();

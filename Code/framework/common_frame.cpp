@@ -112,13 +112,25 @@ void idCommonLocal::Draw() {
 		game->Shell_Render();
 	}
 	else if (mapSpawned) {
-		if (game) {
-			game->Draw(0);
+		bool gameDraw = false;
+		// normal drawing for both single and multi player
+		if (/*!com_skipGameDraw.GetBool() &&*/ Game()->GetLocalClientNum() >= 0) {
+			// draw the game view
+			int	start = Sys_Milliseconds();
+			if (game) {
+				gameDraw = game->Draw(Game()->GetLocalClientNum());
+			}
+			int end = Sys_Milliseconds();
+			time_gameDraw += (end - start);	// note time used for com_speeds
 		}
-		else {
-			//renderSystem->SetColor4(0, 0, 0, 1);
-			//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
-		}
+		/*if (!gameDraw) {
+			renderSystem->SetColor(colorBlack);
+			renderSystem->DrawStretchPic(0, 0, 640, 480, 0, 0, 1, 1, whiteMaterial);
+		}*/
+	}
+	else {
+		//renderSystem->SetColor4(0, 0, 0, 1);
+		//renderSystem->DrawStretchPic(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 1, 1, whiteMaterial);
 	}
 
 	// draw the half console / notify console on top of everything
@@ -274,7 +286,7 @@ void idCommonLocal::Frame() {
 
 		if (mapSpawned && !pauseGame) {
 			if (IsClient()) {
-				//RunNetworkSnapshotFrame();
+				RunNetworkSnapshotFrame();
 			}
 		}
 
@@ -298,12 +310,12 @@ void idCommonLocal::Frame() {
 		usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
 
 		// Store server game time - don't let time go past last SS time in case we are extrapolating
-		if (IsClient()) {
-			//newCmd.serverGameMilliseconds = std::min(Game()->GetServerGameTimeMs(), Game()->GetSSEndTime());
+		/*if (IsClient()) {
+			newCmd.serverGameMilliseconds = std::min(Game()->GetServerGameTimeMs(), Game()->GetSSEndTime());
 		}
 		else {
-			//newCmd.serverGameMilliseconds = Game()->GetServerGameTimeMs();
-		}
+			newCmd.serverGameMilliseconds = Game()->GetServerGameTimeMs();
+		}*/
 
 		userCmdMgr.MakeReadPtrCurrentForPlayer(Game()->GetLocalClientNum());
 
@@ -340,6 +352,17 @@ void idCommonLocal::Frame() {
 
 		// process the game return for map changes, etc
 		ProcessGameReturn(ret);
+
+		// report timing information
+		if (com_speeds.GetBool()) {
+			static int lastTime = Sys_Milliseconds();
+			int	nowTime = Sys_Milliseconds();
+			int	com_frameMsec = nowTime - lastTime;
+			lastTime = nowTime;
+			Printf("frame:%d all:%3d gfr:%3d\n", idLib::frameNumber, com_frameMsec, time_gameFrame);
+			time_gameFrame = 0;
+			time_gameDraw = 0;
+		}
 	}
 	catch (const std::exception& err) {
 		common->Error(err.what());

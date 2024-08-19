@@ -18,11 +18,11 @@ idSessionLocalCallbacks::ReceivedFullSnap
 */
 void idSessionLocalCallbacks::ReceivedFullSnap() {
 	// If we received a full snap, then we can transition into the INGAME state
-	/*sessionLocal->numFullSnapsReceived++;
+	sessionLocal->numFullSnapsReceived++;
 
 	if (sessionLocal->numFullSnapsReceived < 2) {
 		return;
-	}*/
+	}
 
 	if (sessionLocal->localState != idSessionLocal::state_t::STATE_INGAME) {
 		sessionLocal->GetActingGameStateLobby().QueueReliableMessage(sessionLocal->GetActingGameStateLobby().host, idLobby::reliableType_t::RELIABLE_IN_GAME);		// Let host know we are in game now

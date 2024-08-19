@@ -250,6 +250,19 @@ idPlayer *idGameLocal::GetLocalPlayer() const {
 }
 
 /*
+========================
+idGameLocal::SetInterpolation
+========================
+*/
+void idGameLocal::SetInterpolation(const float fraction, const int serverGameMS, const int ssStartTime, const int ssEndTime) {
+    netInterpolationInfo.previousServerGameMs = netInterpolationInfo.serverGameMs;
+    netInterpolationInfo.pct = fraction;
+    netInterpolationInfo.serverGameMs = serverGameMS;
+    netInterpolationInfo.ssStartTime = ssStartTime;
+    netInterpolationInfo.ssEndTime = ssEndTime;
+}
+
+/*
 ================
 idGameLocal::RunEntityThink
 ================
@@ -295,9 +308,8 @@ void idGameLocal::RunFrame(idUserCmdMgr &cmdMgr, gameReturn_t &ret) {
         framenum++;
         fast.previousTime = FRAME_TO_MSEC(framenum - 1);
         fast.time = FRAME_TO_MSEC(framenum);
-        // fast.previousTime = fast.time;
-        // fast.time = FRAME_TO_MSEC(Sys_Milliseconds());
         fast.realClientTime = fast.time;
+        SetServerGameTimeMs(fast.time);
 
         if (time == 3000) {
             auto end = Sys_Milliseconds();
@@ -725,6 +737,25 @@ void idGameLocal::Error(const char *fmt, ...) const {
     va_end(argptr);
 
     common->Error("%s", text);
+}
+
+/*
+========================
+idGameLocal::SetServerGameTimeMs
+========================
+*/
+void idGameLocal::SetServerGameTimeMs(const int time) {
+    previousServerTime = this->serverTime;
+    this->serverTime = time;
+}
+
+/*
+========================
+idGameLocal::GetServerGameTimeMs
+========================
+*/
+int idGameLocal::GetServerGameTimeMs() const {
+    return serverTime;
 }
 
 void idGameLocal::LoadMap(const std::string &mapName, int randseed) {

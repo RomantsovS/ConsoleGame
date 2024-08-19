@@ -124,6 +124,8 @@ protected:
 	idLobby gameStateLobby;
 	idLobby stubLobby; // We use this when we request the active lobby when we are not in a lobby (i.e at press start)
 
+	int numFullSnapsReceived;
+
 	//------------------------
 	// State functions
 	//------------------------

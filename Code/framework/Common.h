@@ -26,6 +26,7 @@ class idSession;
 class idMatchParameters;
 
 extern idCVar com_allowConsole;
+extern idCVar com_speeds;
 extern idCVar com_showFPS;
 
 struct mpMap_t {

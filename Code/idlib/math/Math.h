@@ -9,6 +9,78 @@
 #define MS2SEC(t)				( (t) * idMath::M_MS2SEC )
 
 /*
+========================
+IEEE_FLT_IS_NAN
+========================
+*/
+extern inline bool IEEE_FLT_IS_NAN(float x) {
+	return x != x;
+}
+
+/*
+========================
+IEEE_FLT_IS_INF
+========================
+*/
+extern inline bool IEEE_FLT_IS_INF(float x) {
+	return x == x && x * 0 != x * 0;
+}
+
+/*
+========================
+IEEE_FLT_IS_INF_NAN
+========================
+*/
+extern inline bool IEEE_FLT_IS_INF_NAN(float x) {
+	return x * 0 != x * 0;
+}
+
+/*
+========================
+IEEE_FLT_IS_IND
+========================
+*/
+extern inline bool IEEE_FLT_IS_IND(float x) {
+	return	(reinterpret_cast<const unsigned int&>(x) == 0xffc00000);
+}
+
+/*
+========================
+IEEE_FLT_IS_DENORMAL
+========================
+*/
+extern inline bool IEEE_FLT_IS_DENORMAL(float x) {
+	return ((reinterpret_cast<const unsigned int&>(x) & 0x7f800000) == 0x00000000 &&
+		(reinterpret_cast<const unsigned int&>(x) & 0x007fffff) != 0x00000000);
+}
+
+/*
+========================
+IsValid
+========================
+*/
+template<class type>
+extern inline bool IsValid(const type& v) {
+	for (int i = 0; i < v.GetDimension(); i++) {
+		const float f = v.ToFloatPtr()[i];
+		if (IEEE_FLT_IS_NAN(f) || IEEE_FLT_IS_INF(f) || IEEE_FLT_IS_IND(f) || IEEE_FLT_IS_DENORMAL(f)) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/*
+========================
+IsValid
+========================
+*/
+template<>
+extern inline bool IsValid(const float& f) {	// these parameter must be a reference for the function to be considered a specialization
+	return !(IEEE_FLT_IS_NAN(f) || IEEE_FLT_IS_INF(f) || IEEE_FLT_IS_IND(f) || IEEE_FLT_IS_DENORMAL(f));
+}
+
+/*
 ================================================================================================
 
 	floating point bit layouts according to the IEEE 754-1985 and 754-2008 standard
@@ -32,9 +104,6 @@ public:
 	static int ClampInt(int min, int max, int value);
 
 	static int FloatHash(gsl::span<const float> arr) noexcept;
-
-	template<typename T>
-	static int ValueInRange(T val, T min, T max);
 
 	static const float M_MS2SEC; // milliseconds to seconds multiplier
 	static const float M_SEC2MS; // seconds to milliseconds multiplier
@@ -129,15 +198,14 @@ inline int idMath::FloatHash(gsl::span<const float> arr) noexcept {
 	return hash;
 }
 
-template<typename T>
-inline int idMath::ValueInRange(T val, T min, T max)
-{
-	if (val < min)
-		return -1;
-	else if (val > max)
-		return 1;
+template< typename T >
+extern inline T Lerp(const T from, const T to, float f) {
+	return from + ((to - from) * f);
+}
 
-	return 0;
+template<>
+extern inline int Lerp(const int from, const int to, float f) {
+	return static_cast<int>(static_cast<float>(from) + ((static_cast<float>(to) - static_cast<float>(from)) * f));
 }
 
 #endif // !MATH_H

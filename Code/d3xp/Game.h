@@ -20,6 +20,12 @@ public:
 	// Shut down the entire game.
 	virtual void Shutdown() = 0;
 
+	// Interpolated server time
+	virtual void SetServerGameTimeMs(const int time) = 0;
+
+	// Interpolated server time
+	virtual int GetServerGameTimeMs() const = 0;
+
 	// Loads a map and spawns all the entities.
 	virtual void InitFromNewMap(const std::string& mapName, std::shared_ptr<idRenderWorld> renderWorld, int randseed) = 0;
 
@@ -37,6 +43,11 @@ public:
 
 	// Writes a snapshot of the server game state.
 	virtual void ServerWriteSnapshot(idSnapShot& ss) = 0;
+
+	// Processes a reliable message
+	//virtual void ProcessReliableMessage(int clientNum, int type, const idBitMsg& msg) = 0;
+
+	virtual void SetInterpolation(const float fraction, const int serverGameMS, const int ssStartTime, const int ssEndTime) = 0;
 
 	// Reads a snapshot and updates the client game state.
 	virtual void ClientReadSnapshot(const idSnapShot& ss) = 0;

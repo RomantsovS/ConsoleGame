@@ -22,6 +22,9 @@ public:
 	int  GetTime() const { return time; }
 	void SetTime(int t) { time = t; }
 
+	int  GetRecvTime() const { return recvTime; }
+	void SetRecvTime(int t) { recvTime = t; }
+
 	// Reads a new object state packet, which is assumed to be delta compressed against this snapshot
 	bool ReadDeltaForJob(const std::byte* deltaMem, int deltaSize, int& outSeq, int& outBaseSeq);
 

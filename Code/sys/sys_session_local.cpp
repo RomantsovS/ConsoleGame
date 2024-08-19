@@ -51,6 +51,8 @@ void idSessionLocal::InitBaseState() noexcept {
 
 	//connectType = CONNECT_NONE;
 	connectTime = 0;
+
+	numFullSnapsReceived = 0;
 }
 
 /*
@@ -148,6 +150,7 @@ void idSessionLocal::FindOrCreateMatch(const idMatchParameters& p) {
 
 	//connectType = connectType_t::CONNECT_FIND_OR_CREATE;
 	connectTime = Sys_Milliseconds();
+	numFullSnapsReceived = 0;
 
 	// Wait for searching to complete
 	SetState(state_t::STATE_FIND_OR_CREATE_MATCH);
@@ -749,7 +752,7 @@ void idSessionLocal::EndMatchInternal(bool premature/*=false*/) {
 	GetActingGameStateLobby().loaded = false;
 
 	//gameLobbyWasCoalesced = false;		// Reset this back to false.  We use this so the lobby code doesn't randomly choose a map when we coalesce
-	//numFullSnapsReceived = 0;
+	numFullSnapsReceived = 0;
 
 	if (GetActingGameStateLobby().IsLobbyActive() /* && (GetActingGameStateLobby().GetMatchParms().matchFlags & MATCH_REQUIRE_PARTY_LOBBY)*/) {
 		// All peers need to remove disconnected users to stay in sync

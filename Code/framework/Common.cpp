@@ -3,7 +3,7 @@
 #include "Common_local.h"
 
 idCVar com_allowConsole("com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key");
-
+idCVar com_speeds("com_speeds", "0", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "show engine timings");
 idCVar com_showFPS("com_showFPS", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_ARCHIVE | CVAR_NOCHEAT, "show frames rendered per second");
 
 idCVar com_engineHz("com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f);
@@ -18,6 +18,15 @@ bool isCommonExists = false;
 idCommonLocal::idCommonLocal() :
 	readSnapshotIndex(0),
 	writeSnapshotIndex(0) {
+	snapCurrent.localTime = -1;
+	snapPrevious.localTime = -1;
+	snapCurrent.serverTime = -1;
+	snapPrevious.serverTime = -1;
+	snapTimeBuffered = 0.0f;
+	effectiveSnapRate = 0.0f;
+	totalBufferedTime = 0;
+	totalRecvTime = 0;
+
 	com_errorEntered = ERP_NONE;
 	com_shuttingDown = false;
 

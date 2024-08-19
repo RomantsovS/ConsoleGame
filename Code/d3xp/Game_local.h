@@ -82,6 +82,8 @@ struct timeState_t {
 
 class idGameLocal : public idGame {
 public:
+	int previousServerTime;		// time in msec of last frame on the server
+	int serverTime;				// in msec. ( on the client ) the server time. ( on the server ) the actual game time.
 	std::vector<std::shared_ptr<idEntity>> entities;
 	std::vector<int> spawnIds;// for use in idEntityPtr
 	std::array<int, 2> firstFreeEntityIndex;	// first free index in the entities array. [0] for replicated entities, [1] for non-replicated
@@ -132,6 +134,7 @@ public:
 	void RunEntityThink(idEntity& ent, idUserCmdMgr& userCmdMgr);
 	bool Draw(int clientNum) override;
 	void ServerWriteSnapshot(idSnapShot& ss) override;
+	//void ProcessReliableMessage(int clientNum, int type, const idBitMsg& msg) override;
 	void ClientReadSnapshot(const idSnapShot& ss) override;
 	void ClientRunFrame(idUserCmdMgr& cmdMgr, bool lastPredictFrame, gameReturn_t& ret) override;
 	void BuildReturnValue(gameReturn_t& ret);
@@ -176,6 +179,14 @@ public:
 
 	void SyncPlayersWithLobbyUsers(bool initial);
 
+	void SetInterpolation(const float fraction, const int serverGameMS, const int ssStartTime, const int ssEndTime) override;
+
+	void ServerProcessReliableMessage(int clientNum, int type, const idBitMsg& msg);
+	void ClientProcessReliableMessage(int type, const idBitMsg& msg);
+
+	void SetServerGameTimeMs(const int time) override;
+	int GetServerGameTimeMs() const override;
+
 	bool InhibitControls() override;
 
 	// MAIN MENU FUNCTIONS
@@ -214,6 +225,23 @@ private:
 	idDict spawnArgs;
 
 	gameState_t gamestate; // keeps track of whether we're spawning, shutting down, or normal gameplay
+
+	struct netInterpolationInfo_t {		// Was in GameTimeManager.h in id5, needed common place to put this.
+		netInterpolationInfo_t()
+			: pct(0.0f)
+			, serverGameMs(0)
+			, previousServerGameMs(0)
+			, ssStartTime(0)
+			, ssEndTime(0)
+		{}
+		float	pct;					// % of current interpolation
+		int		serverGameMs;			// Interpolated server game time
+		int		previousServerGameMs;	// last frame's interpolated server game time
+		int		ssStartTime;			// Server time of old snapshot
+		int		ssEndTime;				// Server time of next snapshot
+	};
+
+	netInterpolationInfo_t	netInterpolationInfo;
 
 	void Clear();
 							// spawn entities from the map file
