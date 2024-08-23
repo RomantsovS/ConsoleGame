@@ -126,10 +126,10 @@ NOTE - We only compress reliables because we assume everything else has already 
 bool idPacketProcessor::ProcessOutgoing(const int time, const idBitMsg& msg, bool isOOB, int userData) {
 	// We can only do ONE ProcessOutgoing call, then we need to do GetSendFragment to
 	// COMPLETELY empty unsentMsg before calling ProcessOutgoing again.
-	/*if (!verify(fragmentedSend == false)) {
+	if (!idverify(fragmentedSend == false)) {
 		idLib::Warning("ProcessOutgoing: fragmentedSend == true!");
 		return false;
-	}*/
+	}
 
 	if (!idverify(unsentMsg.GetRemainingData() == 0)) {
 		idLib::Warning("ProcessOutgoing: unsentMsg.GetRemainingData() > 0!");
@@ -178,7 +178,7 @@ bool idPacketProcessor::ProcessOutgoing(const int time, const idBitMsg& msg, boo
 		if (isOOB) {
 			idLib::Error("oob msg's cannot fragment");
 		}
-		//fragmentedSend = true;
+		fragmentedSend = true;
 	}
 
 	return true;
@@ -203,40 +203,38 @@ bool idPacketProcessor::GetSendFragment(const int time, sessionId_t sessionID, i
 	// Write outer packet header to the msg
 	outerHeader.WriteToMsg(outMsg);
 
-	//if (!fragmentedSend) {
+	if (!fragmentedSend) {
 		// Simple case, no fragments to sent
 		outMsg.WriteData(unsentMsg.GetReadData(), unsentMsg.GetSize());
 		unsentMsg.SetSize(0);
-	//}
-	//else {
-	//	int currentSize = idMath::ClampInt(0, MAX_PACKET_SIZE, unsentMsg.GetRemainingData());
-	//	idassert(currentSize > 0);
-	//	idassert(unsentMsg.GetRemainingData() - currentSize >= 0);
+	}
+	else {
+		int currentSize = idMath::ClampInt(0, MAX_PACKET_SIZE, unsentMsg.GetRemainingData());
+		idassert(currentSize > 0);
+		idassert(unsentMsg.GetRemainingData() - currentSize >= 0);
 
-	//	// See if we'll have more fragments once we subtract off how much we're about to write
-	//	bool moreFragments = (unsentMsg.GetRemainingData() - currentSize > 0) ? true : false;
+		// See if we'll have more fragments once we subtract off how much we're about to write
+		bool moreFragments = (unsentMsg.GetRemainingData() - currentSize > 0) ? true : false;
 
-	//	if (!unsentMsg.GetReadCount()) {		// If this is the first read, then we know it's the first fragment
-	//		idassert(moreFragments);			// If we have a first, we must have more or something went wrong
-	//		idInnerPacketHeader header(PACKET_TYPE_FRAGMENTED, FRAGMENT_START);
-	//		header.WriteToMsg(outMsg);
-	//	}
-	//	else {
-	//		idInnerPacketHeader header(PACKET_TYPE_FRAGMENTED, moreFragments ? FRAGMENT_MIDDLE : FRAGMENT_END);
-	//		header.WriteToMsg(outMsg);
-	//	}
+		if (!unsentMsg.GetReadCount()) {		// If this is the first read, then we know it's the first fragment
+			idassert(moreFragments);			// If we have a first, we must have more or something went wrong
+			idInnerPacketHeader header(PACKET_TYPE_FRAGMENTED, FRAGMENT_START);
+			header.WriteToMsg(outMsg);
+		}
+		else {
+			idInnerPacketHeader header(PACKET_TYPE_FRAGMENTED, moreFragments ? FRAGMENT_MIDDLE : FRAGMENT_END);
+			header.WriteToMsg(outMsg);
+		}
 
-	//	outMsg.WriteLong(fragmentSequence);
-	//	outMsg.WriteData(unsentMsg.GetReadData() + unsentMsg.GetReadCount(), currentSize);
-	//	unsentMsg.ReadData(NULL, currentSize);
+		outMsg.WriteLong(fragmentSequence);
+		outMsg.WriteData(unsentMsg.GetReadData() + unsentMsg.GetReadCount(), currentSize);
+		unsentMsg.ReadData(NULL, currentSize);
 
-	//	idassert(moreFragments == unsentMsg.GetRemainingData() > 0);
-	//	fragmentedSend = moreFragments;
+		idassert(moreFragments == unsentMsg.GetRemainingData() > 0);
+		fragmentedSend = moreFragments;
 
-	//	fragmentSequence++;				// Advance sequence
-
-	//	fragmentAccumulator++;			// update the counter for the net debug hud
-	//}
+		fragmentSequence++;				// Advance sequence
+	}
 
 
 	// The caller needs to send this packet, so assume he did, and update rates
@@ -283,42 +281,41 @@ int idPacketProcessor::ProcessIncoming(int time, sessionId_t expectedSessionID, 
 		return FinalizeRead(msg, out, userData);
 	}
 
-	idassert(false);
-
 	// Decode fragmented packet
-	//int readSequence = msg.ReadLong();	// Read sequence of fragment
+	int readSequence = msg.ReadLong();	// Read sequence of fragment
 
-	//if (header.Value() == FRAGMENT_START) {
-	//	msgWritePos = 0;				// Reset msg reconstruction write pos
-	//}
-	//else if (fragmentSequence == -1 || readSequence != fragmentSequence + 1) {
-	//	droppedFrags++;
-	//	idLib::Printf("Dropped Fragments - PeerNum: %i FragmentSeq: %i, ReadSeq: %i, Total: %i\n", peerNum, fragmentSequence, readSequence, droppedFrags);
+	if (header.Value() == FRAGMENT_START) {
+		msgWritePos = 0;				// Reset msg reconstruction write pos
+	}
+	else if (fragmentSequence == -1 || readSequence != fragmentSequence + 1) {
+		droppedFrags++;
+		idLib::Printf("Dropped Fragments - PeerNum: %i FragmentSeq: %i, ReadSeq: %i, Total: %i\n",
+			peerNum, fragmentSequence, readSequence, droppedFrags);
 
-	//	// If this is the middle or end, make sure we are reading in fragmentSequence
-	//	fragmentSequence = -1;
-	//	return RETURN_TYPE_NONE;		// Out of sequence
-	//}
-	//fragmentSequence = readSequence;
-	//idassert(msg.GetRemainingData() > 0);
+		// If this is the middle or end, make sure we are reading in fragmentSequence
+		fragmentSequence = -1;
+		return RETURN_TYPE_NONE;		// Out of sequence
+	}
+	fragmentSequence = readSequence;
+	idassert(msg.GetRemainingData() > 0);
 
-	//if (!verify(msgWritePos + msg.GetRemainingData() < sizeof(msgBuffer))) {
-	//	idLib::Error("ProcessIncoming: Fragmented msg buffer overflow.");
-	//}
+	if (!idverify(msgWritePos + msg.GetRemainingData() < sizeof(msgBuffer))) {
+		idLib::Error("ProcessIncoming: Fragmented msg buffer overflow.");
+	}
 
-	//memcpy(msgBuffer + msgWritePos, msg.GetReadData() + msg.GetReadCount(), msg.GetRemainingData());
-	//msgWritePos += msg.GetRemainingData();
+	memcpy(msgBuffer.data() + msgWritePos, msg.GetReadData() + msg.GetReadCount(), msg.GetRemainingData());
+	msgWritePos += msg.GetRemainingData();
 
-	//if (header.Value() == FRAGMENT_END) {
-	//	// Done reconstructing the msg
-	//	idBitMsg msg(msgBuffer, sizeof(msgBuffer));
-	//	msg.SetSize(msgWritePos);
-	//	return FinalizeRead(msg, out, userData);
-	//}
+	if (header.Value() == FRAGMENT_END) {
+		// Done reconstructing the msg
+		idBitMsg msg(msgBuffer.data(), sizeof(msgBuffer));
+		msg.SetSize(msgWritePos);
+		return FinalizeRead(msg, out, userData);
+	}
 
-	/*if (!verify(header.Value() == FRAGMENT_START || header.Value() == FRAGMENT_MIDDLE)) {
+	if (!idverify(header.Value() == FRAGMENT_START || header.Value() == FRAGMENT_MIDDLE)) {
 		idLib::Printf("ProcessIncoming: Invalid packet.\n");
-	}*/
+	}
 
 	// If we get here, this is part (either beginning or end) of a fragmented packet.
 	// We return RETURN_TYPE_NONE to let the caller know they don't need to do anything yet.

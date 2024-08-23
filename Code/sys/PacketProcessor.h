@@ -29,6 +29,11 @@ public:
 	}
 
 	void Reset() {
+		msgWritePos = 0;
+		fragmentSequence = 0;
+		droppedFrags = 0;
+		fragmentedSend = false;
+
 		reliableSequenceSend = 1;
 		reliableSequenceRecv = 0;
 		
@@ -44,8 +49,7 @@ public:
 	static const int MAX_RELIABLE_QUEUE = 64;
 
 	// TypeInfo doesn't like sizeof( sessionId_t )?? and then fails to understand the #ifdef/#else/#endif
-	//static const int MAX_PACKET_SIZE		= MAX_FINAL_PACKET_SIZE - 6 - sizeof( sessionId_t );	// Largest possible packet before headers and such applied (subtract some for various internal header data, and session id)
-	static const int MAX_PACKET_SIZE = MAX_FINAL_PACKET_SIZE - 6 - 2;			// Largest possible packet before headers and such applied (subtract some for various internal header data, and session id)
+	static const int MAX_PACKET_SIZE = MAX_FINAL_PACKET_SIZE - 4 - 5 - 2;			// Largest possible packet before headers and such applied (subtract some for various internal header data, and session id)
 	static const int MAX_OOB_MSG_SIZE = MAX_PACKET_SIZE - 1;			// We don't allow fragmentation for out-of-band msg's, and we need a byte for the header
 
 private:
@@ -92,6 +96,11 @@ private:
 	static const int PACKET_TYPE_RELIABLE_ACK = 2;	// Header type used to piggy-back on top of msgs to ack reliable msg's
 	static const int PACKET_TYPE_FRAGMENTED = 3;	// The msg is fragmented, fragment type stored in the userData portion of header
 
+	// PACKET_TYPE_FRAGMENTED userData values
+	static const int FRAGMENT_START = 0;
+	static const int FRAGMENT_MIDDLE = 1;
+	static const int FRAGMENT_END = 2;
+
 	class idOuterPacketHeader {
 	public:
 		idOuterPacketHeader() : sessionID(SESSION_ID_INVALID) {}
@@ -117,12 +126,12 @@ private:
 
 		void WriteToMsg(idBitMsg& msg) {
 			msg.WriteBytes(type, 1);
-			msg.WriteLongLong(userData);
+			msg.WriteLong(userData);
 		}
 
 		void ReadFromMsg(idBitMsg& msg) {
 			type = msg.ReadBytes(1);
-			userData = msg.ReadLongLong();
+			userData = msg.ReadLong();
 		}
 
 		int Type() { return type; }
@@ -132,6 +141,12 @@ private:
 		int type;
 		int userData;
 	};
+
+	std::array<std::byte, MAX_MSG_SIZE> msgBuffer; // Buffer used to reconstruct the msg
+	int msgWritePos; // Write position into the msg reconstruction buffer
+	int fragmentSequence; // Fragment sequence number
+	int droppedFrags; // Number of dropped fragments
+	bool fragmentedSend; // Used to determine if the current send requires fragmenting
 
 	idDataQueue<MAX_RELIABLE_QUEUE, MAX_MSG_SIZE> reliable; // list of unacknowledged reliable messages
 

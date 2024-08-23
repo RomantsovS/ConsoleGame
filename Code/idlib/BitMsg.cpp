@@ -6,7 +6,7 @@ idBitMsg::CheckOverflow
 ========================
 */
 bool idBitMsg::CheckOverflow(int numBytes) {
-	if (curSize + numBytes > GetRemainingWriteBytes()) {
+	if (numBytes > GetRemainingWriteBytes()) {
 		idLib::FatalError("idBitMsg: overflow without allowOverflow set; maxsize=%i size=%i numBytes=%i numRemainingWriteBytes=%i",
 		GetMaxSize(), GetSize(), numBytes, GetRemainingWriteBytes());
 		return true;
@@ -85,6 +85,27 @@ idBitMsg::WriteData
 */
 void idBitMsg::WriteData(const void* data, int length) {
 	memcpy(GetByteSpace(length), data, length);
+}
+
+int idBitMsg::ReadData(std::byte* data, int length) const {
+	int cnt;
+
+	cnt = readCount;
+
+	if (readCount + length > curSize) {
+		if (data) {
+			memcpy(data, readData + readCount, GetRemainingData());
+		}
+		readCount = curSize;
+	}
+	else {
+		if (data) {
+			memcpy(data, readData + readCount, length);
+		}
+		readCount += length;
+	}
+
+	return (readCount - cnt);
 }
 
 bool idBitMsg::ReadProtobufMessage(google::protobuf::Message* proto_msg) const {

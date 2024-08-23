@@ -92,7 +92,7 @@ public:
 	uint32_t ReadLong() const;
 	uint64_t ReadLongLong() const;
 	float ReadFloat() const;
-	void ReadData(std::byte* buf, int length) const;
+	int ReadData(std::byte* data, int length) const;
 	bool ReadProtobufMessage(google::protobuf::Message* proto_msg) const;
 private:
 	std::byte* writeData;		// pointer to data for writing
@@ -366,12 +366,6 @@ inline float idBitMsg::ReadFloat() const {
 	float value;
 	*reinterpret_cast<int*>(&value) = ReadBytes(4);
 	return value;
-}
-
-inline void idBitMsg::ReadData(std::byte* buf, int length) const {
-	for (size_t i = 0; i < length; ++i) {
-		buf[i] = static_cast<std::byte>(ReadByte());
-	}
 }
 
 #endif
