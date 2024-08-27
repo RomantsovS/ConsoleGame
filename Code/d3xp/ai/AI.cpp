@@ -58,7 +58,9 @@ void idAI::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vec
 	physicsObj->SetContents(0);
 	physicsObj->GetClipModel()->Unlink();
 
-	PostEventMS(&EV_Remove, 0);
+	Hide();
+
+	PostEventMS(&EV_Remove, 100);
 }
 
 CLASS_DECLARATION(idAI, AISimple)
