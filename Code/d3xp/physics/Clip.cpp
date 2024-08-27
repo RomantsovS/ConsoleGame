@@ -271,7 +271,7 @@ void idClipModel::Init() {
 	bounds.Zero();
 	absBounds.Zero();
 	//material = NULL;
-	//contents = CONTENTS_BODY;
+	contents = static_cast<int>(contentsFlags_t::CONTENTS_BODY);
 	collisionModelHandle = 0;
 	renderModelHandle = -1;
 	traceModelIndex = -1;

@@ -93,11 +93,11 @@ void idProjectile::Launch(const Vector2& start, const Vector2& dir, const Vector
 	Vector2 tmpDir = dir;
 	tmpDir.Normalize();
 
-	if (spawnArgs.GetBool("can_touch_player")) {
+	if (spawnArgs.GetBool("solid")) {
 		physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_PROJECTILE));
 	}
 	else {
-		physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
+		physicsObj->SetContents(0);
 	}
 	physicsObj->SetClipMask(MASK_PLAYERSOLID);
 	physicsObj->SetLinearVelocity(tmpDir * speed + pushVelocity);
@@ -135,7 +135,7 @@ void idProjectile::Think() {
 	// run physics
 	RunPhysics();
 
-	if (spawnArgs.GetBool("can_touch_player")) {
+	if (spawnArgs.GetBool("solid")) {
 		if (playerTouched != PlayerTouchState::UNTAUCHED) {
 			idPlayer* player = gameLocal.GetLocalPlayer();
 

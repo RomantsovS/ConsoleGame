@@ -14,6 +14,7 @@ idStaticEntity::~idStaticEntity() {
 }
 
 void idStaticEntity::Spawn() {
+	GetPhysics()->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
 	fl.takedamage = !spawnArgs.GetBool("noDamage");
 }
 

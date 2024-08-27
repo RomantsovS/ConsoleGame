@@ -150,7 +150,7 @@ entityDef projectile_grenade {
 	"detonate_on_actor"			"1"					// whether projectile should detonate when it hits a character in the game
 	"detonate_on_trigger"		"1"					// whether projectile should detonate when triggered by a character in the game
 
-	"can_touch_player"			"1"
+	"solid"			"1"
 }
 
 entityDef damage_grenadeDirect {
