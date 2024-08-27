@@ -130,6 +130,7 @@ idStaticEntity::WriteToSnapshot
 ================
 */
 void AISimple::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteBytes(fl.hidden, 1);
 	GetPhysics()->WriteToSnapshot(msg);
 }
 
@@ -139,18 +140,15 @@ idStaticEntity::ReadFromSnapshot
 ================
 */
 void AISimple::ReadFromSnapshot(const idBitMsg& msg) {
-	bool hidden;
+	if (msg.ReadBytes(1)) {
+		Hide();
+	}
+	else {
+		Show();
+	}
 
 	GetPhysics()->ReadFromSnapshot(msg);
-	/*hidden = msg.ReadBits(1) == 1;
-	if (hidden != IsHidden()) {
-		if (hidden) {
-			Hide();
-		}
-		else {
-			Show();
-		}
-	}*/
+
 	if (true/*msg.HasChanged()*/) {
 		UpdateVisuals();
 	}
