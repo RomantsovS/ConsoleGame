@@ -51,7 +51,6 @@ private:
 		UNTAUCHED
 	};
 	PlayerTouchState playerTouched = PlayerTouchState::NONE;
-	size_t num_firebals = 4;
 
 	idDict projectileDict{};
 };

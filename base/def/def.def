@@ -137,11 +137,12 @@ entityDef projectile_grenade {
 	"remove_time"				"1500"
 
 	"def_projectile"			"projectile_grenade_explosion"
-	"num_projectiles"			"4"
+	"num_projectile_directions"	"4"
 	"projectile0_shift"		"-1 0"
 	"projectile1_shift"		"1 0"
 	"projectile2_shift"		"0 -1"
 	"projectile3_shift"		"0 1"
+	"num_fireballs"			"4"
 
 	"detonate_on_fuse"			"1"					// whether projectile should detonate when it's fuse runs out
 	"detonate_on_death"			"0"					// whether projectile should detonate when it's "killed" (health runs out)

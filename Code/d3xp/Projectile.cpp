@@ -238,66 +238,70 @@ void idProjectile::Explode(const trace_t& collision, idEntity* ignore) {
 	physicsObj->ClearContacts();
 	physicsObj->PutToRest();
 
-	if (!spawnArgs.GetString("def_projectile").empty()) {
-		size_t num_projectiles = spawnArgs.GetInt("num_projectiles");
-		Vector2 size = spawnArgs.GetVector("size");
-		int projShift = projectileDict.GetInt("shift");
+	if (!common->IsClient() || fl.skipReplication) {
+		size_t num_projectile_directions = spawnArgs.GetInt("num_projectile_directions");
+		size_t num_fireballs = spawnArgs.GetInt("num_fireballs");
 
-		std::shared_ptr<idEntity> ent;
-		gameLocal.SpawnEntityDef(projectileDict, &ent);
+		if (!spawnArgs.GetString("def_projectile").empty() && num_fireballs > 0) {
+			Vector2 size = spawnArgs.GetVector("size");
+			int projShift = projectileDict.GetInt("shift");
 
-		if (!ent || !ent->IsType(idProjectile::Type)) {
-			const std::string projectileName = spawnArgs.GetString("def_projectile");
-			gameLocal.Error("'%s' is not an idProjectile", projectileName.c_str());
-			return;
-		}
+			std::shared_ptr<idEntity> ent;
+			gameLocal.SpawnEntityDef(projectileDict, &ent);
 
-		std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
+			if (!ent || !ent->IsType(idProjectile::Type)) {
+				const std::string projectileName = spawnArgs.GetString("def_projectile");
+				gameLocal.Error("'%s' is not an idProjectile", projectileName.c_str());
+				return;
+			}
 
-		proj->Create(owner, GetPhysics()->GetOrigin(), vec2_origin);
-		proj->Launch(GetPhysics()->GetOrigin(), vec2_origin, vec2_origin);
+			std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
 
-		for (size_t i = 0; i < num_projectiles; ++i) {
-			for (size_t j = 0; j < num_firebals; ++j) {
-				Vector2 shift = spawnArgs.GetVector(va("projectile%d_shift", i));
-				if (shift.x == 0 && shift.y == 0)
-					continue;
-				shift.x *= (size.x + projShift) / 2 * (j + 1);
-				shift.y *= (size.y + projShift) / 2 * (j + 1);
+			proj->Create(owner, GetPhysics()->GetOrigin(), vec2_origin);
+			proj->Launch(GetPhysics()->GetOrigin(), vec2_origin, vec2_origin);
 
-				const auto proj_origin = GetPhysics()->GetOrigin() + shift;
+			for (size_t i = 0; i < num_projectile_directions; ++i) {
+				for (size_t j = 0; j < spawnArgs.GetInt("num_fireballs", 1); ++j) {
+					Vector2 shift = spawnArgs.GetVector(va("projectile%d_shift", i));
+					if (shift.x == 0 && shift.y == 0)
+						continue;
+					shift.x *= (size.x + projShift) / 2 * (j + 1);
+					shift.y *= (size.y + projShift) / 2 * (j + 1);
 
-				std::shared_ptr<idEntity> ent;
-				gameLocal.SpawnEntityDef(projectileDict, &ent);
+					const auto proj_origin = GetPhysics()->GetOrigin() + shift;
 
-				if (!ent || !ent->IsType(idProjectile::Type)) {
-					const std::string projectileName = spawnArgs.GetString("def_projectile");
-					gameLocal.Error("'%s' is not an idProjectile", projectileName.c_str());
-					return;
-				}
+					std::shared_ptr<idEntity> ent;
+					gameLocal.SpawnEntityDef(projectileDict, &ent);
 
-				std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
-
-				proj->Create(owner, proj_origin, vec2_origin);
-				proj->Launch(proj_origin, vec2_origin, vec2_origin);
-
-				proj->Think();
-
-				bool collided = false;
-				for (int i = 0; i < proj->physicsObj->GetNumContacts(); ++i) {
-					auto ent = gameLocal.entities[proj->physicsObj->GetContact(i).entityNum].get();
-					if (gameLocal.entities[proj->physicsObj->GetContact(i).entityNum]->IsType(idStaticEntity::Type)) {
-						gameLocal.DPrintf("contact proj %d %s %f %f with %d %s %f %f\n", proj->entityNumber, proj->GetName().c_str(), proj->GetPhysics()->GetOrigin().x,
-							proj->GetPhysics()->GetOrigin().y, ent->entityNumber, ent->GetName().c_str(), ent->GetPhysics()->GetOrigin().x,
-							ent->GetPhysics()->GetOrigin().y);
-						if (!ent->fl.takedamage)
-							proj->PostEventSec(&EV_Explode, 0);
-						collided = true;
-						break;
+					if (!ent || !ent->IsType(idProjectile::Type)) {
+						const std::string projectileName = spawnArgs.GetString("def_projectile");
+						gameLocal.Error("'%s' is not an idProjectile", projectileName.c_str());
+						return;
 					}
+
+					std::shared_ptr<idProjectile> proj = std::static_pointer_cast<idProjectile>(ent);
+
+					proj->Create(owner, proj_origin, vec2_origin);
+					proj->Launch(proj_origin, vec2_origin, vec2_origin);
+
+					proj->Think();
+
+					bool collided = false;
+					for (int i = 0; i < proj->physicsObj->GetNumContacts(); ++i) {
+						auto ent = gameLocal.entities[proj->physicsObj->GetContact(i).entityNum].get();
+						if (gameLocal.entities[proj->physicsObj->GetContact(i).entityNum]->IsType(idStaticEntity::Type)) {
+							gameLocal.DPrintf("contact proj %d %s %f %f with %d %s %f %f\n", proj->entityNumber, proj->GetName().c_str(), proj->GetPhysics()->GetOrigin().x,
+								proj->GetPhysics()->GetOrigin().y, ent->entityNumber, ent->GetName().c_str(), ent->GetPhysics()->GetOrigin().x,
+								ent->GetPhysics()->GetOrigin().y);
+							if (!ent->fl.takedamage)
+								proj->PostEventSec(&EV_Explode, 0);
+							collided = true;
+							break;
+						}
+					}
+					if (collided)
+						break;
 				}
-				if (collided)
-					break;
 			}
 		}
 	}
