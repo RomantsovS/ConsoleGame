@@ -30,7 +30,7 @@ bool idassertFailed(const std::string& file, int line, const std::string& expres
 		}
 	}
 
-	idLib::Warning("idassertION FAILED! %s(%d): '%s'", file.c_str(), line, expression.c_str());
+	idLib::Warning("idassertion FAILED! %s(%d): '%s'", file.c_str(), line, expression.c_str());
 
 	#ifdef _WIN32
 	if (IsDebuggerPresent()) {
