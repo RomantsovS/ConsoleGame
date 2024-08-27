@@ -59,7 +59,6 @@ void idAI::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vec
 	physicsObj->GetClipModel()->Unlink();
 
 	Hide();
-
 	PostEventMS(&EV_Remove, 100);
 }
 

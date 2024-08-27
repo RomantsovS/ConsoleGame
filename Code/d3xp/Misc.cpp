@@ -22,7 +22,8 @@ void idStaticEntity::Think() {
 }
 
 void idStaticEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept {
-	PostEventMS(&EV_Remove, 0);
+	Hide();
+	PostEventMS(&EV_Remove, 100);
 }
 
 /*
@@ -31,6 +32,7 @@ idStaticEntity::WriteToSnapshot
 ================
 */
 void idStaticEntity::WriteToSnapshot(idBitMsg& msg) const {
+	msg.WriteBytes(fl.hidden, 1);
 	GetPhysics()->WriteToSnapshot(msg);
 }
 
@@ -40,18 +42,15 @@ idStaticEntity::ReadFromSnapshot
 ================
 */
 void idStaticEntity::ReadFromSnapshot(const idBitMsg& msg) {
-	bool hidden;
+	if (msg.ReadBytes(1)) {
+		Hide();
+	}
+	else {
+		Show();
+	}
 
 	GetPhysics()->ReadFromSnapshot(msg);
-	/*hidden = msg.ReadBits(1) == 1;
-	if (hidden != IsHidden()) {
-		if (hidden) {
-			Hide();
-		}
-		else {
-			Show();
-		}
-	}*/
+	
 	if (true/*msg.HasChanged()*/) {
 		UpdateVisuals();
 	}
