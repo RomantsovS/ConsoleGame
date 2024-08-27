@@ -202,12 +202,10 @@ bool idUDP::GetPacket(netadr_t& from, void* data, int& size, int maxSize) {
 			
 			idLib::Warning("NET: socket receive warning %d %s\n", ec.value(), NET_ErrorString(ec.value()));
 
-			idassert(0);
-
 			return false;
 		}
 		else {
-			idLib::Printf("NET: socket received %d bytes\n", size);
+			//idLib::Printf("NET: socket received %d bytes\n", size);
 		}
 
 		from.address = sender_endpoint.address();
