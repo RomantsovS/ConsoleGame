@@ -85,17 +85,28 @@ void idGameLocal::ClientReadSnapshot(const idSnapShot& ss) {
 			continue;
 		}
 
+		/*if (snapObjectNum < SNAP_ENTITIES || snapObjectNum >= SNAP_ENTITIES_END) {
+			continue;
+		}*/
+
+		//int entityNumber = snapObjectNum - SNAP_ENTITIES;
+
 		int spawnId = msg.ReadUShort();
 		int typeNum = msg.ReadLong();
 		int entityDefNumber = msg.ReadLong();
 		int entityNumber = msg.ReadLong();
+
+		if (msg.GetSize() == 0) {
+			entities[entityNumber] = nullptr;
+			continue;
+		}
 
 		idTypeInfo* typeInfo = idClass::GetType(typeNum);
 		if (!typeInfo) {
 			idLib::Error("Unknown type number %d for entity %d with class number %d", typeNum, entityNumber, 0/*entityDefNumber*/);
 		}
 
-		auto ent = entities[entityNumber];
+		auto& ent = entities[entityNumber];
 
 		// if there is no entity or an entity of the wrong type
 		if (!ent || ent->GetType()->typeNum != typeNum || ent->entityDefNumber != entityDefNumber || spawnId != spawnIds[entityNumber]) {
