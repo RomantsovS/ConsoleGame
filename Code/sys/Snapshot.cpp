@@ -86,7 +86,7 @@ idSnapShot::objectState_t* idSnapShot::S_AddObject(int objectNum, const std::byt
 	memcpy(buffer.Ptr(), data, size);
 
 	objectState_t object_state;
-	object_state.objectNum = allocatedObjs.size();
+	object_state.objectNum = objectNum;
 	object_state.buffer = std::move(buffer);
 
 	allocatedObjs.push_back(std::move(object_state));
