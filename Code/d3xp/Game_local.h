@@ -215,6 +215,8 @@ public:
 
 	int GetInfoUpdateTime() noexcept { return info_update_time; }
 private:
+	const static int INITIAL_SPAWN_COUNT = 1;
+
 	std::string mapFileName; // name of the map, empty string if no map loaded
 	std::shared_ptr<idMapFile> mapFile; // will be NULL during the game unless in-game editing is used
 

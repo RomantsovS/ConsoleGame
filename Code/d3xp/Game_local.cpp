@@ -783,6 +783,8 @@ void idGameLocal::LoadMap(const std::string &mapName, int randseed) {
     entities.clear();
     entities.resize(MAX_GENTITIES);
     std::fill(spawnIds.begin(), spawnIds.end(), -1);
+    spawnCount = INITIAL_SPAWN_COUNT;
+
     spawnedEntities.Clear();
     activeEntities.Clear();
     numEntitiesToDeactivate = 0;
@@ -856,6 +858,7 @@ void idGameLocal::Clear() {
     time = 0;
     mapFileName.clear();
     mapFile = nullptr;
+    spawnCount = INITIAL_SPAWN_COUNT;
     spawnArgs.Clear();
     gamestate = GAMESTATE_UNINITIALIZED;
 
