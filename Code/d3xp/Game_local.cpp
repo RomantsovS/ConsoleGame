@@ -418,7 +418,7 @@ void idGameLocal::RunSingleUserCmd(usercmd_t &cmd, gsl::not_null<idPlayer *> pla
         // in a snapshot so they know when they can stop predicting certain things.
         // usercmdLastClientMilliseconds[player.GetEntityNumber()] = cmd.clientGameMilliseconds;
     } else {
-        // player->ClientThink(netInterpolationInfo.serverGameMs, netInterpolationInfo.pct, true);
+         player->ClientThink(/*netInterpolationInfo.serverGameMs, netInterpolationInfo.pct, true*/);
     }
 }
 
