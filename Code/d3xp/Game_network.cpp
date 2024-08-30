@@ -19,6 +19,11 @@ idGameLocal::SyncPlayersWithLobbyUsers
 ================
 */
 void idGameLocal::SyncPlayersWithLobbyUsers(bool initial) {
+	idLobbyBase& lobby = session->GetActingGameStateLobbyBase();
+	if (!lobby.IsHost()) {
+		return;
+	}
+
 	// spawn the player
 	SpawnPlayer(0);
 }
