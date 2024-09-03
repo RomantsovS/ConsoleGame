@@ -88,7 +88,9 @@ use normal spawn selection.
 ============
 */
 void idPlayer::SelectInitialSpawnPoint(Vector2& origin, Vector2& angles) {
-	origin = gameLocal.SelectInitialSpawnPoint(dynamic_cast<idPlayer*>(this));
+	auto* spot = gameLocal.SelectInitialSpawnPoint(dynamic_cast<idPlayer*>(this));
+
+	origin = spot->GetPhysics()->GetOrigin();
 	angles = vec2_origin;
 }
 

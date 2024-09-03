@@ -5,7 +5,6 @@ Version 2
 "call" "map_marscity1::main"
 "no_Weapons" "1"
 "def_player" "player_snake_short"
-"player_origin" "30 40"
 // primitive 2
 {
  brushDef3
@@ -13,6 +12,12 @@ Version 2
   ( 0 0 36 80 )
  }
 }
+}
+
+{
+"classname" "info_player_start"
+"name" "info_player_start_1"
+"origin" "30 40"
 }
 
 // entity 1

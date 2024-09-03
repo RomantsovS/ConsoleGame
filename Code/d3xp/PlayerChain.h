@@ -17,9 +17,6 @@ public:
 	void Present() override;
 
 	void Init();
-	void SelectInitialSpawnPoint(Vector2& origin, Vector2& angles);
-	void SpawnFromSpawnSpot();
-	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
 
 	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
 protected:

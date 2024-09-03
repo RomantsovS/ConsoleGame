@@ -214,7 +214,6 @@ void idGameLocal::SpawnPlayer(int clientNum) {
 
     // args.Set("model", "pixel");
     args.Set("color", std::to_string(static_cast<Screen::color_type>(gameLocal.GetRandomColor())));
-    args.Set("origin", world->spawnArgs.GetString("player_origin", "10, 10"));
 
     std::shared_ptr<idEntity> ent;
     if (!SpawnEntityDef(args, &ent) || clientNum >= MAX_GENTITIES || !entities[clientNum]) {
@@ -1379,6 +1378,26 @@ void idGameLocal::UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept {
     }
 }
 
+idEntity* idGameLocal::FindEntityUsingDef(idEntity* from, const std::string& match) const {
+    idEntity* ent;
+
+    if (!from) {
+        ent = spawnedEntities.Next().get();
+    }
+    else {
+        ent = from->spawnNode.Next().get();
+    }
+
+    for (; ent; ent = ent->spawnNode.Next().get()) {
+        assert(ent);
+        if(ent->GetEntityDefName() == match) {
+            return ent;
+        }
+    }
+
+    return nullptr;
+}
+
 /*
 ================
 idGameLocal::EntitiesWithinRadius
@@ -1413,25 +1432,16 @@ upon map restart, initial spawns are used (randomized ordered list of spawns fla
   if there are more players than initial spots, overflow to regular spawning
 ============
 */
-Vector2 idGameLocal::SelectInitialSpawnPoint(idPlayer *player) {
-    Vector2 origin = player->spawnArgs.GetVector("origin", "0, 0");
-
-    /*std::vector<std::shared_ptr<idEntity>> ent_vec(1);
-
-    int num_attempts = 0;
-    float searching_radius = 0.0f;
-    int finded_ents = 0;
-    while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size())) != 0)
-    {
-        if (num_attempts++ > 100)
-        {
-            Error("couldn't spawn random point at %5.2f %5.2f, finded %d with radius %f", origin.x, origin.y, finded_ents, searching_radius);
+idEntity* idGameLocal::SelectInitialSpawnPoint(idPlayer *player) {
+    if (!common->IsMultiplayer()) {
+        auto ent = FindEntityUsingDef(NULL, "info_player_start");
+        if (!ent) {
+            Error("No info_player_start on map.\n");
         }
+        return ent;
+    }
 
-        origin = Vector2(GetRandomValue(0.0f, GetHeight() - 1.0f), GetRandomValue(0.0f, GetWidth() - 1.0f));
-    }*/
-
-    return origin;
+    Error("Can't get initial spawn point.\n");
 }
 
 /*

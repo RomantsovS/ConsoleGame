@@ -1,6 +1,25 @@
 #ifndef MISC_H
 #define MISC_H
 
+/*
+===============================================================================
+
+  Potential spawning position for players.
+  The first time a player enters the game, they will be at an 'initial' spot.
+  Targets will be fired when someone spawns in on them.
+
+  When triggered, will cause player to be teleported to spawn spot.
+
+===============================================================================
+*/
+
+class idPlayerStart : public idEntity {
+public:
+	CLASS_PROTOTYPE(idPlayerStart);
+
+	void Spawn();
+};
+
 class idStaticEntity : public idEntity {
 public:
 	CLASS_PROTOTYPE(idStaticEntity);

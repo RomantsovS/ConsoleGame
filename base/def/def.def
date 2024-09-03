@@ -21,6 +21,10 @@ entityDef worldspawn {
 	"name"					"world"
 }
 
+entityDef info_player_start {
+	"spawnclass"			"idPlayerStart"
+}
+
 entityDef brick {
 	"spawnclass"			"idStaticEntity"
 	"model"					"models/brick16x16.bmp"

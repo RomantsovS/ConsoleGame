@@ -56,6 +56,7 @@ public:
 	
 	void Remove() noexcept override;
 
+	const std::string& GetEntityDefName() const;
 	void SetName(const std::string name);
 	const std::string& GetName() const noexcept;
 

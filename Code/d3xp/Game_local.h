@@ -168,6 +168,7 @@ public:
 	void UnregisterEntity(std::shared_ptr<idEntity> ent) noexcept;
 	const idDict &GetSpawnArgs() const noexcept { return spawnArgs; }
 
+	idEntity* FindEntityUsingDef(idEntity* from, const std::string& match) const;
 	int EntitiesWithinRadius(const Vector2 org, float radius, std::vector<std::shared_ptr<idEntity>>& entityList, int maxCount) const;
 
 	// added the following to assist licensees with merge issues
@@ -176,7 +177,7 @@ public:
 
 	idPlayer* GetLocalPlayer() const;
 
-	Vector2 SelectInitialSpawnPoint(idPlayer* player);
+	idEntity* SelectInitialSpawnPoint(idPlayer* player);
 
 	void SyncPlayersWithLobbyUsers(bool initial);
 

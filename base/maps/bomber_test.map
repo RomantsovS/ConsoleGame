@@ -4,7 +4,6 @@ Version 2
 "classname"				"worldspawn"
 "call"					"map_marscity1::main"
 "def_player"			"player"
-"player_origin"			"28 8"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
 "r_background_color"	"0"
@@ -15,6 +14,12 @@ Version 2
   ( 0 0 208 112 )
  }
 }
+}
+
+{
+"classname" "info_player_start"
+"name" "info_player_start_1"
+"origin" "28 8"
 }
 
 {

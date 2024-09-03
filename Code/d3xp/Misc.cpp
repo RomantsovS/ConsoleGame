@@ -3,6 +3,12 @@
 
 #include "Game_local.h"
 
+CLASS_DECLARATION(idEntity, idPlayerStart)
+END_CLASS
+
+void idPlayerStart::Spawn() {
+}
+
 CLASS_DECLARATION(idEntity, idStaticEntity)
 END_CLASS
 

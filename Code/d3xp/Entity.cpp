@@ -111,6 +111,13 @@ void idEntity::Remove() noexcept {
 	gameLocal.UnregisterEntity(shared_from_this());
 }
 
+const std::string& idEntity::GetEntityDefName() const {
+	if (entityDefNumber < 0) {
+		return "*unknown*";
+	}
+	return declManager->DeclByIndex(declType_t::DECL_ENTITYDEF, entityDefNumber, false)->GetName();
+}
+
 /*
 ================
 idEntity::SetName
