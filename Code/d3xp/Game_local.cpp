@@ -1080,6 +1080,9 @@ void idGameLocal::MapPopulate() {
     // parse the key/value pairs and spawn entities
     SpawnMapEntities();
 
+    // prepare the list of randomized initial spawn spots
+    RandomizeInitialSpawns();
+
     // execute pending events before the very first game frame
     // this makes sure the map script main() function is called
     // before the physics are run so entities can bind correctly
@@ -1423,6 +1426,37 @@ int idGameLocal::EntitiesWithinRadius(const Vector2 org, float radius, std::vect
     return entCount;
 }
 
+void idGameLocal::RandomizeInitialSpawns() {
+    idEntity* ent;
+
+    if (!common->IsServer()) {
+        return;
+    }
+    initialSpots.clear();
+
+    ent = FindEntityUsingDef(NULL, "info_player_deathmatch");
+    while (ent) {
+        if (ent->spawnArgs.GetBool("initial")) {
+            initialSpots.push_back(ent);
+        }
+        ent = FindEntityUsingDef(ent, "info_player_deathmatch");
+    }
+
+    if (initialSpots.empty()) {
+        common->Warning("no info_player_deathmatch in map");
+        return;
+    }
+
+    common->Printf("spawns (%d initials)\n", initialSpots.size());
+    // if there are no initial spots in the map, consider they can all be used as initial
+    if (initialSpots.empty()) {
+        common->Warning("no info_player_deathmatch entities marked initial in map");
+    }
+
+    // reset the counter
+    currentInitialSpot = 0;
+}
+
 /*
 ===========
 idGameLocal::SelectInitialSpawnPoint
@@ -1439,6 +1473,10 @@ idEntity* idGameLocal::SelectInitialSpawnPoint(idPlayer *player) {
             Error("No info_player_start on map.\n");
         }
         return ent;
+    }
+
+    if (currentInitialSpot < initialSpots.size()) {
+        return initialSpots.at(currentInitialSpot++);
     }
 
     Error("Can't get initial spawn point.\n");

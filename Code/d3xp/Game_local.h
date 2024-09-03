@@ -230,6 +230,9 @@ private:
 
 	gameState_t gamestate; // keeps track of whether we're spawning, shutting down, or normal gameplay
 
+	std::vector<idEntity*> initialSpots;
+	int currentInitialSpot;
+
 	struct netInterpolationInfo_t {		// Was in GameTimeManager.h in id5, needed common place to put this.
 		netInterpolationInfo_t()
 			: pct(0.0f)
@@ -261,6 +264,8 @@ private:
 
 	void InitConsoleCommands();
 	void ShutdownConsoleCommands();
+
+	void RandomizeInitialSpawns();
 
 	/*void onMoveKeyPressed(SimpleObject::directions dir);
 

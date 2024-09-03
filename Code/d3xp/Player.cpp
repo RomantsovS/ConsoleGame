@@ -75,8 +75,18 @@ void idPlayer::Spawn() {
 	physicsObj->SetClipMask(MASK_PLAYERSOLID);
 	SetPhysics(physicsObj);
 
-	SetupWeaponEntity();
-	SpawnFromSpawnSpot();
+	if (common->IsMultiplayer()) {
+		Init();
+		if (!common->IsClient()) {
+			// set yourself ready to spawn. idMultiplayerGame will decide when/if appropriate and call SpawnFromSpawnSpot
+			SetupWeaponEntity();
+			SpawnFromSpawnSpot();
+		}
+	}
+	else {
+		SetupWeaponEntity();
+		SpawnFromSpawnSpot();
+	}
 }
 
 /*

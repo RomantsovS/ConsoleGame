@@ -21,6 +21,10 @@ entityDef worldspawn {
 	"name"					"world"
 }
 
+entityDef info_player_deathmatch {
+	"spawnclass"			"idPlayerStart"
+}
+
 entityDef info_player_start {
 	"spawnclass"			"idPlayerStart"
 }

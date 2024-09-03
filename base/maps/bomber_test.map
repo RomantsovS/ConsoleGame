@@ -17,6 +17,20 @@ Version 2
 }
 
 {
+"classname" "info_player_deathmatch"
+"name" "info_player_deathmatch_1"
+"origin" "28 8"
+"initial" "1"
+}
+
+{
+"classname" "info_player_deathmatch"
+"name" "info_player_deathmatch_1"
+"origin" "58 18"
+"initial" "1"
+}
+
+{
 "classname" "info_player_start"
 "name" "info_player_start_1"
 "origin" "28 8"
