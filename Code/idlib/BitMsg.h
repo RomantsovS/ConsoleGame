@@ -92,7 +92,7 @@ public:
 	uint32_t ReadLong() const;
 	uint64_t ReadLongLong() const;
 	float ReadFloat() const;
-	int ReadData(std::byte* data, int length) const;
+	int ReadData(void* data, int length) const;
 	bool ReadProtobufMessage(google::protobuf::Message* proto_msg) const;
 private:
 	std::byte* writeData;		// pointer to data for writing

@@ -1,7 +1,6 @@
 #include "idlib/precompiled.h"
 
 #include "sys_session_local.h"
-#include <ConnectionRequest.pb.h>
 #include "sys_lobby_backend_direct.h"
 
 idCVar net_useGameStateLobby("net_useGameStateLobby", "0", CVAR_BOOL, "");
@@ -417,7 +416,7 @@ bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
 
 				lobbyUser_t* partyUser = GetPartyLobby().GetLobbyUser(i);
 
-				/*for (int j = 0; j < GetGameLobby().GetNumLobbyUsers(); j++) {
+				for (int j = 0; j < GetGameLobby().GetNumLobbyUsers(); j++) {
 					lobbyUser_t* gameUser = GetGameLobby().GetLobbyUser(j);
 
 					if (GetGameLobby().IsSessionUserLocal(gameUser) || gameUser->address.Compare(partyUser->address, true)) {
@@ -427,7 +426,7 @@ bool idSessionLocal::HandleConnectAndMoveToLobby(idLobby& lobby) {
 					}
 				}
 
-				idassert(!GetPartyLobby().IsSessionUserIndexLocal(i) || foundUser);*/
+				idassert(!GetPartyLobby().IsSessionUserIndexLocal(i) || foundUser);
 			}
 
 			if (numUsersIn != GetPartyLobby().GetNumLobbyUsers()) {
@@ -1435,6 +1434,14 @@ lobbyAddress_t::Compare
 */
 bool lobbyAddress_t::Compare(const lobbyAddress_t& addr, bool ignoreSessionCheck) const {
 	return Sys_CompareNetAdrBase(netAddr, addr.netAddr);
+}
+
+void lobbyAddress_t::WriteToMsg(idBitMsg& msg) const {
+	msg.WriteData(&netAddr, sizeof(netAddr));
+}
+
+void lobbyAddress_t::ReadFromMsg(idBitMsg& msg) {
+	msg.ReadData(&netAddr, sizeof(netAddr));
 }
 
 /*

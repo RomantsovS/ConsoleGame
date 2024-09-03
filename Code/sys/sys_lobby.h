@@ -209,6 +209,7 @@ public:
 
 	int GetNumLobbyUsers() const override { return userList.size(); }
 	lobbyUser_t* GetLobbyUser(int index) { return (index >= 0 && index < GetNumLobbyUsers()) ? userList[index] : nullptr; }
+	const lobbyUser_t* GetLobbyUser(int index) const { return (index >= 0 && index < GetNumLobbyUsers()) ? userList[index] : nullptr; }
 
 	const idMatchParameters& GetMatchParms() const override { return parms; }
 
@@ -294,6 +295,10 @@ public:
 	void RegisterUser(lobbyUser_t* lobbyUser);
 	void UnregisterUser(lobbyUser_t* lobbyUser);
 
+	bool IsSessionUserLocal(const lobbyUser_t* lobbyUser) const;
+	bool IsSessionUserIndexLocal(int i) const;
+	int GetLobbyUserIndexByID(lobbyUserID_t lobbyUserId, bool ignoreLobbyType = false) const;
+
 	// Helper function to create a lobby user from a local user
 	lobbyUser_t CreateLobbyUserFromLocalUser();
 
@@ -302,6 +307,13 @@ public:
 	void InitSessionUsersFromLocalUsers(bool onlineMatch);
 
 	void RemoveUsersWithDisconnectedPeers();
+	void SendNewUsersToPeers(int skipPeer, int userStart, int numUsers);
+	void AddUsersFromMsg(idBitMsg& msg, int fromPeer);
+
+	bool ValidateConnectedUser(const lobbyUser_t* user) const;
+	bool IsLobbyUserValid(lobbyUserID_t lobbyUserID) const override;
+	bool IsLobbyUserLoaded(lobbyUserID_t lobbyUserID) const override;
+	lobbyUserID_t GetLobbyUserIdByOrdinal(int userIndex) const override;
 
 	//
 	// Snapshots

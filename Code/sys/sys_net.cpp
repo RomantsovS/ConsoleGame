@@ -249,7 +249,4 @@ void idUDP::SendPacket(const netadr_t to, const void* data, int size) {
 
 		idassert(0);
 	}
-	else {
-		idLib::Printf("NET: socket sent %d bytes\n", len);
-	}
 }

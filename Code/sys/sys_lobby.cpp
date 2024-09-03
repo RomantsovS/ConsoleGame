@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 #include "sys_lobby.h"
-#include <ConnectionRequest.pb.h>
 #include <ReliableHello.pb.h>
 
 extern idCVar net_connectTimeoutInSeconds;
@@ -163,7 +162,7 @@ void idLobby::Shutdown(bool retainMigrationInfo, bool skipGoodbye) {
 	//	UnregisterUser(user);
 	//}
 
-	//FreeAllUsers();
+	FreeAllUsers();
 
 	host = -1;
 	//peerIndexOnHost = -1;
@@ -876,19 +875,18 @@ void idLobby::SendConnectionRequest() {
 	std::array<std::byte, idPacketProcessor::MAX_PACKET_SIZE - 2> buffer;
 	idBitMsg msg(buffer.data(), sizeof(buffer));
 
-	Serialize::ConnectionRequest proto_msg;
-	proto_msg.set_sessionid(peers[host].sessionID);
+	msg.WriteUShort(peers[host].sessionID);
 
 	// We use InitSessionUsersFromLocalUsers here to copy the current local users over to session users simply to have a list
 	// to send on the initial connection attempt.  We immediately clear our session user list once sent.
 	InitSessionUsersFromLocalUsers(true);
 
 	if (GetNumLobbyUsers() > 0) {
+		// Fill up the msg with the users on this machine
+		msg.WriteBytes(GetNumLobbyUsers(), 1);
+
 		for (int u = 0; u < GetNumLobbyUsers(); u++) {
-			auto lobbyUser = GetLobbyUser(u);
-			Serialize::Address address;
-			address.set_port(lobbyUser->address.netAddr.port);
-			*proto_msg.mutable_address() = address;
+			GetLobbyUser(u)->WriteToMsg(msg);
 		}
 	}
 	else {
@@ -903,8 +901,6 @@ void idLobby::SendConnectionRequest() {
 
 	NET_VERBOSE_PRINT("NET: Sending hello to: %s (lobbyType: %s, session ID %i, attempt: %i)\n", hostAddress.ToString().c_str(), GetLobbyName().c_str(),
 		peers[host].sessionID, connectionAttempts);
-
-	msg.WriteProtobufMessage(&proto_msg);
 
 	SendConnectionLess(hostAddress, static_cast<std::byte>(OOB_HELLO), msg.GetReadData(), msg.GetSize());
 
@@ -1052,10 +1048,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 		return -1;
 	}*/
 
-	Serialize::ConnectionRequest proto_msg;
-	if (!msg.ReadProtobufMessage(&proto_msg)) {
-		return -1;
-	}
+	idPacketProcessor::sessionId_t sessionID = msg.ReadUShort();
 
 	// Check to see if this is a peer trying to connect with a different sessionID
 	// If the peer got abruptly disconnected, the peer could be trying to reconnect from a non clean disconnect
@@ -1064,7 +1057,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 
 		idassert(existingPeer.GetConnectionState() != connectionState_t::CONNECTION_FREE);
 
-		if (existingPeer.sessionID == proto_msg.sessionid()) {
+		if (existingPeer.sessionID == sessionID) {
 			return peerNum;		// If this is the same sessionID, then assume redundant connection attempt
 		}
 
@@ -1093,7 +1086,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 	}
 
 	// Calling AddPeer will set our connectionState to this peer as CONNECTION_CONNECTING (which will get set to CONNECTION_ESTABLISHED below)
-	peerNum = AddPeer(peerAddress, proto_msg.sessionid());
+	peerNum = AddPeer(peerAddress, sessionID);
 
 	peer_t& newPeer = peers[peerNum];
 
@@ -1102,7 +1095,7 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 
 	// First, add users from this new peer to our user list 
 	// (which will then forward the list to all peers except peerNum)
-	//AddUsersFromMsg(msg, peerNum);
+	AddUsersFromMsg(msg, peerNum);
 
 	// Mark the peer as connected for this session type
 	SetPeerConnectionState(peerNum, connectionState_t::CONNECTION_ESTABLISHED);
@@ -1121,6 +1114,14 @@ int idLobby::HandleInitialPeerConnection(idBitMsg& msg, const lobbyAddress_t& pe
 	*proto_out_msg.mutable_matchparams() = proto_match_params;
 
 	outmsg.WriteProtobufMessage(&proto_out_msg);
+
+	// Send list of existing users to this new peer 
+	// (the users from the new peer will also be in this list, since we already called AddUsersFromMsg)
+	outmsg.WriteBytes(GetNumLobbyUsers(), 1);
+
+	for (int u = 0; u < GetNumLobbyUsers(); u++) {
+		GetLobbyUser(u)->WriteToMsg(outmsg);
+	}
 
 	NET_VERBOSE_PRINT("NET: Sending response to %s, lobbyType %s, sessionID %i\n", peerAddress.ToString().c_str(), GetLobbyName().c_str(), 0);
 
@@ -1156,7 +1157,7 @@ void idLobby::InitStateLobbyHost() {
 	}
 
 	// Initialize the initial user list for this lobby
-	//InitSessionUsersFromLocalUsers(MatchTypeIsOnline(parms.matchFlags));
+	InitSessionUsersFromLocalUsers(MatchTypeIsOnline(parms.matchFlags));
 
 	// Set the session's hostAddress to the local players' address.
 	/*const int myUserIndex = GetLobbyUserIndexByLocalUserHandle(sessionCB->GetSignInManager().GetMasterLocalUserHandle());
@@ -1403,7 +1404,7 @@ void idLobby::HandleHelloAck(int p, idBitMsg& msg) {
 	// Populate the user list with the one from the host (which will also include our local users)
 	// This ensures the user lists are kept in sync
 	FreeAllUsers();
-	//AddUsersFromMsg(msg, p);
+	AddUsersFromMsg(msg, p);
 
 	// Make sure the host has a current heartbeat
 	//peer.lastHeartBeat = Sys_Milliseconds();

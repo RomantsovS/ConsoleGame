@@ -290,6 +290,8 @@ void idGameLocal::RunFrame(idUserCmdMgr &cmdMgr, gameReturn_t &ret) {
         return;
     }
 
+    SyncPlayersWithLobbyUsers(false);
+
     static auto start_time = Sys_Milliseconds();
 
     auto player = GetLocalPlayer();
@@ -833,7 +835,7 @@ void idGameLocal::getGameSize(const idMapFile *mapFile) {
         Error("Map brush must have two points");
     }
     width = mapSide->GetPoints()[1].x - mapSide->GetPoints()[0].x;
-    width = mapSide->GetPoints()[1].y - mapSide->GetPoints()[0].y;
+    height = mapSide->GetPoints()[1].y - mapSide->GetPoints()[0].y;
 }
 
 void idGameLocal::Clear() {

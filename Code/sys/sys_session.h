@@ -15,6 +15,8 @@ enum class matchFlags_t {
 	MATCH_JOIN_IN_PROGRESS = BIT(7),		// Join in progress supported for this match
 };
 
+inline bool MatchTypeIsOnline(uint8_t matchFlags) { return (matchFlags & static_cast<int>(matchFlags_t::MATCH_ONLINE)) ? true : false; }
+
 const int8_t GAME_MAP_RANDOM = -1;
 
 const int DefaultPartyFlags = static_cast<int>(matchFlags_t::MATCH_JOIN_IN_PROGRESS) | static_cast<int>(matchFlags_t::MATCH_ONLINE);
@@ -40,6 +42,55 @@ public:
 	std::string mapName; // This is only used for SP (gameMap == GAME_MAP_SINGLEPLAYER)
 };
 
+struct lobbyUserID_t {
+public:
+
+	lobbyUserID_t() : lobbyType{ 0xFF } {}
+
+	explicit lobbyUserID_t(uint32_t localUser_, std::byte lobbyType_) : localUserHandle(localUser_), lobbyType(lobbyType_) {}
+	
+	bool operator == (const lobbyUserID_t& other) const {
+		return localUserHandle == other.localUserHandle && lobbyType == other.lobbyType;		// Lobby type must match
+	}
+
+	bool operator != (const lobbyUserID_t& other) const {
+		return !(*this == other);
+	}
+
+	bool operator < (const lobbyUserID_t& other) const {
+		if (localUserHandle == other.localUserHandle) {
+			return lobbyType < other.lobbyType;		// Lobby type tie breaker
+		}
+
+		return localUserHandle < other.localUserHandle;
+	}
+	/*
+	bool CompareIgnoreLobbyType(const lobbyUserID_t& other) const {
+		return localUserHandle == other.localUserHandle;
+	}
+	*/
+	uint32_t GetLocalUserHandle() const { return localUserHandle; }
+	std::byte GetLobbyType() const { return lobbyType; }
+	
+	bool IsValid() const { return localUserHandle > 0 && lobbyType != std::byte{ 0xFF }; }
+	
+	void WriteToMsg(idBitMsg& msg) {
+		msg.WriteLong(localUserHandle);
+		msg.WriteBytes(static_cast<int32_t>(lobbyType), 1);
+	}
+
+	void ReadFromMsg(const idBitMsg& msg) {
+		localUserHandle = msg.ReadLong();
+		lobbyType = static_cast<std::byte>(msg.ReadBytes(1));
+	}
+	
+	//void Serialize(idSerializer& ser);
+
+private:
+	uint32_t localUserHandle = 0;
+	std::byte lobbyType;
+};
+
 /*
 ================================================
 idLobbyBase
@@ -52,6 +103,12 @@ public:
 	virtual bool IsPeer() const = 0;
 	virtual bool HasActivePeers() const = 0;
 	virtual int GetNumLobbyUsers() const = 0;
+
+	virtual lobbyUserID_t GetLobbyUserIdByOrdinal(int userIndex) const = 0;
+
+	// Lobby user access
+	virtual bool IsLobbyUserValid(lobbyUserID_t lobbyUserID) const = 0;
+	virtual bool IsLobbyUserLoaded(lobbyUserID_t lobbyUserID) const = 0;
 
 	virtual const idMatchParameters& GetMatchParms() const = 0;
 };

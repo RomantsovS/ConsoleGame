@@ -84,6 +84,7 @@ class idGameLocal : public idGame {
 public:
 	int previousServerTime;		// time in msec of last frame on the server
 	int serverTime;				// in msec. ( on the client ) the server time. ( on the server ) the actual game time.
+	std::array<lobbyUserID_t, MAX_CLIENTS> lobbyUserIDs;	// Maps from a client (player) number to a lobby user
 	std::vector<std::shared_ptr<idEntity>> entities;
 	std::vector<int> spawnIds;// for use in idEntityPtr
 	std::array<int, 2> firstFreeEntityIndex;	// first free index in the entities array. [0] for replicated entities, [1] for non-replicated

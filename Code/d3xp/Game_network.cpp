@@ -24,8 +24,94 @@ void idGameLocal::SyncPlayersWithLobbyUsers(bool initial) {
 		return;
 	}
 
-	// spawn the player
-	SpawnPlayer(0);
+	std::vector<lobbyUserID_t> newLobbyUsers;
+	newLobbyUsers.reserve(MAX_CLIENTS);
+
+	// First, loop over lobby users, and see if we find a lobby user that we haven't registered
+	for (int i = 0; i < lobby.GetNumLobbyUsers(); i++) {
+		lobbyUserID_t lobbyUserID1 = lobby.GetLobbyUserIdByOrdinal(i);
+
+		if (!lobbyUserID1.IsValid()) {
+			continue;
+		}
+
+		if (!initial && !lobby.IsLobbyUserLoaded(lobbyUserID1)) {
+			continue;
+		}
+
+		// Now, see if we find this lobby user in our list
+		bool found = false;
+
+		for (int j = 0; j < MAX_PLAYERS; j++) {
+			auto player = std::dynamic_pointer_cast<idPlayer>(entities[j]);
+			if (!player) {
+				continue;
+			}
+
+			lobbyUserID_t lobbyUserID2 = lobbyUserIDs[j];
+
+			if (lobbyUserID1 == lobbyUserID2) {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			// If we didn't find it, we need to create a player and assign it to this new lobby user
+			newLobbyUsers.push_back(lobbyUserID1);
+		}
+	}
+
+	// Validate connected players
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		auto player = std::dynamic_pointer_cast<idPlayer>(entities[i]);
+		if (!player) {
+			continue;
+		}
+
+		lobbyUserID_t lobbyUserID = lobbyUserIDs[i];
+
+		if (!lobby.IsLobbyUserValid(lobbyUserID)) {
+			entities[i] = nullptr;
+			//mpGame.DisconnectClient(i);
+			lobbyUserIDs[i] = lobbyUserID_t();
+			continue;
+		}
+
+		//lobby.EnableSnapshotsForLobbyUser(lobbyUserID);
+	}
+
+	while (!newLobbyUsers.empty()) {
+		// Find a free player data slot to use for this new player
+		int freePlayerDataIndex = -1;
+
+		for (int i = 0; i < MAX_PLAYERS; ++i) {
+			auto player = std::dynamic_pointer_cast<idPlayer>(entities[i]);
+			if (!player) {
+				freePlayerDataIndex = i;
+				break;
+			}
+		}
+		if (freePlayerDataIndex == -1) {
+			break;			// No player data slots (this shouldn't happen)
+		}
+		lobbyUserID_t lobbyUserID = newLobbyUsers.back();
+		newLobbyUsers.pop_back();
+
+		//mpGame.ServerClientConnect(freePlayerDataIndex);
+		Printf("client %d connected.\n", freePlayerDataIndex);
+
+		lobbyUserIDs[freePlayerDataIndex] = lobbyUserID;
+
+		// Clear this player's old usercmds.
+		//common->ResetPlayerInput(freePlayerDataIndex);
+
+
+		// spawn the player
+		SpawnPlayer(freePlayerDataIndex);
+
+		//ServerWriteInitialReliableMessages(freePlayerDataIndex, lobbyUserID);
+	}
 }
 
 /*

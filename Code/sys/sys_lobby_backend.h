@@ -13,6 +13,8 @@ public:
 
 	std::string ToString() const;
 	bool Compare(const lobbyAddress_t& addr, bool ignoreSessionCheck = false) const;
+	void WriteToMsg(idBitMsg& msg) const;
+	void ReadFromMsg(idBitMsg& msg);
 
 	// IP address
 	netadr_t netAddr;
@@ -51,7 +53,30 @@ struct lobbyUser_t {
 
 	// Common variables
 	int peerIndex; // peer number on host
+	lobbyUserID_t lobbyUserID; // Locally generated to be unique, and internally keeps the local user handle
 	lobbyAddress_t address;
+
+	bool IsDisconnected() const { return lobbyUserID.IsValid() ? false : true; }
+
+	void WriteToMsg(idBitMsg& msg) {
+		address.WriteToMsg(msg);
+		lobbyUserID.WriteToMsg(msg);
+		msg.WriteLong(peerIndex);
+		/*msg.WriteShort(pingMs);
+		msg.WriteLong(partyToken);
+		msg.WriteString(gamertag, MAX_GAMERTAG, false);
+		WriteClientMutableData(msg);*/
+	}
+
+	void ReadFromMsg(idBitMsg& msg) {
+		address.ReadFromMsg(msg);
+		lobbyUserID.ReadFromMsg(msg);
+		peerIndex = msg.ReadLong();
+		/*pingMs = msg.ReadShort();
+		partyToken = msg.ReadLong();
+		msg.ReadString(gamertag, MAX_GAMERTAG);
+		ReadClientMutableData(msg);*/
+	}
 };
 
 /*

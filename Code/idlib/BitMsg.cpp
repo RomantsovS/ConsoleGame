@@ -87,7 +87,7 @@ void idBitMsg::WriteData(const void* data, int length) {
 	memcpy(GetByteSpace(length), data, length);
 }
 
-int idBitMsg::ReadData(std::byte* data, int length) const {
+int idBitMsg::ReadData(void* data, int length) const {
 	int cnt;
 
 	cnt = readCount;
@@ -111,7 +111,9 @@ int idBitMsg::ReadData(std::byte* data, int length) const {
 bool idBitMsg::ReadProtobufMessage(google::protobuf::Message* proto_msg) const {
 	uint64_t size = ReadLongLong();
 
-	return proto_msg->ParseFromArray(readData + readCount, size);
+	bool res = proto_msg->ParseFromArray(readData + readCount, size);
+	readCount += size;
+	return res;
 }
 
 bool idBitMsg::WriteProtobufMessage(google::protobuf::Message* proto_msg) {
