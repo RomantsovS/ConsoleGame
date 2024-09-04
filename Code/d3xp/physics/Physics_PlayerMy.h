@@ -1,24 +1,32 @@
 #ifndef PHYSICS_PHYSICS_PLAYER_MY_H_
 #define PHYSICS_PHYSICS_PLAYER_MY_H_
 
+enum class pmtype_t {
+	PM_NORMAL,				// normal physics
+	PM_DEAD,				// no acceleration or turning, but free falling
+	PM_SPECTATOR,			// flying without gravity but with collision detection
+	PM_FREEZE,				// stuck in place without control
+	PM_NOCLIP				// flying without collision detection nor gravity
+};
+
 struct playerMyPState_t {
 	Vector2 origin;
 	Vector2 velocity;
 	Vector2 localOrigin;
 	//idVec3					pushVelocity;
 	//float					stepUp;
-	//int movementType;
+	pmtype_t movementType;
 	//int movementFlags;
 	//int movementTime;
 
 	playerMyPState_t() :
 		origin(vec2_origin),
 		velocity(vec2_origin),
-		localOrigin(vec2_origin)
+		localOrigin(vec2_origin),
 		/*pushVelocity(vec3_zero),
-		stepUp(0.0f),
-		movementType(0),
-		movementFlags(0),
+		stepUp(0.0f),*/
+		movementType(pmtype_t::PM_NORMAL)
+		/*movementFlags(0),
 		movementTime(0)*/ {
 	}
 };
@@ -36,7 +44,8 @@ public:
 	Physics_PlayerMy& operator=(Physics_PlayerMy&&) = default;
 
 	// initialisation
-	const Vector2& PlayerGetOrigin() const noexcept;	// != GetOrigin
+	void SetMovementType(const pmtype_t type);
+	const Vector2& PlayerGetOrigin() const noexcept override;	// != GetOrigin
 public:	// common physics interface
 	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
 

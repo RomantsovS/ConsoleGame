@@ -168,11 +168,25 @@ void Physics_PlayerMy::MovePlayer(int msec) {
 	// move the player velocity into the frame of a pusher
 	//current.velocity -= current.pushVelocity;
 
+	// no control when dead
+	if (current.movementType == pmtype_t::PM_DEAD) {
+		command.forwardmove = 0;
+		command.rightmove = 0;
+		command.buttons &= ~(BUTTON_JUMP | BUTTON_CROUCH);
+	}
+
 	// check for ground
 	CheckGround();
 
-	// walking on ground
-	WalkMove();
+	// move
+	if (current.movementType == pmtype_t::PM_DEAD) {
+		// dead
+		//idPhysics_PlayerBase::DeadMove();
+	}
+	else {
+		// walking on ground
+		WalkMove();
+	}
 
 	// move the player velocity back into the world frame
 	//current.velocity += current.pushVelocity;
@@ -278,6 +292,10 @@ void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 	//}
 
 	clipModel->Link(gameLocal.clip, self, 0, newOrigin);
+}
+
+void Physics_PlayerMy::SetMovementType(const pmtype_t type) {
+	current.movementType = type;
 }
 
 /*

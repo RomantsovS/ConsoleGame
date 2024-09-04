@@ -307,6 +307,9 @@ void idPlayer::Killed(idEntity* inflictor, idEntity* attacker, int damage, const
 	minRespawnTime = gameLocal.time + SEC2MS(delay);
 
 	physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) | static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
+	physicsObj->SetMovementType(pmtype_t::PM_DEAD);
+
+	Hide();
 
 	UpdateVisuals();
 }

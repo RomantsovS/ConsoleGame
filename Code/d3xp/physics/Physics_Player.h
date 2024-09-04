@@ -22,7 +22,7 @@ public:
 	// initialisation
 	void SetPlayerInput(const usercmd_t& cmd, const Vector2& forwardVector) noexcept;
 	virtual void SetSpeed(const float newWalkSpeed, const float newCrouchSpeed) noexcept;
-	const Vector2& PlayerGetOrigin() const noexcept;	// != GetOrigin
+	virtual const Vector2& PlayerGetOrigin() const noexcept;	// != GetOrigin
 public:	// common physics interface
 	bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
 
@@ -44,9 +44,6 @@ private:
 	// properties
 	float walkSpeed{};
 
-	// player input
-	usercmd_t command;
-
 	// run-time variables
 	int framemsec{};
 	float frametime{};
@@ -58,6 +55,9 @@ protected:
 	const usercmd_t& GetUserCmd() const noexcept { return command; }
 	float GetFrameTime() noexcept { return frametime; }
 	float GetPlayerSpeed() const noexcept { return playerSpeed; }
+
+	// player input
+	usercmd_t command;
 };
 
 #endif // !PHYSICS_PHYSICS_PLAYER_H_
