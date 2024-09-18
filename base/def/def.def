@@ -97,7 +97,7 @@ entityDef player_snake_long {
 }
 
 entityDef player {
-	"spawnclass"			"idPlayer"
+	"spawnclass"			"idPlayerBomber"
 	"model"					"mario"
 	"size"					"14 14"
 	"linearVelocity"		"0 10"
@@ -108,7 +108,7 @@ entityDef player {
 }
 
 entityDef player_turtle {
-	"spawnclass"			"idPlayer"
+	"spawnclass"			"idPlayerBomber"
 	"model"					"turtle"
 	"size"					"16 23"
 	"linearVelocity"		"0 10"
