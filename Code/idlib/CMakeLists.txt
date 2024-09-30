@@ -10,7 +10,8 @@ CryFileContainer("sys")
 find_package(Boost REQUIRED)
 find_package(Threads)
 
-find_package(Protobuf REQUIRED)
+find_package(Protobuf REQUIRED) # use without CONFIG to call cmake's FindProtobuf to define Protobuf_INCLUDE_DIRS
+message(STATUS "Protobuf_INCLUDE_DIRS=${Protobuf_INCLUDE_DIRS}")
 
 if (MODULE_FORCE_SHARED)
 	add_library(${THIS_PROJECT} SHARED ${${THIS_PROJECT}_SOURCES})

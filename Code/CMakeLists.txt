@@ -28,30 +28,37 @@
 	find_package(Boost REQUIRED)
 	find_package(Threads)
 
-	if(WINDOWS AND MSVC)
-		find_package(Protobuf CONFIG REQUIRED) # vcpkg protobuf found this way only
-	else()
-		find_package(Protobuf REQUIRED)
-	endif()
-	
+	find_package(protobuf CONFIG REQUIRED)
 	file(GLOB _proto_source_list LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
 
-	protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${_proto_source_list})
-
 	if(WINDOWS)
-		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
+		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES} ${_proto_source_list})
 	else()
-		add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
+		add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES} ${PROTO_SRCS})
 	endif()
 	if(NOT ANDROID)
 		set_property(TARGET ${THIS_PROJECT} PROPERTY OUTPUT_NAME "${OPTION_LAUNCHER_EXECUTABLE}")	
 	endif()
 
+	message(STATUS "CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
+
+	#set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+	#target_include_directories(proto-objects PUBLIC "$<BUILD_INTERFACE:${PROTO_BINARY_DIR}>")
+	protobuf_generate(
+		TARGET ${THIS_PROJECT}
+		IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../proto"
+		#PROTOC_OUT_DIR "${PROTO_BINARY_DIR}"
+	)
+
 	if(WINDOWS AND MSVC)
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
 
-	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${Protobuf_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
+	message(STATUS "PROTOBUF_LIBRARIES=${PROTOBUF_LIBRARIES}")
+	message(STATUS "PROTOBUF_LIBRARY=${PROTOBUF_LIBRARY}")
+	message(STATUS "Protobuf_INCLUDE_DIRS=${Protobuf_INCLUDE_DIRS}")
+
+	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} protobuf::libprotobuf idlib)
 
 	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
