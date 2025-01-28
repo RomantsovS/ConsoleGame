@@ -28,6 +28,11 @@ jobs:
         run: |
           sudo apt-get install -y cmake
 
+      # Install Boost libraries
+      - name: Install Boost
+        run: |
+          sudo apt-get install -y libboost-all-dev
+
       # Create build directory
       - name: Create build directory
         run: |
