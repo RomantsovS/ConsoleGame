@@ -56,7 +56,7 @@ idLobbyBackendDirect::GetSearchResults
 void idLobbyBackendDirect::GetSearchResults(std::vector<lobbyConnectInfo_t>& searchResults) {
 	lobbyConnectInfo_t fakeResult;
 
-	boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string(host_net_ip.GetString()), net_port.GetInteger());
+	boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address(host_net_ip.GetString()), net_port.GetInteger());
 	fakeResult.netAddr.address = ep.address();
 	fakeResult.netAddr.port = ep.port();
 	fakeResult.netAddr.type = netadrtype_t::NA_IP;
@@ -72,7 +72,7 @@ idLobbyBackendDirect::JoinFromConnectInfo
 */
 void idLobbyBackendDirect::JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo) {
 	if (lobbyToSessionCB->CanJoinLocalHost()) {
-		boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string("127.0.0.1"), net_port.GetInteger());
+		boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
 		address.address = ep.address();
 		address.port = ep.port();
 		address.type = netadrtype_t::NA_IP;
@@ -115,7 +115,7 @@ lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo() {
 
 	// If we aren't the host, this lobby should have been joined through JoinFromConnectInfo
 	if (IsHost()) {
-		boost::asio::ip::udp::endpoint ep(boost::asio::ip::address::from_string("127.0.0.1"), net_port.GetInteger());
+		boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
 		address.address = ep.address();
 		address.port = ep.port();
 		address.type = netadrtype_t::NA_IP;

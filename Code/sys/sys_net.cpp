@@ -130,7 +130,7 @@ bool idUDP::InitForPort(int portNumber) {
 	if(net_interface.empty() || net_interface == "localhost")
 		ep = ba::ip::udp::endpoint(ba::ip::address_v4::any(), portNumber == PORT_ANY ? 0 : portNumber);
 	else
-		ep = ba::ip::udp::endpoint(boost::asio::ip::address::from_string(net_interface), portNumber == PORT_ANY ? 0 : portNumber);
+		ep = ba::ip::udp::endpoint(boost::asio::ip::make_address(net_interface), portNumber == PORT_ANY ? 0 : portNumber);
 
 	socket->bind(ep, ec);
 	if (ec) {
