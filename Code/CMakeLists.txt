@@ -28,7 +28,10 @@
 	find_package(Boost REQUIRED)
 	find_package(Threads)
 
-	find_package(protobuf CONFIG REQUIRED)
+	find_package(Protobuf CONFIG REQUIRED)
+	if (NOT Protobuf_FOUND)
+		find_package(Protobuf REQUIRED)
+	endif()
 	file(GLOB _proto_source_list LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
 
 	if(WINDOWS)
@@ -53,10 +56,6 @@
 	if(WINDOWS AND MSVC)
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
-
-	message(STATUS "PROTOBUF_LIBRARIES=${PROTOBUF_LIBRARIES}")
-	message(STATUS "PROTOBUF_LIBRARY=${PROTOBUF_LIBRARY}")
-	message(STATUS "Protobuf_INCLUDE_DIRS=${Protobuf_INCLUDE_DIRS}")
 
 	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} protobuf::libprotobuf idlib)
