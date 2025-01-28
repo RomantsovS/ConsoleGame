@@ -33,6 +33,11 @@ jobs:
         run: |
           sudo apt-get install -y libboost-all-dev
 
+      # Install Protobuf libraries
+      - name: Install Protobuf
+        run: |
+          sudo apt-get install -y protobuf-compiler libprotobuf-dev
+
       # Create build directory
       - name: Create build directory
         run: |
