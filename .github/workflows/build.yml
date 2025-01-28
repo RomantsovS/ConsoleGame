@@ -1,92 +1,42 @@
-name: Build
+name: Build CMake Project with GCC
+
 on:
   push:
     branches:
       - master
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - master
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-  SONAR_WRAPPER_URL: https://sonarcloud.io/static/cpp/build-wrapper-win-x86.zip
-  SONAR_SCANNER_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-windows.zip
-  
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # You can choose other runners like 'ubuntu-22.04' or 'ubuntu-20.04'
+
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
-    
-    - name: echo MSBuild
-      shell: bash
-      run: |
-        msbuild.exe -version
-        
-    - name: Install wget
-      shell: bash
-      run: |
-        choco install wget --no-progress
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Environment
-      shell: bash
-      run: |
-        mkdir -p build
-    - name: Install Sonar Scanner
-      run: |
-        Invoke-WebRequest -Uri "${{ env.SONAR_WRAPPER_URL }}" -OutFile build/build-wrapper.zip
-        Invoke-WebRequest -Uri "${{ env.SONAR_SCANNER_URL }}" -OutFile build/sonar-scanner.zip
-        Expand-Archive -LiteralPath build/build-wrapper.zip -DestinationPath build
-        Expand-Archive -LiteralPath build/sonar-scanner.zip -DestinationPath build
-        ls
-        ls build
-         
-    - name: install vcpkg
-      shell: bash
-      run: |
-        cd ..
-        git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        sh bootstrap-vcpkg.sh
-        ./vcpkg.exe integrate install
-        ./vcpkg.exe --triplet x64-windows install ms-gsl
-        
-    - name: Configure CMake
-      run: |
-        cmake -B ${{github.workspace}}/out/build -DCMAKE_TOOLCHAIN_FILE=${{github.workspace}}/../vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DPATCH_VERSION=${{ github.run_number }} -DWITH_GTEST=OFF
-    - name: Build
-      run: |
-        cmake --build ${{github.workspace}}/out/build --config ${{env.BUILD_TYPE}}
+      # Set up GCC
+      - name: Set up GCC
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc g++
 
-    - name: Build with Sonar Wrapper
-      shell: cmd
-      run: |
-        SET PATH=%PATH%;%cd%\build\build-wrapper-win-x86
-        ls
-        ls out
-        ls out/build
-        ls out/build/code
-        build-wrapper-win-x86-64 --out-dir build\bw_output MSBuild.exe out/build/Code/ConsoleGame.sln -t:Rebuild -verbosity:diag -p:Configuration=${{env.BUILD_TYPE}} 
-    - name: Prepare Sonar Scanner
-      shell: bash
-      run: |
-        set -x
-        cd build
-        ls -la bw_output
-        mv sonar-scanner-*-windows sonar-scanner
-    - name: Sonar Scanner
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      shell: cmd
-      run: |
-        SET PATH=%PATH%;%cd%\build\sonar-scanner\bin
-        ECHO PATH=%PATH%
-        ECHO DIR %cd%\build\bw_output\
-        DIR %cd%\build\bw_output\
-        sonar-scanner.bat -Dsonar.cfamily.build-wrapper-output=%cd%\build\bw_output
+      # Set up CMake
+      - name: Set up CMake
+        run: |
+          sudo apt-get install -y cmake
+
+      # Create build directory
+      - name: Create build directory
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+
+      # Build the project using GCC
+      - name: Build with CMake
+        run: |
+          cd build
+          cmake --build . -- -j$(nproc)
