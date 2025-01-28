@@ -9,7 +9,7 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
         "BOOST_ROOT": "c:/Users/roman/source/repos/boost",
-        "CMAKE_PREFIX_PATH": "c:/Users/roman/source/repos/protobuf/install;c:/Users/roman/source/repos/zlib/install"
+        "CMAKE_PREFIX_PATH": "c:\\Users\\roman\\source\\repos\\grpc_install"
       },
       "condition": {
         "type": "equals",
