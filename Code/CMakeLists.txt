@@ -28,7 +28,7 @@
 	find_package(Boost REQUIRED)
 	find_package(Threads)
 
-	find_package(Protobuf CONFIG REQUIRED)
+	find_package(Protobuf CONFIG)
 	if (NOT Protobuf_FOUND)
 		find_package(Protobuf REQUIRED)
 	endif()
