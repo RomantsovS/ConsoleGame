@@ -60,7 +60,7 @@ IsValid
 ========================
 */
 template<class type>
-extern inline bool IsValid(const type& v) {
+inline bool IsValid(const type& v) {
 	for (int i = 0; i < v.GetDimension(); i++) {
 		const float f = v.ToFloatPtr()[i];
 		if (IEEE_FLT_IS_NAN(f) || IEEE_FLT_IS_INF(f) || IEEE_FLT_IS_IND(f) || IEEE_FLT_IS_DENORMAL(f)) {
@@ -76,7 +76,7 @@ IsValid
 ========================
 */
 template<>
-extern inline bool IsValid(const float& f) {	// these parameter must be a reference for the function to be considered a specialization
+inline bool IsValid(const float& f) {	// these parameter must be a reference for the function to be considered a specialization
 	return !(IEEE_FLT_IS_NAN(f) || IEEE_FLT_IS_INF(f) || IEEE_FLT_IS_IND(f) || IEEE_FLT_IS_DENORMAL(f));
 }
 
