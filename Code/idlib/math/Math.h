@@ -199,12 +199,12 @@ inline int idMath::FloatHash(gsl::span<const float> arr) noexcept {
 }
 
 template< typename T >
-extern inline T Lerp(const T from, const T to, float f) {
+inline T Lerp(const T from, const T to, float f) {
 	return from + ((to - from) * f);
 }
 
 template<>
-extern inline int Lerp(const int from, const int to, float f) {
+inline int Lerp(const int from, const int to, float f) {
 	return static_cast<int>(static_cast<float>(from) + ((static_cast<float>(to) - static_cast<float>(from)) * f));
 }
 
