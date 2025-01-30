@@ -203,8 +203,7 @@ long long Sys_Microseconds();
 int64_t Sys_Time() noexcept;
 
 // for accurate performance testing
-double Sys_GetClockTicks() noexcept;
-long long Sys_ClockTicksPerSecond() noexcept;
+int64_t Sys_GetClockTicks() noexcept;
 
 // event generation
 sysEvent_t Sys_GetEvent() noexcept;

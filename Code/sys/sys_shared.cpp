@@ -45,3 +45,13 @@ int Sys_ListFiles(const std::filesystem::path& directory, const std::filesystem:
 
 	return list.size();
 }
+
+/*
+================
+Sys_GetClockTicks
+================
+*/
+int64_t Sys_GetClockTicks() noexcept {
+	auto now = std::chrono::steady_clock::now();
+	return now.time_since_epoch().count();
+}

@@ -15,9 +15,9 @@
 	CryFileContainer("SWF")
 	CryFileContainer("sys")
 	if(WINDOWS)
-	CryFileContainer("sys/win32")
+		CryFileContainer("sys/win32")
 	else()
-	CryFileContainer("sys/linux")
+		CryFileContainer("sys/linux")
 	endif()
 
 	message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
