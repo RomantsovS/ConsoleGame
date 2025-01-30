@@ -20,9 +20,6 @@
 	CryFileContainer("sys/linux")
 	endif()
 
-	message(STATUS "THIS_PROJECT = ${THIS_PROJECT}")
-	message(STATUS "THIS_PROJECT_SOURCES = ${${THIS_PROJECT}_SOURCES}")
-
 	message(STATUS "add_executable THIS_PROJECT = ${THIS_PROJECT}")
 
 	find_package(Boost REQUIRED)
@@ -30,12 +27,21 @@
 
 	find_package(Protobuf CONFIG)
 	if (NOT Protobuf_FOUND)
+		set(protobuf_MODULE_COMPATIBLE ON)
+		message("Use protobuf_MODULE_COMPATIBLE")
 		find_package(Protobuf REQUIRED)
 	endif()
-	file(GLOB _proto_source_list LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
+	file(GLOB ${THIS_PROJECT}_PROTOS LIST_DIRECTORIES false "${PROJECT_DIR}/Proto/*.proto")
+
+	if(protobuf_MODULE_COMPATIBLE) #Legacy Support
+		protobuf_generate_cpp(${THIS_PROJECT}_PROTO_SRCS ${THIS_PROJECT}_PROTO_HDRS ${${THIS_PROJECT}_PROTOS})
+		list(APPEND ${THIS_PROJECT}_SOURCES ${${THIS_PROJECT}_PROTO_SRCS} ${${THIS_PROJECT}_PROTO_HDRS})
+	endif()
+
+	message(STATUS "THIS_PROJECT_PROTOS = ${${THIS_PROJECT}_PROTOS}")
 
 	if(WINDOWS)
-		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES} ${_proto_source_list})
+		add_executable(${THIS_PROJECT} WIN32 ${${THIS_PROJECT}_SOURCES} ${${THIS_PROJECT}_PROTOS})
 	else()
 		add_executable(${THIS_PROJECT} ${${THIS_PROJECT}_SOURCES} ${PROTO_SRCS})
 	endif()
@@ -45,20 +51,24 @@
 
 	message(STATUS "CMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_LIST_DIR}")
 
-	#set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
-	#target_include_directories(proto-objects PUBLIC "$<BUILD_INTERFACE:${PROTO_BINARY_DIR}>")
-	protobuf_generate(
-		TARGET ${THIS_PROJECT}
-		IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../Proto"
-		#PROTOC_OUT_DIR "${PROTO_BINARY_DIR}"
-	)
+	if(protobuf_MODULE_COMPATIBLE) #Legacy Support
+		target_include_directories(${THIS_PROJECT} PUBLIC ${PROTOBUF_INCLUDE_DIRS})
+		target_link_libraries(${THIS_PROJECT} ${PROTOBUF_LIBRARIES})
+	else()
+		target_link_libraries(${THIS_PROJECT} protobuf::libprotobuf)
+		protobuf_generate(
+			TARGET ${THIS_PROJECT}
+			IMPORT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../Proto"
+			#PROTOC_OUT_DIR "${PROTO_BINARY_DIR}"
+		)
+	endif()
 
 	if(WINDOWS AND MSVC)
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
 
 	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} protobuf::libprotobuf idlib)
+	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} idlib)
 
 	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")
 endif()
