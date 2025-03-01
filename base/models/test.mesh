@@ -1,0 +1,6 @@
+"numMeshes" 1
+{
+"shader" textures/mario
+"size" 15 16
+"textcoord" 211 0
+}

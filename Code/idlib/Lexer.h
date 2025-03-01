@@ -115,6 +115,8 @@ public:
 	// read a token only if on the same line
 	int				ReadTokenOnLine(gsl::not_null<idToken*> token);
 
+	// read a signed integer
+	int				ParseInt();
 	// read a floating point number.  If errorFlag is NULL, a non-numeric token will
 	// issue an Error().  If it isn't NULL, it will issue a Warning() and set *errorFlag = true
 	float			ParseFloat(bool* errorFlag = nullptr);

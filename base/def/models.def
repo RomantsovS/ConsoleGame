@@ -11,7 +11,7 @@ model mushroom {
 }
 
 model mario {
-	mesh "models/mario13x16.bmp"
+	mesh "models/test.mesh"
 }
 
 model turtle {

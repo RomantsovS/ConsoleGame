@@ -3,3 +3,9 @@ textures/bigchars {
 		map textures/bigchars.bmp
 	}
 }
+
+textures/mario {
+	{
+		map textures/mario.bmp
+	}
+}

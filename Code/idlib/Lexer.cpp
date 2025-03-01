@@ -949,6 +949,23 @@ int idLexer::ReadTokenOnLine(gsl::not_null<idToken*> token) {
 	return false;
 }
 
+int idLexer::ParseInt() {
+	idToken token;
+
+	if (!idLexer::ReadToken(&token)) {
+		idLexer::Error("couldn't read expected integer");
+		return 0;
+	}
+	if (token.type == TT_PUNCTUATION && token == "-") {
+		idLexer::ExpectTokenType(TT_NUMBER, TT_INTEGER, &token);
+		return -((signed int)token.GetIntValue());
+	}
+	else if (token.type != TT_NUMBER || token.subtype == TT_FLOAT) {
+		idLexer::Error("expected integer value, found '%s'", token.c_str());
+	}
+	return token.GetIntValue();
+}
+
 /*
 ================
 idLexer::ParseFloat

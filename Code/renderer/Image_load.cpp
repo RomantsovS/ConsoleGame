@@ -30,4 +30,7 @@ void idImage::ActuallyLoadImage(bool fromBackEnd) {
 		return;
 
 	ConvertBMPToModelSurfaces(bmp, pixels);
+
+	height = bmp.bmp_info_header.height;
+	width = bmp.bmp_info_header.width;
 }

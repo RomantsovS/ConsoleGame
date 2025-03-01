@@ -114,6 +114,9 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 	if (extension == "textmodel" || extension == "bmp") {
 		model = std::make_shared<idRenderModelStatic>();
 	}
+	else if (extension == "mesh") {
+		model = std::make_shared<RenderModelMesh>();
+	}
 
 	if (model) {
 		idFileLocal file(fileSystem->OpenFileReadMemory(canonical));

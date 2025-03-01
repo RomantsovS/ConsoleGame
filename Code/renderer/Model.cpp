@@ -34,7 +34,7 @@ bool idRenderModelStatic::IsDefaultModel() const noexcept {
 	return defaulted;
 }
 
-void idRenderModelStatic::InitFromFile(std::string fileName) {
+void idRenderModelStatic::InitFromFile(const std::string& fileName) {
 	bool loaded{};
 	std::string extension;
 
@@ -107,7 +107,7 @@ bool idRenderModelStatic::IsLevelLoadReferenced() noexcept {
 	return levelLoadReferenced;
 }
 
-void idRenderModelStatic::InitEmpty(const std::string fileName) {
+void idRenderModelStatic::InitEmpty(const std::string& fileName) {
 	name = fileName;
 	reloadable = false;	// if it didn't come from a file, we can't reload it
 	PurgeModel();
@@ -143,6 +143,16 @@ idRenderModelStatic::IsReloadable
 */
 bool idRenderModelStatic::IsReloadable() const noexcept {
 	return reloadable;
+}
+
+idRenderModel* idRenderModelStatic::InstantiateDynamicModel(const renderEntity_t* ent, const viewDef_t* view,
+	idRenderModel* cachedModel) {
+	if (cachedModel) {
+		delete cachedModel;
+		cachedModel = nullptr;
+	}
+	common->Error("InstantiateDynamicModel called on static model '%s'", name.c_str());
+	return NULL;
 }
 
 void idRenderModelStatic::MakeDefaultModel() {
@@ -236,15 +246,7 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 		}
 	}
 
-	auto max_x = surfaces.back().origin.x + 1;
-	auto max_y = surfaces.back().origin.y + 1;
-
-	for (float i = 0; i < max_y; ++i) {
-		for (float j = 0; j < max_x; ++j) {
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= (max_x - 1) / 2;
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= (max_y - 1) / 2;
-		}
-	}
+	ShiftSurfaces();
 
 	return true;
 }
@@ -256,16 +258,8 @@ bool idRenderModelStatic::LoadBMPModel(const std::string& fileName) {
 		return false;
 	
 	ConvertBMPToModelSurfaces(bmp, surfaces);
-	
-	auto max_x = surfaces.back().origin.x + 1;
-	auto max_y = surfaces.back().origin.y + 1;
 
-	for (float i = 0; i < max_y; ++i) {
-		for (float j = 0; j < max_x; ++j) {
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= (max_x - 1) / 2;
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= (max_y - 1) / 2;
-		}
-	}
+	ShiftSurfaces();
 
 	return true;
 }
@@ -324,6 +318,18 @@ bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces
 	}
 
 	return true;
+}
+
+void idRenderModelStatic::ShiftSurfaces() {
+	int max_x = surfaces.back().origin.x + 1;
+	int max_y = surfaces.back().origin.y + 1;
+
+	for (int i = 0; i < max_y; ++i) {
+		for (int j = 0; j < max_x; ++j) {
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= max_x / 2;
+			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= max_y / 2;
+		}
+	}
 }
 
 Screen::color_type idRenderModelStatic::GetColor() const noexcept {

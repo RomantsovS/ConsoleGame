@@ -46,6 +46,8 @@ public:
 
 	double			GetDoubleValue();				// double value of TT_NUMBER
 	float			GetFloatValue();				// float value of TT_NUMBER
+	unsigned long	GetUnsignedLongValue();		// unsigned long value of TT_NUMBER
+	int				GetIntValue();				// int value of TT_NUMBER
 
 	void			NumberValue();				// calculate values for a TT_NUMBER
 private:
@@ -77,6 +79,20 @@ inline double idToken::GetDoubleValue() {
 
 inline float idToken::GetFloatValue() {
 	return static_cast<float>(GetDoubleValue());
+}
+
+inline unsigned long idToken::GetUnsignedLongValue() {
+	if (type != TT_NUMBER) {
+		return 0;
+	}
+	if (!(subtype & TT_VALUESVALID)) {
+		NumberValue();
+	}
+	return intvalue;
+}
+
+inline int idToken::GetIntValue() {
+	return (int)GetUnsignedLongValue();
 }
 
 inline void idToken::AppendDirty(const char a) {
