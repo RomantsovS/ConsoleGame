@@ -28,6 +28,9 @@ private:
 	std::vector<ModelPixel> pixels;
 	int height = 0;
 	int width = 0;
+
+	bool ConvertBMPToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
+		std::vector<ModelPixel>& pixels);
 };
 
 inline idImage::idImage(const std::string& name) : imgName(name) {

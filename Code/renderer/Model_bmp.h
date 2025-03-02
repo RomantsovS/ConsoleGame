@@ -63,6 +63,8 @@ private:
 };
 
 class ModelPixel;
-bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces);
+
+bool ConvertBMPToModelSurfaces(unsigned char* data, int img_height, int img_width, int img_nrChannels,
+	std::vector<ModelPixel>& surfaces);
 
 #endif // ! MODEL_DMP_H_

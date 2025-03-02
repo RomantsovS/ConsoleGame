@@ -252,75 +252,19 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 }
 
 bool idRenderModelStatic::LoadBMPModel(const std::string& fileName) {
-	BMP bmp(fileName);
+	idImage image(fileName);
+	image.ActuallyLoadImage(false);
 
-	if (bmp.data.empty())
-		return false;
-	
-	ConvertBMPToModelSurfaces(bmp, surfaces);
+	surfaces = image.GetPixels();
 
 	ShiftSurfaces();
 
 	return true;
 }
 
-bool ConvertBMPToModelSurfaces(const BMP& bmp, std::vector<ModelPixel>& surfaces) {
-	const char symbol{'\xDB'};
-	int col{};
-
-	for (int j = bmp.bmp_info_header.height - 1; j >= 0; --j) {
-		for (int i = 0; i < bmp.bmp_info_header.width; ++i) {
-			int cur_pixel = (j * bmp.bmp_info_header.width + i) * 3;
-
-			if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
-				bmp.data.at(cur_pixel + 2) > 200) {
-				col = colorWhite;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 100 && bmp.data.at(cur_pixel + 2) > 200) {
-				col = colorYellow;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 200 && bmp.data.at(cur_pixel + 1) > 200 &&
-				bmp.data.at(cur_pixel + 3) > 100) {
-				col = colorLightCyan;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 200) {
-				col = colorBlue;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 200) {
-				col = colorGreen;
-			}
-			else if (bmp.data.at(cur_pixel + 2) > 200) {
-				col = colorLightRed;
-			}
-			else if (bmp.data.at(cur_pixel + 0) < 50 && bmp.data.at(cur_pixel + 1) < 50 &&
-				bmp.data.at(cur_pixel + 2) < 50) {
-				col = colorBlack;
-			}
-			else if (bmp.data.at(cur_pixel + 0) > 100 && bmp.data.at(cur_pixel + 1) > 100 &&
-				bmp.data.at(cur_pixel + 2) < 50) {
-				col = colorLightGray;
-			}
-			else if (bmp.data.at(cur_pixel + 0) < 100 && bmp.data.at(cur_pixel + 1) < 100 &&
-				bmp.data.at(cur_pixel + 2) < 100) {
-				col = colorCyan;
-			}
-			else if (bmp.data.at(cur_pixel + 1) > 100) {
-				col = colorLightGreen;
-			}
-			else if (bmp.data.at(cur_pixel + 2) > 50) {
-				col = colorRed;
-			}
-			else
-				col = colorWhite;
-
-			surfaces.emplace_back(Vector2(i, bmp.bmp_info_header.height - j - 1), Screen::Pixel(symbol, col));
-		}
-	}
-
-	return true;
-}
-
 void idRenderModelStatic::ShiftSurfaces() {
+	if (surfaces.empty()) return;
+
 	int max_x = surfaces.back().origin.x + 1;
 	int max_y = surfaces.back().origin.y + 1;
 

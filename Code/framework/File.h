@@ -47,6 +47,7 @@ public:
 	idFile_Permanent(idFile_Permanent&&) = default;
 	idFile_Permanent& operator=(idFile_Permanent&&) = default;
 
+	const std::string GetFullPath() const override;
 	int Read(void* buffer, int len) override;
 	int Write(const void* buffer, int len) override;
 	int Length() const noexcept override;

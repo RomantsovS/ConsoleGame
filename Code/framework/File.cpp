@@ -103,6 +103,10 @@ idFile_Permanent::~idFile_Permanent() {
 	}
 }
 
+const std::string idFile_Permanent::GetFullPath() const {
+	return fullPath.string();
+}
+
 /*
 =================
 idFile_Permanent::Read

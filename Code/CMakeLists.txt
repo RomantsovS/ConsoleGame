@@ -67,7 +67,8 @@
 		set_property(TARGET ${THIS_PROJECT} APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 	endif()
 
-	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+	target_include_directories(${THIS_PROJECT} PRIVATE ${Boost_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+													   "${CMAKE_CURRENT_LIST_DIR}/../third_party/include")
 	target_link_libraries(${THIS_PROJECT} ${CMAKE_THREAD_LIBS_INIT} idlib)
 
 	prepare_project_after(PCH "framework/precompiled.cpp" PCH_H "idlib/precompiled.h")

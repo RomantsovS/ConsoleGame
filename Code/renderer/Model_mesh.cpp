@@ -28,10 +28,9 @@ void Mesh::ParseMesh(idLexer& parser) {
 }
 
 void Mesh::UpdateSurface(const struct renderEntity_t* ent, std::vector<ModelPixel>& surfaces, const idImage& image) const {
-	const char symbol{ '\xDB' };
-
 	if (!image.IsLoaded()) {
-		common->DWarning("image %s wasn't loaded", image.GetName());
+		common->Warning("image %s wasn't loaded", image.GetName().c_str());
+		return;
 	}
 
 	const auto& imagePixels = image.GetPixels();
@@ -39,7 +38,8 @@ void Mesh::UpdateSurface(const struct renderEntity_t* ent, std::vector<ModelPixe
 	for (int j = 0; j < size.y; ++j) {
 		for (int i = 0; i < size.x; ++i) {
 			int pixelIndex = (text_coords.y + j) * image.GetWidth() + text_coords.x + i;
-			surfaces.emplace_back(Vector2(i, j), Screen::Pixel(symbol, imagePixels[pixelIndex].screenPixel.color));
+			if (pixelIndex >= imagePixels.size()) return;
+			surfaces.emplace_back(Vector2(i, j), imagePixels[pixelIndex].screenPixel);
 		}
 	}
 }
