@@ -668,9 +668,6 @@ void idAnimatedEntity::SetModel(const std::string& modelname) {
 	}
 
 	idRenderModel* renderModel = modelDef->ModelHandle().lock().get();
-	if (!renderModel) {
-		return;
-	}
 
 	renderEntity.hModel = renderModel;
 	if (!renderEntity.hModel) {

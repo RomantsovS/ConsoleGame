@@ -74,7 +74,7 @@ void RenderModelMesh::LoadModel() {
 idRenderModel* RenderModelMesh::InstantiateDynamicModel(const renderEntity_t* ent, const viewDef_t* view,
 	idRenderModel* cachedModel) {
 	if (purged) {
-		common->DWarning("model %s instantiated while purged", Name());
+		common->DWarning("model %s instantiated while purged", Name().c_str());
 		LoadModel();
 	}
 
@@ -96,6 +96,11 @@ idRenderModel* RenderModelMesh::InstantiateDynamicModel(const renderEntity_t* en
 
 		if (!shader) {
 			staticModel->surfaces.clear();
+			continue;
+		}
+
+		if (!shader->GetStage()) {
+			common->Warning("Material %s has empty stage", shader->GetName());
 			continue;
 		}
 

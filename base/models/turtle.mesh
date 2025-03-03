@@ -1,0 +1,6 @@
+"numMeshes" 1
+{
+"shader" textures/enemies
+"size" 16 23
+"textcoord" 210 0
+}

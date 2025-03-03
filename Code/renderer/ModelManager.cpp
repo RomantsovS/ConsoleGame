@@ -111,7 +111,7 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(const std::st
 
 	std::shared_ptr<idRenderModel> model;
 
-	if (extension == "textmodel" || extension == "bmp") {
+	if (extension == "textmodel") {
 		model = std::make_shared<idRenderModelStatic>();
 	}
 	else if (extension == "mesh") {

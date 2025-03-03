@@ -73,7 +73,6 @@
 #include "../renderer/Material.h"
 #include "../renderer/Model.h"
 #include "../renderer/ModelManager.h"
-#include "../renderer/Model_bmp.h"
 #include "../renderer/RenderSystem.h"
 #include "../renderer/RenderWorld.h"
 #include "../renderer/Screen.h"

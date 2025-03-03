@@ -34,7 +34,6 @@ public:
 	void MakeDefaultModel();
 
 	bool LoadTextModel(const std::string& fileName);
-	bool LoadBMPModel(const std::string& fileName);
 
 	void ShiftSurfaces();
 

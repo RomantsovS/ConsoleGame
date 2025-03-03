@@ -52,13 +52,13 @@ void idImage::ActuallyLoadImage(bool fromBackEnd) {
 		return;
 	}
 
-	ConvertBMPToModelPixels(data_ptr.get(), img_height, img_width, img_nrChannels, pixels);
+	ConvertImageDataToModelPixels(data_ptr.get(), img_height, img_width, img_nrChannels, pixels);
 
 	height = img_height;
 	width = img_width;
 }
 
-bool idImage::ConvertBMPToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
+bool idImage::ConvertImageDataToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
 	std::vector<ModelPixel>& pixels) {
 	const char symbol{ '\xDB' };
 	int col{};

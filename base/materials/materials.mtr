@@ -9,3 +9,27 @@ textures/mario {
 		map textures/mario.bmp
 	}
 }
+
+textures/enemies {
+	{
+		map textures/smb_enemies_sheet.png
+	}
+}
+
+textures/block {
+	{
+		map textures/block16x16.bmp
+	}
+}
+
+textures/brick {
+	{
+		map textures/brick16x16.bmp
+	}
+}
+
+textures/bomb {
+	{
+		map textures/bomb16x16.bmp
+	}
+}

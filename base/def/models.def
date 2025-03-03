@@ -7,13 +7,13 @@ model test_model {
 }
 
 model mushroom {
-	mesh "models/mushroom16x16.bmp"
+	mesh "models/mushroom.mesh"
 }
 
 model mario {
-	mesh "models/test.mesh"
+	mesh "models/mario.mesh"
 }
 
 model turtle {
-	mesh "models/turtle16x23.bmp"
+	mesh "models/turtle.mesh"
 }

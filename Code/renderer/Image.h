@@ -29,7 +29,7 @@ private:
 	int height = 0;
 	int width = 0;
 
-	bool ConvertBMPToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
+	bool ConvertImageDataToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
 		std::vector<ModelPixel>& pixels);
 };
 

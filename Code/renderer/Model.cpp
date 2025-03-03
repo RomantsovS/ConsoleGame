@@ -46,10 +46,6 @@ void idRenderModelStatic::InitFromFile(const std::string& fileName) {
 		loaded = LoadTextModel(name);
 		reloadable = true;
 	}
-	else if (extension == "bmp") {
-		loaded = LoadBMPModel(name);
-		reloadable = true;
-	}
 
 	if (!loaded) {
 		common->Warning("Couldn't load model: '%s'", name.c_str());
@@ -245,17 +241,6 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
 			return false;
 		}
 	}
-
-	ShiftSurfaces();
-
-	return true;
-}
-
-bool idRenderModelStatic::LoadBMPModel(const std::string& fileName) {
-	idImage image(fileName);
-	image.ActuallyLoadImage(false);
-
-	surfaces = image.GetPixels();
 
 	ShiftSurfaces();
 
