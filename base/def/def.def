@@ -194,10 +194,16 @@ entityDef damage_entityCollide {
 	"damage"					"999"
 }
 
-entityDef test_def {
+entityDef test_textmodel_def {
 	"spawnclass"			"idStaticEntity"
 	"model"					"models/test.textmodel"
 	"size"					"4 2"
+}
+
+entityDef test_mesh_def {
+	"spawnclass"			"idStaticEntity"
+	"model"					"models/test.mesh"
+	"size"					"16 16"
 }
 
 mapDef bomber {

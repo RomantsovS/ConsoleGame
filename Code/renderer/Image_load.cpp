@@ -73,7 +73,7 @@ bool idImage::ConvertImageDataToModelPixels(unsigned char* data, int img_height,
 				data[cur_pixel + 2] > 200) {
 				col = colorWhite;
 			}
-			else if (data[cur_pixel + 1] > 200 && data[cur_pixel + 2] > 200) {
+			else if (data[cur_pixel + 1] > 100 && data[cur_pixel + 2] > 100 && data[cur_pixel + 0] < 100) {
 				col = data[cur_pixel + 0] > 75 ? colorLightCyan : colorCyan;
 			}
 			else if (data[cur_pixel + 0] > 200 && data[cur_pixel + 2] > 200) {
@@ -99,7 +99,7 @@ bool idImage::ConvertImageDataToModelPixels(unsigned char* data, int img_height,
 				data[cur_pixel + 2] < 50) {
 				col = colorBlack;
 			}
-			else if (data[cur_pixel + 0] + data[cur_pixel + 1] + data[cur_pixel + 2] > 400) {
+			else if (data[cur_pixel + 0] + data[cur_pixel + 1] + data[cur_pixel + 2] > 300) {
 				col = colorLightGray;
 			}
 			else

@@ -33,3 +33,9 @@ textures/bomb {
 		map textures/bomb16x16.bmp
 	}
 }
+
+textures/colors {
+	{
+		map textures/colors.png
+	}
+}
