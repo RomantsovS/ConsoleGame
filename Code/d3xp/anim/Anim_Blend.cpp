@@ -98,7 +98,7 @@ bool idDeclModelDef::Parse(const char* text, const int textLength, bool allowBin
 			}
 			filename = token2;
 			idStr::ExtractFileExtension(filename, extension);
-			if (extension != MD5_MESH_EXT) {
+			if (extension != "mesh") {
 				src.Warning("Invalid model for MD5 mesh");
 				MakeDefault();
 				return false;

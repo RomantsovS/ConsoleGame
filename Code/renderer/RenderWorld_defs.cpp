@@ -12,6 +12,16 @@ Does not actually free the entityDef.
 ===================
 */
 void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel) noexcept {
+	// clear the dynamic model if present
+	if (def->dynamicModel) {
+		def->dynamicModel = nullptr;
+	}
+
+	if (!keepCachedDynamicModel) {
+		delete def->cachedDynamicModel;
+		def->cachedDynamicModel = nullptr;
+	}
+
 	// free the entityRefs from the areas
 	for (auto ref = def->entityRefs.get(); ref;) {
 		auto next = ref->ownerNext.get();

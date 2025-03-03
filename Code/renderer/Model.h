@@ -3,14 +3,15 @@
 
 #include "Screen.h"
 
-#define MD5_MESH_EXT "bmp"
+struct renderEntity_t;
+struct viewDef_t;
 
 class ModelPixel {
 public:
+	ModelPixel() = default;
 	ModelPixel(Vector2 pos, Screen::Pixel pixel) noexcept;
 
 	Vector2 origin;
-
 	Screen::Pixel screenPixel;
 };
 
@@ -30,7 +31,7 @@ public:
 	idRenderModel& operator=(idRenderModel&&) = default;
 
 	// Loads static models only, dynamic models must be loaded by the modelManager
-	virtual void				InitFromFile(std::string fileName) = 0;
+	virtual void				InitFromFile(const std::string& fileName) = 0;
 
 	// Supports reading/writing binary file formats
 	virtual bool				LoadBinaryModel(idFile* file) = 0;
@@ -38,7 +39,7 @@ public:
 
 	// this is used for dynamically created surfaces, which are assumed to not be reloadable.
 	// It can be called again to clear out the surfaces of a dynamic model for regeneration.
-	virtual void				InitEmpty(const std::string fileName) = 0;
+	virtual void				InitEmpty(const std::string& fileName) = 0;
 
 	// frees all the data, but leaves the class around for dangling references,
 	// which can regenerate the data with LoadModel()
@@ -71,6 +72,15 @@ public:
 
 	// if the load failed for any reason, this will return true
 	virtual bool				IsDefaultModel() const = 0;
+
+	// returns a static model based on the definition and view
+	// currently, this will be regenerated for every view, even though
+	// some models, like character meshes, could be used for multiple (mirror)
+	// views in a frame, or may stay static for multiple frames (corpses)
+	// The renderer will delete the returned dynamic model the next view
+	// This isn't const, because it may need to reload a purged model if it
+	// wasn't precached correctly.
+	virtual idRenderModel* InstantiateDynamicModel(const renderEntity_t* ent, const viewDef_t* view, idRenderModel* cachedModel) = 0;
 
 	virtual Screen::color_type GetColor() const = 0;
 	virtual void SetColor(Screen::color_type col) = 0;

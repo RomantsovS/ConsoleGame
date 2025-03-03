@@ -1,0 +1,6 @@
+"numMeshes" 1
+{
+"shader" textures/bomb
+"size" 16 16
+"textcoord" 0 0
+}

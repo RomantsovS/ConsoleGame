@@ -5,13 +5,33 @@
 #include "Model_local.h"
 
 idRenderModel* R_EntityDefDynamicModel(idRenderEntityLocal* def) {
+	/*if (def->dynamicModelFrameCount == tr.frameCount) {
+		return def->dynamicModel;
+	}*/
+
 	auto model = def->parms.hModel;
 
+	if (!model) {
+		common->Error("R_EntityDefDynamicModel: NULL model");
+		return NULL;
+	}
+
 	if (model->IsDynamicModel() == DM_STATIC) {
+		def->dynamicModel = nullptr;
+		//def->dynamicModelFrameCount = 0;
 		return model;
 	}
 
-	return model;
+	// if we don't have a snapshot of the dynamic model, generate it now
+	if (!def->dynamicModel) {
+		// instantiate the snapshot of the dynamic model, possibly reusing memory from the cached snapshot
+		def->cachedDynamicModel = model->InstantiateDynamicModel(&def->parms, tr.viewDef.get(), def->cachedDynamicModel);
+
+		def->dynamicModel = def->cachedDynamicModel;
+		//def->dynamicModelFrameCount = tr.frameCount;
+	}
+
+	return def->dynamicModel;
 }
 
 void R_AddSingleModel(const viewEntity_t& vEntity) {

@@ -68,6 +68,11 @@ public:
     idRenderWorldLocal *world;
     int index; // in world entityDefs
 
+    idRenderModel* dynamicModel = nullptr; // if parms.model->IsDynamicModel(), this is the generated data
+    int dynamicModelFrameCount;	// continuously animating dynamic models will recreate
+    // dynamicModel if this doesn't == tr.viewCount
+    idRenderModel* cachedDynamicModel = nullptr;
+
     // a viewEntity_t is created whenever a idRenderEntityLocal is considered for inclusion
     // in a given view, even if it turns out to not be visible
     int viewCount;                            // if tr.viewCount == viewCount, viewEntity is valid,

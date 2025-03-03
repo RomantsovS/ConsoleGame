@@ -13,9 +13,11 @@ public:
 
 	void ActuallyLoadImage(bool fromBackEnd);
 
-	bool IsLoaded() const noexcept { return texnum != -1; }
+	bool IsLoaded() const noexcept { return height != 0 && width != 0; }
 
-	std::vector<ModelPixel>& GetPixels() noexcept { return pixels; }
+	const std::vector<ModelPixel>& GetPixels() const noexcept { return pixels; }
+	int GetHeigth() const noexcept { return height; }
+	int GetWidth() const noexcept { return width; }
 private:
 	friend class idImageManager;
 
@@ -24,7 +26,11 @@ private:
 	void (*generatorFunction)(gsl::not_null<idImage*> image) = nullptr;	// NULL for files
 
 	std::vector<ModelPixel> pixels;
-	int texnum = -1;
+	int height = 0;
+	int width = 0;
+
+	bool ConvertImageDataToModelPixels(unsigned char* data, int img_height, int img_width, int img_nrChannels,
+		std::vector<ModelPixel>& pixels);
 };
 
 inline idImage::idImage(const std::string& name) : imgName(name) {

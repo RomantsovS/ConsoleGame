@@ -62,7 +62,11 @@ void idRenderSystemLocal::DrawStretchPic(int x, int y, int w, int h, int s1, int
         return;
     }
 
-    const auto &imagePixels = material->GetStage()->image->GetPixels();
+    auto image = material->GetStage()->image;
+    if (!image->IsLoaded()) {
+        common->Error("Image %s is not loaded", image->GetName().c_str());
+    }
+    const auto &imagePixels = image->GetPixels();
 
     for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
