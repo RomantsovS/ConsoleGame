@@ -7,7 +7,7 @@ Version 2
 "player_origin"			"28 8"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
-"r_background_color"	"0"
+"r_background_color"	"2"
 // primitive 2
 {
  brushDef3

@@ -20,7 +20,7 @@ public:
     };
 
     Screen() = default;
-    Screen(pos_type ht, pos_type wd, Pixel back) noexcept;
+    Screen(pos_type ht, pos_type wd) noexcept;
     virtual ~Screen() = default;
     Screen(const Screen &) = default;
     Screen &operator=(const Screen &) = default;

@@ -6,7 +6,7 @@ textures/bigchars {
 
 textures/mario {
 	{
-		map textures/mario.bmp
+		map textures/mario.png
 	}
 }
 
@@ -30,7 +30,7 @@ textures/brick {
 
 textures/bomb {
 	{
-		map textures/bomb16x16.bmp
+		map textures/bomb16x16.png
 	}
 }
 

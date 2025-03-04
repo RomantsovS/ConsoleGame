@@ -6,7 +6,7 @@ Version 2
 "def_player"			"player"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
-"r_background_color"	"0"
+"r_background_color"	"14"
 // primitive 2
 {
  brushDef3

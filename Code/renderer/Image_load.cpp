@@ -69,6 +69,12 @@ bool idImage::ConvertImageDataToModelPixels(unsigned char* data, int img_height,
 		for (int i = 0; i < img_width; ++i) {
 			int cur_pixel = (j * img_width + i) * img_nrChannels;
 
+			if (img_nrChannels == 4 && data[cur_pixel + 3] == 0) {
+				col = colorNone;
+				pixels.emplace_back(Vector2(i, j), Screen::Pixel(symbol, col));
+				continue;
+			}
+
 			if (data[cur_pixel + 0] > 200 && data[cur_pixel + 1] > 200 &&
 				data[cur_pixel + 2] > 200) {
 				col = colorWhite;

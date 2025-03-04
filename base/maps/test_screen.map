@@ -4,19 +4,19 @@ Version 2
 "classname"				"worldspawn"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
-"r_background_color"	"0"
+"r_background_color"	"14"
 // primitive 2
 {
  brushDef3
  {
-  ( 0 0 5 4)
+  ( 0 0 16 16)
  }
 }
 }
 
 {
-"classname" "test_def"
+"classname" "test_mesh_def"
 "name" "test"
-"origin" "2 2"
+"origin" "8 8"
 "linearVelocity" "0 0"
 }

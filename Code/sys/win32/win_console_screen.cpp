@@ -7,7 +7,7 @@ idCVar text_info_max_height("text_info_max_height", "10",
                             CVAR_SYSTEM | CVAR_INIT, "");
 
 WinConsoleScreen::WinConsoleScreen(pos_type wd, pos_type ht, Pixel back) noexcept
-    : Screen(wd, ht, back),
+    : Screen(wd, ht),
       cur_write_coord({0, 0}),
       window_rect({0, 0, 1, 1}) {
     setBackGroundPixel(back);
