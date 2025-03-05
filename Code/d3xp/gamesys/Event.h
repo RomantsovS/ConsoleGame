@@ -9,7 +9,8 @@ constexpr auto D_EVENT_FLOAT = 'f';
 constexpr auto D_EVENT_VECTOR = 'v';
 constexpr auto D_EVENT_STRING = 's';
 constexpr auto D_EVENT_ENTITY = 'e';
-constexpr auto D_EVENT_ENTITY_NULL = 'E'; // event can handle NULL entity pointers;
+constexpr auto D_EVENT_ENTITY_NULL =
+    'E';  // event can handle NULL entity pointers;
 constexpr auto D_EVENT_TRACE = 't';
 
 constexpr auto MAX_EVENTS = 4096;
@@ -18,63 +19,67 @@ class idClass;
 class idTypeInfo;
 
 class idEventDef {
-private:
-	std::string name;
-	std::string formatspec;
-	unsigned int formatspecIndex;
-	int numargs;
-	size_t argsize;
-	int eventnum;
+ private:
+  std::string name;
+  std::string formatspec;
+  unsigned int formatspecIndex;
+  int numargs;
+  size_t argsize;
+  int eventnum;
 
-	static idEventDef* eventDefList[MAX_EVENTS];
-	static int numEventDefs;
-public:
-	idEventDef(const std::string& command, const std::string& formatspec = "", char returnType = 0);
+  static idEventDef* eventDefList[MAX_EVENTS];
+  static int numEventDefs;
 
-	const std::string GetName() const;
-	const std::string GetArgFormat() const;
-	unsigned int GetFormatspecIndex() const noexcept;
-	int GetEventNum() const noexcept;
-	int GetNumArgs() const noexcept;
-	size_t GetArgSize() const noexcept;
+ public:
+  idEventDef(const std::string& command, const std::string& formatspec = "",
+             char returnType = 0);
 
-	static int NumEventCommands() noexcept;
+  const std::string GetName() const;
+  const std::string GetArgFormat() const;
+  unsigned int GetFormatspecIndex() const noexcept;
+  int GetEventNum() const noexcept;
+  int GetNumArgs() const noexcept;
+  size_t GetArgSize() const noexcept;
+
+  static int NumEventCommands() noexcept;
 };
 
-class idEvent : public std::enable_shared_from_this<idEvent>  {
-private:
-	const idEventDef* eventdef = nullptr;
-	unsigned char* data = nullptr;
-	int time;
-	idClass* object;
-	const idTypeInfo* typeinfo;
+class idEvent : public std::enable_shared_from_this<idEvent> {
+ private:
+  const idEventDef* eventdef = nullptr;
+  unsigned char* data = nullptr;
+  int time;
+  idClass* object;
+  const idTypeInfo* typeinfo;
 
-	idLinkList<idEvent> eventNode;
+  idLinkList<idEvent> eventNode;
 
-	static std::allocator<unsigned char> eventDataAllocator;
-public:
-	static bool initialized;
-	
-	idEvent();
-	~idEvent();
-	idEvent(const idEvent&) = default;
-	idEvent& operator=(const idEvent&) = default;
-	idEvent(idEvent&&) = default;
-	idEvent& operator=(idEvent&&) = default;
+  static std::allocator<unsigned char> eventDataAllocator;
 
-	static std::shared_ptr<idEvent> Alloc(gsl::not_null<const idEventDef*> evdef, int numargs, va_list args);
-	//static void CopyArgs(const idEventDef* evdef, int numargs, va_list args, int data[D_EVENT_MAXARGS]);
+ public:
+  static bool initialized;
 
-	void Free(bool setOwner = true);
-	void Schedule(idClass* object, const idTypeInfo* cls, int time) noexcept;
-	unsigned char* GetData() noexcept;
+  idEvent();
+  ~idEvent();
+  idEvent(const idEvent&) = default;
+  idEvent& operator=(const idEvent&) = default;
+  idEvent(idEvent&&) = default;
+  idEvent& operator=(idEvent&&) = default;
 
-	static void CancelEvents(const idClass* obj, const idEventDef* evdef = NULL);
-	static void ClearEventList();
-	static void ServiceEvents();
-	static void Init();
-	static void Shutdown();
+  static std::shared_ptr<idEvent> Alloc(gsl::not_null<const idEventDef*> evdef,
+                                        int numargs, va_list args);
+  // static void CopyArgs(const idEventDef* evdef, int numargs, va_list args,
+  // int data[D_EVENT_MAXARGS]);
 
+  void Free(bool setOwner = true);
+  void Schedule(idClass* object, const idTypeInfo* cls, int time) noexcept;
+  unsigned char* GetData() noexcept;
+
+  static void CancelEvents(const idClass* obj, const idEventDef* evdef = NULL);
+  static void ClearEventList();
+  static void ServiceEvents();
+  static void Init();
+  static void Shutdown();
 };
 
 /*
@@ -82,27 +87,21 @@ public:
 idEvent::GetData
 ================
 */
-inline unsigned char* idEvent::GetData() noexcept {
-	return data;
-}
+inline unsigned char* idEvent::GetData() noexcept { return data; }
 
 /*
 ================
 idEventDef::GetName
 ================
 */
-inline const std::string idEventDef::GetName() const {
-	return name;
-}
+inline const std::string idEventDef::GetName() const { return name; }
 
 /*
 ================
 idEventDef::GetArgFormat
 ================
 */
-inline const std::string idEventDef::GetArgFormat() const {
-	return formatspec;
-}
+inline const std::string idEventDef::GetArgFormat() const { return formatspec; }
 
 /*
 ================
@@ -110,7 +109,7 @@ idEventDef::GetFormatspecIndex
 ================
 */
 inline unsigned int idEventDef::GetFormatspecIndex() const noexcept {
-	return formatspecIndex;
+  return formatspecIndex;
 }
 
 /*
@@ -118,26 +117,20 @@ inline unsigned int idEventDef::GetFormatspecIndex() const noexcept {
 idEventDef::GetNumArgs
 ================
 */
-inline int idEventDef::GetNumArgs() const noexcept {
-	return numargs;
-}
+inline int idEventDef::GetNumArgs() const noexcept { return numargs; }
 
 /*
 ================
 idEventDef::GetArgSize
 ================
 */
-inline size_t idEventDef::GetArgSize() const noexcept {
-	return argsize;
-}
+inline size_t idEventDef::GetArgSize() const noexcept { return argsize; }
 
 /*
 ================
 idEventDef::GetEventNum
 ================
 */
-inline int idEventDef::GetEventNum() const noexcept {
-	return eventnum;
-}
+inline int idEventDef::GetEventNum() const noexcept { return eventnum; }
 
 #endif

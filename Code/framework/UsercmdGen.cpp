@@ -2,68 +2,66 @@
 
 const int KEY_MOVESPEED = 127;
 
-std::vector<userCmdString_t> userCmdStrings = {
-	{ "_moveUp",		UB_MOVEUP },
-	{ "_moveDown",		UB_MOVEDOWN },
-	{ "_left",			UB_LOOKLEFT },
-	{ "_right",			UB_LOOKRIGHT },
-	{ "_forward",		UB_MOVEFORWARD },
-	{ "_back",			UB_MOVEBACK },
-	{ "_lookUp",		UB_LOOKUP },
-	{ "_lookDown",		UB_LOOKDOWN },
-	{ "_moveLeft",		UB_MOVELEFT },
-	{ "_moveRight",		UB_MOVERIGHT },
+std::vector<userCmdString_t> userCmdStrings = {{"_moveUp", UB_MOVEUP},
+                                               {"_moveDown", UB_MOVEDOWN},
+                                               {"_left", UB_LOOKLEFT},
+                                               {"_right", UB_LOOKRIGHT},
+                                               {"_forward", UB_MOVEFORWARD},
+                                               {"_back", UB_MOVEBACK},
+                                               {"_lookUp", UB_LOOKUP},
+                                               {"_lookDown", UB_LOOKDOWN},
+                                               {"_moveLeft", UB_MOVELEFT},
+                                               {"_moveRight", UB_MOVERIGHT},
 
-	{ "_attack",		UB_ATTACK },
-	{ "_speed",			UB_SPEED },
-	{ "_zoom",			UB_ZOOM },
-	{ "_showScores",	UB_SHOWSCORES },
-	{ "_use",			UB_USE },
+                                               {"_attack", UB_ATTACK},
+                                               {"_speed", UB_SPEED},
+                                               {"_zoom", UB_ZOOM},
+                                               {"_showScores", UB_SHOWSCORES},
+                                               {"_use", UB_USE},
 
-	{ "_impulse0",		UB_IMPULSE0 },
-	{ "_impulse1",		UB_IMPULSE1 },
-	{ "_impulse2",		UB_IMPULSE2 },
-	{ "_impulse3",		UB_IMPULSE3 },
-	{ "_impulse4",		UB_IMPULSE4 },
-	{ "_impulse5",		UB_IMPULSE5 },
-	{ "_impulse6",		UB_IMPULSE6 },
-	{ "_impulse7",		UB_IMPULSE7 },
-	{ "_impulse8",		UB_IMPULSE8 },
-	{ "_impulse9",		UB_IMPULSE9 },
-	{ "_impulse10",		UB_IMPULSE10 },
-	{ "_impulse11",		UB_IMPULSE11 },
-	{ "_impulse12",		UB_IMPULSE12 },
-	{ "_impulse13",		UB_IMPULSE13 },
-	{ "_impulse14",		UB_IMPULSE14 },
-	{ "_impulse15",		UB_IMPULSE15 },
-	{ "_impulse16",		UB_IMPULSE16 },
-	{ "_impulse17",		UB_IMPULSE17 },
-	{ "_impulse18",		UB_IMPULSE18 },
-	{ "_impulse19",		UB_IMPULSE19 },
-	{ "_impulse20",		UB_IMPULSE20 },
-	{ "_impulse21",		UB_IMPULSE21 },
-	{ "_impulse22",		UB_IMPULSE22 },
-	{ "_impulse23",		UB_IMPULSE23 },
-	{ "_impulse24",		UB_IMPULSE24 },
-	{ "_impulse25",		UB_IMPULSE25 },
-	{ "_impulse26",		UB_IMPULSE26 },
-	{ "_impulse27",		UB_IMPULSE27 },
-	{ "_impulse28",		UB_IMPULSE28 },
-	{ "_impulse29",		UB_IMPULSE29 },
-	{ "_impulse30",		UB_IMPULSE30 },
-	{ "_impulse31",		UB_IMPULSE31 },
+                                               {"_impulse0", UB_IMPULSE0},
+                                               {"_impulse1", UB_IMPULSE1},
+                                               {"_impulse2", UB_IMPULSE2},
+                                               {"_impulse3", UB_IMPULSE3},
+                                               {"_impulse4", UB_IMPULSE4},
+                                               {"_impulse5", UB_IMPULSE5},
+                                               {"_impulse6", UB_IMPULSE6},
+                                               {"_impulse7", UB_IMPULSE7},
+                                               {"_impulse8", UB_IMPULSE8},
+                                               {"_impulse9", UB_IMPULSE9},
+                                               {"_impulse10", UB_IMPULSE10},
+                                               {"_impulse11", UB_IMPULSE11},
+                                               {"_impulse12", UB_IMPULSE12},
+                                               {"_impulse13", UB_IMPULSE13},
+                                               {"_impulse14", UB_IMPULSE14},
+                                               {"_impulse15", UB_IMPULSE15},
+                                               {"_impulse16", UB_IMPULSE16},
+                                               {"_impulse17", UB_IMPULSE17},
+                                               {"_impulse18", UB_IMPULSE18},
+                                               {"_impulse19", UB_IMPULSE19},
+                                               {"_impulse20", UB_IMPULSE20},
+                                               {"_impulse21", UB_IMPULSE21},
+                                               {"_impulse22", UB_IMPULSE22},
+                                               {"_impulse23", UB_IMPULSE23},
+                                               {"_impulse24", UB_IMPULSE24},
+                                               {"_impulse25", UB_IMPULSE25},
+                                               {"_impulse26", UB_IMPULSE26},
+                                               {"_impulse27", UB_IMPULSE27},
+                                               {"_impulse28", UB_IMPULSE28},
+                                               {"_impulse29", UB_IMPULSE29},
+                                               {"_impulse30", UB_IMPULSE30},
+                                               {"_impulse31", UB_IMPULSE31},
 
-	{ "",				UB_NONE }
-};
+                                               {"", UB_NONE}};
 
 class buttonState_t {
-public:
-	int		on{};
-	bool	held{};
+ public:
+  int on{};
+  bool held{};
 
-	buttonState_t() { };
-	void Clear() noexcept;
-	void SetKeyState(int keystate, bool toggle) noexcept;
+  buttonState_t(){};
+  void Clear() noexcept;
+  void SetKeyState(int keystate, bool toggle) noexcept;
 };
 
 /*
@@ -72,8 +70,8 @@ buttonState_t::Clear
 ================
 */
 void buttonState_t::Clear() noexcept {
-	held = false;
-	on = 0;
+  held = false;
+  on = 0;
 }
 
 /*
@@ -82,108 +80,109 @@ buttonState_t::SetKeyState
 ================
 */
 void buttonState_t::SetKeyState(int keystate, bool toggle) noexcept {
-	if (!toggle) {
-		held = false;
-		on = keystate;
-	}
-	else if (!keystate) {
-		held = false;
-	}
-	else if (!held) {
-		held = true;
-		on ^= 1;
-	}
+  if (!toggle) {
+    held = false;
+    on = keystate;
+  } else if (!keystate) {
+    held = false;
+  } else if (!held) {
+    held = true;
+    on ^= 1;
+  }
 }
 
 class idUsercmdGenLocal : public idUsercmdGen {
-public:
-	idUsercmdGenLocal();
+ public:
+  idUsercmdGenLocal();
 
-	void Init() noexcept override;
+  void Init() noexcept override;
 
-	void InitForNewMap() noexcept override;
+  void InitForNewMap() noexcept override;
 
-	void Shutdown() noexcept override;
+  void Shutdown() noexcept override;
 
-	void Clear() noexcept override;
+  void Clear() noexcept override;
 
-	//void			ClearAngles();
+  // void			ClearAngles();
 
-	void InhibitUsercmd(inhibit_t subsystem, bool inhibit);
-	
-	int CommandStringUsercmdData(const std::string& cmdString) override;
+  void InhibitUsercmd(inhibit_t subsystem, bool inhibit);
 
-	void BuildCurrentUsercmd(int deviceNum) override;
+  int CommandStringUsercmdData(const std::string& cmdString) override;
 
-	usercmd_t GetCurrentUsercmd() noexcept override { return cmd; };
+  void BuildCurrentUsercmd(int deviceNum) override;
 
-	//void			MouseState(int* x, int* y, int* button, bool* down);
+  usercmd_t GetCurrentUsercmd() noexcept override { return cmd; };
 
-	int				ButtonState(int key) noexcept override;
-	int				KeyState(int key) noexcept override;
+  // void			MouseState(int* x, int* y, int* button, bool*
+  // down);
 
-private:
-	void			MakeCurrent() noexcept;
-	void			InitCurrent() noexcept;
+  int ButtonState(int key) noexcept override;
+  int KeyState(int key) noexcept override;
 
-	bool			Inhibited();
-	//void			AdjustAngles();
-	void			KeyMove() noexcept;
-	/*void			CircleToSquare(float& axis_x, float& axis_y) const;
-	void			HandleJoystickAxis(int keyNum, float unclampedValue, float threshold, bool positive);
-	void			JoystickMove();
-	void			JoystickMove2();
-	void			MouseMove();*/
-	void CmdButtons() noexcept;
+ private:
+  void MakeCurrent() noexcept;
+  void InitCurrent() noexcept;
 
-	/*void			AimAssist();
+  bool Inhibited();
+  // void			AdjustAngles();
+  void KeyMove() noexcept;
+  /*void			CircleToSquare(float& axis_x, float& axis_y)
+  const; void			HandleJoystickAxis(int keyNum, float
+  unclampedValue, float threshold, bool positive); void
+  JoystickMove(); void			JoystickMove2(); void
+  MouseMove();*/
+  void CmdButtons() noexcept;
 
-	void			Mouse();*/
-	void			Keyboard();
-	//void			Joystick(int deviceNum);
+  /*void			AimAssist();
 
-	void Key(int keyNum, bool down) noexcept;
+  void			Mouse();*/
+  void Keyboard();
+  // void			Joystick(int deviceNum);
 
-	/*idVec3			viewangles;
-	int				impulseSequence;*/
-	int				impulse;
-	
-	//buttonState_t	toggled_crouch;
-	buttonState_t	toggled_run{};
-	//buttonState_t	toggled_zoom;
+  void Key(int keyNum, bool down) noexcept;
 
-	int				buttonState[UB_MAX_BUTTONS];
-	bool			keyState[static_cast<int>(keyNum_t::K_LAST_KEY)];
+  /*idVec3			viewangles;
+  int				impulseSequence;*/
+  int impulse;
 
-	int inhibitCommands; // true when in console or menu locally
+  // buttonState_t	toggled_crouch;
+  buttonState_t toggled_run{};
+  // buttonState_t	toggled_zoom;
 
-	bool			initialized;
+  int buttonState[UB_MAX_BUTTONS];
+  bool keyState[static_cast<int>(keyNum_t::K_LAST_KEY)];
 
-	usercmd_t		cmd;		// the current cmd being built
+  int inhibitCommands;  // true when in console or menu locally
 
-	/*int				continuousMouseX, continuousMouseY;	// for gui event generatioin, never zerod
-	int				mouseButton;						// for gui event generatioin
-	bool			mouseDown;
+  bool initialized;
 
-	int				mouseDx, mouseDy;	// added to by mouse events
-	float			joystickAxis[MAX_JOYSTICK_AXIS];	// set by joystick events
-	
-	int				pollTime;
-	int				lastPollTime;
-	float			lastLookValuePitch;
-	float			lastLookValueYaw;
+  usercmd_t cmd;  // the current cmd being built
 
-	static idCVar	in_yawSpeed;
-	static idCVar	in_pitchSpeed;
-	static idCVar	in_angleSpeedKey;
-	static idCVar	in_toggleRun;
-	static idCVar	in_toggleCrouch;
-	static idCVar	in_toggleZoom;
-	static idCVar	sensitivity;
-	static idCVar	m_pitch;
-	static idCVar	m_yaw;
-	static idCVar	m_smooth;
-	static idCVar	m_showMouseRate;*/
+  /*int				continuousMouseX, continuousMouseY;	// for
+  gui event generatioin, never zerod int
+  mouseButton;						// for gui event
+  generatioin bool			mouseDown;
+
+  int				mouseDx, mouseDy;	// added to by mouse
+  events float			joystickAxis[MAX_JOYSTICK_AXIS];	// set
+  by joystick events
+
+  int				pollTime;
+  int				lastPollTime;
+  float			lastLookValuePitch;
+  float			lastLookValueYaw;
+
+  static idCVar	in_yawSpeed;
+  static idCVar	in_pitchSpeed;
+  static idCVar	in_angleSpeedKey;
+  static idCVar	in_toggleRun;
+  static idCVar	in_toggleCrouch;
+  static idCVar	in_toggleZoom;
+  static idCVar	sensitivity;
+  static idCVar	m_pitch;
+  static idCVar	m_yaw;
+  static idCVar	m_smooth;
+  static idCVar	m_showMouseRate;*/
 };
 
 static idUsercmdGenLocal localUsercmdGen;
@@ -195,11 +194,11 @@ idUsercmdGenLocal::idUsercmdGenLocal
 ================
 */
 idUsercmdGenLocal::idUsercmdGenLocal() {
-	initialized = false;
+  initialized = false;
 
-	impulse = 0;
+  impulse = 0;
 
-	Clear();
+  Clear();
 }
 
 /*
@@ -208,12 +207,11 @@ idUsercmdGenLocal::InhibitUsercmd
 ================
 */
 void idUsercmdGenLocal::InhibitUsercmd(inhibit_t subsystem, bool inhibit) {
-	if (inhibit) {
-		inhibitCommands |= 1 << static_cast<int>(subsystem);
-	}
-	else {
-		inhibitCommands &= (0xffffffff ^ (1 << static_cast<int>(subsystem)));
-	}
+  if (inhibit) {
+    inhibitCommands |= 1 << static_cast<int>(subsystem);
+  } else {
+    inhibitCommands &= (0xffffffff ^ (1 << static_cast<int>(subsystem)));
+  }
 }
 
 /*
@@ -223,11 +221,11 @@ idUsercmdGenLocal::ButtonState
 Returns (the fraction of the frame) that the key was down
 ===============
 */
-int	idUsercmdGenLocal::ButtonState(int key) noexcept {
-	if (key < 0 || key >= UB_MAX_BUTTONS) {
-		return -1;
-	}
-	return (buttonState[key] > 0) ? 1 : 0;
+int idUsercmdGenLocal::ButtonState(int key) noexcept {
+  if (key < 0 || key >= UB_MAX_BUTTONS) {
+    return -1;
+  }
+  return (buttonState[key] > 0) ? 1 : 0;
 }
 
 /*
@@ -238,11 +236,11 @@ Returns (the fraction of the frame) that the key was down
 bk20060111
 ===============
 */
-int	idUsercmdGenLocal::KeyState(int key) noexcept {
-	if (key < 0 || key >= static_cast<int>(keyNum_t::K_LAST_KEY)) {
-		return -1;
-	}
-	return (keyState[key]) ? 1 : 0;
+int idUsercmdGenLocal::KeyState(int key) noexcept {
+  if (key < 0 || key >= static_cast<int>(keyNum_t::K_LAST_KEY)) {
+    return -1;
+  }
+  return (keyState[key]) ? 1 : 0;
 }
 
 /*
@@ -252,9 +250,7 @@ idUsercmdGenLocal::Inhibited
 is user cmd generation inhibited
 ================
 */
-bool idUsercmdGenLocal::Inhibited() {
-	return (inhibitCommands != 0);
-}
+bool idUsercmdGenLocal::Inhibited() { return (inhibitCommands != 0); }
 
 /*
 ================
@@ -264,17 +260,17 @@ Sets the usercmd_t based on key states
 ================
 */
 void idUsercmdGenLocal::KeyMove() noexcept {
-	int forward = 0;
-	int side = 0;
+  int forward = 0;
+  int side = 0;
 
-	side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
-	side -= KEY_MOVESPEED * ButtonState(UB_MOVELEFT);
+  side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
+  side -= KEY_MOVESPEED * ButtonState(UB_MOVELEFT);
 
-	forward -= KEY_MOVESPEED * ButtonState(UB_MOVEUP);
-	forward += KEY_MOVESPEED * ButtonState(UB_MOVEDOWN);
+  forward -= KEY_MOVESPEED * ButtonState(UB_MOVEUP);
+  forward += KEY_MOVESPEED * ButtonState(UB_MOVEDOWN);
 
-	cmd.forwardmove += idMath::ClampChar(forward);
-	cmd.rightmove += idMath::ClampChar(side);
+  cmd.forwardmove += idMath::ClampChar(forward);
+  cmd.rightmove += idMath::ClampChar(side);
 }
 
 /*
@@ -283,26 +279,26 @@ idUsercmdGenLocal::CmdButtons
 ==============
 */
 void idUsercmdGenLocal::CmdButtons() noexcept {
-	cmd.buttons = 0;
+  cmd.buttons = 0;
 
-	// check the attack button
-	if (ButtonState(UB_ATTACK)) {
-		cmd.buttons |= BUTTON_ATTACK;
-	}
+  // check the attack button
+  if (ButtonState(UB_ATTACK)) {
+    cmd.buttons |= BUTTON_ATTACK;
+  }
 
-	// check the use button
-	if (ButtonState(UB_USE)) {
-		cmd.buttons |= BUTTON_USE;
-	}
+  // check the use button
+  if (ButtonState(UB_USE)) {
+    cmd.buttons |= BUTTON_USE;
+  }
 
-	// check the run button
-	if (toggled_run.on) {
-		cmd.buttons |= BUTTON_RUN;
-	}
+  // check the run button
+  if (toggled_run.on) {
+    cmd.buttons |= BUTTON_RUN;
+  }
 
-	if (ButtonState(UB_MOVEUP)) {
-		cmd.buttons |= BUTTON_JUMP;
-	}
+  if (ButtonState(UB_MOVEUP)) {
+    cmd.buttons |= BUTTON_JUMP;
+  }
 }
 
 /*
@@ -313,10 +309,11 @@ inits the current command for this frame
 ================
 */
 void idUsercmdGenLocal::InitCurrent() noexcept {
-	memset(&cmd, 0, sizeof(cmd));
-	//cmd.impulseSequence = impulseSequence;
-	cmd.impulse = impulse;
-	//cmd.buttons |= (in_alwaysRun.GetBool() && common->IsMultiplayer()) ? BUTTON_RUN : 0;
+  memset(&cmd, 0, sizeof(cmd));
+  // cmd.impulseSequence = impulseSequence;
+  cmd.impulse = impulse;
+  // cmd.buttons |= (in_alwaysRun.GetBool() && common->IsMultiplayer()) ?
+  // BUTTON_RUN : 0;
 }
 
 /*
@@ -327,17 +324,17 @@ creates the current command for this frame
 ================
 */
 void idUsercmdGenLocal::MakeCurrent() noexcept {
-	if (!Inhibited()) {
-		toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
+  if (!Inhibited()) {
+    toggled_run.SetKeyState(ButtonState(UB_SPEED), false);
 
-		// set button bits
-		CmdButtons();
+    // set button bits
+    CmdButtons();
 
-		// get basic movement from keyboard
-		KeyMove();
-	}
+    // get basic movement from keyboard
+    KeyMove();
+  }
 
-	impulse = cmd.impulse;
+  impulse = cmd.impulse;
 }
 
 /*
@@ -347,13 +344,15 @@ idUsercmdGenLocal::CommandStringUsercmdData
 Returns the button if the command string is used by the usercmd generator.
 ================
 */
-int	idUsercmdGenLocal::CommandStringUsercmdData(const std::string& cmdString) {
-	auto iter = std::find_if(userCmdStrings.begin(), userCmdStrings.end(), [&cmdString](auto& ucs) noexcept {return cmdString.compare(ucs.string) == 0; });
+int idUsercmdGenLocal::CommandStringUsercmdData(const std::string& cmdString) {
+  auto iter = std::find_if(userCmdStrings.begin(), userCmdStrings.end(),
+                           [&cmdString](auto& ucs) noexcept {
+                             return cmdString.compare(ucs.string) == 0;
+                           });
 
-	if (iter != userCmdStrings.end())
-		return iter->button;
+  if (iter != userCmdStrings.end()) return iter->button;
 
-	return UB_NONE;
+  return UB_NONE;
 }
 
 /*
@@ -361,9 +360,7 @@ int	idUsercmdGenLocal::CommandStringUsercmdData(const std::string& cmdString) {
 idUsercmdGenLocal::Init
 ================
 */
-void idUsercmdGenLocal::Init() noexcept {
-	initialized = true;
-}
+void idUsercmdGenLocal::Init() noexcept { initialized = true; }
 
 /*
 ================
@@ -371,12 +368,12 @@ idUsercmdGenLocal::InitForNewMap
 ================
 */
 void idUsercmdGenLocal::InitForNewMap() noexcept {
-	impulse = 0;
+  impulse = 0;
 
-	toggled_run.Clear();
-	toggled_run.on = false;
+  toggled_run.Clear();
+  toggled_run.on = false;
 
-	Clear();
+  Clear();
 }
 
 /*
@@ -384,9 +381,7 @@ void idUsercmdGenLocal::InitForNewMap() noexcept {
 idUsercmdGenLocal::Shutdown
 ================
 */
-void idUsercmdGenLocal::Shutdown() noexcept {
-	initialized = false;
-}
+void idUsercmdGenLocal::Shutdown() noexcept { initialized = false; }
 
 /*
 ================
@@ -394,11 +389,11 @@ idUsercmdGenLocal::Clear
 ================
 */
 void idUsercmdGenLocal::Clear() noexcept {
-	// clears all key states 
-	memset(buttonState, 0, sizeof(buttonState));
-	memset(keyState, false, sizeof(keyState));
+  // clears all key states
+  memset(buttonState, 0, sizeof(buttonState));
+  memset(keyState, false, sizeof(keyState));
 
-	inhibitCommands = false;
+  inhibitCommands = false;
 }
 
 /*
@@ -409,31 +404,29 @@ Handles mouse/keyboard button actions
 ===================
 */
 void idUsercmdGenLocal::Key(int keyNum, bool down) noexcept {
+  // Sanity check, sometimes we get double message :(
+  if (keyState[keyNum] == down) {
+    return;
+  }
+  keyState[keyNum] = down;
 
-	// Sanity check, sometimes we get double message :(
-	if (keyState[keyNum] == down) {
-		return;
-	}
-	keyState[keyNum] = down;
+  int action = idKeyInput::GetUsercmdAction(keyNum);
 
-	int action = idKeyInput::GetUsercmdAction(keyNum);
-
-	if (down) {
-		buttonState[action]++;
-		if (!Inhibited()) {
-			if (action >= UB_IMPULSE0 && action <= UB_IMPULSE31) {
-				cmd.impulse = action - UB_IMPULSE0;
-				//cmd.impulseSequence++;
-			}
-		}
-	}
-	else {
-		buttonState[action]--;
-		// we might have one held down across an app active transition
-		if (buttonState[action] < 0) {
-			buttonState[action] = 0;
-		}
-	}
+  if (down) {
+    buttonState[action]++;
+    if (!Inhibited()) {
+      if (action >= UB_IMPULSE0 && action <= UB_IMPULSE31) {
+        cmd.impulse = action - UB_IMPULSE0;
+        // cmd.impulseSequence++;
+      }
+    }
+  } else {
+    buttonState[action]--;
+    // we might have one held down across an app active transition
+    if (buttonState[action] < 0) {
+      buttonState[action] = 0;
+    }
+  }
 }
 
 /*
@@ -442,22 +435,21 @@ idUsercmdGenLocal::Keyboard
 ===============
 */
 void idUsercmdGenLocal::Keyboard() {
-	int numEvents = Sys_PollKeyboardInputEvents();
+  int numEvents = Sys_PollKeyboardInputEvents();
 
-	// Study each of the buffer elements and process them.
-	for (int i = 0; i < numEvents; i++) {
-		int key;
-		bool state;
-		if (Sys_ReturnKeyboardInputEvent(i, key, state)) {
-			Key(key, state);
-		}
-	}
+  // Study each of the buffer elements and process them.
+  for (int i = 0; i < numEvents; i++) {
+    int key;
+    bool state;
+    if (Sys_ReturnKeyboardInputEvent(i, key, state)) {
+      Key(key, state);
+    }
+  }
 
-	Sys_EndKeyboardInputEvents();
+  Sys_EndKeyboardInputEvents();
 }
 
-void Sys_EndKeyboardInputEvents() noexcept {
-}
+void Sys_EndKeyboardInputEvents() noexcept {}
 
 /*
 ================
@@ -465,15 +457,15 @@ idUsercmdGenLocal::BuildCurrentUsercmd
 ================
 */
 void idUsercmdGenLocal::BuildCurrentUsercmd(int deviceNum) {
-	// initialize current usercmd
-	InitCurrent();
+  // initialize current usercmd
+  InitCurrent();
 
-	// process the system mouse events
-	//Mouse();
+  // process the system mouse events
+  // Mouse();
 
-	// process the system keyboard events
-	Keyboard();
+  // process the system keyboard events
+  Keyboard();
 
-	// create the usercmd
-	MakeCurrent();
+  // create the usercmd
+  MakeCurrent();
 }

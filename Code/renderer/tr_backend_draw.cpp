@@ -9,14 +9,14 @@ RB_DrawViewInternal
 ==================
 */
 void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
-	//-------------------------------------------------
-	// render debug tools
-	//-------------------------------------------------
-	RB_RenderDebugTools();
+  //-------------------------------------------------
+  // render debug tools
+  //-------------------------------------------------
+  RB_RenderDebugTools();
 
-	tr.Display();
+  tr.Display();
 
-	tr.update_frame = false;
+  tr.update_frame = false;
 }
 
 /*
@@ -24,13 +24,13 @@ void RB_DrawViewInternal(/*const viewDef_t * viewDef, const int stereoEye*/) {
 RB_DrawView
 
 StereoEye will always be 0 in mono modes, or -1 / 1 in stereo modes.
-If the view is a GUI view that is repeated for both eyes, the viewDef.stereoEye value
-is 0, so the stereoEye parameter is not always the same as that.
+If the view is a GUI view that is repeated for both eyes, the viewDef.stereoEye
+value is 0, so the stereoEye parameter is not always the same as that.
 ==================
 */
 void RB_DrawView(/*const void *data, const int stereoEye*/) {
-	// render the scene
-	RB_DrawViewInternal(/*cmd->viewDef, stereoEye*/);
+  // render the scene
+  RB_DrawViewInternal(/*cmd->viewDef, stereoEye*/);
 }
 
 /*
@@ -41,6 +41,4 @@ This function will be called syncronously if running without
 smp extensions, or asyncronously by another thread.
 ====================
 */
-void RB_ExecuteBackEndCommands() {
-	RB_DrawView();
-}
+void RB_ExecuteBackEndCommands() { RB_DrawView(); }

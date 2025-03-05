@@ -15,32 +15,34 @@ articulated figure. Only used for debugging!
 #include "physics/Physics_AF.h"
 
 class idMultiModelAF : public idEntity {
-public:
-	CLASS_PROTOTYPE(idMultiModelAF);
+ public:
+  CLASS_PROTOTYPE(idMultiModelAF);
 
-	idMultiModelAF() = default;
-	~idMultiModelAF();
-	idMultiModelAF(const idMultiModelAF&) = default;
-	idMultiModelAF& operator=(const idMultiModelAF&) = default;
-	idMultiModelAF(idMultiModelAF&&) = default;
-	idMultiModelAF& operator=(idMultiModelAF&&) = default;
+  idMultiModelAF() = default;
+  ~idMultiModelAF();
+  idMultiModelAF(const idMultiModelAF&) = default;
+  idMultiModelAF& operator=(const idMultiModelAF&) = default;
+  idMultiModelAF(idMultiModelAF&&) = default;
+  idMultiModelAF& operator=(idMultiModelAF&&) = default;
 
-	void Spawn();
+  void Spawn();
 
-	void Think() override;
-	void Present() override;
+  void Think() override;
+  void Present() override;
 
-	void Remove() noexcept override;
+  void Remove() noexcept override;
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
-protected:
-	std::shared_ptr<idPhysics_AF> physicsObj;
+  bool Collide(const trace_t& collision,
+               const Vector2& velocity) noexcept override;
 
-	void SetModelForId(int id, const std::string& modelName);
+ protected:
+  std::shared_ptr<idPhysics_AF> physicsObj;
 
-private:
-	std::vector<std::shared_ptr<idRenderModel>> modelHandles;
-	std::vector<int> modelDefHandles;
+  void SetModelForId(int id, const std::string& modelName);
+
+ private:
+  std::vector<std::shared_ptr<idRenderModel>> modelHandles;
+  std::vector<int> modelDefHandles;
 };
 
 /*
@@ -54,13 +56,14 @@ Chain hanging down from the ceiling. Only used for debugging!
 */
 
 class idChain : public idMultiModelAF {
-public:
-	CLASS_PROTOTYPE(idChain);
+ public:
+  CLASS_PROTOTYPE(idChain);
 
-	void Spawn();
+  void Spawn();
 
-protected:
-	void BuildChain(const std::string& name, const Vector2& origin, float linkLength, int numLinks, const Vector2& dir);
+ protected:
+  void BuildChain(const std::string& name, const Vector2& origin,
+                  float linkLength, int numLinks, const Vector2& dir);
 };
 
 #endif

@@ -7,13 +7,13 @@ idSWFTextInstance::Init
 ========================
 */
 void idSWFTextInstance::Init(std::shared_ptr<idSWF> _swf) {
-	swf = _swf;
+  swf = _swf;
 
-	text = "initial text";
-	color = colorWhite;
-	visible = true;
+  text = "initial text";
+  color = colorWhite;
+  visible = true;
 
-	scriptObject->SetText(shared_from_this());
+  scriptObject->SetText(shared_from_this());
 }
 
 /*
@@ -21,12 +21,10 @@ void idSWFTextInstance::Init(std::shared_ptr<idSWF> _swf) {
 idSWFTextInstance::GetTextLength
 ========================
 */
-size_t idSWFTextInstance::GetTextLength() noexcept {
-	return text.size();
-}
+size_t idSWFTextInstance::GetTextLength() noexcept { return text.size(); }
 
 void idSWFTextInstance::Clear() noexcept {
-	scriptObject->SetText(NULL);
-	scriptObject->Clear();
-	scriptObject = nullptr;
+  scriptObject->SetText(NULL);
+  scriptObject->Clear();
+  scriptObject = nullptr;
 }

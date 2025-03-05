@@ -5,6 +5,6 @@ package Serialize;
 import "MatchParams.proto";
 
 message ReliableHello {
-    int32 peerNum = 1;
-    MatchParams matchParams = 2;
+  int32 peerNum = 1;
+  MatchParams matchParams = 2;
 }

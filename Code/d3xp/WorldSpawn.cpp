@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "Game_local.h"
 
 /*
@@ -20,8 +19,8 @@ idWorldspawn::Spawn
 ================
 */
 void idWorldspawn::Spawn() {
-	idassert(!gameLocal.world);
-	gameLocal.world = std::dynamic_pointer_cast<idWorldspawn>(shared_from_this());
+  idassert(!gameLocal.world);
+  gameLocal.world = std::dynamic_pointer_cast<idWorldspawn>(shared_from_this());
 }
 
 /*
@@ -30,9 +29,9 @@ idWorldspawn::~idWorldspawn
 ================
 */
 idWorldspawn::~idWorldspawn() {
-	if (gameLocal.world.get() == this) {
-		gameLocal.world = nullptr;
-	}
+  if (gameLocal.world.get() == this) {
+    gameLocal.world = nullptr;
+  }
 }
 
 /*
@@ -40,6 +39,4 @@ idWorldspawn::~idWorldspawn() {
 idWorldspawn::Event_Remove
 ================
 */
-void idWorldspawn::Event_Remove() {
-	gameLocal.Error("Tried to remove world");
-}
+void idWorldspawn::Event_Remove() { gameLocal.Error("Tried to remove world"); }

@@ -13,7 +13,7 @@ idLobbyBackendDirect::idLobbyBackendDirect
 ========================
 */
 idLobbyBackendDirect::idLobbyBackendDirect() {
-	state = lobbyBackendState_t::STATE_INVALID;
+  state = lobbyBackendState_t::STATE_INVALID;
 }
 
 /*
@@ -21,14 +21,16 @@ idLobbyBackendDirect::idLobbyBackendDirect() {
 idLobbyBackendDirect::StartHosting
 ========================
 */
-void idLobbyBackendDirect::StartHosting(const idMatchParameters& p, float skillLevel, lobbyBackendType_t type) {
-	NET_VERBOSE_PRINT("idLobbyBackendDirect::StartHosting\n");
+void idLobbyBackendDirect::StartHosting(const idMatchParameters& p,
+                                        float skillLevel,
+                                        lobbyBackendType_t type) {
+  NET_VERBOSE_PRINT("idLobbyBackendDirect::StartHosting\n");
 
-	isLocal = true;// MatchTypeIsLocal(p.matchFlags);
-	isHost = true;
+  isLocal = true;  // MatchTypeIsLocal(p.matchFlags);
+  isHost = true;
 
-	state = lobbyBackendState_t ::STATE_READY;
-	isLocal = true;
+  state = lobbyBackendState_t ::STATE_READY;
+  isLocal = true;
 }
 
 /*
@@ -36,16 +38,17 @@ void idLobbyBackendDirect::StartHosting(const idMatchParameters& p, float skillL
 idLobbyBackendDirect::StartFinding
 ========================
 */
-void idLobbyBackendDirect::StartFinding(const idMatchParameters& p, int numPartyUsers, float skillLevel) {
-	isLocal = true;
-	isHost = false;
+void idLobbyBackendDirect::StartFinding(const idMatchParameters& p,
+                                        int numPartyUsers, float skillLevel) {
+  isLocal = true;
+  isHost = false;
 
-	//if (lobbyToSessionCB->CanJoinLocalHost()) {
-		state = lobbyBackendState_t::STATE_READY;
-	/*}
-	else {
-		state = lobbyBackendState_t::STATE_FAILED;
-	}*/
+  // if (lobbyToSessionCB->CanJoinLocalHost()) {
+  state = lobbyBackendState_t::STATE_READY;
+  /*}
+  else {
+          state = lobbyBackendState_t::STATE_FAILED;
+  }*/
 }
 
 /*
@@ -53,16 +56,19 @@ void idLobbyBackendDirect::StartFinding(const idMatchParameters& p, int numParty
 idLobbyBackendDirect::GetSearchResults
 ========================
 */
-void idLobbyBackendDirect::GetSearchResults(std::vector<lobbyConnectInfo_t>& searchResults) {
-	lobbyConnectInfo_t fakeResult;
+void idLobbyBackendDirect::GetSearchResults(
+    std::vector<lobbyConnectInfo_t>& searchResults) {
+  lobbyConnectInfo_t fakeResult;
 
-	boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address(host_net_ip.GetString()), net_port.GetInteger());
-	fakeResult.netAddr.address = ep.address();
-	fakeResult.netAddr.port = ep.port();
-	fakeResult.netAddr.type = netadrtype_t::NA_IP;
+  boost::asio::ip::udp::endpoint ep(
+      boost::asio::ip::make_address(host_net_ip.GetString()),
+      net_port.GetInteger());
+  fakeResult.netAddr.address = ep.address();
+  fakeResult.netAddr.port = ep.port();
+  fakeResult.netAddr.type = netadrtype_t::NA_IP;
 
-	searchResults.clear();
-	searchResults.push_back(fakeResult);
+  searchResults.clear();
+  searchResults.push_back(fakeResult);
 }
 
 /*
@@ -70,20 +76,21 @@ void idLobbyBackendDirect::GetSearchResults(std::vector<lobbyConnectInfo_t>& sea
 idLobbyBackendDirect::JoinFromConnectInfo
 ========================
 */
-void idLobbyBackendDirect::JoinFromConnectInfo(const lobbyConnectInfo_t& connectInfo) {
-	if (lobbyToSessionCB->CanJoinLocalHost()) {
-		boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
-		address.address = ep.address();
-		address.port = ep.port();
-		address.type = netadrtype_t::NA_IP;
-	}
-	else {
-		address = connectInfo.netAddr;
-	}
+void idLobbyBackendDirect::JoinFromConnectInfo(
+    const lobbyConnectInfo_t& connectInfo) {
+  if (lobbyToSessionCB->CanJoinLocalHost()) {
+    boost::asio::ip::udp::endpoint ep(
+        boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
+    address.address = ep.address();
+    address.port = ep.port();
+    address.type = netadrtype_t::NA_IP;
+  } else {
+    address = connectInfo.netAddr;
+  }
 
-	state = lobbyBackendState_t::STATE_READY;
-	isLocal = false;
-	isHost = false;
+  state = lobbyBackendState_t::STATE_READY;
+  isLocal = false;
+  isHost = false;
 }
 
 /*
@@ -92,7 +99,7 @@ idLobbyBackendDirect::Shutdown
 ========================
 */
 void idLobbyBackendDirect::Shutdown() {
-	state = lobbyBackendState_t::STATE_SHUTDOWN;
+  state = lobbyBackendState_t::STATE_SHUTDOWN;
 }
 
 /*
@@ -101,8 +108,8 @@ idLobbyBackendDirect::GetOwnerAddress
 ========================
 */
 void idLobbyBackendDirect::GetOwnerAddress(lobbyAddress_t& outAddr) {
-	outAddr.netAddr = address;
-	state = lobbyBackendState_t::STATE_READY;
+  outAddr.netAddr = address;
+  state = lobbyBackendState_t::STATE_READY;
 }
 
 /*
@@ -111,17 +118,19 @@ idLobbyBackendDirect::GetConnectInfo
 ========================
 */
 lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo() {
-	lobbyConnectInfo_t connectInfo;
+  lobbyConnectInfo_t connectInfo;
 
-	// If we aren't the host, this lobby should have been joined through JoinFromConnectInfo
-	if (IsHost()) {
-		boost::asio::ip::udp::endpoint ep(boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
-		address.address = ep.address();
-		address.port = ep.port();
-		address.type = netadrtype_t::NA_IP;
-	}
+  // If we aren't the host, this lobby should have been joined through
+  // JoinFromConnectInfo
+  if (IsHost()) {
+    boost::asio::ip::udp::endpoint ep(
+        boost::asio::ip::make_address("127.0.0.1"), net_port.GetInteger());
+    address.address = ep.address();
+    address.port = ep.port();
+    address.type = netadrtype_t::NA_IP;
+  }
 
-	connectInfo.netAddr = address;
+  connectInfo.netAddr = address;
 
-	return connectInfo;
+  return connectInfo;
 }

@@ -1,28 +1,27 @@
 #include "idlib/precompiled.h"
 
-
 #include "tr_local.h"
 #include "Model_local.h"
 
 idRenderModelStatic::idRenderModelStatic() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s ctor\n", "idRenderModelStatic");
-#endif // DEBUG_PRINT_Ctor_Dtor
+  common->DPrintf("%s ctor\n", "idRenderModelStatic");
+#endif  // DEBUG_PRINT_Ctor_Dtor
 
-	name = "<undefined>";
-	purged = false;
-	reloadable = true;
-	levelLoadReferenced = false;
+  name = "<undefined>";
+  purged = false;
+  reloadable = true;
+  levelLoadReferenced = false;
 
-	color = colorNone;
+  color = colorNone;
 }
 
 idRenderModelStatic::~idRenderModelStatic() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-	common->DPrintf("%s dtor\n", "idRenderModelStatic");
-#endif // DEBUG_PRINT_Ctor_Dtor
+  common->DPrintf("%s dtor\n", "idRenderModelStatic");
+#endif  // DEBUG_PRINT_Ctor_Dtor
 
-	PurgeModel();
+  PurgeModel();
 }
 
 /*
@@ -30,31 +29,29 @@ idRenderModelStatic::~idRenderModelStatic() {
 idRenderModelStatic::IsDefaultModel
 ================
 */
-bool idRenderModelStatic::IsDefaultModel() const noexcept {
-	return defaulted;
-}
+bool idRenderModelStatic::IsDefaultModel() const noexcept { return defaulted; }
 
 void idRenderModelStatic::InitFromFile(const std::string& fileName) {
-	bool loaded{};
-	std::string extension;
+  bool loaded{};
+  std::string extension;
 
-	InitEmpty(fileName);
+  InitEmpty(fileName);
 
-	idStr::ExtractFileExtension(name, extension);
+  idStr::ExtractFileExtension(name, extension);
 
-	if (extension == "textmodel") {
-		loaded = LoadTextModel(name);
-		reloadable = true;
-	}
+  if (extension == "textmodel") {
+    loaded = LoadTextModel(name);
+    reloadable = true;
+  }
 
-	if (!loaded) {
-		common->Warning("Couldn't load model: '%s'", name.c_str());
-		MakeDefaultModel();
-		return;
-	}
+  if (!loaded) {
+    common->Warning("Couldn't load model: '%s'", name.c_str());
+    MakeDefaultModel();
+    return;
+  }
 
-	// it is now available for use
-	purged = false;
+  // it is now available for use
+  purged = false;
 }
 
 /*
@@ -63,27 +60,25 @@ idRenderModelStatic::LoadBinaryModel
 ========================
 */
 bool idRenderModelStatic::LoadBinaryModel(idFile* file) noexcept {
-	if (file == nullptr) {
-		return false;
-	}
+  if (file == nullptr) {
+    return false;
+  }
 
-	return false;
+  return false;
 }
 
 void idRenderModelStatic::PurgeModel() noexcept {
-	surfaces.clear();
+  surfaces.clear();
 
-	purged = true;
+  purged = true;
 }
 
 void idRenderModelStatic::LoadModel() {
-	PurgeModel();
-	InitFromFile(name);
+  PurgeModel();
+  InitFromFile(name);
 }
 
-bool idRenderModelStatic::IsLoaded() noexcept {
-	return !purged;
-}
+bool idRenderModelStatic::IsLoaded() noexcept { return !purged; }
 
 /*
 ================
@@ -91,7 +86,7 @@ idRenderModelStatic::SetLevelLoadReferenced
 ================
 */
 void idRenderModelStatic::SetLevelLoadReferenced(bool referenced) noexcept {
-	levelLoadReferenced = referenced;
+  levelLoadReferenced = referenced;
 }
 
 /*
@@ -100,14 +95,14 @@ idRenderModelStatic::IsLevelLoadReferenced
 ================
 */
 bool idRenderModelStatic::IsLevelLoadReferenced() noexcept {
-	return levelLoadReferenced;
+  return levelLoadReferenced;
 }
 
 void idRenderModelStatic::InitEmpty(const std::string& fileName) {
-	name = fileName;
-	reloadable = false;	// if it didn't come from a file, we can't reload it
-	PurgeModel();
-	purged = false;
+  name = fileName;
+  reloadable = false;  // if it didn't come from a file, we can't reload it
+  PurgeModel();
+  purged = false;
 }
 
 /*
@@ -115,21 +110,19 @@ void idRenderModelStatic::InitEmpty(const std::string& fileName) {
 idRenderModelStatic::Name
 ================
 */
-const std::string& idRenderModelStatic::Name() const {
-	return name;
-}
+const std::string& idRenderModelStatic::Name() const { return name; }
 
 int idRenderModelStatic::NumSurfaces() const noexcept {
-	return surfaces.size();
+  return surfaces.size();
 }
 
-const ModelPixel & idRenderModelStatic::Surface(int surfaceNum) const noexcept {
-	return surfaces[surfaceNum];
+const ModelPixel& idRenderModelStatic::Surface(int surfaceNum) const noexcept {
+  return surfaces[surfaceNum];
 }
 
 dynamicModel_t idRenderModelStatic::IsDynamicModel() const noexcept {
-	// dynamic subclasses will override this
-	return DM_STATIC;
+  // dynamic subclasses will override this
+  return DM_STATIC;
 }
 
 /*
@@ -137,31 +130,33 @@ dynamicModel_t idRenderModelStatic::IsDynamicModel() const noexcept {
 idRenderModelStatic::IsReloadable
 ================
 */
-bool idRenderModelStatic::IsReloadable() const noexcept {
-	return reloadable;
-}
+bool idRenderModelStatic::IsReloadable() const noexcept { return reloadable; }
 
-idRenderModel* idRenderModelStatic::InstantiateDynamicModel(const renderEntity_t* ent, const viewDef_t* view,
-	idRenderModel* cachedModel) {
-	if (cachedModel) {
-		delete cachedModel;
-		cachedModel = nullptr;
-	}
-	common->Error("InstantiateDynamicModel called on static model '%s'", name.c_str());
-	return NULL;
+idRenderModel* idRenderModelStatic::InstantiateDynamicModel(
+    const renderEntity_t* ent, const viewDef_t* view,
+    idRenderModel* cachedModel) {
+  if (cachedModel) {
+    delete cachedModel;
+    cachedModel = nullptr;
+  }
+  common->Error("InstantiateDynamicModel called on static model '%s'",
+                name.c_str());
+  return NULL;
 }
 
 void idRenderModelStatic::MakeDefaultModel() {
-	defaulted = true;
+  defaulted = true;
 
-	// throw out any surfaces we already have
-	PurgeModel();
+  // throw out any surfaces we already have
+  PurgeModel();
 
-	for (int i = -8 / window_font_height.GetInteger(); i < 8 / window_font_height.GetInteger(); ++i) {
-		for (int j = -8 / window_font_width.GetInteger(); j < 8 / window_font_width.GetInteger(); ++j) {
-			surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', colorWhite));
-		}
-	}
+  for (int i = -8 / window_font_height.GetInteger();
+       i < 8 / window_font_height.GetInteger(); ++i) {
+    for (int j = -8 / window_font_width.GetInteger();
+         j < 8 / window_font_width.GetInteger(); ++j) {
+      surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', colorWhite));
+    }
+  }
 }
 
 /*
@@ -170,110 +165,109 @@ idRenderModelStatic::LoadASE
 =================
 */
 bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
-	ID_TIME_T timeStamp;
-	int len;
+  ID_TIME_T timeStamp;
+  int len;
 
-	auto buf = fileSystem->ReadFile(fileName, len, &timeStamp, true);
-	if (!buf) {
-		return false;
-	}
+  auto buf = fileSystem->ReadFile(fileName, len, &timeStamp, true);
+  if (!buf) {
+    return false;
+  }
 
-	idLexer src;
-	idToken token;
-	idToken token2;
+  idLexer src;
+  idToken token;
+  idToken token2;
 
-	src.LoadMemory(buf.get(), len, fileName, 0);
-	//src.SetFlags(DECL_LEXER_FLAGS);
-	src.SkipUntilString("{");
+  src.LoadMemory(buf.get(), len, fileName, 0);
+  // src.SetFlags(DECL_LEXER_FLAGS);
+  src.SkipUntilString("{");
 
-	float x{}, y{};
-	char symbol;
-	int col{};
+  float x{}, y{};
+  char symbol;
+  int col{};
 
-	while (1) {
-		if (!src.ReadToken(&token)) {
-			break;
-		}
+  while (1) {
+    if (!src.ReadToken(&token)) {
+      break;
+    }
 
-		if (token == "}") {
-			break;
-		}
+    if (token == "}") {
+      break;
+    }
 
-		if (token == "{") {
-			while (1) {
-				if (!src.ReadToken(&token2)) {
-					src.Warning("Unexpected end of file");
-					return false;
-				}
+    if (token == "{") {
+      while (1) {
+        if (!src.ReadToken(&token2)) {
+          src.Warning("Unexpected end of file");
+          return false;
+        }
 
-				if (token2 == "}") {
-					++y;
-					x = 0;
-					break;
-				}
+        if (token2 == "}") {
+          ++y;
+          x = 0;
+          break;
+        }
 
-				if (!src.ReadToken(&token2)) {
-					src.Warning("Unexpected end of file");
-					return false;
-				}
+        if (!src.ReadToken(&token2)) {
+          src.Warning("Unexpected end of file");
+          return false;
+        }
 
-				symbol = token2.at(0);
+        symbol = token2.at(0);
 
-				if (!src.ReadToken(&token2)) {
-					src.Warning("Unexpected end of file");
-					return false;
-				}
+        if (!src.ReadToken(&token2)) {
+          src.Warning("Unexpected end of file");
+          return false;
+        }
 
-				col = std::stoi(token2);
+        col = std::stoi(token2);
 
-				surfaces.emplace_back(Vector2(x, y), Screen::Pixel(symbol, col));
+        surfaces.emplace_back(Vector2(x, y), Screen::Pixel(symbol, col));
 
-				++x;
+        ++x;
 
-				if (!src.ExpectTokenString("}")) {
-					src.Warning("Unexpected token");
-					return false;
-				}
-			}
-		}
-		else {
-			src.Warning("unknown token '%s'", token.c_str());
-			return false;
-		}
-	}
+        if (!src.ExpectTokenString("}")) {
+          src.Warning("Unexpected token");
+          return false;
+        }
+      }
+    } else {
+      src.Warning("unknown token '%s'", token.c_str());
+      return false;
+    }
+  }
 
-	ShiftSurfaces();
+  ShiftSurfaces();
 
-	return true;
+  return true;
 }
 
 void idRenderModelStatic::ShiftSurfaces() {
-	if (surfaces.empty()) return;
+  if (surfaces.empty()) return;
 
-	int max_x = surfaces.back().origin.x + 1;
-	int max_y = surfaces.back().origin.y + 1;
+  int max_x = surfaces.back().origin.x + 1;
+  int max_y = surfaces.back().origin.y + 1;
 
-	for (int i = 0; i < max_y; ++i) {
-		for (int j = 0; j < max_x; ++j) {
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= max_x / 2;
-			surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= max_y / 2;
-		}
-	}
+  for (int i = 0; i < max_y; ++i) {
+    for (int j = 0; j < max_x; ++j) {
+      surfaces.at(static_cast<size_t>(i * max_x + j)).origin.x -= max_x / 2;
+      surfaces.at(static_cast<size_t>(i * max_x + j)).origin.y -= max_y / 2;
+    }
+  }
 }
 
 Screen::color_type idRenderModelStatic::GetColor() const noexcept {
-	return color;
+  return color;
 }
 
 void idRenderModelStatic::SetColor(Screen::color_type col) noexcept {
-	/*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
-	{
-		iter->screenPixel.color = col;
-	}*/
-	color = col;
+  /*for (auto iter = surfaces.begin(); iter != surfaces.end(); ++iter)
+  {
+          iter->screenPixel.color = col;
+  }*/
+  color = col;
 }
 
 ModelPixel::ModelPixel(Vector2 origin, Screen::Pixel pixel) noexcept {
-	this->origin = origin;
-	this->screenPixel = pixel;
+  this->origin = origin;
+  this->screenPixel = pixel;
 }

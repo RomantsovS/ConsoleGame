@@ -2,20 +2,20 @@
 #define IDLIB_LIB_H_
 
 class idLib {
-private:
-public:
-	static class idCommon* common;
-	static int frameNumber;
+ private:
+ public:
+  static class idCommon* common;
+  static int frameNumber;
 
-	// wrapper to idCommon functions 
-	static void Printf(const char* fmt, ...);
-	static void Error(const char* fmt, ...);
-	static void FatalError(const char* fmt, ...);
-	static void Warning(const char* fmt, ...);
+  // wrapper to idCommon functions
+  static void Printf(const char* fmt, ...);
+  static void Error(const char* fmt, ...);
+  static void FatalError(const char* fmt, ...);
+  static void Warning(const char* fmt, ...);
 };
 
-#define MAX_STRING_CHARS		1024		// max length of a string
-#define MAX_PRINT_MSG			16384		// buffer size for our various printf routines
+#define MAX_STRING_CHARS 1024  // max length of a string
+#define MAX_PRINT_MSG 16384    // buffer size for our various printf routines
 
 // basic colors
 extern unsigned short colorNone;
@@ -43,7 +43,7 @@ extern unsigned short colorWhite;
 /*
 ===============================================================================
 
-	idLib headers.
+        idLib headers.
 
 ===============================================================================
 */
@@ -82,4 +82,4 @@ extern unsigned short colorWhite;
 #include "MapFile.h"
 #include "Thread.h"
 
-#endif // !IDLIB_LIB_H_
+#endif  // !IDLIB_LIB_H_

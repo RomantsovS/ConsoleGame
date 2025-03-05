@@ -1,17 +1,14 @@
 #include "precompiled.h"
 
+idDict::idDict() {}
 
-idDict::idDict() {
+idDict::idDict(const idDict& other) {
+  args.clear();
+
+  args = other.args;
 }
 
-idDict::idDict(const idDict & other) {
-	args.clear();
-
-	args = other.args;
-}
-
-idDict::~idDict() {
-}
+idDict::~idDict() {}
 
 /*
 ================
@@ -19,105 +16,108 @@ idDict::SetDefaults
 ================
 */
 void idDict::SetDefaults(const idDict* dict) {
-	for (const auto& def : dict->args) {
-		auto iter = args.find(def.first);
+  for (const auto& def : dict->args) {
+    auto iter = args.find(def.first);
 
-		if (iter == args.end()) {
-			args.insert_or_assign(def.first, def.second);
-		}
-	}
+    if (iter == args.end()) {
+      args.insert_or_assign(def.first, def.second);
+    }
+  }
 }
 
-void idDict::Clear() noexcept {
-	args.clear();
-}
+void idDict::Clear() noexcept { args.clear(); }
 
 void idDict::Set(const std::string& key, const std::string& value) {
-	args.insert_or_assign(key, value);
+  args.insert_or_assign(key, value);
 }
 
-const std::string& idDict::GetString(const std::string& key, const std::string& defaultString) const {
-	auto iter = args.find(key);
+const std::string& idDict::GetString(const std::string& key,
+                                     const std::string& defaultString) const {
+  auto iter = args.find(key);
 
-	if (iter != args.end()) {
-		return iter->second;
-	}
+  if (iter != args.end()) {
+    return iter->second;
+  }
 
-	return defaultString;
+  return defaultString;
 }
 
-int idDict::GetInt(const std::string& key, const std::string& defaultString) const {
-	return atoi(GetString(key, defaultString).c_str());
+int idDict::GetInt(const std::string& key,
+                   const std::string& defaultString) const {
+  return atoi(GetString(key, defaultString).c_str());
 }
 
-bool idDict::GetString(const std::string& key, const std::string& defaultString, gsl::not_null<std::string*> out) const {
-	auto iter = args.find(key);
+bool idDict::GetString(const std::string& key, const std::string& defaultString,
+                       gsl::not_null<std::string*> out) const {
+  auto iter = args.find(key);
 
-	if (iter != args.end()) {
-		*out = iter->second;
-		return true;
-	}
+  if (iter != args.end()) {
+    *out = iter->second;
+    return true;
+  }
 
-	*out = defaultString;
+  *out = defaultString;
 
-	return false;
+  return false;
 }
 
-bool idDict::GetInt(const std::string key, const std::string defaultString, int & out) const {
-	std::string s;
-	bool found;
+bool idDict::GetInt(const std::string key, const std::string defaultString,
+                    int& out) const {
+  std::string s;
+  bool found;
 
-	found = GetString(key, defaultString, &s);
-	out = atoi(s.c_str());
-	return found;
+  found = GetString(key, defaultString, &s);
+  out = atoi(s.c_str());
+  return found;
 }
 
 int idDict::GetInt(const std::string& key, const int defaultInt) const {
-	auto iter = args.find(key);
+  auto iter = args.find(key);
 
-	if (iter != args.end()) {
-		return std::atoi(iter->second.c_str());
-	}
+  if (iter != args.end()) {
+    return std::atoi(iter->second.c_str());
+  }
 
-	return defaultInt;
+  return defaultInt;
 }
 
 bool idDict::GetBool(const std::string& key, const bool defaultBool) const {
-	auto iter = args.find(key);
+  auto iter = args.find(key);
 
-	if (iter != args.end()) {
-		return std::atoi(iter->second.c_str()) != 0;
-	}
+  if (iter != args.end()) {
+    return std::atoi(iter->second.c_str()) != 0;
+  }
 
-	return defaultBool;
+  return defaultBool;
 }
 
-Vector2 idDict::GetVector(const std::string key, const std::string defaultString) const {
-	Vector2 out;
-	GetVector(key, defaultString, out);
-	return out;
+Vector2 idDict::GetVector(const std::string key,
+                          const std::string defaultString) const {
+  Vector2 out;
+  GetVector(key, defaultString, out);
+  return out;
 }
 
-bool idDict::GetVector(const std::string key, std::string defaultString, Vector2 & out) const {
-	bool found;
-	std::string s;
+bool idDict::GetVector(const std::string key, std::string defaultString,
+                       Vector2& out) const {
+  bool found;
+  std::string s;
 
-	if (defaultString.empty())
-	{
-		defaultString = "0 0";
-	}
+  if (defaultString.empty()) {
+    defaultString = "0 0";
+  }
 
-	found = GetString(key, defaultString, &s);
-	
-	out.Zero();
-	
-	std::istringstream is;
+  found = GetString(key, defaultString, &s);
 
-	is.str(s);
+  out.Zero();
 
-	is >> out.x >> out.y;
+  std::istringstream is;
 
-	return found;
+  is.str(s);
+
+  is >> out.x >> out.y;
+
+  return found;
 }
 
 /*
@@ -126,31 +126,29 @@ idDict::FindKey
 ================
 */
 std::string idDict::FindKey(const std::string& key) const {
-	if (key.empty()) {
-		common->DWarning("idDict::FindKey: empty key");
-		return "";
-	}
+  if (key.empty()) {
+    common->DWarning("idDict::FindKey: empty key");
+    return "";
+  }
 
-	auto iter = args.find(key);
-	if (iter != args.end())
-		return iter->first;
+  auto iter = args.find(key);
+  if (iter != args.end()) return iter->first;
 
-	return "";
+  return "";
 }
 
-const idDict::args_pair * idDict::MatchPrefix(const std::string & prefix, const std::string lastMatch) const {
-	map_type::const_iterator iter;
+const idDict::args_pair* idDict::MatchPrefix(
+    const std::string& prefix, const std::string lastMatch) const {
+  map_type::const_iterator iter;
 
-	if (!lastMatch.empty()) {
-		iter = args.lower_bound(lastMatch);
-		++iter;
-	}
-	else
-		iter = args.lower_bound(prefix);
+  if (!lastMatch.empty()) {
+    iter = args.lower_bound(lastMatch);
+    ++iter;
+  } else
+    iter = args.lower_bound(prefix);
 
-	if (iter != args.end())
-		if(!iter->first.compare(0, prefix.size(), prefix))
-			return &*iter;
+  if (iter != args.end())
+    if (!iter->first.compare(0, prefix.size(), prefix)) return &*iter;
 
-	return nullptr;
+  return nullptr;
 }

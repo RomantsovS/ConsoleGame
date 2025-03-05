@@ -2,31 +2,31 @@
 #define FRAMEWORK_EVENTLOOP_H__
 
 class idEventLoop {
-public:
-	idEventLoop();
-	~idEventLoop();
-	idEventLoop(const idEventLoop&) = default;
-	idEventLoop& operator=(const idEventLoop&) = default;
-	idEventLoop(idEventLoop&&) = default;
-	idEventLoop& operator=(idEventLoop&&) = default;
+ public:
+  idEventLoop();
+  ~idEventLoop();
+  idEventLoop(const idEventLoop&) = default;
+  idEventLoop& operator=(const idEventLoop&) = default;
+  idEventLoop(idEventLoop&&) = default;
+  idEventLoop& operator=(idEventLoop&&) = default;
 
-	void Init() noexcept;
+  void Init() noexcept;
 
-	// Closes the journal file if needed.
-	void Shutdown() noexcept;
+  // Closes the journal file if needed.
+  void Shutdown() noexcept;
 
-	// It is possible to get an event at the beginning of a frame that
-	// has a time stamp lower than the last event from the previous frame.
-	sysEvent_t GetEvent() noexcept;
+  // It is possible to get an event at the beginning of a frame that
+  // has a time stamp lower than the last event from the previous frame.
+  sysEvent_t GetEvent() noexcept;
 
-	// Dispatches all pending events and returns the current time.
-	int RunEventLoop(bool commandExecution = true);
+  // Dispatches all pending events and returns the current time.
+  int RunEventLoop(bool commandExecution = true);
 
-private:
-	sysEvent_t GetRealEvent() noexcept;
-	void ProcessEvent(sysEvent_t ev);
+ private:
+  sysEvent_t GetRealEvent() noexcept;
+  void ProcessEvent(sysEvent_t ev);
 };
 
-extern	idEventLoop* eventLoop;
+extern idEventLoop* eventLoop;
 
-#endif // !FRAMEWORK_EVENTLOOP_H__
+#endif  // !FRAMEWORK_EVENTLOOP_H__

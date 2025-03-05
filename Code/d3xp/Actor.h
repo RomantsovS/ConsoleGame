@@ -2,26 +2,27 @@
 #define ACTOR_H
 
 class idAttachInfo {
-public:
-	std::shared_ptr<idEntity> ent;
+ public:
+  std::shared_ptr<idEntity> ent;
 };
 
 class idActor : public idAnimatedEntity {
-public:
-	CLASS_PROTOTYPE(idActor);
+ public:
+  CLASS_PROTOTYPE(idActor);
 
-	idActor();
-	virtual ~idActor() override;
-	idActor(const idActor&) = default;
-	idActor& operator=(const idActor&) = default;
-	idActor(idActor&&) = default;
-	idActor& operator=(idActor&&) = default;
+  idActor();
+  virtual ~idActor() override;
+  idActor(const idActor&) = default;
+  idActor& operator=(const idActor&) = default;
+  idActor(idActor&&) = default;
+  idActor& operator=(idActor&&) = default;
 
-	void Spawn();
-	
-	void Attach(std::shared_ptr<idEntity> ent);
-protected:
-	std::list<idAttachInfo>	attachments;
+  void Spawn();
+
+  void Attach(std::shared_ptr<idEntity> ent);
+
+ protected:
+  std::list<idAttachInfo> attachments;
 };
 
 #endif
