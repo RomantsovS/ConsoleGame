@@ -1,7 +1,7 @@
 #ifndef D3XP_GAMESYS_SYSCVAR_H_
 #define D3XP_GAMESYS_SYSCVAR_H_
 
-extern idCVar	developer;
+extern idCVar developer;
 
 extern idCVar g_debugDamage;
 extern idCVar g_stopTime;
@@ -17,5 +17,4 @@ extern idCVar pm_runspeed;
 
 extern idCVar g_testDeath;
 
-#endif // !D3XP_GAMESYS_SYSCVAR_H_
-
+#endif  // !D3XP_GAMESYS_SYSCVAR_H_

@@ -1,6 +1,5 @@
 #include "idlib/precompiled.h"
 
-
 #include "../Game_local.h"
 
 CLASS_DECLARATION(idPhysics_Base, idPhysics_AF)
@@ -17,30 +16,28 @@ END_CLASS
 idAFBody::idAFBody
 ================
 */
-idAFBody::idAFBody() {
-	Init();
-}
+idAFBody::idAFBody() { Init(); }
 
 /*
 ================
 idAFBody::idAFBody
 ================
 */
-idAFBody::idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipModel, float density) {
+idAFBody::idAFBody(const std::string& name,
+                   std::shared_ptr<idClipModel> clipModel, float density) {
+  // idassert(clipModel);
+  // idassert(clipModel->IsTraceModel());
 
-	//idassert(clipModel);
-	//idassert(clipModel->IsTraceModel());
+  Init();
 
-	Init();
+  this->name = name;
+  this->clipModel = nullptr;
 
-	this->name = name;
-	this->clipModel = nullptr;
+  SetClipModel(clipModel);
 
-	SetClipModel(clipModel);
-
-	current->worldOrigin = clipModel->GetOrigin();
-	//current->worldAxis = clipModel->GetAxis();
-	*next = *current;
+  current->worldOrigin = clipModel->GetOrigin();
+  // current->worldAxis = clipModel->GetAxis();
+  *next = *current;
 }
 
 /*
@@ -48,9 +45,7 @@ idAFBody::idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipMod
 idAFBody::~idAFBody
 ================
 */
-idAFBody::~idAFBody() {
-	clipModel = nullptr;
-}
+idAFBody::~idAFBody() { clipModel = nullptr; }
 
 /*
 ================
@@ -58,22 +53,22 @@ idAFBody::Init
 ================
 */
 void idAFBody::Init() {
-	name = "noname";
-	parent = nullptr;
-	clipModel = nullptr;
+  name = "noname";
+  parent = nullptr;
+  clipModel = nullptr;
 
-	clipMask = 0;
+  clipMask = 0;
 
-	current = &state[0];
-	next = &state[1];
-	current->worldOrigin = vec2_origin;
-	current->spatialVelocity = vec2_origin;
-	*next = *current;
-	saved = *current;
+  current = &state[0];
+  next = &state[1];
+  current->worldOrigin = vec2_origin;
+  current->spatialVelocity = vec2_origin;
+  *next = *current;
+  saved = *current;
 
-	memset(&fl, 0, sizeof(fl));
+  memset(&fl, 0, sizeof(fl));
 
-	fl.selfCollision = true;
+  fl.selfCollision = true;
 }
 
 /*
@@ -82,10 +77,10 @@ idAFBody::SetClipModel
 ================
 */
 void idAFBody::SetClipModel(std::shared_ptr<idClipModel> clipModel) noexcept {
-	if (this->clipModel && this->clipModel != clipModel) {
-		this->clipModel = nullptr;
-	}
-	this->clipModel = clipModel;
+  if (this->clipModel && this->clipModel != clipModel) {
+    this->clipModel = nullptr;
+  }
+  this->clipModel = clipModel;
 }
 
 //===============================================================
@@ -100,27 +95,29 @@ idPhysics_AF::Evolve
 ================
 */
 void idPhysics_AF::Evolve(float timeStep) noexcept {
-	// calculate the position of the bodies for the next physics state
+  // calculate the position of the bodies for the next physics state
 
-	if (!bodies.empty()) {
-		auto body = bodies[0];
+  if (!bodies.empty()) {
+    auto body = bodies[0];
 
-		body->next->spatialVelocity = body->current->spatialVelocity;
+    body->next->spatialVelocity = body->current->spatialVelocity;
 
-		// translate world origin
-		body->next->worldOrigin = body->current->worldOrigin + timeStep * body->next->spatialVelocity;
-	}
+    // translate world origin
+    body->next->worldOrigin =
+        body->current->worldOrigin + timeStep * body->next->spatialVelocity;
+  }
 
-	if (bodies.size() > 1) {
-		for (size_t i = 1; i < bodies.size(); ++i) {
-			auto body = bodies[i];
+  if (bodies.size() > 1) {
+    for (size_t i = 1; i < bodies.size(); ++i) {
+      auto body = bodies[i];
 
-			body->next->spatialVelocity = body->current->spatialVelocity;
+      body->next->spatialVelocity = body->current->spatialVelocity;
 
-			// translate world origin
-			body->next->worldOrigin = body->current->worldOrigin + timeStep * body->next->spatialVelocity;
-		}
-	}
+      // translate world origin
+      body->next->worldOrigin =
+          body->current->worldOrigin + timeStep * body->next->spatialVelocity;
+    }
+  }
 }
 
 /*
@@ -132,16 +129,17 @@ idPhysics_AF::CollisionImpulse
   this is silly as it doesn't take the AF structure into account
 ================
 */
-bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body, trace_t& collision) noexcept {
-	auto ent = gameLocal.entities[collision.c.entityNum];
-	if (ent.get() == self) {
-		return false;
-	}
+bool idPhysics_AF::CollisionImpulse(float timeStep, idAFBody* body,
+                                    trace_t& collision) noexcept {
+  auto ent = gameLocal.entities[collision.c.entityNum];
+  if (ent.get() == self) {
+    return false;
+  }
 
-	auto velocity = body->current->spatialVelocity;
+  auto velocity = body->current->spatialVelocity;
 
-	// callback to self to let the entity know about the impact
-	return self->Collide(collision, velocity);
+  // callback to self to let the entity know about the impact
+  return self->Collide(collision, velocity);
 }
 
 /*
@@ -150,12 +148,13 @@ idPhysics_AF::ApplyCollisions
 ================
 */
 bool idPhysics_AF::ApplyCollisions(float timeStep) noexcept {
-	for (size_t i = 0; i < collisions.size(); i++) {
-		if (CollisionImpulse(timeStep, collisions[i].body.get(), collisions[i].trace)) {
-			return true;
-		}
-	}
-	return false;
+  for (size_t i = 0; i < collisions.size(); i++) {
+    if (CollisionImpulse(timeStep, collisions[i].body.get(),
+                         collisions[i].trace)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /*
@@ -164,34 +163,30 @@ idPhysics_AF::SetupCollisionForBody
 ================
 */
 idEntity* idPhysics_AF::SetupCollisionForBody(idAFBody* body) const noexcept {
-	size_t i;
-	idEntity* passEntity = nullptr;
+  size_t i;
+  idEntity* passEntity = nullptr;
 
-	if (!selfCollision || !body->fl.selfCollision) {
+  if (!selfCollision || !body->fl.selfCollision) {
+    // disable all bodies
+    for (i = 0; i < bodies.size(); i++) {
+      bodies[i]->clipModel->Disable();
+    }
 
-		// disable all bodies
-		for (i = 0; i < bodies.size(); i++) {
-			bodies[i]->clipModel->Disable();
-		}
+  } else {
+    // enable all bodies that have self collision
+    for (i = 0; i < bodies.size(); i++) {
+      if (bodies[i]->fl.selfCollision) {
+        bodies[i]->clipModel->Enable();
+      } else {
+        bodies[i]->clipModel->Disable();
+      }
+    }
 
-	}
-	else {
+    // don't let the body collide with itself
+    body->clipModel->Disable();
+  }
 
-		// enable all bodies that have self collision
-		for (i = 0; i < bodies.size(); i++) {
-			if (bodies[i]->fl.selfCollision) {
-				bodies[i]->clipModel->Enable();
-			}
-			else {
-				bodies[i]->clipModel->Disable();
-			}
-		}
-
-		// don't let the body collide with itself
-		body->clipModel->Disable();
-	}
-
-	return passEntity;
+  return passEntity;
 }
 
 /*
@@ -199,67 +194,69 @@ idEntity* idPhysics_AF::SetupCollisionForBody(idAFBody* body) const noexcept {
 idPhysics_AF::CheckForCollisions
 
   check for collisions between the current and next state
-  if there is a collision the next state is set to the state at the moment of impact
-  assumes all bodies are linked for collision detection and relinks all bodies after moving them
+  if there is a collision the next state is set to the state at the moment of
+impact assumes all bodies are linked for collision detection and relinks all
+bodies after moving them
 ================
 */
 void idPhysics_AF::CheckForCollisions(float timeStep) {
-	trace_t collision;
+  trace_t collision;
 
-	// clear list with collisions
-	collisions.clear();
+  // clear list with collisions
+  collisions.clear();
 
-	if (!enableCollision) {
-		return;
-	}
+  if (!enableCollision) {
+    return;
+  }
 
-	for (size_t i = 0; i < bodies.size(); i++) {
-		auto body = bodies[i];
+  for (size_t i = 0; i < bodies.size(); i++) {
+    auto body = bodies[i];
 
-		if (body->clipMask != 0) {
+    if (body->clipMask != 0) {
+      auto passEntity = SetupCollisionForBody(body.get());
 
-			auto passEntity = SetupCollisionForBody(body.get());
+      // if there was a collision
+      if (gameLocal.clip.Motion(collision, body->current->worldOrigin,
+                                body->next->worldOrigin, body->clipModel.get(),
+                                body->clipMask, passEntity)) {
+        // set the next state to the state at the moment of impact
+        body->next->worldOrigin = collision.endpos;
 
-			// if there was a collision
-			if (gameLocal.clip.Motion(collision, body->current->worldOrigin, body->next->worldOrigin,
-				body->clipModel.get(), body->clipMask, passEntity)) {
+        // add collision to the list
+        auto index = collisions.size();
+        collisions.resize(index + 1);
+        collisions[index].trace = collision;
+        collisions[index].body = body;
+      }
+    }
 
-				// set the next state to the state at the moment of impact
-				body->next->worldOrigin = collision.endpos;
+    body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(),
+                          body->next->worldOrigin);
+  }
 
-				// add collision to the list
-				auto index = collisions.size();
-				collisions.resize(index + 1);
-				collisions[index].trace = collision;
-				collisions[index].body = body;
-			}
-		}
-
-		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->next->worldOrigin);
-	}
-
-	MoveEachBodiesToPrevOne();
+  MoveEachBodiesToPrevOne();
 }
 
 void idPhysics_AF::MoveEachBodiesToPrevOne() {
-	auto body = bodies[0];
+  auto body = bodies[0];
 
-	if (bodies.size() < 2)
-		return;
+  if (bodies.size() < 2) return;
 
-	auto head_body_moved = body->current->worldOrigin.GetIntegerVectorFloor() != body->next->worldOrigin.GetIntegerVectorFloor();
+  auto head_body_moved = body->current->worldOrigin.GetIntegerVectorFloor() !=
+                         body->next->worldOrigin.GetIntegerVectorFloor();
 
-	// translate world origin
-	for (size_t i = 1; i < bodies.size(); ++i) {
-		if (head_body_moved) {
-			bodies[i]->next->worldOrigin = bodies[i - 1]->current->worldOrigin;
-		}
-		else {
-			bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
-		}
-		
-		bodies[i]->clipModel->Link(gameLocal.clip, self, bodies[i]->clipModel->GetId(), bodies[i]->next->worldOrigin);
-	}
+  // translate world origin
+  for (size_t i = 1; i < bodies.size(); ++i) {
+    if (head_body_moved) {
+      bodies[i]->next->worldOrigin = bodies[i - 1]->current->worldOrigin;
+    } else {
+      bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
+    }
+
+    bodies[i]->clipModel->Link(gameLocal.clip, self,
+                               bodies[i]->clipModel->GetId(),
+                               bodies[i]->next->worldOrigin);
+  }
 }
 
 /*
@@ -268,73 +265,77 @@ idPhysics_AF::EvaluateContacts
 ================
 */
 bool idPhysics_AF::EvaluateContacts() noexcept {
-	/*int i, j, k, numContacts, numBodyContacts;
-	idAFBody* body;
-	contactInfo_t contactInfo[10];
-	idEntity* passEntity;
-	idVecX dir(6, VECX_ALLOCA(6));
+  /*int i, j, k, numContacts, numBodyContacts;
+  idAFBody* body;
+  contactInfo_t contactInfo[10];
+  idEntity* passEntity;
+  idVecX dir(6, VECX_ALLOCA(6));
 
-	// evaluate bodies
-	EvaluateBodies(current.lastTimeStep);*/
+  // evaluate bodies
+  EvaluateBodies(current.lastTimeStep);*/
 
-	// remove all existing contacts
-	ClearContacts();
+  // remove all existing contacts
+  ClearContacts();
 
-	/*contactBodies.SetNum(0);
+  /*contactBodies.SetNum(0);
 
-	if (!enableCollision) {
-		return false;
-	}
+  if (!enableCollision) {
+          return false;
+  }
 
-	// find all the contacts
-	for (i = 0; i < bodies.Num(); i++) {
-		body = bodies[i];
+  // find all the contacts
+  for (i = 0; i < bodies.Num(); i++) {
+          body = bodies[i];
 
-		if (body->clipMask == 0) {
-			continue;
-		}
+          if (body->clipMask == 0) {
+                  continue;
+          }
 
-		passEntity = SetupCollisionForBody(body);
+          passEntity = SetupCollisionForBody(body);
 
-		body->InverseWorldSpatialInertiaMultiply(dir, body->current->externalForce.ToFloatPtr());
-		dir.SubVec6(0) = body->current->spatialVelocity + current.lastTimeStep * dir.SubVec6(0);
-		dir.SubVec3(0).Normalize();
-		dir.SubVec3(1).Normalize();
+          body->InverseWorldSpatialInertiaMultiply(dir,
+  body->current->externalForce.ToFloatPtr()); dir.SubVec6(0) =
+  body->current->spatialVelocity + current.lastTimeStep * dir.SubVec6(0);
+          dir.SubVec3(0).Normalize();
+          dir.SubVec3(1).Normalize();
 
-		numContacts = gameLocal.clip.Contacts(contactInfo, 10, body->current->worldOrigin, dir.SubVec6(0), 2.0f, //CONTACT_EPSILON,
-			body->clipModel, body->current->worldAxis, body->clipMask, passEntity);
+          numContacts = gameLocal.clip.Contacts(contactInfo, 10,
+  body->current->worldOrigin, dir.SubVec6(0), 2.0f, //CONTACT_EPSILON,
+                  body->clipModel, body->current->worldAxis, body->clipMask,
+  passEntity);
 
-		// merge nearby contacts between the same bodies
-		// and assure there are at most three planar contacts between any pair of bodies
-		for (j = 0; j < numContacts; j++) {
+          // merge nearby contacts between the same bodies
+          // and assure there are at most three planar contacts between any pair
+  of bodies for (j = 0; j < numContacts; j++) {
 
-			numBodyContacts = 0;
-			for (k = 0; k < contacts.size(); k++) {
-				if (contacts[k].entityNum == contactInfo[j].entityNum) {
-					if ((contacts[k].id == i && contactInfo[j].id == contactBodies[k]) ||
-						(contactBodies[k] == i && contacts[k].id == contactInfo[j].id)) {
+                  numBodyContacts = 0;
+                  for (k = 0; k < contacts.size(); k++) {
+                          if (contacts[k].entityNum == contactInfo[j].entityNum)
+  { if ((contacts[k].id == i && contactInfo[j].id == contactBodies[k]) ||
+                                          (contactBodies[k] == i &&
+  contacts[k].id == contactInfo[j].id)) {
 
-						if ((contacts[k].point - contactInfo[j].point).LengthSqr() < Square(2.0f)) {
-							break;
-						}
-						if (idMath::Fabs(contacts[k].normal * contactInfo[j].normal) > 0.9f) {
-							numBodyContacts++;
-						}
-					}
-				}
-			}
+                                          if ((contacts[k].point -
+  contactInfo[j].point).LengthSqr() < Square(2.0f)) { break;
+                                          }
+                                          if (idMath::Fabs(contacts[k].normal *
+  contactInfo[j].normal) > 0.9f) { numBodyContacts++;
+                                          }
+                                  }
+                          }
+                  }
 
-			if (k >= contacts.size() && numBodyContacts < 3) {
-				contacts.push_back(contactInfo[j]);
-				contactBodies.Append(i);
-			}
-		}
+                  if (k >= contacts.size() && numBodyContacts < 3) {
+                          contacts.push_back(contactInfo[j]);
+                          contactBodies.Append(i);
+                  }
+          }
 
-	}
+  }
 
-	AddContactEntitiesForContacts();*/
+  AddContactEntitiesForContacts();*/
 
-	return (contacts.size() != 0);
+  return (contacts.size() != 0);
 }
 
 /*
@@ -343,15 +344,14 @@ idPhysics_AF::SwapStates
 ================
 */
 void idPhysics_AF::SwapStates() noexcept {
-	for (size_t i = 0; i < bodies.size(); i++) {
+  for (size_t i = 0; i < bodies.size(); i++) {
+    auto body = bodies[i];
 
-		auto body = bodies[i];
-
-		// swap the current and next state for next simulation step
-		auto swap = body->current;
-		body->current = body->next;
-		body->next = swap;
-	}
+    // swap the current and next state for next simulation step
+    auto swap = body->current;
+    body->current = body->next;
+    body->next = swap;
+  }
 }
 
 /*
@@ -360,10 +360,11 @@ idPhysics_AF::UpdateClipModels
 ================
 */
 void idPhysics_AF::UpdateClipModels() {
-	for (size_t i = 0; i < bodies.size(); i++) {
-		auto body = bodies[i];
-		body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(), body->current->worldOrigin);
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    auto body = bodies[i];
+    body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(),
+                          body->current->worldOrigin);
+  }
 }
 
 /*
@@ -372,13 +373,13 @@ idPhysics_AF::TestIfAtRest
 ================
 */
 bool idPhysics_AF::TestIfAtRest(float timeStep) noexcept {
-	if (current.atRest >= 0) {
-		return true;
-	}
+  if (current.atRest >= 0) {
+    return true;
+  }
 
-	current.activateTime += timeStep;
+  current.activateTime += timeStep;
 
-	return false;
+  return false;
 }
 
 /*
@@ -387,13 +388,13 @@ idPhysics_AF::Rest
 ================
 */
 void idPhysics_AF::Rest() noexcept {
-	current.atRest = gameLocal.time;
+  current.atRest = gameLocal.time;
 
-	for (size_t i = 0; i < bodies.size(); i++) {
-		bodies[i]->current->spatialVelocity.Zero();
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    bodies[i]->current->spatialVelocity.Zero();
+  }
 
-	self->BecomeInactive(TH_PHYSICS);
+  self->BecomeInactive(TH_PHYSICS);
 }
 
 /*
@@ -402,14 +403,14 @@ idPhysics_AF::Activate
 ================
 */
 void idPhysics_AF::Activate() noexcept {
-	// if the articulated figure was at rest
-	if (current.atRest >= 0) {
-		// reset the active time for the max move time
-		current.activateTime = 0.0f;
-	}
-	current.atRest = -1;
-	current.noMoveTime = 0.0f;
-	self->BecomeActive(TH_PHYSICS);
+  // if the articulated figure was at rest
+  if (current.atRest >= 0) {
+    // reset the active time for the max move time
+    current.activateTime = 0.0f;
+  }
+  current.atRest = -1;
+  current.noMoveTime = 0.0f;
+  self->BecomeActive(TH_PHYSICS);
 }
 
 /*
@@ -419,17 +420,15 @@ idPhysics_AF::PutToRest
   put to rest untill something collides with this physics object
 ================
 */
-void idPhysics_AF::PutToRest() noexcept {
-	Rest();
-}
+void idPhysics_AF::PutToRest() noexcept { Rest(); }
 
 /*
 ================
 idPhysics_AF::SetClipModel
 ================
 */
-void idPhysics_AF::SetClipModel(std::shared_ptr<idClipModel> model, float density, int id, bool freeOld) noexcept {
-}
+void idPhysics_AF::SetClipModel(std::shared_ptr<idClipModel> model,
+                                float density, int id, bool freeOld) noexcept {}
 
 /*
 ================
@@ -437,10 +436,10 @@ idPhysics_AF::GetClipModel
 ================
 */
 std::shared_ptr<idClipModel> idPhysics_AF::GetClipModel(int id) const noexcept {
-	if (id >= 0 && id < static_cast<int>(bodies.size())) {
-		return bodies[id]->GetClipModel();
-	}
-	return nullptr;
+  if (id >= 0 && id < static_cast<int>(bodies.size())) {
+    return bodies[id]->GetClipModel();
+  }
+  return nullptr;
 }
 
 /*
@@ -448,9 +447,7 @@ std::shared_ptr<idClipModel> idPhysics_AF::GetClipModel(int id) const noexcept {
 idPhysics_AF::GetNumClipModels
 ================
 */
-int idPhysics_AF::GetNumClipModels() const noexcept {
-	return bodies.size();
-}
+int idPhysics_AF::GetNumClipModels() const noexcept { return bodies.size(); }
 
 /*
 ================
@@ -458,29 +455,28 @@ idPhysics_AF::GetBounds
 ================
 */
 const idBounds& idPhysics_AF::GetBounds(int id) const noexcept {
-	static idBounds relBounds;
+  static idBounds relBounds;
 
-	if (id >= 0 && id < static_cast<int>(bodies.size())) {
-		return bodies[id]->GetClipModel()->GetBounds();
-	}
-	else if (!bodies.size()) {
-		relBounds.Zero();
-		return relBounds;
-	}
-	else {
-		/*relBounds = bodies[0]->GetClipModel()->GetBounds();
-		for (i = 1; i < bodies.size(); i++) {
-			idBounds bounds;
-			Vector2 origin = (bodies[i]->GetWorldOrigin() - bodies[0]->GetWorldOrigin()) * bodies[0]->GetWorldAxis().Transpose();
-			idMat3 axis = bodies[i]->GetWorldAxis() * bodies[0]->GetWorldAxis().Transpose();
-			bounds.FromTransformedBounds(bodies[i]->GetClipModel()->GetBounds(), origin, axis);
-			relBounds += bounds;
-		}
-		return relBounds;*/
-		gameLocal.Warning("Error Physics_AF GetBounds()");
-	}
+  if (id >= 0 && id < static_cast<int>(bodies.size())) {
+    return bodies[id]->GetClipModel()->GetBounds();
+  } else if (!bodies.size()) {
+    relBounds.Zero();
+    return relBounds;
+  } else {
+    /*relBounds = bodies[0]->GetClipModel()->GetBounds();
+    for (i = 1; i < bodies.size(); i++) {
+            idBounds bounds;
+            Vector2 origin = (bodies[i]->GetWorldOrigin() -
+    bodies[0]->GetWorldOrigin()) * bodies[0]->GetWorldAxis().Transpose(); idMat3
+    axis = bodies[i]->GetWorldAxis() * bodies[0]->GetWorldAxis().Transpose();
+            bounds.FromTransformedBounds(bodies[i]->GetClipModel()->GetBounds(),
+    origin, axis); relBounds += bounds;
+    }
+    return relBounds;*/
+    gameLocal.Warning("Error Physics_AF GetBounds()");
+  }
 
-	return relBounds;
+  return relBounds;
 }
 
 /*
@@ -489,22 +485,20 @@ idPhysics_AF::GetAbsBounds
 ================
 */
 const idBounds& idPhysics_AF::GetAbsBounds(int id) const noexcept {
-	static idBounds absBounds;
+  static idBounds absBounds;
 
-	if (id >= 0 && id < static_cast<int>(bodies.size())) {
-		return bodies[id]->GetClipModel()->GetAbsBounds();
-	}
-	else if (!bodies.size()) {
-		absBounds.Zero();
-		return absBounds;
-	}
-	else {
-		absBounds = bodies[0]->GetClipModel()->GetAbsBounds();
-		for (size_t i = 1; i < static_cast<int>(bodies.size()); i++) {
-			absBounds += bodies[i]->GetClipModel()->GetAbsBounds();
-		}
-		return absBounds;
-	}
+  if (id >= 0 && id < static_cast<int>(bodies.size())) {
+    return bodies[id]->GetClipModel()->GetAbsBounds();
+  } else if (!bodies.size()) {
+    absBounds.Zero();
+    return absBounds;
+  } else {
+    absBounds = bodies[0]->GetClipModel()->GetAbsBounds();
+    for (size_t i = 1; i < static_cast<int>(bodies.size()); i++) {
+      absBounds += bodies[i]->GetClipModel()->GetAbsBounds();
+    }
+    return absBounds;
+  }
 }
 
 /*
@@ -513,64 +507,66 @@ idPhysics_AF::Evaluate
 ================
 */
 bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
-	float timeStep;
+  float timeStep;
 
-	timeStep = MS2SEC(timeStepMSec);
-	current.lastTimeStep = timeStep;
+  timeStep = MS2SEC(timeStepMSec);
+  current.lastTimeStep = timeStep;
 
-	// if the simulation is suspended because the figure is at rest
-	if (current.atRest >= 0 || timeStep <= 0.0f) {
-		DebugDraw();
-		return false;
-	}
+  // if the simulation is suspended because the figure is at rest
+  if (current.atRest >= 0 || timeStep <= 0.0f) {
+    DebugDraw();
+    return false;
+  }
 
-	// evaluate contacts
-	EvaluateContacts();
+  // evaluate contacts
+  EvaluateContacts();
 
-	// evolve current state to next state
-	Evolve(timeStep);
+  // evolve current state to next state
+  Evolve(timeStep);
 
-	// debug graphics
-	DebugDraw();
+  // debug graphics
+  DebugDraw();
 
-	// check for collisions between current and next state
-	CheckForCollisions(timeStep);
+  // check for collisions between current and next state
+  CheckForCollisions(timeStep);
 
 #ifdef AF_TIMINGS
-	timer_collision.Stop();
+  timer_collision.Stop();
 #endif
 
-	// swap the current and next state
-	SwapStates();
+  // swap the current and next state
+  SwapStates();
 
-	// make sure all clip models are disabled in case they were enabled for self collision
-	/*if (selfCollision) {
-		DisableClip();
-	}*/
-	EnableClip();
+  // make sure all clip models are disabled in case they were enabled for self
+  // collision
+  /*if (selfCollision) {
+          DisableClip();
+  }*/
+  EnableClip();
 
-	// apply collision impulses
-	if (ApplyCollisions(timeStep)) {
-		current.atRest = gameLocal.time;
-		comeToRest = true;
-	}
+  // apply collision impulses
+  if (ApplyCollisions(timeStep)) {
+    current.atRest = gameLocal.time;
+    comeToRest = true;
+  }
 
-	// test if the simulation can be suspended because the whole figure is at rest
-	if (comeToRest && TestIfAtRest(timeStep)) {
-		Rest();
-	}
-	else {
-		ActivateContactEntities();
-	}
+  // test if the simulation can be suspended because the whole figure is at rest
+  if (comeToRest && TestIfAtRest(timeStep)) {
+    Rest();
+  } else {
+    ActivateContactEntities();
+  }
 
-	if (IsOutsideWorld()) {
-		gameLocal.Warning("articulated figure moved outside world bounds for entity '%s' type '%s' at (%s)",
-			self->name.c_str(), self->GetType()->classname.c_str(),
-			bodies[0]->current->worldOrigin.ToString(0).c_str());
-		Rest();
-	}
-	
-	return true;
+  if (IsOutsideWorld()) {
+    gameLocal.Warning(
+        "articulated figure moved outside world bounds for entity '%s' type "
+        "'%s' at (%s)",
+        self->name.c_str(), self->GetType()->classname.c_str(),
+        bodies[0]->current->worldOrigin.ToString(0).c_str());
+    Rest();
+  }
+
+  return true;
 }
 
 /*
@@ -578,25 +574,21 @@ bool idPhysics_AF::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 idPhysics_AF::UpdateTime
 ================
 */
-void idPhysics_AF::UpdateTime(int endTimeMSec) noexcept {
-}
+void idPhysics_AF::UpdateTime(int endTimeMSec) noexcept {}
 
 /*
 ================
 idPhysics_AF::GetTime
 ================
 */
-int idPhysics_AF::GetTime() const noexcept {
-	return gameLocal.time;
-}
+int idPhysics_AF::GetTime() const noexcept { return gameLocal.time; }
 
 /*
 ================
 idPhysics_AF::DebugDraw
 ================
 */
-void idPhysics_AF::DebugDraw() noexcept {
-}
+void idPhysics_AF::DebugDraw() noexcept {}
 
 /*
 ================
@@ -604,18 +596,18 @@ idPhysics_AF::idPhysics_AF
 ================
 */
 idPhysics_AF::idPhysics_AF() {
-	bodies.clear();
-	contacts.clear();
-	collisions.clear();
+  bodies.clear();
+  contacts.clear();
+  collisions.clear();
 
-	memset(&current, 0, sizeof(current));
-	current.atRest = -1;
-	current.lastTimeStep = 0.0f;
-	saved = current;
+  memset(&current, 0, sizeof(current));
+  current.atRest = -1;
+  current.lastTimeStep = 0.0f;
+  saved = current;
 
-	enableCollision = true;
-	selfCollision = true;
-	comeToRest = true;
+  enableCollision = true;
+  selfCollision = true;
+  comeToRest = true;
 }
 
 /*
@@ -624,11 +616,11 @@ idPhysics_AF::~idPhysics_AF
 ================
 */
 idPhysics_AF::~idPhysics_AF() {
-	size_t i;
+  size_t i;
 
-	for (i = 0; i < bodies.size(); i++) {
-		bodies[i] = nullptr;
-	}
+  for (i = 0; i < bodies.size(); i++) {
+    bodies[i] = nullptr;
+  }
 }
 
 /*
@@ -640,38 +632,42 @@ idPhysics_AF::AddBody
 ================
 */
 int idPhysics_AF::AddBody(const std::shared_ptr<idAFBody>& body) {
-	int id = 0;
+  int id = 0;
 
-	if (body->clipModel == nullptr) {
-		gameLocal.Error("idPhysics_AF::AddBody: body '%s' has no clip model.", body->name.c_str());
-		return 0;
-	}
+  if (body->clipModel == nullptr) {
+    gameLocal.Error("idPhysics_AF::AddBody: body '%s' has no clip model.",
+                    body->name.c_str());
+    return 0;
+  }
 
-	if (std::find(bodies.begin(), bodies.end(), body) != bodies.end()) {
-		gameLocal.Error("idPhysics_AF::AddBody: body '%s' added twice.", body->name.c_str());
-	}
+  if (std::find(bodies.begin(), bodies.end(), body) != bodies.end()) {
+    gameLocal.Error("idPhysics_AF::AddBody: body '%s' added twice.",
+                    body->name.c_str());
+  }
 
-	if (GetBody(body->name)) {
-		gameLocal.Error("idPhysics_AF::AddBody: a body with the name '%s' already exists.", body->name.c_str());
-	}
+  if (GetBody(body->name)) {
+    gameLocal.Error(
+        "idPhysics_AF::AddBody: a body with the name '%s' already exists.",
+        body->name.c_str());
+  }
 
-	id = bodies.size();
-	//body->clipModel->SetId(id);
-	/*if (body->linearFriction < 0.0f) {
-		body->linearFriction = linearFriction;
-		body->angularFriction = angularFriction;
-		body->contactFriction = contactFriction;
-	}
-	if (body->bouncyness < 0.0f) {
-		body->bouncyness = bouncyness;
-	}*/
-	if (!body->fl.clipMaskSet) {
-		body->clipMask = clipMask;
-	}
+  id = bodies.size();
+  // body->clipModel->SetId(id);
+  /*if (body->linearFriction < 0.0f) {
+          body->linearFriction = linearFriction;
+          body->angularFriction = angularFriction;
+          body->contactFriction = contactFriction;
+  }
+  if (body->bouncyness < 0.0f) {
+          body->bouncyness = bouncyness;
+  }*/
+  if (!body->fl.clipMaskSet) {
+    body->clipMask = clipMask;
+  }
 
-	bodies.push_back(body);
+  bodies.push_back(body);
 
-	return id;
+  return id;
 }
 
 /*
@@ -680,12 +676,14 @@ idPhysics_AF::GetBodyId
 ================
 */
 int idPhysics_AF::GetBodyId(const std::shared_ptr<idAFBody>& body) const {
-	auto iter = std::find(bodies.begin(), bodies.end(), body);
+  auto iter = std::find(bodies.begin(), bodies.end(), body);
 
-	if (iter == bodies.end() && body) {
-		gameLocal.Error("GetBodyId: body '%s' is not part of the articulated figure.\n", body->name.c_str());
-	}
-	return iter - bodies.begin();
+  if (iter == bodies.end() && body) {
+    gameLocal.Error(
+        "GetBodyId: body '%s' is not part of the articulated figure.\n",
+        body->name.c_str());
+  }
+  return iter - bodies.begin();
 }
 
 /*
@@ -693,14 +691,15 @@ int idPhysics_AF::GetBodyId(const std::shared_ptr<idAFBody>& body) const {
 idPhysics_AF::GetBody
 ================
 */
-std::shared_ptr<idAFBody> idPhysics_AF::GetBody(const std::string& bodyName) const noexcept {
-	for (size_t i = 0; i < bodies.size(); i++) {
-		if (bodies[i]->name == bodyName) {
-			return bodies[i];
-		}
-	}
+std::shared_ptr<idAFBody> idPhysics_AF::GetBody(
+    const std::string& bodyName) const noexcept {
+  for (size_t i = 0; i < bodies.size(); i++) {
+    if (bodies[i]->name == bodyName) {
+      return bodies[i];
+    }
+  }
 
-	return nullptr;
+  return nullptr;
 }
 
 /*
@@ -709,20 +708,20 @@ idPhysics_AF::DeleteBody
 ================
 */
 void idPhysics_AF::DeleteBody(const int id) {
-	if (id < 0 || id > static_cast<int>(bodies.size())) {
-		gameLocal.Error("DeleteBody: no body with id %d.", id);
-		return;
-	}
+  if (id < 0 || id > static_cast<int>(bodies.size())) {
+    gameLocal.Error("DeleteBody: no body with id %d.", id);
+    return;
+  }
 
-	// remove the body
-	bodies[id]->SetClipModel(nullptr);
-	bodies[id] = nullptr;
-	bodies.erase(bodies.begin() + id);
+  // remove the body
+  bodies[id]->SetClipModel(nullptr);
+  bodies[id] = nullptr;
+  bodies.erase(bodies.begin() + id);
 
-	// set new body ids
-	for (size_t j = 0; j < bodies.size(); j++) {
-		bodies[j]->clipModel->SetId(j);
-	}
+  // set new body ids
+  for (size_t j = 0; j < bodies.size(); j++) {
+    bodies[j]->clipModel->SetId(j);
+  }
 }
 
 /*
@@ -730,9 +729,7 @@ void idPhysics_AF::DeleteBody(const int id) {
 idPhysics_AF::IsAtRest
 ================
 */
-bool idPhysics_AF::IsAtRest() const noexcept {
-	return current.atRest >= 0;
-}
+bool idPhysics_AF::IsAtRest() const noexcept { return current.atRest >= 0; }
 
 /*
 ================
@@ -740,11 +737,11 @@ idPhysics_AF::SaveState
 ================
 */
 void idPhysics_AF::SaveState() noexcept {
-	saved = current;
+  saved = current;
 
-	for (size_t i = 0; i < bodies.size(); i++) {
-		memcpy(&bodies[i]->saved, bodies[i]->current, sizeof(AFBodyPState_t));
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    memcpy(&bodies[i]->saved, bodies[i]->current, sizeof(AFBodyPState_t));
+  }
 }
 
 /*
@@ -753,13 +750,13 @@ idPhysics_AF::RestoreState
 ================
 */
 void idPhysics_AF::RestoreState() noexcept {
-	current = saved;
+  current = saved;
 
-	for (size_t i = 0; i < bodies.size(); i++) {
-		*(bodies[i]->current) = bodies[i]->saved;
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    *(bodies[i]->current) = bodies[i]->saved;
+  }
 
-	EvaluateContacts();
+  EvaluateContacts();
 }
 
 /*
@@ -768,12 +765,13 @@ idPhysics_AF::SetOrigin
 ================
 */
 void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) noexcept {
-	/*if (masterBody) {
-		Translate(masterBody->current->worldOrigin + masterBody->current->worldAxis * newOrigin - bodies[0]->current->worldOrigin);
-	}
-	else {*/
-		Translate(newOrigin - bodies[0]->current->worldOrigin);
-	//}
+  /*if (masterBody) {
+          Translate(masterBody->current->worldOrigin +
+  masterBody->current->worldAxis * newOrigin - bodies[0]->current->worldOrigin);
+  }
+  else {*/
+  Translate(newOrigin - bodies[0]->current->worldOrigin);
+  //}
 }
 
 /*
@@ -781,8 +779,7 @@ void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) noexcept {
 idPhysics_AF::SetAxis
 ================
 */
-void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) noexcept {
-}
+void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) noexcept {}
 
 /*
 ================
@@ -790,16 +787,15 @@ idPhysics_AF::Translate
 ================
 */
 void idPhysics_AF::Translate(const Vector2& translation, int id) noexcept {
-	// translate all the bodies
-	for (size_t i = 0; i < bodies.size(); i++) {
+  // translate all the bodies
+  for (size_t i = 0; i < bodies.size(); i++) {
+    auto body = bodies[i];
+    body->current->worldOrigin += translation;
+  }
 
-		auto body = bodies[i];
-		body->current->worldOrigin += translation;
-	}
+  Activate();
 
-	Activate();
-
-	UpdateClipModels();
+  UpdateClipModels();
 }
 
 /*
@@ -808,12 +804,11 @@ idPhysics_AF::GetOrigin
 ================
 */
 const Vector2& idPhysics_AF::GetOrigin(int id) const noexcept {
-	if (id < 0 || id >= static_cast<int>(bodies.size())) {
-		return vec2_origin;
-	}
-	else {
-		return bodies[id]->current->worldOrigin;
-	}
+  if (id < 0 || id >= static_cast<int>(bodies.size())) {
+    return vec2_origin;
+  } else {
+    return bodies[id]->current->worldOrigin;
+  }
 }
 
 /*
@@ -821,12 +816,13 @@ const Vector2& idPhysics_AF::GetOrigin(int id) const noexcept {
 idPhysics_AF::SetLinearVelocity
 ================
 */
-void idPhysics_AF::SetLinearVelocity(const Vector2& newLinearVelocity, int id) noexcept {
-	if (id < 0 || id >= static_cast<int>(bodies.size())) {
-		return;
-	}
-	bodies[id]->current->spatialVelocity = newLinearVelocity;
-	Activate();
+void idPhysics_AF::SetLinearVelocity(const Vector2& newLinearVelocity,
+                                     int id) noexcept {
+  if (id < 0 || id >= static_cast<int>(bodies.size())) {
+    return;
+  }
+  bodies[id]->current->spatialVelocity = newLinearVelocity;
+  Activate();
 }
 
 /*
@@ -835,12 +831,11 @@ idPhysics_AF::GetLinearVelocity
 ================
 */
 const Vector2& idPhysics_AF::GetLinearVelocity(int id) const noexcept {
-	if (id < 0 || id >= static_cast<int>(bodies.size())) {
-		return vec2_origin;
-	}
-	else {
-		return bodies[id]->current->spatialVelocity;
-	}
+  if (id < 0 || id >= static_cast<int>(bodies.size())) {
+    return vec2_origin;
+  } else {
+    return bodies[id]->current->spatialVelocity;
+  }
 }
 
 /*
@@ -849,9 +844,9 @@ idPhysics_AF::DisableClip
 ================
 */
 void idPhysics_AF::DisableClip() noexcept {
-	for (size_t i = 0; i < bodies.size(); i++) {
-		bodies[i]->clipModel->Disable();
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    bodies[i]->clipModel->Disable();
+  }
 }
 
 /*
@@ -860,9 +855,9 @@ idPhysics_AF::EnableClip
 ================
 */
 void idPhysics_AF::EnableClip() noexcept {
-	for (size_t i = 0; i < bodies.size(); i++) {
-		bodies[i]->clipModel->Enable();
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    bodies[i]->clipModel->Enable();
+  }
 }
 
 /*
@@ -871,9 +866,9 @@ idPhysics_AF::UnlinkClip
 ================
 */
 void idPhysics_AF::UnlinkClip() noexcept {
-	for (size_t i = 0; i < bodies.size(); i++) {
-		bodies[i]->clipModel->Unlink();
-	}
+  for (size_t i = 0; i < bodies.size(); i++) {
+    bodies[i]->clipModel->Unlink();
+  }
 }
 
 /*
@@ -881,6 +876,4 @@ void idPhysics_AF::UnlinkClip() noexcept {
 idPhysics_AF::LinkClip
 ================
 */
-void idPhysics_AF::LinkClip() noexcept {
-	UpdateClipModels();
-}
+void idPhysics_AF::LinkClip() noexcept { UpdateClipModels(); }

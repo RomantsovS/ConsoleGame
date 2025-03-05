@@ -7,38 +7,46 @@ Interface for calling functions from script
 ========================
 */
 class idSWFScriptFunction {
-public:
-	idSWFScriptFunction() {
+ public:
+  idSWFScriptFunction() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s ctor\n", "idSWFScriptFunction");
-#endif // DEBUG_PRINT_Ctor_Dtor;
-	}
-	virtual ~idSWFScriptFunction() {
+    common->DPrintf("%s ctor\n", "idSWFScriptFunction");
+#endif  // DEBUG_PRINT_Ctor_Dtor;
+  }
+  virtual ~idSWFScriptFunction() {
 #ifdef DEBUG_PRINT_Ctor_Dtor
-		common->DPrintf("%s dtor\n", "idSWFScriptFunction");
-#endif // DEBUG_PRINT_Ctor_Dtor;
-	};
-	idSWFScriptFunction(const idSWFScriptFunction&) = default;
-	idSWFScriptFunction& operator=(const idSWFScriptFunction&) = default;
-	idSWFScriptFunction(idSWFScriptFunction&&) = default;
-	idSWFScriptFunction& operator=(idSWFScriptFunction&&) = default;
+    common->DPrintf("%s dtor\n", "idSWFScriptFunction");
+#endif  // DEBUG_PRINT_Ctor_Dtor;
+  };
+  idSWFScriptFunction(const idSWFScriptFunction&) = default;
+  idSWFScriptFunction& operator=(const idSWFScriptFunction&) = default;
+  idSWFScriptFunction(idSWFScriptFunction&&) = default;
+  idSWFScriptFunction& operator=(idSWFScriptFunction&&) = default;
 
-	virtual idSWFScriptVar Call(idSWFScriptObject* thisObject, const idSWFParmList& parm) { return idSWFScriptVar(); }; // this should never be hit
+  virtual idSWFScriptVar Call(idSWFScriptObject* thisObject,
+                              const idSWFParmList& parm) {
+    return idSWFScriptVar();
+  };  // this should never be hit
 };
 
 /*
 ========================
-Interface for calling functions from script, implemented natively on a nested class object
+Interface for calling functions from script, implemented natively on a nested
+class object
 ========================
 */
-template<typename T>
+template <typename T>
 class idSWFScriptFunction_Nested : public idSWFScriptFunction {
-protected:
-	T* pThis;
-public:
-	idSWFScriptFunction_Nested() : pThis(nullptr) { }
+ protected:
+  T* pThis;
 
-	idSWFScriptFunction* Bind(T* _pThis) noexcept { pThis = _pThis; return this; }
+ public:
+  idSWFScriptFunction_Nested() : pThis(nullptr) {}
+
+  idSWFScriptFunction* Bind(T* _pThis) noexcept {
+    pThis = _pThis;
+    return this;
+  }
 };
 
 #endif

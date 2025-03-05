@@ -2,230 +2,243 @@
 
 #include "Common_local.h"
 
-idCVar com_logFile("logFile", "2", CVAR_SYSTEM | CVAR_NOCHEAT, "1 = buffer log, 2 = flush after each print", 0, 2);
-idCVar com_logFileName("logFileName", "qconsole", CVAR_SYSTEM | CVAR_NOCHEAT, "name of log file, if empty, qconsole.log will be used");
+idCVar com_logFile("logFile", "2", CVAR_SYSTEM | CVAR_NOCHEAT,
+                   "1 = buffer log, 2 = flush after each print", 0, 2);
+idCVar com_logFileName("logFileName", "qconsole", CVAR_SYSTEM | CVAR_NOCHEAT,
+                       "name of log file, if empty, qconsole.log will be used");
 
 void idCommonLocal::Printf(const char* fmt, ...) {
-	va_list argptr;
-	va_start(argptr, fmt);
-	VPrintf(fmt, argptr);
-	va_end(argptr);
+  va_list argptr;
+  va_start(argptr, fmt);
+  VPrintf(fmt, argptr);
+  va_end(argptr);
 }
 
 void idCommonLocal::VPrintf(const char* fmt, va_list args) {
-	static bool	logFileFailed = false;
+  static bool logFileFailed = false;
 
-	// optionally put a timestamp at the beginning of each print,
-	// so we can see how long different init sections are taking
-	int timeLength = 0;
-	char msg[MAX_PRINT_MSG_SIZE];
-	msg[0] = '\0';
-	if (true) {
-		int	t = Sys_Milliseconds();
-		// if (true) {
-		// 	snprintf(msg, MAX_PRINT_MSG_SIZE, "[%5.2f] thread:%d ", t * 0.001f,
-		// 	std::this_thread::get_id());
-		// }
-		// else {
-			snprintf(msg, MAX_PRINT_MSG_SIZE, "[%i]", t);
-		// }
-	}
-	timeLength = strlen(msg);
+  // optionally put a timestamp at the beginning of each print,
+  // so we can see how long different init sections are taking
+  int timeLength = 0;
+  char msg[MAX_PRINT_MSG_SIZE];
+  msg[0] = '\0';
+  if (true) {
+    int t = Sys_Milliseconds();
+    // if (true) {
+    // 	snprintf(msg, MAX_PRINT_MSG_SIZE, "[%5.2f] thread:%d ", t * 0.001f,
+    // 	std::this_thread::get_id());
+    // }
+    // else {
+    snprintf(msg, MAX_PRINT_MSG_SIZE, "[%i]", t);
+    // }
+  }
+  timeLength = strlen(msg);
 
-	if (idStr::vsnPrintf(msg + timeLength, MAX_PRINT_MSG_SIZE - timeLength - 1, fmt, args) < 0)
-	{
-		msg[sizeof(msg) - 2] = '\n'; msg[sizeof(msg) - 1] = '\0'; // avoid output garbling
-		Sys_Printf("idCommon::VPrintf: truncated to %d characters\n", strlen(msg) - 1);
-	}
+  if (idStr::vsnPrintf(msg + timeLength, MAX_PRINT_MSG_SIZE - timeLength - 1,
+                       fmt, args) < 0) {
+    msg[sizeof(msg) - 2] = '\n';
+    msg[sizeof(msg) - 1] = '\0';  // avoid output garbling
+    Sys_Printf("idCommon::VPrintf: truncated to %d characters\n",
+               strlen(msg) - 1);
+  }
 
-	// echo to console buffer
-	console->Print(msg);
+  // echo to console buffer
+  console->Print(msg);
 
-	// echo to dedicated console and early console
-	Sys_Printf("%s", msg);
+  // echo to dedicated console and early console
+  Sys_Printf("%s", msg);
 
-	// logFile
-	if (com_logFile.GetInteger() > 0 && !logFileFailed && isFileSystemExists && fileSystem->IsInitialized()) {
-		static bool recursing;
+  // logFile
+  if (com_logFile.GetInteger() > 0 && !logFileFailed && isFileSystemExists &&
+      fileSystem->IsInitialized()) {
+    static bool recursing;
 
-		if (!logFile && !recursing) {
-			// fileSystem->OpenFileWrite can cause recursive prints into here
-			recursing = true;
+    if (!logFile && !recursing) {
+      // fileSystem->OpenFileWrite can cause recursive prints into here
+      recursing = true;
 
-			time_t aclock;
-			tm newtime;
+      time_t aclock;
+      tm newtime;
 
 #ifdef LOG_FILE_NAME_TIME
-			time(&aclock);
-			localtime_s(&newtime, &aclock);
+      time(&aclock);
+      localtime_s(&newtime, &aclock);
 
-			char cur_local_time[50];
-			cur_local_time[0] = '\0';
+      char cur_local_time[50];
+      cur_local_time[0] = '\0';
 
-			snprintf(cur_local_time, 50, "qconsole_%2d-%2d-%2d", newtime.tm_hour, newtime.tm_min, newtime.tm_sec);
+      snprintf(cur_local_time, 50, "qconsole_%2d-%2d-%2d", newtime.tm_hour,
+               newtime.tm_min, newtime.tm_sec);
 
-			std::string fileName = cur_local_time;
+      std::string fileName = cur_local_time;
 #else
-			std::string fileName = !com_logFileName.GetString().empty() ? com_logFileName.GetString() : "qconsole";
-#endif // LOG_FILE_NAME_TIME
+      std::string fileName = !com_logFileName.GetString().empty()
+                                 ? com_logFileName.GetString()
+                                 : "qconsole";
+#endif  // LOG_FILE_NAME_TIME
 
-			fileName += ".log";
+      fileName += ".log";
 
-			logFile = fileSystem->OpenFileWrite(fileName);
-			if (!logFile) {
-				logFileFailed = true;
-				FatalError("failed to open log file '%s'\n", fileName.c_str());
-			}
+      logFile = fileSystem->OpenFileWrite(fileName);
+      if (!logFile) {
+        logFileFailed = true;
+        FatalError("failed to open log file '%s'\n", fileName.c_str());
+      }
 
-			recursing = false;
+      recursing = false;
 
-			if (com_logFile.GetInteger() > 1) {
-				// force it to not buffer so we get valid
-				// data even if we are crashing
-				logFile->ForceFlush();
-			}
+      if (com_logFile.GetInteger() > 1) {
+        // force it to not buffer so we get valid
+        // data even if we are crashing
+        logFile->ForceFlush();
+      }
 
-			auto time_now = std::chrono::system_clock::now();
-			std::time_t time = std::chrono::system_clock::to_time_t(time_now);
+      auto time_now = std::chrono::system_clock::now();
+      std::time_t time = std::chrono::system_clock::to_time_t(time_now);
 
-			Printf("log file '%s' opened on %s\n", fileName.c_str(), std::ctime(&time));
-		}
-		if (logFile) {
-			logFile->Write(msg, strlen(msg));
-			logFile->Flush();	// ForceFlush doesn't help a whole lot
-		}
-	}
+      Printf("log file '%s' opened on %s\n", fileName.c_str(),
+             std::ctime(&time));
+    }
+    if (logFile) {
+      logFile->Write(msg, strlen(msg));
+      logFile->Flush();  // ForceFlush doesn't help a whole lot
+    }
+  }
 }
 
 void idCommonLocal::DPrintf(const char* fmt, ...) {
-	va_list		argptr;
-	char		msg[MAX_PRINT_MSG_SIZE];
+  va_list argptr;
+  char msg[MAX_PRINT_MSG_SIZE];
 
-	va_start(argptr, fmt);
-	idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-	msg[sizeof(msg) - 1] = '\0';
+  va_start(argptr, fmt);
+  idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
+  va_end(argptr);
+  msg[sizeof(msg) - 1] = '\0';
 
-	Printf("%s", msg);
+  Printf("%s", msg);
 }
 
 /*
 ==================
 idCommonLocal::DWarning
 
-prints warning message in yellow that only shows up if the "developer" cvar is set
+prints warning message in yellow that only shows up if the "developer" cvar is
+set
 ==================
 */
 void idCommonLocal::DWarning(const char* fmt, ...) {
-	va_list		argptr;
-	char		msg[MAX_PRINT_MSG_SIZE];
+  va_list argptr;
+  char msg[MAX_PRINT_MSG_SIZE];
 
-	va_start(argptr, fmt);
-	idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-	msg[sizeof(msg) - 1] = '\0';
+  va_start(argptr, fmt);
+  idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
+  va_end(argptr);
+  msg[sizeof(msg) - 1] = '\0';
 
-	Printf("WARNING: %s\n", msg);
+  Printf("WARNING: %s\n", msg);
 }
 
 void idCommonLocal::CloseLogFile() {
-	if (logFile) {
-		com_logFile.SetBool(false); // make sure no further VPrintf attempts to open the log file again
+  if (logFile) {
+    com_logFile.SetBool(false);  // make sure no further VPrintf attempts to
+                                 // open the log file again
 
-		fileSystem->CloseFile(logFile);
+    fileSystem->CloseFile(logFile);
 
-		logFile = nullptr;
-
-	}
+    logFile = nullptr;
+  }
 }
 
 void idCommonLocal::Warning(const char* fmt, ...) {
-	va_list		argptr;
-	char		msg[MAX_PRINT_MSG_SIZE];
+  va_list argptr;
+  char msg[MAX_PRINT_MSG_SIZE];
 
-	va_start(argptr, fmt);
-	idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
-	va_end(argptr);
-	msg[sizeof(msg) - 1] = 0;
+  va_start(argptr, fmt);
+  idStr::vsnPrintf(msg, sizeof(msg), fmt, argptr);
+  va_end(argptr);
+  msg[sizeof(msg) - 1] = 0;
 
-	Printf("WARNING: " "%s\n", msg);
+  Printf(
+      "WARNING: "
+      "%s\n",
+      msg);
 }
 
 void idCommonLocal::Error(const char* fmt, ...) {
-	va_list		argptr;
-	static int	lastErrorTime;
-	static int	errorCount;
-	int			currentTime;
+  va_list argptr;
+  static int lastErrorTime;
+  static int errorCount;
+  int currentTime;
 
-	errorParm_t code = ERP_DROP;
+  errorParm_t code = ERP_DROP;
 
-	// if we got a recursive error, make it fatal
-	if (com_errorEntered) {
-		// if we are recursively erroring while exiting
-		// from a fatal error, just kill the entire
-		// process immediately, which will prevent a
-		// full screen rendering window covering the
-		// error dialog
-		if (com_errorEntered == ERP_FATAL) {
-			Sys_Quit();
-		}
-		code = ERP_FATAL;
-	}
+  // if we got a recursive error, make it fatal
+  if (com_errorEntered) {
+    // if we are recursively erroring while exiting
+    // from a fatal error, just kill the entire
+    // process immediately, which will prevent a
+    // full screen rendering window covering the
+    // error dialog
+    if (com_errorEntered == ERP_FATAL) {
+      Sys_Quit();
+    }
+    code = ERP_FATAL;
+  }
 
-	// if we are getting a solid stream of ERP_DROP, do an ERP_FATAL
-	currentTime = Sys_Milliseconds();
-	if (currentTime - lastErrorTime < 100) {
-		if (++errorCount > 3) {
-			code = ERP_FATAL;
-		}
-	}
-	else {
-		errorCount = 0;
-	}
-	lastErrorTime = currentTime;
+  // if we are getting a solid stream of ERP_DROP, do an ERP_FATAL
+  currentTime = Sys_Milliseconds();
+  if (currentTime - lastErrorTime < 100) {
+    if (++errorCount > 3) {
+      code = ERP_FATAL;
+    }
+  } else {
+    errorCount = 0;
+  }
+  lastErrorTime = currentTime;
 
-	com_errorEntered = code;
+  com_errorEntered = code;
 
-	va_start(argptr, fmt);
-	idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
-	va_end(argptr);
-	errorMessage[sizeof(errorMessage) - 1] = '\0';
+  va_start(argptr, fmt);
+  idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
+  va_end(argptr);
+  errorMessage[sizeof(errorMessage) - 1] = '\0';
 
-	Stop();
+  Stop();
 
-	Printf("********************\nERROR: %s\n********************\n", errorMessage);
+  Printf("********************\nERROR: %s\n********************\n",
+         errorMessage);
 
-	Sys_Error(errorMessage);
+  Sys_Error(errorMessage);
 }
 
 void idCommonLocal::FatalError(const char* fmt, ...) {
-	va_list		argptr;
+  va_list argptr;
 
-	if (com_errorEntered) {
-		// if we are recursively erroring while exiting
-		// from a fatal error, just kill the entire
-		// process immediately, which will prevent a
-		// full screen rendering window covering the
-		// error dialog
+  if (com_errorEntered) {
+    // if we are recursively erroring while exiting
+    // from a fatal error, just kill the entire
+    // process immediately, which will prevent a
+    // full screen rendering window covering the
+    // error dialog
 
-		Sys_Printf("FATAL: recursed fatal error:\n%s\n", errorMessage);
+    Sys_Printf("FATAL: recursed fatal error:\n%s\n", errorMessage);
 
-		va_start(argptr, fmt);
-		idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
-		va_end(argptr);
-		errorMessage[sizeof(errorMessage) - 1] = '\0';
+    va_start(argptr, fmt);
+    idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
+    va_end(argptr);
+    errorMessage[sizeof(errorMessage) - 1] = '\0';
 
-		Sys_Printf("%s\n", errorMessage);
+    Sys_Printf("%s\n", errorMessage);
 
-		// write the console to a log file?
-		Sys_Quit();
-	}
-	com_errorEntered = ERP_FATAL;
+    // write the console to a log file?
+    Sys_Quit();
+  }
+  com_errorEntered = ERP_FATAL;
 
-	va_start(argptr, fmt);
-	idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
-	va_end(argptr);
-	errorMessage[sizeof(errorMessage) - 1] = '\0';
+  va_start(argptr, fmt);
+  idStr::vsnPrintf(errorMessage, sizeof(errorMessage), fmt, argptr);
+  va_end(argptr);
+  errorMessage[sizeof(errorMessage) - 1] = '\0';
 
-	Sys_Error(errorMessage);
+  Sys_Error(errorMessage);
 }

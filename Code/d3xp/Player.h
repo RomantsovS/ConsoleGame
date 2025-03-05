@@ -2,66 +2,76 @@
 #define PLAYER_ENTITY_H
 
 class idPlayer : public idActor {
-public:
-	usercmd_t usercmd;
-	int oldButtons{};
+ public:
+  usercmd_t usercmd;
+  int oldButtons{};
 
-	// timers
-	int minRespawnTime = 0; // can respawn when time > this, force after g_forcerespawn
-public:
-	CLASS_PROTOTYPE(idPlayer);
+  // timers
+  int minRespawnTime =
+      0;  // can respawn when time > this, force after g_forcerespawn
+ public:
+  CLASS_PROTOTYPE(idPlayer);
 
-	idPlayer() = default;
-	virtual ~idPlayer() = default;
-	idPlayer(const idPlayer&) = default;
-	idPlayer& operator=(const idPlayer&) = default;
-	idPlayer(idPlayer&&) = default;
-	idPlayer& operator=(idPlayer&&) = default;
+  idPlayer() = default;
+  virtual ~idPlayer() = default;
+  idPlayer(const idPlayer&) = default;
+  idPlayer& operator=(const idPlayer&) = default;
+  idPlayer(idPlayer&&) = default;
+  idPlayer& operator=(idPlayer&&) = default;
 
-	void Spawn();
-	void Think() override;
+  void Spawn();
+  void Think() override;
 
-	void Init();
-	void SetupWeaponEntity();
-	void SelectInitialSpawnPoint(Vector2& origin, Vector2& angles);
-	void SpawnFromSpawnSpot();
-	void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
-	void SetClipModel();
+  void Init();
+  void SetupWeaponEntity();
+  void SelectInitialSpawnPoint(Vector2& origin, Vector2& angles);
+  void SpawnFromSpawnSpot();
+  void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
+  void SetClipModel();
 
-	void RestorePersistantInfo();
+  void RestorePersistantInfo();
 
-	bool Collide(const trace_t& collision, const Vector2& velocity) noexcept override;
-	
-	void CalcDamagePoints(idEntity* inflictor, idEntity* attacker, const idDict* damageDef, int* health);
-	void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir, const std::string& damageDefName) override;
+  bool Collide(const trace_t& collision,
+               const Vector2& velocity) noexcept override;
 
-	// New damage path for instant client feedback.
-	void ServerDealDamage(int damage, idEntity& inflictor, idEntity& attacker, const Vector2& dir, const std::string& damageDefName); // Actually updates the player's health independent of feedback.
+  void CalcDamagePoints(idEntity* inflictor, idEntity* attacker,
+                        const idDict* damageDef, int* health);
+  void Damage(idEntity* inflictor, idEntity* attacker, const Vector2& dir,
+              const std::string& damageDefName) override;
 
-	void Killed(idEntity* inflictor, idEntity* attacker, int damage, const Vector2& dir) noexcept override;
+  // New damage path for instant client feedback.
+  void ServerDealDamage(
+      int damage, idEntity& inflictor, idEntity& attacker, const Vector2& dir,
+      const std::string& damageDefName);  // Actually updates the player's
+                                          // health independent of feedback.
 
-	void ClientThink(/*const int curTime, const float fraction, const bool predict*/) override;
-	void WriteToSnapshot(idBitMsg& msg) const override;
-	void ReadFromSnapshot(const idBitMsg& msg) override;
+  void Killed(idEntity* inflictor, idEntity* attacker, int damage,
+              const Vector2& dir) noexcept override;
 
-	void HandleUserCmds(const usercmd_t& newcmd) noexcept;
+  void ClientThink(
+      /*const int curTime, const float fraction, const bool predict*/) override;
+  void WriteToSnapshot(idBitMsg& msg) const override;
+  void ReadFromSnapshot(const idBitMsg& msg) override;
 
-	bool IsLocallyControlled() const noexcept;
-private:
-	std::shared_ptr<idWeapon> weapon;
+  void HandleUserCmds(const usercmd_t& newcmd) noexcept;
 
-	std::shared_ptr<Physics_PlayerMy> physicsObj; // player physics
+  bool IsLocallyControlled() const noexcept;
 
-	int currentWeapon{ -1 };
-	int idealWeapon{ -1 };
+ private:
+  std::shared_ptr<idWeapon> weapon;
 
-	void EvaluateControls() noexcept;
-	void AdjustSpeed() noexcept;
-	void Move();
+  std::shared_ptr<Physics_PlayerMy> physicsObj;  // player physics
 
-	void FireWeapon() noexcept;
-	void Weapon_Combat();
-	void UpdateWeapon();
+  int currentWeapon{-1};
+  int idealWeapon{-1};
+
+  void EvaluateControls() noexcept;
+  void AdjustSpeed() noexcept;
+  void Move();
+
+  void FireWeapon() noexcept;
+  void Weapon_Combat();
+  void UpdateWeapon();
 };
 
 #endif

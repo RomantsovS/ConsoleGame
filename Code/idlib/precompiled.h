@@ -46,7 +46,9 @@
 #include "sys/sys_includes.h"
 #include "sys/sys_types.h"
 
-#define ID_TIME_T int64 // Signed because -1 means "File not found" and we don't want that to compare > than any other time
+#define ID_TIME_T \
+  int64  // Signed because -1 means "File not found" and we don't want that to
+         // compare > than any other time
 
 // non-portable system services
 #include "../sys/sys_public.h"

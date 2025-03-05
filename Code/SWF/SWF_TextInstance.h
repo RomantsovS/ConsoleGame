@@ -3,39 +3,42 @@
 
 #include "../renderer/Screen.h"
 
-class idSWFTextInstance :public std::enable_shared_from_this<idSWFTextInstance> {
-public:
-	idSWFTextInstance() :
-		scriptObject(std::make_shared<idSWFScriptObject>()),
-		text(""),
-		color(colorNone),
-		visible(false) {
-		swf.reset();
-	}
-	~idSWFTextInstance() = default;
-	idSWFTextInstance(const idSWFTextInstance&) = default;
-	idSWFTextInstance& operator=(const idSWFTextInstance&) = default;
-	idSWFTextInstance(idSWFTextInstance&&) = default;
-	idSWFTextInstance& operator=(idSWFTextInstance&&) = default;
+class idSWFTextInstance
+    : public std::enable_shared_from_this<idSWFTextInstance> {
+ public:
+  idSWFTextInstance()
+      : scriptObject(std::make_shared<idSWFScriptObject>()),
+        text(""),
+        color(colorNone),
+        visible(false) {
+    swf.reset();
+  }
+  ~idSWFTextInstance() = default;
+  idSWFTextInstance(const idSWFTextInstance&) = default;
+  idSWFTextInstance& operator=(const idSWFTextInstance&) = default;
+  idSWFTextInstance(idSWFTextInstance&&) = default;
+  idSWFTextInstance& operator=(idSWFTextInstance&&) = default;
 
-	void Init(std::shared_ptr<idSWF> _gui);
+  void Init(std::shared_ptr<idSWF> _gui);
 
-	std::shared_ptr<idSWFScriptObject> GetScriptObject() noexcept { return scriptObject; }
-	size_t GetTextLength() noexcept;
+  std::shared_ptr<idSWFScriptObject> GetScriptObject() noexcept {
+    return scriptObject;
+  }
+  size_t GetTextLength() noexcept;
 
-	void SetText(const std::string& val) { text = val; }
+  void SetText(const std::string& val) { text = val; }
 
-	void Clear() noexcept;
+  void Clear() noexcept;
 
-	std::weak_ptr<idSWF> swf;
+  std::weak_ptr<idSWF> swf;
 
-	// this text instance's script object
-	std::shared_ptr<idSWFScriptObject> scriptObject;
+  // this text instance's script object
+  std::shared_ptr<idSWFScriptObject> scriptObject;
 
-	std::string text;
-	Screen::color_type color;
+  std::string text;
+  Screen::color_type color;
 
-	bool visible;
+  bool visible;
 };
 
 #endif
