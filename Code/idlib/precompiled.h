@@ -68,7 +68,9 @@
 #include "../framework/UsercmdGen.h"
 
 // decls
+#include "../framework/DeclManager.h"
 #include "../framework/DeclEntityDef.h"
+#include "../framework/DeclParticle.h"
 
 // renderer
 #include "../renderer/Image.h"
