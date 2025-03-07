@@ -2,5 +2,8 @@
 {
 "shader" textures/block
 "size" 16 16
-"textcoord" 0 0
+"anim_stages" 1
+{
+0 0
+}
 }
