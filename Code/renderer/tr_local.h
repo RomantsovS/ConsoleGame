@@ -153,7 +153,7 @@ struct viewDef_t {
   viewDef_t& operator=(viewDef_t&&) = default;
 
   // specified in the call to DrawScene()
-  // renderView_t		renderView;
+  renderView_t renderView;
 
   // viewEntity_t		worldSpace;
 

@@ -74,6 +74,9 @@ void idPlayer::Spawn() {
   physicsObj->SetClipMask(MASK_PLAYERSOLID);
   SetPhysics(physicsObj);
 
+  // init the damage effects
+  playerView.SetPlayerEntity(this);
+
   if (common->IsMultiplayer()) {
     Init();
     if (!common->IsClient()) {
@@ -287,6 +290,9 @@ void idPlayer::Think() {
 
   Move();
 
+  // this may use firstPersonView, or a thirdPeroson / camera view
+  CalculateRenderView();
+
   UpdateWeapon();
 
   Present();
@@ -463,6 +469,26 @@ void idPlayer::Damage(idEntity* inflictor, idEntity* attacker,
   ServerDealDamage(damage, *inflictor, *attacker, dir, damageDefName);
 }
 
+std::shared_ptr<renderView_t> idPlayer::GetRenderView() { return renderView; }
+
+void idPlayer::CalculateRenderView() {
+  if (!renderView) {
+    renderView = std::make_shared<renderView_t>();
+  }
+
+  renderView->time[0] = gameLocal.slow.time;
+  renderView->time[1] = gameLocal.fast.time;
+
+  renderView->viewID = 0;
+
+  if (g_stopTime.GetBool()) {
+  } else {
+    // set the viewID to the clientNum + 1, so we can suppress the right
+    // player bodies and allow the right player view weapons
+    renderView->viewID = entityNumber + 1;
+  }
+}
+
 /*
 ==============
 idPlayer::AdjustSpeed
@@ -558,6 +584,9 @@ void idPlayer::ClientThink(
   //		Move_Interpolated(fraction);
   //	}
   // }
+
+  // this may use firstPersonView, or a thirdPerson / camera view
+  CalculateRenderView();
 
   Present();
 }

@@ -498,16 +498,14 @@ bool idGameLocal::Draw(int clientNum) {
     // return mpGame.Draw(clientNum);
   }
 
-  // std::shared_ptr<idPlayer> player =
-  // std::static_pointer_cast<idPlayer>(entities.at(clientNum));
+  auto player = std::static_pointer_cast<idPlayer>(entities[clientNum]);
 
-  // if ((!player) /*|| (player->GetRenderView() == NULL)*/) {
-  //	return false;
-  // }
+  if (!player || !player->GetRenderView()) {
+    return false;
+  }
 
-  if (!gameRenderWorld) return false;
-
-  gameRenderWorld->RenderScene(nullptr);
+  // render the scene
+  player->playerView.RenderPlayerView();
 
   return true;
 }
