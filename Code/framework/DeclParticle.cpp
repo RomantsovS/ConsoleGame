@@ -127,8 +127,7 @@ void idParticleStage::Default() {
   cycleMsec = (particleLife) * 1000;
 }
 
-void idParticleStage::ParticleTexCoords(particleGen_t* g /*,
-                                        idDrawVert* verts*/) const {
+std::pair<int, int> idParticleStage::ParticleTexCoords(particleGen_t* g) const {
   float s, width;
   float t, height;
 
@@ -153,43 +152,14 @@ void idParticleStage::ParticleTexCoords(particleGen_t* g /*,
   t = 0.0f;
   height = 1.0f;
 
-  /*verts[0].SetTexCoord(s, t);
-  verts[1].SetTexCoord(s + width, t);
-  verts[2].SetTexCoord(s, t + height);
-  verts[3].SetTexCoord(s + width, t + height);*/
+  return {s, width};
 }
 
-int idParticleStage::CreateParticle(particleGen_t* g /*,
-                                    idDrawVert* verts*/) const {
-  ParticleTexCoords(g /*, verts*/);
+int idParticleStage::CreateParticle(particleGen_t* g) const {
+  auto st = ParticleTexCoords(g);
 
   if (animationFrames <= 1) {
-    return 1;
+    return 0;
   }
-
-  // if we are doing strip-animation, we need to double the quad and cross fade
-  // it
-  float width = 1.0f / animationFrames;
-  float frac = g->animationFrameFrac;
-  float iFrac = 1.0f - frac;
-
-  /*idVec2 tempST;
-  for (int i = 0; i < numVerts; i++) {
-    verts[numVerts + i] = verts[i];
-
-    tempST = verts[numVerts + i].GetTexCoord();
-    verts[numVerts + i].SetTexCoord(tempST.x + width, tempST.y);
-
-    verts[numVerts + i].color[0] *= frac;
-    verts[numVerts + i].color[1] *= frac;
-    verts[numVerts + i].color[2] *= frac;
-    verts[numVerts + i].color[3] *= frac;
-
-    verts[i].color[0] *= iFrac;
-    verts[i].color[1] *= iFrac;
-    verts[i].color[2] *= iFrac;
-    verts[i].color[3] *= iFrac;
-  }*/
-
-  return 2;
+  return 0;
 }
