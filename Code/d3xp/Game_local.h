@@ -440,6 +440,7 @@ constexpr auto MASK_DEADSOLID =
 #include "Projectile.h"
 #include "Weapon.h"
 #include "WorldSpawn.h"
+#include "PlayerView.h"
 #include "Player.h"
 #include "PlayerChain.h"
 

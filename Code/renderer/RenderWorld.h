@@ -29,6 +29,10 @@ struct renderView_t {
   // player views will set this to a non-zero integer for model suppress / allow
   // subviews (mirrors, cameras, etc) will always clear it to zero
   int viewID;
+
+  // time in milliseconds for shader effects and other time dependent rendering
+  // issues
+  int time[2];
 };
 
 class idRenderWorld {

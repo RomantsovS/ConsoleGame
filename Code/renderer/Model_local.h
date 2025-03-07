@@ -85,4 +85,16 @@ class RenderModelMesh : public idRenderModelStatic {
   std::vector<Mesh> meshes;
 };
 
+class idRenderModelPrt : public idRenderModelStatic {
+ public:
+  void InitFromFile(const std::string& fileName) override;
+  dynamicModel_t IsDynamicModel() const noexcept override;
+  idRenderModel* InstantiateDynamicModel(const renderEntity_t* ent,
+                                         const viewDef_t* view,
+                                         idRenderModel* cachedModel) override;
+
+ private:
+  std::shared_ptr<idDeclParticle> particleSystem;
+};
+
 #endif

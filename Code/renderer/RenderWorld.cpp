@@ -138,6 +138,7 @@ void idRenderWorldLocal::RenderScene(const renderView_t* renderView) {
   if (!tr.update_frame) return;
 
   auto parms = std::make_shared<viewDef_t>();
+  parms->renderView = *renderView;
   parms->renderWorld = std::dynamic_pointer_cast<idRenderWorldLocal>(getptr());
 
   R_RenderView(parms);
