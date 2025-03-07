@@ -2,5 +2,8 @@
 {
 "shader" textures/enemies
 "size" 16 16
-"textcoord" 392 185
+"anim_stages" 1
+{
+392 185
+}
 }

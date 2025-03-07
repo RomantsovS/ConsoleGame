@@ -19,16 +19,24 @@ void Mesh::ParseMesh(idLexer& parser) {
   size.x = parser.ParseInt();
   size.y = parser.ParseInt();
 
-  parser.ExpectTokenString("textcoord");
-  text_coords.x = parser.ParseInt();
-  text_coords.y = parser.ParseInt();
+  parser.ExpectTokenString("anim_stages");
+  anim_stages.resize(parser.ParseInt());
+  
+  parser.ExpectTokenString("{");
+  
+  for (auto& stage : anim_stages) {
+    stage.x = parser.ParseInt();
+    stage.y = parser.ParseInt();
+  }
+
+  parser.ExpectTokenString("}");
 
   parser.ExpectTokenString("}");
 }
 
 void Mesh::UpdateSurface(const struct renderEntity_t* ent,
                          std::vector<ModelPixel>& surfaces,
-                         const idImage& image) const {
+                         const idImage& image, Vector2 st) const {
   if (!image.IsLoaded()) {
     common->Warning("image %s wasn't loaded", image.GetName().c_str());
     return;
@@ -38,8 +46,7 @@ void Mesh::UpdateSurface(const struct renderEntity_t* ent,
 
   for (int j = 0; j < size.y; ++j) {
     for (int i = 0; i < size.x; ++i) {
-      int pixelIndex =
-          (text_coords.y + j) * image.GetWidth() + text_coords.x + i;
+      int pixelIndex = (st.y + j) * image.GetWidth() + i + st.x;
       if (pixelIndex >= imagePixels.size()) return;
       surfaces.emplace_back(Vector2(i, j), imagePixels[pixelIndex].screenPixel);
     }
@@ -74,7 +81,7 @@ void RenderModelMesh::LoadModel() {
 }
 
 idRenderModel* RenderModelMesh::InstantiateDynamicModel(
-    const renderEntity_t* ent, const viewDef_t* view,
+    const renderEntity_t* renderEntity, const viewDef_t* viewDef,
     idRenderModel* cachedModel) {
   if (purged) {
     common->DWarning("model %s instantiated while purged", Name().c_str());
@@ -106,8 +113,10 @@ idRenderModel* RenderModelMesh::InstantiateDynamicModel(
       continue;
     }
 
-    mesh.UpdateSurface(ent, staticModel->surfaces,
-                       *shader->GetStage()->image.get());
+    auto stage = mesh.anim_stages[rand()% mesh.anim_stages.size()];
+
+    mesh.UpdateSurface(renderEntity, staticModel->surfaces,
+                       *shader->GetStage()->image.get(), stage);
   }
 
   staticModel->ShiftSurfaces();

@@ -26,9 +26,9 @@ class idParticleStage {
 
   // returns the number of verts created, which will range from 0 to
   // 4*NumQuadsPerParticle()
-  int CreateParticle(particleGen_t* g /*, idDrawVert* verts*/) const;
+  int CreateParticle(particleGen_t* g) const;
 
-  void ParticleTexCoords(particleGen_t* g /*, idDrawVert* verts*/) const;
+  std::pair<int, int> ParticleTexCoords(particleGen_t* g) const;
 
   std::shared_ptr<idMaterial> material;
   // invisible at a given time

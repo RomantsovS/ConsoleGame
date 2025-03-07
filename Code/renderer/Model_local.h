@@ -61,13 +61,13 @@ class Mesh {
   void ParseMesh(idLexer& parser);
 
   void UpdateSurface(const struct renderEntity_t* ent,
-                     std::vector<ModelPixel>& surfaces,
-                     const idImage& image) const;
+                     std::vector<ModelPixel>& surfaces, const idImage& image,
+                     Vector2 st) const;
 
  private:
   std::shared_ptr<idMaterial> shader;  // material applied to mesh
   Vector2 size;
-  Vector2 text_coords;
+  std::vector<Vector2> anim_stages;
 };
 
 class RenderModelMesh : public idRenderModelStatic {
@@ -83,18 +83,6 @@ class RenderModelMesh : public idRenderModelStatic {
 
  private:
   std::vector<Mesh> meshes;
-};
-
-class idRenderModelPrt : public idRenderModelStatic {
- public:
-  void InitFromFile(const std::string& fileName) override;
-  dynamicModel_t IsDynamicModel() const noexcept override;
-  idRenderModel* InstantiateDynamicModel(const renderEntity_t* ent,
-                                         const viewDef_t* view,
-                                         idRenderModel* cachedModel) override;
-
- private:
-  std::shared_ptr<idDeclParticle> particleSystem;
 };
 
 #endif
