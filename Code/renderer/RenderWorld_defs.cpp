@@ -19,7 +19,6 @@ void R_FreeEntityDefDerivedData(idRenderEntityLocal* def, bool keepDecals,
   }
 
   if (!keepCachedDynamicModel) {
-    delete def->cachedDynamicModel;
     def->cachedDynamicModel = nullptr;
   }
 

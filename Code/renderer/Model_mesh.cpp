@@ -36,12 +36,15 @@ void Mesh::UpdateSurface(const struct renderEntity_t* ent,
 
   const auto& imagePixels = image.GetPixels();
 
+  surfaces.resize(size.x * size.y);
+
   for (int j = 0; j < size.y; ++j) {
     for (int i = 0; i < size.x; ++i) {
       int pixelIndex =
           (text_coords.y + j) * image.GetWidth() + text_coords.x + i;
       if (pixelIndex >= imagePixels.size()) return;
-      surfaces.emplace_back(Vector2(i, j), imagePixels[pixelIndex].screenPixel);
+      surfaces[j * size.x + i] =
+          ModelPixel(Vector2(i, j), imagePixels[pixelIndex].screenPixel);
     }
   }
 }
@@ -73,9 +76,9 @@ void RenderModelMesh::LoadModel() {
   }
 }
 
-idRenderModel* RenderModelMesh::InstantiateDynamicModel(
+void RenderModelMesh::InstantiateDynamicModel(
     const renderEntity_t* ent, const viewDef_t* view,
-    idRenderModel* cachedModel) {
+    std::unique_ptr<idRenderModel>& cachedModel) {
   if (purged) {
     common->DWarning("model %s instantiated while purged", Name().c_str());
     LoadModel();
@@ -83,14 +86,13 @@ idRenderModel* RenderModelMesh::InstantiateDynamicModel(
 
   idRenderModelStatic* staticModel;
   if (cachedModel) {
-    assert(dynamic_cast<idRenderModelStatic*>(cachedModel));
-    staticModel = static_cast<idRenderModelStatic*>(cachedModel);
+    assert(dynamic_cast<idRenderModelStatic*>(cachedModel.get()));
+    staticModel = static_cast<idRenderModelStatic*>(cachedModel.get());
   } else {
-    staticModel = new idRenderModelStatic;
+    cachedModel = std::make_unique<idRenderModelStatic>();
+    staticModel = static_cast<idRenderModelStatic*>(cachedModel.get());
     staticModel->InitEmpty("");
   }
-
-  staticModel->surfaces.clear();
 
   for (int i = 0; i < meshes.size(); i++) {
     auto& mesh = meshes[i];
@@ -111,8 +113,6 @@ idRenderModel* RenderModelMesh::InstantiateDynamicModel(
   }
 
   staticModel->ShiftSurfaces();
-
-  return staticModel;
 }
 
 void RenderModelMesh::PurgeModel() noexcept {

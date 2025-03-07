@@ -26,10 +26,10 @@ idRenderModel* R_EntityDefDynamicModel(idRenderEntityLocal* def) {
   if (!def->dynamicModel) {
     // instantiate the snapshot of the dynamic model, possibly reusing memory
     // from the cached snapshot
-    def->cachedDynamicModel = model->InstantiateDynamicModel(
+    model->InstantiateDynamicModel(
         &def->parms, tr.viewDef.get(), def->cachedDynamicModel);
 
-    def->dynamicModel = def->cachedDynamicModel;
+    def->dynamicModel = def->cachedDynamicModel.get();
     // def->dynamicModelFrameCount = tr.frameCount;
   }
 

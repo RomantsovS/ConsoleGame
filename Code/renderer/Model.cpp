@@ -132,16 +132,12 @@ idRenderModelStatic::IsReloadable
 */
 bool idRenderModelStatic::IsReloadable() const noexcept { return reloadable; }
 
-idRenderModel* idRenderModelStatic::InstantiateDynamicModel(
+void idRenderModelStatic::InstantiateDynamicModel(
     const renderEntity_t* ent, const viewDef_t* view,
-    idRenderModel* cachedModel) {
-  if (cachedModel) {
-    delete cachedModel;
-    cachedModel = nullptr;
-  }
+    std::unique_ptr<idRenderModel>& cachedModel) {
   common->Error("InstantiateDynamicModel called on static model '%s'",
                 name.c_str());
-  return NULL;
+  return;
 }
 
 void idRenderModelStatic::MakeDefaultModel() {

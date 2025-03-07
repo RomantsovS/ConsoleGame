@@ -28,9 +28,9 @@ class idRenderModelStatic : public idRenderModel {
   dynamicModel_t IsDynamicModel() const noexcept override;
   bool IsDefaultModel() const noexcept override;
   bool IsReloadable() const noexcept override;
-  idRenderModel* InstantiateDynamicModel(const renderEntity_t* ent,
-                                         const viewDef_t* view,
-                                         idRenderModel* cachedModel) override;
+  void InstantiateDynamicModel(
+      const renderEntity_t* ent, const viewDef_t* view,
+      std::unique_ptr<idRenderModel>& cachedModel) override;
 
   void MakeDefaultModel();
 
@@ -74,9 +74,9 @@ class RenderModelMesh : public idRenderModelStatic {
  public:
   void InitFromFile(const std::string& fileName) override;
   void LoadModel() override;
-  idRenderModel* InstantiateDynamicModel(const renderEntity_t* ent,
-                                         const viewDef_t* view,
-                                         idRenderModel* cachedModel) override;
+  void InstantiateDynamicModel(
+      const renderEntity_t* ent, const viewDef_t* view,
+      std::unique_ptr<idRenderModel>& cachedModel) override;
   void PurgeModel() noexcept override;
 
   dynamicModel_t IsDynamicModel() const noexcept override;

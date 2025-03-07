@@ -84,9 +84,9 @@ class idRenderModel {
   // The renderer will delete the returned dynamic model the next view
   // This isn't const, because it may need to reload a purged model if it
   // wasn't precached correctly.
-  virtual idRenderModel* InstantiateDynamicModel(
+  virtual void InstantiateDynamicModel(
       const renderEntity_t* ent, const viewDef_t* view,
-      idRenderModel* cachedModel) = 0;
+      std::unique_ptr<idRenderModel>& cachedModel) = 0;
 
   virtual Screen::color_type GetColor() const = 0;
   virtual void SetColor(Screen::color_type col) = 0;
