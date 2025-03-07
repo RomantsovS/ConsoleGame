@@ -39,6 +39,8 @@ idEntity::idEntity() : originDelta(vec2_origin), axisDelta(vec2_origin) {
 
   thinkFlags = 0;
 
+  renderView = nullptr;
+
   physics = nullptr;
 
   modelDefHandle = -1;

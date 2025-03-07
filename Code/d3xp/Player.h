@@ -4,6 +4,9 @@
 class idPlayer : public idActor {
  public:
   usercmd_t usercmd;
+
+  idPlayerView playerView;  // handles damage kicks and effects
+
   int oldButtons{};
 
   // timers
@@ -47,6 +50,9 @@ class idPlayer : public idActor {
 
   void Killed(idEntity* inflictor, idEntity* attacker, int damage,
               const Vector2& dir) noexcept override;
+
+  std::shared_ptr<renderView_t> GetRenderView();
+  void CalculateRenderView();  // called every tic by player code
 
   void ClientThink(
       /*const int curTime, const float fraction, const bool predict*/) override;
