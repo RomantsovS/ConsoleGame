@@ -117,7 +117,7 @@ void RenderModelMesh::InstantiateDynamicModel(
 
     auto stage = mesh.anim_stages[rand()% mesh.anim_stages.size()];
 
-    mesh.UpdateSurface(renderEntity, staticModel->surfaces,
+    mesh.UpdateSurface(ent, staticModel->surfaces,
                        *shader->GetStage()->image.get(), stage);
   }
 
