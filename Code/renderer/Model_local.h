@@ -60,9 +60,9 @@ class Mesh {
  public:
   void ParseMesh(idLexer& parser);
 
-  void UpdateSurface(const struct renderEntity_t* ent,
+  void UpdateSurface(const renderEntity_t* ent,
                      std::vector<ModelPixel>& surfaces, const idImage& image,
-                     Vector2 st) const;
+                     const Vector2& st) const;
 
  private:
   std::shared_ptr<idMaterial> shader;  // material applied to mesh

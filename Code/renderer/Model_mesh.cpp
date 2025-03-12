@@ -34,9 +34,9 @@ void Mesh::ParseMesh(idLexer& parser) {
   parser.ExpectTokenString("}");
 }
 
-void Mesh::UpdateSurface(const struct renderEntity_t* ent,
+void Mesh::UpdateSurface(const renderEntity_t* ent,
                          std::vector<ModelPixel>& surfaces,
-                         const idImage& image, Vector2 st) const {
+                         const idImage& image, const Vector2& st) const {
   if (!image.IsLoaded()) {
     common->Warning("image %s wasn't loaded", image.GetName().c_str());
     return;
@@ -115,7 +115,7 @@ void RenderModelMesh::InstantiateDynamicModel(
       continue;
     }
 
-    auto stage = mesh.anim_stages[rand()% mesh.anim_stages.size()];
+    const auto& stage = mesh.anim_stages[rand()% mesh.anim_stages.size()];
 
     mesh.UpdateSurface(ent, staticModel->surfaces,
                        *shader->GetStage()->image.get(), stage);

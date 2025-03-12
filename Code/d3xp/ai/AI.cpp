@@ -31,6 +31,8 @@ void idAI::Spawn() {
   Vector2 linearVelocity;
   spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
   physicsObj->SetLinearVelocity(linearVelocity);
+
+  BecomeActive(TH_THINK);
 }
 
 void idAI::Think() noexcept {}
@@ -73,17 +75,24 @@ void AISimple::Spawn() {
 }
 
 void AISimple::Think() noexcept {
-  if (directionChangePeriod > 0 &&
-      gameLocal.time - lastChangeDirection > directionChangePeriod) {
-    Vector2 vel = GetPhysics()->GetLinearVelocity();
-    int i = gameLocal.GetRandomValue({-1, 1});
-    vel = ((vel.x == 0) ? Vector2(vel.y * i, 0.0f) : Vector2(0.0f, vel.x * i));
-    GetPhysics()->SetLinearVelocity(vel);
+  if (thinkFlags & TH_THINK) {
+    if (directionChangePeriod > 0 &&
+        gameLocal.time - lastChangeDirection > directionChangePeriod) {
+      Vector2 vel = GetPhysics()->GetLinearVelocity();
+      int i = gameLocal.GetRandomValue({-1, 1});
+      vel =
+          ((vel.x == 0) ? Vector2(vel.y * i, 0.0f) : Vector2(0.0f, vel.x * i));
+      GetPhysics()->SetLinearVelocity(vel);
 
-    lastChangeDirection = gameLocal.time;
+      lastChangeDirection = gameLocal.time;
+    }
+    RunPhysics();
+  } else if (thinkFlags & TH_PHYSICS) {
+    RunPhysics();
   }
 
-  idEntity::Think();
+  UpdateAnimation();
+  Present();
 }
 
 void AISimple::Remove() noexcept {
