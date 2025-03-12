@@ -22,7 +22,8 @@ class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
   std::string name;  // name of entity
   idDict spawnArgs;  // key/value pairs used to spawn and initialize entity
 
-  std::shared_ptr<renderView_t> renderView;  // for camera views from this entity
+  std::shared_ptr<renderView_t>
+      renderView;  // for camera views from this entity
 
   int thinkFlags;  // TH_? flags
 
@@ -179,6 +180,8 @@ class idAnimatedEntity : public idEntity {
   // void ClientThink(const int curTime, const float fraction, const bool
   // predict) override;
   void Think() override;
+
+  void UpdateAnimation();
 
   void SetModel(const std::string& modelname) override;
 };

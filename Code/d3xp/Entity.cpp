@@ -648,11 +648,13 @@ idAnimatedEntity::Think
 */
 void idAnimatedEntity::Think() {
   RunPhysics();
-  // UpdateAnimation();
+  UpdateAnimation();
   Present();
 }
 
-/*
+void idAnimatedEntity::UpdateAnimation() {}
+
+  /*
 ================
 idAnimatedEntity::SetModel
 ================

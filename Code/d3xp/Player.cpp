@@ -295,6 +295,8 @@ void idPlayer::Think() {
 
   UpdateWeapon();
 
+  UpdateAnimation();
+
   Present();
 
   if (!(thinkFlags & TH_THINK)) {
@@ -587,6 +589,8 @@ void idPlayer::ClientThink(
 
   // this may use firstPersonView, or a thirdPerson / camera view
   CalculateRenderView();
+
+  UpdateAnimation();
 
   Present();
 }
