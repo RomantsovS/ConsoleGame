@@ -243,7 +243,7 @@ bool Physics_PlayerMy::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
         GetOrigin().ToString(0).c_str());
   }
 
-  return true;
+  return current.origin != saved.origin;
 }
 
 /*

@@ -259,7 +259,7 @@ bool idPhysics_RigidBody::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
     self->Hide();
   }
 
-  return true;
+  return current.i.position != saved.i.position;
 }
 
 void idPhysics_RigidBody::UpdateTime(int endTimeMSec) noexcept {}
