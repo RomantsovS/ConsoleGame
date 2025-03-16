@@ -19,24 +19,12 @@ void Mesh::ParseMesh(idLexer& parser) {
   size.x = parser.ParseInt();
   size.y = parser.ParseInt();
 
-  parser.ExpectTokenString("anim_stages");
-  anim_stages.resize(parser.ParseInt());
-  
-  parser.ExpectTokenString("{");
-  
-  for (auto& stage : anim_stages) {
-    stage.x = parser.ParseInt();
-    stage.y = parser.ParseInt();
-  }
-
-  parser.ExpectTokenString("}");
-
   parser.ExpectTokenString("}");
 }
 
-void Mesh::UpdateSurface(const renderEntity_t* ent,
+void Mesh::UpdateSurface(const renderEntity_t* ent, const Vector2& text_coords,
                          std::vector<ModelPixel>& surfaces,
-                         const idImage& image, const Vector2& st) const {
+                         const idImage& image) const {
   if (!image.IsLoaded()) {
     common->Warning("image %s wasn't loaded", image.GetName().c_str());
     return;
@@ -48,13 +36,16 @@ void Mesh::UpdateSurface(const renderEntity_t* ent,
 
   for (int j = 0; j < size.y; ++j) {
     for (int i = 0; i < size.x; ++i) {
-      int pixelIndex = (st.y + j) * image.GetWidth() + i + st.x;
+      int pixelIndex =
+          (text_coords.y + j) * image.GetWidth() + i + text_coords.x;
       if (pixelIndex >= imagePixels.size()) return;
       surfaces[j * size.x + i] =
           ModelPixel(Vector2(i, j), imagePixels[pixelIndex].screenPixel);
     }
   }
 }
+
+std::shared_ptr<idMaterial> Mesh::GetShader() { return shader; }
 
 void RenderModelMesh::InitFromFile(const std::string& fileName) {
   name = fileName;
@@ -91,6 +82,15 @@ void RenderModelMesh::InstantiateDynamicModel(
     LoadModel();
   }
 
+  if (!ent->text_coords) {
+    common->Printf(
+        "idRenderModelMD5::InstantiateDynamicModel: NULL text_coords on "
+        "renderEntity for '%s'\n",
+        Name().c_str());
+    cachedModel = nullptr;
+    return;
+  }
+
   idRenderModelStatic* staticModel;
   if (cachedModel) {
     assert(dynamic_cast<idRenderModelStatic*>(cachedModel.get()));
@@ -103,7 +103,7 @@ void RenderModelMesh::InstantiateDynamicModel(
 
   for (int i = 0; i < meshes.size(); i++) {
     auto& mesh = meshes[i];
-    const auto& shader = mesh.shader;
+    const auto& shader = mesh.GetShader();
 
     if (!shader) {
       staticModel->surfaces.clear();
@@ -115,10 +115,8 @@ void RenderModelMesh::InstantiateDynamicModel(
       continue;
     }
 
-    const auto& stage = mesh.anim_stages[rand()% mesh.anim_stages.size()];
-
-    mesh.UpdateSurface(ent, staticModel->surfaces,
-                       *shader->GetStage()->image.get(), stage);
+    mesh.UpdateSurface(ent, *ent->text_coords, staticModel->surfaces,
+                       *shader->GetStage()->image.get());
   }
 
   staticModel->ShiftSurfaces();

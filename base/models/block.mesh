@@ -1,9 +1,0 @@
-"numMeshes" 1
-{
-"shader" textures/block
-"size" 16 16
-"anim_stages" 1
-{
-0 0
-}
-}

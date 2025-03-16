@@ -94,15 +94,7 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(
 
     if (!model->IsLoaded()) {
       // reload it if it was purged
-      if (model->SupportsBinaryModel()) {
-        idFileLocal file(fileSystem->OpenFileReadMemory(canonical));
-        model->PurgeModel();
-        if (!model->LoadBinaryModel(file)) {
-          model->LoadModel();
-        }
-      } else {
-        model->LoadModel();
-      }
+      model->LoadModel();
     } else if (insideLevelLoad && !model->IsLevelLoadReferenced()) {
       // we are reusing a model already in memory, but
       // touch all the materials to make sure they stay
@@ -115,7 +107,7 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(
 
   std::shared_ptr<idRenderModel> model;
 
-  if (extension == "textmodel") {
+  if (extension == "textmodel" || extension == "meshstatic") {
     model = std::make_shared<idRenderModelStatic>();
   } else if (extension == "mesh") {
     model = std::make_shared<RenderModelMesh>();
@@ -123,14 +115,7 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(
 
   if (model) {
     idFileLocal file(fileSystem->OpenFileReadMemory(canonical));
-
-    if (!model->SupportsBinaryModel()) {
-      model->InitFromFile(canonical);
-    } else {
-      if (!model->LoadBinaryModel(file)) {
-        model->InitFromFile(canonical);
-      }
-    }
+    model->InitFromFile(canonical);
   }
 
   if (!model) {

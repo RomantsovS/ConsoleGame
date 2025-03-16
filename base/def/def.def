@@ -31,13 +31,13 @@ entityDef info_player_start {
 
 entityDef brick {
 	"spawnclass"			"idStaticEntity"
-	"model"					"models/brick.mesh"
+	"model"					"models/brick.meshstatic"
 	"size"					"16 16"
 }
 
 entityDef block {
 	"spawnclass"			"idStaticEntity"
-	"model"					"models/block.mesh"
+	"model"					"models/block.meshstatic"
 	"size"					"16 16"
 	"noDamage"				"1"
 }
@@ -134,7 +134,7 @@ entityDef weapon_handgrenade {
 entityDef projectile_grenade {
 	"spawnclass"				"idProjectile"
 	"size"						"16 16"
-	"model"						"models/bomb.mesh"
+	"model"						"models/bomb.meshstatic"
 
 	"def_damage"				"damage_grenadeDirect"
 
@@ -169,7 +169,7 @@ entityDef projectile_grenade_explosion {
 	"spawnclass"				"idProjectile"
 	"size"						"15.8 15.8"
 	"shift"						"16"
-	"model"						"models/fireball.mesh"
+	"model"						"models/fireball.meshstatic"
 
 	"def_damage"				"damage_grenadeExplosion"
 

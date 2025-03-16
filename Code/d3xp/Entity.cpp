@@ -75,6 +75,8 @@ void idEntity::Spawn() {
   // parse static models the same way the editor display does
   gameEdit->ParseSpawnArgsToRenderEntity(&spawnArgs, &renderEntity);
 
+  renderEntity.entityNum = entityNumber;
+
   origin = renderEntity.origin;
   axis = renderEntity.axis;
 
@@ -218,11 +220,40 @@ void idEntity::Present() {
 
 renderEntity_t* idEntity::GetRenderEntity() noexcept { return &renderEntity; }
 
+bool idEntity::UpdateRenderEntity(renderEntity_t* renderEntity,
+                                  const renderView_t* renderView) {
+  idAnimator* animator = GetAnimator();
+  if (animator) {
+    int currentTime = gameLocal.time;
+    if (renderEntity) {
+      currentTime = gameLocal.GetTimeGroupTime(0);
+    }
+    return animator->CreateFrame(currentTime, false);
+  }
+
+  return false;
+}
+
+bool idEntity::ModelCallback(renderEntity_t* renderEntity,
+                             const renderView_t* renderView) {
+  auto& ent = gameLocal.entities[renderEntity->entityNum];
+  if (!ent) {
+    gameLocal.Error("idEntity::ModelCallback: callback with NULL game entity");
+    return false;
+  }
+
+  return ent->UpdateRenderEntity(renderEntity, renderView);
+}
+
+idAnimator* idEntity::GetAnimator() { return nullptr; }
+
 void idEntity::SetModel(const std::string& modelname) {
   FreeModelDef();
 
   renderEntity.hModel = renderModelManager->FindModel(modelname).get();
 
+  renderEntity.callback = nullptr;
+  renderEntity.text_coords = nullptr;
   if (renderEntity.hModel) {
     // renderEntity.bounds = renderEntity.hModel->Bounds(&renderEntity);
   } else {
@@ -281,6 +312,12 @@ void idEntity::UpdateVisuals() { UpdateModel(); }
 void idEntity::UpdateModel() {
   UpdateModelTransform();
 
+  auto* animator = GetAnimator();
+  if (animator && animator->ModelHandle()) {
+    // set the callback to update the joints
+    renderEntity.callback = idEntity::ModelCallback;
+  }
+
   // ensure that we call Present this frame
   BecomeActive(TH_UPDATEVISUALS);
 }
@@ -305,16 +342,6 @@ void idEntity::SetColor(const Screen::color_type color) {
   renderEntity.color = color;
 
   UpdateVisuals();
-}
-
-/*
-================
-idEntity::UpdateAnimationControllers
-================
-*/
-bool idEntity::UpdateAnimationControllers() noexcept {
-  // any ragdoll and IK animation controllers should be updated here
-  return false;
 }
 
 void idEntity::SetPhysics(std::shared_ptr<idPhysics> phys) {
@@ -347,10 +374,6 @@ bool idEntity::RunPhysics() {
 
   // don't run physics if not enabled
   if (!(thinkFlags & TH_PHYSICS)) {
-    // however do update any animation controllers
-    if (UpdateAnimationControllers()) {
-      BecomeActive(TH_ANIMATE);
-    }
     return false;
   }
 
@@ -632,7 +655,7 @@ END_CLASS
 idAnimatedEntity::idAnimatedEntity
 ================
 */
-idAnimatedEntity::idAnimatedEntity() {}
+idAnimatedEntity::idAnimatedEntity() { animator.SetEntity(this); }
 
 /*
 ================
@@ -652,29 +675,47 @@ void idAnimatedEntity::Think() {
   Present();
 }
 
-void idAnimatedEntity::UpdateAnimation() {}
-
-  /*
-================
-idAnimatedEntity::SetModel
-================
-*/
-void idAnimatedEntity::SetModel(const std::string& modelname) {
-  FreeModelDef();
-
-  auto modelDef = std::dynamic_pointer_cast<idDeclModelDef>(
-      declManager->FindType(declType_t::DECL_MODELDEF, modelname, false));
-  if (!modelDef) {
+void idAnimatedEntity::UpdateAnimation() {
+  // don't do animations if they're not enabled
+  if (!(thinkFlags & TH_ANIMATE)) {
     return;
   }
 
-  idRenderModel* renderModel = modelDef->ModelHandle().lock().get();
+  // is the model an MD5?
+  if (!animator.ModelHandle()) {
+    // no, so nothing to do
+    return;
+  }
 
-  renderEntity.hModel = renderModel;
+  // call any frame commands that have happened in the past frame
+  if (!fl.hidden) {
+    animator.ServiceAnims(gameLocal.previousTime, gameLocal.time);
+  }
+
+  // if the model is animating then we have to update it
+  if (!animator.FrameHasChanged(gameLocal.time)) {
+    // still fine the way it was
+    return;
+  }
+
+  // update the renderEntity
+  UpdateVisuals();
+}
+
+idAnimator* idAnimatedEntity::GetAnimator() { return &animator; }
+
+void idAnimatedEntity::SetModel(const std::string& modelname) {
+  FreeModelDef();
+
+  renderEntity.hModel = animator.SetModel(modelname);
   if (!renderEntity.hModel) {
     idEntity::SetModel(modelname);
     return;
   }
+
+  // set the callback to update the joints
+  renderEntity.callback = idEntity::ModelCallback;
+  animator.GetTextCoords(&renderEntity.text_coords);
 
   UpdateVisuals();
 }

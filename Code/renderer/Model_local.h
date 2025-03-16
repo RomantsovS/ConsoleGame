@@ -11,8 +11,6 @@ class idRenderModelStatic : public idRenderModel {
   idRenderModelStatic& operator=(idRenderModelStatic&&) = default;
 
   void InitFromFile(const std::string& fileName) override;
-  bool LoadBinaryModel(idFile* file) noexcept override;
-  bool SupportsBinaryModel() noexcept override { return false; }
 
   void PurgeModel() noexcept override;
   void LoadModel() override;
@@ -35,6 +33,7 @@ class idRenderModelStatic : public idRenderModel {
   void MakeDefaultModel();
 
   bool LoadTextModel(const std::string& fileName);
+  bool LoadMeshStatic(const std::string& fileName);
 
   void ShiftSurfaces();
 
@@ -55,19 +54,18 @@ class idRenderModelStatic : public idRenderModel {
 };
 
 class Mesh {
-  friend class RenderModelMesh;
-
  public:
   void ParseMesh(idLexer& parser);
 
-  void UpdateSurface(const renderEntity_t* ent,
-                     std::vector<ModelPixel>& surfaces, const idImage& image,
-                     const Vector2& st) const;
+  void UpdateSurface(const renderEntity_t* ent, const Vector2& text_coords,
+                     std::vector<ModelPixel>& surfaces,
+                     const idImage& image) const;
 
+
+  std::shared_ptr<idMaterial> GetShader();
  private:
   std::shared_ptr<idMaterial> shader;  // material applied to mesh
   Vector2 size;
-  std::vector<Vector2> anim_stages;
 };
 
 class RenderModelMesh : public idRenderModelStatic {

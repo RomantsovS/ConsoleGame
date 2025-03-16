@@ -88,7 +88,12 @@ class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
   bool IsHidden() const noexcept;
 
   // animation
-  virtual bool UpdateAnimationControllers() noexcept;
+  bool UpdateRenderEntity(renderEntity_t* renderEntity,
+                          const renderView_t* renderView);
+  static bool ModelCallback(renderEntity_t* renderEntity,
+                            const renderView_t* renderView);
+  // returns animator object used by this entity
+  virtual idAnimator* GetAnimator();
 
   // physics
   // set a new physics object to be used by this entity
@@ -183,7 +188,11 @@ class idAnimatedEntity : public idEntity {
 
   void UpdateAnimation();
 
+  idAnimator* GetAnimator() override;
   void SetModel(const std::string& modelname) override;
+
+ protected:
+  idAnimator animator;
 };
 
 #endif

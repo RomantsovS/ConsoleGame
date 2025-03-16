@@ -288,7 +288,7 @@ int idCollisionModelManagerLocal::LoadModel(const std::string& modelName) {
   // ID_TIME_T sourceTimeStamp = fileSystem->GetTimestamp(modelName);
   // int sourceTimeStamp = 0;
 
-  models[numModels] = LoadBinaryModel(generatedFileName);
+  //models[numModels] = LoadBinaryModel(generatedFileName);
   if (models[numModels]) {
     models[numModels]->name = modelName;
 
