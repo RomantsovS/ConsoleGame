@@ -45,7 +45,7 @@ int idRenderWorldLocal::AddEntityDef(const renderEntity_t* re) {
 
 void idRenderWorldLocal::UpdateEntityDef(
     int entityHandle, gsl::not_null<const renderEntity_t*> re) {
-  if (!re->hModel /*&& !re->callback*/) {
+  if (!re->hModel && !re->callback) {
     common->Error("idRenderWorld::UpdateEntityDef: NULL hModel");
   }
 
@@ -60,6 +60,31 @@ void idRenderWorldLocal::UpdateEntityDef(
   std::shared_ptr<idRenderEntityLocal>& def = entityDefs[entityHandle];
 
   if (def) {
+    /* if (!re->forceUpdate) {
+      // check for exact match (OPTIMIZE: check through pointers more)
+      if (!def->dynamicModel &&
+          !memcmp(re, &def->parms, sizeof(*re))) {
+        return;
+      }
+
+      // if the only thing that changed was shaderparms, we can just leave
+      // things as they are after updating parms
+
+      // if we have a callback function and the bounds, origin, axis and model
+      // match, then we can leave the references as they are
+      if (re->callback) {
+        bool axisMatch = (re->axis == def->parms.axis);
+        bool originMatch = (re->origin == def->parms.origin);
+        bool modelMatch = (re->hModel == def->parms.hModel);
+
+        if (boundsMatch && originMatch && axisMatch && modelMatch) {
+          // only clear the dynamic model and interaction surfaces if they exist
+          R_ClearEntityDefDynamicModel(def);
+          def->parms = *re;
+          return;
+        }
+      }
+    }*/
     // save any decals if the model is the same, allowing marks to move with
     // entities
     if (def->parms.hModel == re->hModel) {
@@ -78,6 +103,11 @@ void idRenderWorldLocal::UpdateEntityDef(
   }
 
   def->parms = *re;
+
+  // optionally immediately issue any callbacks
+  /*if (!r_useEntityCallbacks.GetBool() &&  def->parms.callback) {
+    R_IssueEntityDefCallback(def);
+  }*/
 
   // based on the model bounds, add references in each area
   // that may contain the updated surface

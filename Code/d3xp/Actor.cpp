@@ -10,6 +10,12 @@ idActor::idActor() {}
 idActor::~idActor() {}
 
 void idActor::Spawn() {
+  // the animation used to be set to the IK_ANIM at this point, but that was
+  // fixed, resulting in attachments not binding correctly, so we're stuck
+  // setting the IK_ANIM before attaching things.
+  animator.ClearAllAnims(gameLocal.time, 0);
+  animator.SetFrame(animator.GetAnim("idle"), 0, 0, 0);
+
   // spawn any attachments we might have
   auto kv = spawnArgs.MatchPrefix("def_attach");
   while (kv) {

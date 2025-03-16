@@ -1,8 +1,12 @@
 #ifndef RENDER_WORLD_H
 #define RENDER_WORLD_H
 
+using deferredEntityCallback_t = bool(*)(renderEntity_t*, const renderView_t*);
+
 struct renderEntity_t {
   idRenderModel* hModel;
+
+  int entityNum;
 
   // Entities that are expensive to generate, like skeletal models, can be
   // deferred until their bounds are found to be in view, in the frustum
@@ -14,6 +18,7 @@ struct renderEntity_t {
   // (ie, if the callback has now made the entity valid until the next
   // updateEntity)
   idBounds bounds;  // only needs to be set for deferred models and md5s
+  deferredEntityCallback_t callback;
 
   // positioning
   // axis rotation vectors must be unit length for many
@@ -23,6 +28,8 @@ struct renderEntity_t {
   Vector2 axis;
 
   Screen::color_type color;
+
+  Vector2* text_coords;
 };
 
 struct renderView_t {

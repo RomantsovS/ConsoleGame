@@ -1,5 +1,4 @@
 #include "idlib/precompiled.h"
-#pragma hdrstop
 
 std::shared_ptr<idParticleStage> idDeclParticle::ParseParticleStage(idLexer& src) {
   idToken token;

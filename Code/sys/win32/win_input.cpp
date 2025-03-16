@@ -1,4 +1,3 @@
-#pragma hdrstop
 #include "idlib/precompiled.h"
 #include "../sys_session_local.h"
 

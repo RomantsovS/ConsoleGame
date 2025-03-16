@@ -8,12 +8,16 @@ model test_model {
 
 model mushroom {
 	mesh "models/mushroom.mesh"
+	anim "idle" models/mushroom_idle.meshanim
 }
 
 model mario {
 	mesh "models/mario.mesh"
+	anim "idle" models/mario_idle.meshanim
+	anim "walk_right" models/mario_walk_right.meshanim
 }
 
 model turtle {
 	mesh "models/turtle.mesh"
+	anim "idle" models/turtle_idle.meshanim
 }

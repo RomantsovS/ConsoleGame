@@ -2,8 +2,4 @@
 {
 "shader" textures/enemies
 "size" 16 23
-"anim_stages" 1
-{
-210 0
-}
 }

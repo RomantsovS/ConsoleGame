@@ -35,10 +35,6 @@ class idRenderModel {
   // Loads static models only, dynamic models must be loaded by the modelManager
   virtual void InitFromFile(const std::string& fileName) = 0;
 
-  // Supports reading/writing binary file formats
-  virtual bool LoadBinaryModel(idFile* file) = 0;
-  virtual bool SupportsBinaryModel() = 0;
-
   // this is used for dynamically created surfaces, which are assumed to not be
   // reloadable. It can be called again to clear out the surfaces of a dynamic
   // model for regeneration.

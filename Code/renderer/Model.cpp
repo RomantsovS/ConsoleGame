@@ -42,6 +42,9 @@ void idRenderModelStatic::InitFromFile(const std::string& fileName) {
   if (extension == "textmodel") {
     loaded = LoadTextModel(name);
     reloadable = true;
+  } else if (extension == "meshstatic") {
+    loaded = LoadMeshStatic(name);
+    reloadable = true;
   }
 
   if (!loaded) {
@@ -52,19 +55,6 @@ void idRenderModelStatic::InitFromFile(const std::string& fileName) {
 
   // it is now available for use
   purged = false;
-}
-
-/*
-========================
-idRenderModelStatic::LoadBinaryModel
-========================
-*/
-bool idRenderModelStatic::LoadBinaryModel(idFile* file) noexcept {
-  if (file == nullptr) {
-    return false;
-  }
-
-  return false;
 }
 
 void idRenderModelStatic::PurgeModel() noexcept {
@@ -155,11 +145,6 @@ void idRenderModelStatic::MakeDefaultModel() {
   }
 }
 
-/*
-=================
-idRenderModelStatic::LoadASE
-=================
-*/
 bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
   ID_TIME_T timeStamp;
   int len;
@@ -174,7 +159,6 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
   idToken token2;
 
   src.LoadMemory(buf.get(), len, fileName, 0);
-  // src.SetFlags(DECL_LEXER_FLAGS);
   src.SkipUntilString("{");
 
   float x{}, y{};
@@ -235,6 +219,40 @@ bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {
   ShiftSurfaces();
 
   return true;
+}
+
+bool idRenderModelStatic::LoadMeshStatic(const std::string& fileName) {
+  idToken token;
+  idLexer parser;
+
+  if (!parser.LoadFile(fileName)) {
+    MakeDefaultModel();
+    return false;
+  }
+
+  std::vector<Mesh> meshes;
+  parser.ExpectTokenString("numMeshes");
+  meshes.resize(parser.ParseInt());
+
+  for (auto& mesh : meshes) {
+    mesh.ParseMesh(parser);
+
+    if (!parser.ReadToken(&token)) continue;
+
+    if (token == "text_coords") {
+      Vector2 text_coords;
+      text_coords.x = parser.ParseInt();
+      text_coords.y = parser.ParseInt();
+
+      auto shader = mesh.GetShader();
+      if (!shader) continue;
+
+      mesh.UpdateSurface(nullptr, text_coords, surfaces,
+                         *shader->GetStage()->image.get());
+
+      ShiftSurfaces();
+    }
+  }
 }
 
 void idRenderModelStatic::ShiftSurfaces() {

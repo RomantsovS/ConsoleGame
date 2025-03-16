@@ -4,10 +4,43 @@
 #include "tr_local.h"
 #include "Model_local.h"
 
+void R_ClearEntityDefDynamicModel(idRenderEntityLocal* def) {
+  // clear the dynamic model if present
+  if (def->dynamicModel) {
+    // this is copied from cachedDynamicModel, so it doesn't need to be freed
+    def->dynamicModel = nullptr;
+  }
+  def->dynamicModelFrameCount = 0;
+}
+
+bool R_IssueEntityDefCallback(idRenderEntityLocal* def) {
+  bool update;
+  if (tr.viewDef) {
+    update = def->parms.callback(&def->parms, &tr.viewDef->renderView);
+  } else {
+    update = def->parms.callback(&def->parms, nullptr);
+  }
+
+  if (def->parms.hModel == NULL) {
+    common->Error(
+        "R_IssueEntityDefCallback: dynamic entity callback didn't set model");
+  }
+
+  return update;
+}
+
 idRenderModel* R_EntityDefDynamicModel(idRenderEntityLocal* def) {
   /*if (def->dynamicModelFrameCount == tr.frameCount) {
           return def->dynamicModel;
   }*/
+
+  // allow deferred entities to construct themselves
+  bool callbackUpdate;
+  if (def->parms.callback) {
+    callbackUpdate = R_IssueEntityDefCallback(def);
+  } else {
+    callbackUpdate = false;
+  }
 
   auto model = def->parms.hModel;
 
@@ -22,12 +55,19 @@ idRenderModel* R_EntityDefDynamicModel(idRenderEntityLocal* def) {
     return model;
   }
 
+  // continously animating models (particle systems, etc) will have their
+  // snapshot updated every single view
+  if (callbackUpdate || (model->IsDynamicModel() == DM_CONTINUOUS &&
+                         def->dynamicModelFrameCount != tr.frameCount)) {
+    R_ClearEntityDefDynamicModel(def);
+  }
+
   // if we don't have a snapshot of the dynamic model, generate it now
   if (!def->dynamicModel) {
     // instantiate the snapshot of the dynamic model, possibly reusing memory
     // from the cached snapshot
-    model->InstantiateDynamicModel(
-        &def->parms, tr.viewDef.get(), def->cachedDynamicModel);
+    model->InstantiateDynamicModel(&def->parms, tr.viewDef.get(),
+                                   def->cachedDynamicModel);
 
     def->dynamicModel = def->cachedDynamicModel.get();
     // def->dynamicModelFrameCount = tr.frameCount;
@@ -92,19 +132,8 @@ void R_AddModels() {
   // any light that intersects the view (for shadows).
   //-------------------------------------------------
 
-  /*if (r_useParallelAddModels.GetBool()) {
-          for (viewEntity_t * vEntity = tr.viewDef->viewEntitys; vEntity !=
-  NULL; vEntity = vEntity->next) {
-                  tr.frontEndJobList->AddJob((jobRun_t)R_AddSingleModel,
-  vEntity);
-          }
-          tr.frontEndJobList->Submit();
-          tr.frontEndJobList->Wait();
-  }
-  else {*/
   for (auto vEntity = tr.viewDef->viewEntitys; vEntity;
        vEntity = vEntity->next) {
     R_AddSingleModel(*vEntity);
   }
-  //}
 }
