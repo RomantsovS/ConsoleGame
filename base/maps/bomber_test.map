@@ -35,11 +35,11 @@ Version 2
 "name" "info_player_start_1"
 "origin" "28 8"
 }
-
+/*
 {
 "classname" "mushroom"
 "name" "mushroom3"
 "origin" "120 48"
 "color" "3"
 "linearVelocity" "-10 0"
-}
+}*/

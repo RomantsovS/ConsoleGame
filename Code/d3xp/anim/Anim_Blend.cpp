@@ -234,6 +234,7 @@ int idDeclModelDef::GetAnim(const std::string& name) const {
   }
 
   if (!numAnims) {
+    common->Warning("Can't find anim %s", name.c_str());
     return 0;
   }
 
@@ -277,6 +278,14 @@ std::string idAnim::FullName() const { return realname; }
 
 const MeshAnim* idAnim::GetMeshAnim(int num) const { return anim.get(); }
 
+int idAnim::Length() const {
+  if (!anim) {
+    return 0;
+  }
+
+  return anim->Length();
+}
+
 int idAnim::NumFrames() const {
   if (!anim) {
     return 0;
@@ -306,7 +315,7 @@ int idAnimBlend::NumFrames() const {
 }
 
 void idAnimBlend::SetFrame(const idDeclModelDef* modelDef, int _animNum,
-                           int _frame, int currentTime, int blendTime) {
+                           int _frame, int currentTime) {
   Reset(modelDef);
   if (!modelDef) {
     return;
@@ -329,6 +338,25 @@ void idAnimBlend::SetFrame(const idDeclModelDef* modelDef, int _animNum,
   } else if (frame > _anim->NumFrames()) {
     frame = _anim->NumFrames();
   }
+}
+
+void idAnimBlend::CycleAnim(const idDeclModelDef* modelDef, int _animNum,
+                            int currentTime) {
+  Reset(modelDef);
+  if (!modelDef) {
+    return;
+  }
+
+  const idAnim* _anim = modelDef->GetAnim(_animNum);
+  if (!_anim) {
+    return;
+  }
+
+  animNum = _animNum;
+  endtime = -1;
+  cycle = -1;
+
+  starttime = currentTime;
 }
 
 void idAnimBlend::Clear(int currentTime, int clearTime) {
@@ -374,7 +402,7 @@ const idAnim* idAnimBlend::Anim() const {
   return anim;
 }
 
-int idAnimBlend::AnimTime(int currenttime) const {
+int idAnimBlend::AnimTime(int currentTime) const {
   int time = 0;
   const idAnim* anim = Anim();
 
@@ -385,16 +413,12 @@ int idAnimBlend::AnimTime(int currenttime) const {
 
     // most of the time we're running at the original frame rate, so avoid the
     // int-to-float-to-int conversion
-    /* if (rate == 1.0f) {
-      time = currentTime - starttime + timeOffset;
-    } else {
-      time = static_cast<int>((currentTime - starttime) * rate) + timeOffset;
-    }
+    time = currentTime - starttime;
 
     // given enough time, we can easily wrap time around in our frame
     // calculations, so keep cycling animations' time within the length of the
     // anim.
-    length = anim->Length();
+    auto length = anim->Length();
     if ((cycle < 0) && (length > 0)) {
       time %= length;
 
@@ -403,7 +427,7 @@ int idAnimBlend::AnimTime(int currenttime) const {
       if (time < 0) {
         time += length;
       }
-    }*/
+    }
     return time;
   } else {
     return 0;
@@ -422,8 +446,7 @@ bool idAnimBlend::BlendAnim(int currentTime, Vector2& text_coords) const {
   if (frame) {
     meshanim->GetSingleFrame(frame - 1, text_coords);
   } else {
-    // meshanim->ConvertTimeToFrame(time, cycle, frametime);
-    // md5anim->GetInterpolatedFrame(frametime, text_coords);
+     meshanim->ConvertTimeToFrame(time, cycle, text_coords);
   }
 
   return true;
@@ -453,7 +476,7 @@ void idAnimator::FreeData() {
   // ForceUpdate();
 }
 
-void idAnimator::PushAnims(int currentTime, int blendTime) {
+void idAnimator::PushAnims(int currentTime) {
   if (channel.starttime == currentTime) {
     return;
   }
@@ -518,14 +541,25 @@ void idAnimator::Clear(int channelNum, int currentTime, int cleartime) {
   // ForceUpdate();
 }
 
-void idAnimator::SetFrame(int animNum, int frame, int currentTime,
-                          int blendTime) {
+void idAnimator::SetFrame(int animNum, int frame, int currentTime) {
   if (!modelDef || !modelDef->GetAnim(animNum)) {
     return;
   }
 
-  PushAnims(currentTime, blendTime);
-  channel.SetFrame(modelDef, animNum, frame, currentTime, blendTime);
+  PushAnims(currentTime);
+  channel.SetFrame(modelDef, animNum, frame, currentTime);
+  if (entity) {
+    entity->BecomeActive(TH_ANIMATE);
+  }
+}
+
+void idAnimator::CycleAnim(int animNum, int currentTime) {
+  if (!modelDef || !modelDef->GetAnim(animNum)) {
+    return;
+  }
+
+  PushAnims(currentTime);
+  channel.CycleAnim(modelDef, animNum, currentTime);
   if (entity) {
     entity->BecomeActive(TH_ANIMATE);
   }

@@ -18,6 +18,8 @@ void MeshAnim::Free() {
 
 int MeshAnim::NumFrames() const { return numFrames; }
 
+int MeshAnim::Length() const { return animLength; }
+
 bool MeshAnim::LoadAnim(const std::string& filename) {
   std::string extension;
   idStr::ExtractFileExtension(filename, extension);
@@ -71,6 +73,9 @@ bool MeshAnim::LoadAnim(const std::string& filename) {
     parser.ExpectTokenString("}");
   }
 
+  // we don't count last frame because it would cause a 1 frame pause at the end
+  animLength = ((numFrames) * 1000 + frameRate - 1) / frameRate;
+
   return true;
 }
 
@@ -84,4 +89,17 @@ void MeshAnim::GetSingleFrame(int framenum, Vector2& text_coords) const {
   }
 
   text_coords = componentFrames.at(framenum);
+}
+
+void MeshAnim::ConvertTimeToFrame(int time, int cyclecount,
+                                  Vector2& text_coords) const {
+  if (numFrames <= 1 || time < 0) {
+    text_coords = baseFrame;
+    return;
+  }
+
+  auto frameTime = time * frameRate;
+  auto frameNum = frameTime / 1000;
+
+  text_coords = componentFrames[frameNum % (numFrames)];
 }

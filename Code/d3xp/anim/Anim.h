@@ -27,8 +27,7 @@ class MeshAnim {
   int NumFrames() const;
   std::string Name() const;
 
-  // void ConvertTimeToFrame(int time, int cyclecount, frameBlend_t& frame)
-  // const;
+   void ConvertTimeToFrame(int time, int cyclecount, Vector2& text_coords) const;
 };
 
 class idDeclModelDef;
@@ -50,6 +49,7 @@ class idAnim {
   std::string Name() const;
   std::string FullName() const;
   const MeshAnim* GetMeshAnim(int num) const;
+  int Length() const;
   int NumFrames() const;
 };
 
@@ -97,9 +97,8 @@ class idAnimBlend {
   void Reset(const idDeclModelDef* _modelDef);
   void CallFrameCommands(idEntity* ent, int fromtime, int totime) const;
   void SetFrame(const idDeclModelDef* modelDef, int animnum, int frame,
-                int currenttime, int blendtime);
-  void CycleAnim(const idDeclModelDef* modelDef, int animnum, int currenttime,
-                 int blendtime);
+                int currenttime);
+  void CycleAnim(const idDeclModelDef* modelDef, int animnum, int currenttime);
   void PlayAnim(const idDeclModelDef* modelDef, int animnum, int currenttime,
                 int blendtime);
   bool BlendAnim(int currentTime, Vector2& text_coords) const;
@@ -120,7 +119,7 @@ class idAnimBlend {
   int GetStartTime() const;
   int GetEndTime() const;
   int GetFrameNumber(int currenttime) const;
-  int AnimTime(int currenttime) const;
+  int AnimTime(int currentTime) const;
   int NumFrames() const;
   int Length() const;
   int PlayLength() const;
@@ -151,15 +150,15 @@ class idAnimator {
   bool FrameHasChanged(int animtime) const;
 
   void Clear(int channelNum, int currentTime, int cleartime);
-  void SetFrame(int animnum, int frame, int currenttime, int blendtime);
-  void CycleAnim(int channelNum, int animnum, int currenttime, int blendtime);
+  void SetFrame(int animnum, int frame, int currenttime);
+  void CycleAnim(int animnum, int currenttime);
   void PlayAnim(int channelNum, int animnum, int currenttime, int blendTime);
 
   void ClearAllAnims(int currentTime, int cleartime);
 
  private:
   void FreeData();
-  void PushAnims(int currentTime, int blendTime);
+  void PushAnims(int currentTime);
 
  private:
   const idDeclModelDef* modelDef;

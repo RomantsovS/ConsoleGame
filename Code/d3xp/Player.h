@@ -32,6 +32,8 @@ class idPlayer : public idActor {
   void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
   void SetClipModel();
 
+  void UpdateConditions();
+
   void RestorePersistantInfo();
 
   bool Collide(const trace_t& collision,
