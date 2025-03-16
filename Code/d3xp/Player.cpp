@@ -174,6 +174,39 @@ void idPlayer::RestorePersistantInfo() {
   idealWeapon = spawnArgs.GetInt("current_weapon", "0");
 }
 
+void idPlayer::UpdateConditions() {
+  static std::string cur_anim;
+  if (usercmd.rightmove > 0) {
+    if (cur_anim != "walk_right") {
+      cur_anim = "walk_right";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (usercmd.rightmove < 0) {
+    if (cur_anim != "walk_left") {
+      cur_anim = "walk_left";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (usercmd.rightmove == 0 && usercmd.forwardmove == 0) {
+    if (cur_anim.substr(0, 4) != "idle") {
+      cur_anim = cur_anim == "walk_left" ? "idle_left" : "idle";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (usercmd.forwardmove != 0) {
+    if (cur_anim.substr(0, 4) != "walk") {
+      cur_anim = cur_anim == "idle" ? "walk_right" : "walk_left";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  }
+}
+
 /*
 ===============
 idPlayer::FireWeapon
@@ -289,6 +322,8 @@ void idPlayer::Think() {
   EvaluateControls();
 
   Move();
+
+  UpdateConditions();
 
   // this may use firstPersonView, or a thirdPeroson / camera view
   CalculateRenderView();

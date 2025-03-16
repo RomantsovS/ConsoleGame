@@ -225,9 +225,6 @@ bool idEntity::UpdateRenderEntity(renderEntity_t* renderEntity,
   idAnimator* animator = GetAnimator();
   if (animator) {
     int currentTime = gameLocal.time;
-    if (renderEntity) {
-      currentTime = gameLocal.GetTimeGroupTime(0);
-    }
     return animator->CreateFrame(currentTime, false);
   }
 

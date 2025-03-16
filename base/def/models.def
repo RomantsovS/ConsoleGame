@@ -14,7 +14,9 @@ model mushroom {
 model mario {
 	mesh "models/mario.mesh"
 	anim "idle" models/mario_idle.meshanim
+	anim "idle_left" models/mario_idle_left.meshanim
 	anim "walk_right" models/mario_walk_right.meshanim
+	anim "walk_left" models/mario_walk_left.meshanim
 }
 
 model turtle {

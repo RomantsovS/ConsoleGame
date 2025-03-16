@@ -1,5 +1,5 @@
-"numFrames" 1
-"frameRate" 10
+"numFrames" 2
+"frameRate" 4
 "baseframe"
 {
 	0 4
@@ -7,4 +7,8 @@
 "frame" 0
 {
 	0 4
+}
+"frame" 1
+{
+	30 4
 }

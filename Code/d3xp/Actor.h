@@ -21,6 +21,8 @@ class idActor : public idAnimatedEntity {
 
   void Attach(std::shared_ptr<idEntity> ent);
 
+  int GetAnim(const std::string& name);
+
  protected:
   std::list<idAttachInfo> attachments;
 };

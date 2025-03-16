@@ -14,7 +14,7 @@ void idActor::Spawn() {
   // fixed, resulting in attachments not binding correctly, so we're stuck
   // setting the IK_ANIM before attaching things.
   animator.ClearAllAnims(gameLocal.time, 0);
-  animator.SetFrame(animator.GetAnim("idle"), 0, 0, 0);
+  animator.CycleAnim(animator.GetAnim("idle"), 0);
 
   // spawn any attachments we might have
   auto kv = spawnArgs.MatchPrefix("def_attach");
@@ -56,4 +56,8 @@ void idActor::Attach(std::shared_ptr<idEntity> ent) {
   attach.ent = ent;
 
   ent->SetOrigin(origin + originOffset);
+}
+
+int idActor::GetAnim(const std::string& name) {
+  return animator.GetAnim(name);
 }
