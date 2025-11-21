@@ -170,9 +170,25 @@ void PlayerChain::Spawn() {
   // set our collision model
   physicsObj = std::make_shared<Physics_PlayerChain>();
   physicsObj->SetSelf(this);
-  physicsObj->SetClipMask(MASK_SOLID);
+  SetClipModel();
+  // physicsObj.SetMass(spawnArgs.GetFloat("mass", "100"));
+  physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
+  physicsObj->SetClipMask(MASK_PLAYERSOLID);
+  SetPhysics(physicsObj);
 
-  SpawnFromSpawnSpot();
+  // init the damage effects
+  playerView.SetPlayerEntity(this);
+
+  if (common->IsMultiplayer()) {
+    Init();
+    if (!common->IsClient()) {
+      // set yourself ready to spawn. idMultiplayerGame will decide when/if
+      // appropriate and call SpawnFromSpawnSpot
+      //SpawnFromSpawnSpot();
+    }
+  } else {
+    //SpawnFromSpawnSpot();
+  }
 }
 
 /*
@@ -219,6 +235,15 @@ bool PlayerChain::Collide(const trace_t& collision,
     }
   }
   return false;
+}
+
+/*
+==============
+idPlayer::SetClipModel
+==============
+*/
+void PlayerChain::SetClipModel() {
+  physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
 }
 
 /*
