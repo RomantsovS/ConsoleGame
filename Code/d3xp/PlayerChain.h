@@ -17,6 +17,8 @@ class PlayerChain : public idPlayer {
   void Present() override;
 
   void Init();
+  
+  void SetClipModel();
 
   bool Collide(const trace_t& collision,
                const Vector2& velocity) noexcept override;
