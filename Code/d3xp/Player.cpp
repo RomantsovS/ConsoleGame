@@ -64,32 +64,7 @@ idPlayer::Spawn
 Prepare any resources used by the player.
 ==============
 */
-void idPlayer::Spawn() {
-  // set our collision model
-  physicsObj = std::make_shared<Physics_PlayerMy>();
-  physicsObj->SetSelf(this);
-  SetClipModel();
-  // physicsObj.SetMass(spawnArgs.GetFloat("mass", "100"));
-  physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
-  physicsObj->SetClipMask(MASK_PLAYERSOLID);
-  SetPhysics(physicsObj);
-
-  // init the damage effects
-  playerView.SetPlayerEntity(this);
-
-  if (common->IsMultiplayer()) {
-    Init();
-    if (!common->IsClient()) {
-      // set yourself ready to spawn. idMultiplayerGame will decide when/if
-      // appropriate and call SpawnFromSpawnSpot
-      SetupWeaponEntity();
-      SpawnFromSpawnSpot();
-    }
-  } else {
-    SetupWeaponEntity();
-    SpawnFromSpawnSpot();
-  }
-}
+void idPlayer::Spawn() {}
 
 /*
 ===========
@@ -137,15 +112,15 @@ void idPlayer::SpawnToPoint(const Vector2& spawn_origin,
   Init();
 
   // set back the player physics
-  SetPhysics(physicsObj);
+  // SetPhysics(physicsObj);
 
-  physicsObj->SetClipModelAxis();
-  physicsObj->EnableClip();
+  std::static_pointer_cast<idPhysics_Actor>(GetPhysics())->SetClipModelAxis();
+  GetPhysics()->EnableClip();
 
   Vector2 linearVelocity;
   spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
 
-  physicsObj->SetLinearVelocity(linearVelocity);
+  GetPhysics()->SetLinearVelocity(linearVelocity);
 
   // setup our initial view
   SetOrigin(spawn_origin);
@@ -301,7 +276,7 @@ idPlayer::SetClipModel
 ==============
 */
 void idPlayer::SetClipModel() {
-  physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
+  // physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
 }
 
 /*
@@ -337,30 +312,6 @@ void idPlayer::Think() {
   if (!(thinkFlags & TH_THINK)) {
     gameLocal.Printf("player %d not thinking?\n", entityNumber);
   }
-}
-
-/*
-==================
-idPlayer::Killed
-==================
-*/
-void idPlayer::Killed(idEntity* inflictor, idEntity* attacker, int damage,
-                      const Vector2& dir) noexcept {
-  float delay;
-
-  // don't allow respawn until the death anim is done
-  // g_forcerespawn may force spawning at some later time
-  delay = spawnArgs.GetFloat("respawn_delay");
-  minRespawnTime = gameLocal.time + SEC2MS(delay);
-
-  physicsObj->SetContents(
-      static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) |
-      static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
-  physicsObj->SetMovementType(pmtype_t::PM_DEAD);
-
-  Hide();
-
-  UpdateVisuals();
 }
 
 /*
@@ -555,7 +506,8 @@ void idPlayer::AdjustSpeed() noexcept {
     speed = pm_walkspeed.GetFloat();
   }
 
-  physicsObj->SetSpeed(speed, 0.0f);
+  std::static_pointer_cast<idPhysics_PlayerBase>(GetPhysics())
+      ->SetSpeed(speed, 0.0f);
 }
 
 /*
@@ -569,22 +521,22 @@ void idPlayer::Move() {
   // Vector2 pushVelocity;
 
   // save old origin and velocity for crashlanding
-  oldOrigin = physicsObj->GetOrigin();
-  oldVelocity = physicsObj->GetLinearVelocity();
+  oldOrigin = GetPhysics()->GetOrigin();
+  oldVelocity = GetPhysics()->GetLinearVelocity();
   // pushVelocity = physicsObj->GetPushedLinearVelocity();
 
   if (health <= 0) {
-    physicsObj->SetContents(
+    GetPhysics()->SetContents(
         static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) |
         static_cast<int>(contentsFlags_t::CONTENTS_MONSTERCLIP));
   } else {
-    physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
+    GetPhysics()->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
   }
 
   if (health <= 0) {
-    physicsObj->SetClipMask(MASK_DEADSOLID);
+    GetPhysics()->SetClipMask(MASK_DEADSOLID);
   } else {
-    physicsObj->SetClipMask(MASK_PLAYERSOLID);
+    GetPhysics()->SetClipMask(MASK_PLAYERSOLID);
   }
 
   {
@@ -592,7 +544,8 @@ void idPlayer::Move() {
     // idMat3	axis;
     // GetViewPos(org, axis);
 
-    physicsObj->SetPlayerInput(usercmd, vec2_origin);
+    std::static_pointer_cast<idPhysics_PlayerBase>(GetPhysics())
+        ->SetPlayerInput(usercmd, vec2_origin);
   }
 
   // FIXME: physics gets disabled somehow
@@ -651,7 +604,7 @@ idPlayer::WriteToSnapshot
 ================
 */
 void idPlayer::WriteToSnapshot(idBitMsg& msg) const {
-  physicsObj->WriteToSnapshot(msg);
+  GetPhysics()->WriteToSnapshot(msg);
 }
 
 /*
@@ -660,7 +613,7 @@ idPlayer::ReadFromSnapshot
 ================
 */
 void idPlayer::ReadFromSnapshot(const idBitMsg& msg) {
-  physicsObj->ReadFromSnapshot(msg);
+  GetPhysics()->ReadFromSnapshot(msg);
 
   if (true /*msg.HasChanged()*/) {
     UpdateVisuals();
