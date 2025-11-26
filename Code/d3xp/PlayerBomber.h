@@ -1,9 +1,7 @@
 #ifndef PLAYER_BOMBER_H
 #define PLAYER_BASE_H
 
-class PlayerBomber: public idPlayer {
- public:
-
+class PlayerBomber : public idPlayer {
  public:
   CLASS_PROTOTYPE(PlayerBomber);
 
@@ -14,8 +12,14 @@ class PlayerBomber: public idPlayer {
   PlayerBomber(PlayerBomber&&) = default;
   PlayerBomber& operator=(PlayerBomber&&) = default;
 
+  void Spawn();
+
+  void Killed(idEntity* inflictor, idEntity* attacker, int damage,
+              const Vector2& dir) noexcept override;
+
  private:
 
+  std::shared_ptr<Physics_PlayerMy> physicsObj;  // player physics
 };
 
 #endif

@@ -50,9 +50,6 @@ class idPlayer : public idActor {
       const std::string& damageDefName);  // Actually updates the player's
                                           // health independent of feedback.
 
-  void Killed(idEntity* inflictor, idEntity* attacker, int damage,
-              const Vector2& dir) noexcept override;
-
   std::shared_ptr<renderView_t> GetRenderView();
   void CalculateRenderView();  // called every tic by player code
 
@@ -67,8 +64,6 @@ class idPlayer : public idActor {
 
  private:
   std::shared_ptr<idWeapon> weapon;
-
-  std::shared_ptr<Physics_PlayerMy> physicsObj;  // player physics
 
   int currentWeapon{-1};
   int idealWeapon{-1};
