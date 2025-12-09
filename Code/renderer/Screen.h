@@ -43,19 +43,8 @@ class Screen {
   virtual const Pixel getBackgroundPixel() const noexcept = 0;
 
   virtual void clear() = 0;
-  virtual void clearTextInfo() noexcept = 0;
 
   virtual void display() noexcept {};
-  // void writeInColor(COORD coord, const char* symbol, size_t lenght,
-  // Screen::color_type color_text, Screen::color_type color_background =
-  // colorNone); void writeInColor(const std::string& text, Screen::color_type
-  // color_text, Screen::color_type color_background = colorNone);
-
-  bool readInput(unsigned& key) noexcept;
-  std::string waitConsoleInput();
-
-  void writeConsoleOutput(const std::string& text) noexcept;
-  void clearConsoleOutut() noexcept;
 
   virtual void SetConsoleTextTitle(const std::string& str) = 0;
 

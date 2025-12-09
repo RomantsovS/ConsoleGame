@@ -8,10 +8,14 @@ idCVar text_info_max_height("text_info_max_height", "10",
 
 WinConsoleScreen::WinConsoleScreen(pos_type wd, pos_type ht,
                                    Pixel back) noexcept
-    : Screen(wd, ht), cur_write_coord({0, 0}), window_rect({0, 0, 1, 1}) {
+    : Screen(wd, ht) {
   setBackGroundPixel(back);
   h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
   h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
+
+  if (GetEnvironmentVariableA("WT_SESSION", nullptr, 0) > 0) {
+    common->FatalError("WT_SESSION\n");
+  }
 }
 
 void WinConsoleScreen::init() {
@@ -20,7 +24,12 @@ void WinConsoleScreen::init() {
 
   // Change console visual size to a minimum so ScreenBuffer can shrink
   // below the actual visual size
-  SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect);
+  // Step 1: shrink window first (required by WinAPI)
+  SMALL_RECT window_rect = {0, 0, 0, 0};
+  if (!SetConsoleWindowInfo(h_console_std_out, TRUE, &window_rect)) {
+    common->FatalError("SetConsoleWindowInfo failed - (%s)\n",
+                       getLastErrorMsg());
+  }
 
   // Set the size of the Screen buffer
   COORD coord = {
@@ -36,23 +45,9 @@ void WinConsoleScreen::init() {
                        getLastErrorMsg());
 
   CONSOLE_CURSOR_INFO cursorInfo;
-
   GetConsoleCursorInfo(h_console_std_out, &cursorInfo);
   cursorInfo.bVisible = false;  // set the cursor visibility
   SetConsoleCursorInfo(h_console_std_out, &cursorInfo);
-
-  CONSOLE_FONT_INFOEX cfi;
-  cfi.cbSize = sizeof(cfi);
-  cfi.nFont = 0;
-  cfi.dwFontSize.X =
-      window_font_width.GetInteger();  // Width of each character in the font
-  cfi.dwFontSize.Y = window_font_height.GetInteger();  // Height
-  cfi.FontFamily = FF_DONTCARE;
-  cfi.FontWeight = FW_NORMAL;
-  wcscpy_s(cfi.FaceName, L"Consolas");  // Choose your font
-  if (!SetCurrentConsoleFontEx(h_console_std_out, FALSE, &cfi))
-    common->FatalError("SetCurrentConsoleFontEx  failed - (%s)\n",
-                       getLastErrorMsg());
 
   // Get Screen buffer info and check the maximum allowed window size. Return
   // error if exceeded, so user knows their dimensions/fontsize are too large
@@ -80,44 +75,6 @@ void WinConsoleScreen::init() {
 
   // Allocate memory for Screen buffer
   buffer.resize(width * height);
-  // memset(buffer, 0, sizeof(CHAR_INFO) * width * height);
-
-  cur_write_coord = {0, 0};
-  /*
-  size_t cnt = 100'000;
-
-  auto start = std::chrono::steady_clock::now();
-
-  Vector2 v{ 1.0f, 2.0f };
-
-  for (int i = 0; i < cnt; ++i) {
-          LOG_SUM_DURATION("auto v1 = v + v;", microseconds);
-          auto v1 = v + v;
-          (void)v1;
-  }
-
-  auto finish = std::chrono::steady_clock::now();
-  auto dur = finish - start;
-  auto d = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-  common->DPrintf("time: %d\n", d);
-
-  start = std::chrono::steady_clock::now();
-
-  for (int i = 0; i < cnt; ++i) {
-          LOG_SUM_DURATION("set(vec2_origin, backgroundPixel);", microseconds);
-          set(vec2_origin, backgroundPixel);
-  }
-
-  finish = std::chrono::steady_clock::now();
-  dur = finish - start;
-  d = std::chrono::duration_cast<std::chrono::microseconds>(dur).count();
-  common->DPrintf("time: %d\n", d);*/
-  /*
-  for (float i = 0; i < tr.Screen.getHeight(); ++i) {
-          for (float j = 0; j < tr.Screen.getWidth(); ++j) {
-                  set(Vector2(j, i), WinConsoleScreen::Pixel('*', int(i) % 15));
-          }
-  }*/
 }
 
 WinConsoleScreen& WinConsoleScreen::set(pos_type col, pos_type row,
@@ -141,131 +98,42 @@ WinConsoleScreen& WinConsoleScreen::set(pos_type col, pos_type row,
 
 void WinConsoleScreen::clear() {
   std::fill(buffer.begin(), buffer.end(), backgroundPixel);
+  recreateBuffer();
 }
 
-void WinConsoleScreen::clearTextInfo() noexcept {
-  DWORD written;
-  FillConsoleOutputCharacter(h_console_std_out, ' ', width * 20,
-                             COORD({0, cur_write_coord.Y}), &written);
+class idRenderSystem;
+extern idRenderSystem* renderSystem;
+
+void WinConsoleScreen::recreateBuffer() {
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+  if (!GetConsoleScreenBufferInfo(h_console_std_out, &csbi)) return;
+
+  int w = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+  int h = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+  if (w == width && h == height) return;
+
+  width = w;
+  height = h;
+
+  buffer.resize(width * height);
+
+  renderSystem->SetWidth(width);
+  renderSystem->SetHeight(height);
 }
 
 void WinConsoleScreen::display() noexcept {
-  cur_write_coord = {0, 0};
+  SMALL_RECT writeRegion;
+  writeRegion.Left = 0;
+  writeRegion.Top = 0;
+  writeRegion.Right = width - 1;
+  writeRegion.Bottom = height - 1;
 
-  WriteConsoleOutput(h_console_std_out, buffer.data(),
-                     {(short)width, (short)height}, {0, 0}, &window_rect);
+  COORD bufSize{(SHORT)width, (SHORT)height};
+  COORD bufPos{0, 0};
 
-  cur_write_coord.Y += height;
-}
-/*
-void WinConsoleScreen::writeInColor(COORD coord, const char* symbol, size_t
-lenght, int color_text, int color_background) { if (color_background ==
-colorNone) color_background = backgroundPixel.color;
-
-        std::vector<WORD> attribute(lenght, (WORD)(color_background << 4) |
-color_text | FOREGROUND_INTENSITY); DWORD written;
-
-        WriteConsoleOutputAttribute(h_console_std_out, &attribute[0], lenght,
-coord, &written); WriteConsoleOutputCharacter(h_console_std_out, symbol, lenght,
-coord, &written);
-}
-
-void WinConsoleScreen::writeInColor(const std::string& text, int color_text, int
-color_background) { std::string text_full_string = text;
-
-        if (text.size() % width != 0) {
-                text_full_string.append(width - (text.size() % width), ' ');
-        }
-
-        writeInColor(cur_write_coord, text_full_string.c_str(),
-text_full_string.size(), color_text, color_background);
-
-        cur_write_coord.Y +=
-static_cast<SHORT>(ceil(static_cast<pos_type>(text.size()) / width)) + 1;
-        cur_write_coord.X = 0;
-}
-*/
-bool WinConsoleScreen::readInput(unsigned& key) noexcept {
-  /*DWORD events;
-  INPUT_RECORD input_record;
-
-  // update the game time
-  static auto real_time_last = Sys_Milliseconds();
-  auto real_time = Sys_Milliseconds();
-
-  if (real_time - real_time_last < 100) {
-          return false;
-  }
-
-  real_time_last = real_time;
-
-  key = 0;
-
-  GetNumberOfConsoleInputEvents(h_console_std_in, &events);
-
-  if (!events)
-          return false;
-
-  ReadConsoleInput(h_console_std_in, &input_record, 1, &events);
-
-  switch (input_record.EventType)
-  {
-  case KEY_EVENT:
-  {
-          if (input_record.Event.KeyEvent.bKeyDown)
-          {
-                  key = input_record.Event.KeyEvent.wVirtualKeyCode;
-                  return true;
-          }
-  }
-  }*/
-
-  return false;
-}
-
-std::string WinConsoleScreen::waitConsoleInput() {
-  /*std::string text_input;
-  DWORD events;
-  INPUT_RECORD input_record;
-  COORD coord = { 0, 0 };
-  DWORD written;
-
-  while (true)
-  {
-          ReadConsoleInput(h_console_std_in, &input_record, 1, &events);
-
-          if (input_record.EventType == KEY_EVENT &&
-  input_record.Event.KeyEvent.bKeyDown)
-          {
-                  if (input_record.Event.KeyEvent.wVirtualKeyCode == VK_ESCAPE)
-                          return std::string();
-                  else if (input_record.Event.KeyEvent.wVirtualKeyCode ==
-  VK_RETURN) return text_input; else if
-  (input_record.Event.KeyEvent.wVirtualKeyCode == VK_SHIFT ||
-                          input_record.Event.KeyEvent.wVirtualKeyCode ==
-  VK_CONTROL) { continue;
-                  }
-
-                  text_input += input_record.Event.KeyEvent.uChar.AsciiChar;
-                  WriteConsole(h_console_std_out,
-  &input_record.Event.KeyEvent.uChar.AsciiChar, 1, &written, NULL);
-          }
-  }*/
-
-  return "";
-}
-
-void WinConsoleScreen::writeConsoleOutput(const std::string& text) noexcept {
-  DWORD written;
-  WriteConsole(h_console_std_out, text.c_str(), text.size(), &written, NULL);
-}
-
-void WinConsoleScreen::clearConsoleOutut() noexcept {
-  DWORD written;
-  COORD coord({0, 0});
-
-  FillConsoleOutputCharacter(h_console_std_out, ' ', 255, coord, &written);
-  SetConsoleCursorPosition(h_console_std_out, coord);
+  WriteConsoleOutput(h_console_std_out, buffer.data(), bufSize, bufPos,
+                     &writeRegion);
 }
 
 void WinConsoleScreen::SetConsoleTextTitle(const std::string& str) {

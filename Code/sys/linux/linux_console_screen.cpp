@@ -40,8 +40,6 @@ void LinuxConsoleScreen::clear() {
   std::fill(buffer.begin(), buffer.end(), backgroundPixel.value);
 }
 
-void LinuxConsoleScreen::clearTextInfo() noexcept {}
-
 void LinuxConsoleScreen::display() noexcept {
   for (pos_type i = 0; i < height; ++i) {
     for (pos_type j = 0; j < width; ++j) {
