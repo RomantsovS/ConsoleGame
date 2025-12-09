@@ -61,7 +61,7 @@ void idSWF::Init() {
                                                            va("item%d", i));
 
   auto spr_inst_pcBar =
-      mainspriteInstance->PlaceObject(3, true, "pcBar", Vector2(0, 25));
+      mainspriteInstance->PlaceObject(3, true, "pcBar", Vector2(0, 5));
   auto spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
       0, true, "btn0", Vector2(-100, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
@@ -102,7 +102,7 @@ void idSWF::Init() {
         spr_inst_menuCampaing_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuCampaing_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-80.0f, 10.0f * i - 40.0f));
+        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
   }
 
   auto spr_inst_menuNewGame =
@@ -119,7 +119,7 @@ void idSWF::Init() {
         spr_inst_menuNewGame_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuNewGame_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-80.0f, 10.0f * i - 40.0f));
+        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
   }
 
   auto spr_inst_menuPause =
@@ -134,7 +134,7 @@ void idSWF::Init() {
         spr_inst_menuPause_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuPause_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-80.0f, 10.0f * i - 40.0f));
+        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
   }
 
   auto spr_inst_menuPartyLobby =
@@ -151,7 +151,7 @@ void idSWF::Init() {
         spr_inst_menuPartyLobby_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuPartyLobby_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-80.0f, 10.0f * i - 40.0f));
+        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
   }
   auto spr_inst_PartyLobby_options =
       spr_inst_menuPartyLobby->spriteInstance->PlaceObject(1, true, "options");
@@ -170,7 +170,7 @@ void idSWF::Init() {
         spr_inst_menuGameLobby_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuGameLobby_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-80.0f, 10.0f * i - 40.0f));
+        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
   }
 
   auto spr_inst_GameLobby_match_info =
