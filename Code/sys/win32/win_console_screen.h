@@ -35,20 +35,8 @@ class WinConsoleScreen : public Screen {
   }
 
   void clear();
-  void clearTextInfo() noexcept;
 
   void display() noexcept;
-  // void writeInColor(COORD coord, const char* symbol, size_t lenght,
-  // WinConsoleScreen::color_type color_text, WinConsoleScreen::color_type
-  // color_background = colorNone); void writeInColor(const std::string& text,
-  // WinConsoleScreen::color_type color_text, WinConsoleScreen::color_type
-  // color_background = colorNone);
-
-  bool readInput(unsigned& key) noexcept;
-  std::string waitConsoleInput();
-
-  void writeConsoleOutput(const std::string& text) noexcept;
-  void clearConsoleOutut() noexcept;
 
   void SetConsoleTextTitle(const std::string& str);
 
@@ -59,9 +47,8 @@ class WinConsoleScreen : public Screen {
   std::vector<CHAR_INFO> buffer;
   HANDLE h_console_std_in;
   HANDLE h_console_std_out;
-  SMALL_RECT window_rect;
 
-  COORD cur_write_coord;
+  void recreateBuffer();
 };
 
 inline WinConsoleScreen& WinConsoleScreen::set(

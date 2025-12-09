@@ -24,7 +24,6 @@ class LinuxConsoleScreen : public Screen {
   }
 
   void clear() override;
-  void clearTextInfo() noexcept override;
 
   void display() noexcept override;
 
