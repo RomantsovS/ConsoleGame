@@ -294,10 +294,10 @@ void idMenuHandler_Shell::SetupPCOptions() {
 
   if (menuBar) {
     // navOptions.push_back("DEV");	// DEV
-    navOptions.push_back("campaign");     // singleplayer
-    navOptions.push_back("multiplayer");  // multiplayer
+    navOptions.push_back("CAMPAIGN");     // singleplayer
+    navOptions.push_back("MULTIPLAYER");  // multiplayer
     // navOptions.push_back("settings");	// settings
-    navOptions.push_back("quit");  // quit
+    navOptions.push_back("QUIT");  // quit
 
     std::shared_ptr<idMenuWidget_MenuButton> buttonWidget = nullptr;
     int index = 0;
