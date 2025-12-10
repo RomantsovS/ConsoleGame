@@ -13,15 +13,11 @@ WinConsoleScreen::WinConsoleScreen(pos_type wd, pos_type ht,
   h_console_std_out = GetStdHandle(STD_OUTPUT_HANDLE);
   h_console_std_in = GetStdHandle(STD_INPUT_HANDLE);
 
-  if (GetEnvironmentVariableA("WT_SESSION", nullptr, 0) > 0) {
-    common->FatalError("WT_SESSION\n");
-  }
+  if (h_console_std_out == INVALID_HANDLE_VALUE)
+    common->FatalError("Bad h_console_std_out");
 }
 
 void WinConsoleScreen::init() {
-  if (h_console_std_out == INVALID_HANDLE_VALUE)
-    common->FatalError("Bad h_console_std_out");
-
   // Change console visual size to a minimum so ScreenBuffer can shrink
   // below the actual visual size
   // Step 1: shrink window first (required by WinAPI)
@@ -78,7 +74,7 @@ void WinConsoleScreen::init() {
 }
 
 WinConsoleScreen& WinConsoleScreen::set(pos_type col, pos_type row,
-                                        const WinConsoleScreen::Pixel& ch) {
+                                        const Screen::Pixel& ch) {
   if (row >= height || row < 0) {
     return *this;
     common->Error("Screen height: %d out of range: %d", row, height);
@@ -138,10 +134,4 @@ void WinConsoleScreen::display() noexcept {
 
 void WinConsoleScreen::SetConsoleTextTitle(const std::string& str) {
   SetConsoleTitle(str.c_str());
-}
-
-std::unique_ptr<Screen> MakeScreen(WinConsoleScreen::pos_type ht,
-                                   WinConsoleScreen::pos_type wd,
-                                   WinConsoleScreen::Pixel back) {
-  return std::make_unique<WinConsoleScreen>(ht, wd, back);
 }
