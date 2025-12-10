@@ -86,7 +86,7 @@ WinConsoleScreen& WinConsoleScreen::set(pos_type col, pos_type row,
   }
 
   auto& char_info = buffer[row * width + col];
-  char_info.Char.AsciiChar = ch.value;
+  char_info.Char.UnicodeChar = ch.value;
   char_info.Attributes = ch.color;
 
   return *this;  // return this object as an lvalue
@@ -128,7 +128,7 @@ void WinConsoleScreen::display() noexcept {
   COORD bufSize{(SHORT)width, (SHORT)height};
   COORD bufPos{0, 0};
 
-  WriteConsoleOutput(h_console_std_out, buffer.data(), bufSize, bufPos,
+  WriteConsoleOutputW(h_console_std_out, buffer.data(), bufSize, bufPos,
                      &writeRegion);
 }
 

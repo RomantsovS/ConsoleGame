@@ -66,7 +66,7 @@ void idRenderSystemLocal::Init() {
   height = screen_height.GetInteger();
 
   screen = WinConsoleScreenFactory().MakeScreen(
-      width, height, Screen::Pixel('\xDB', colorBlack));
+      width, height, Screen::Pixel(L'\x2588', colorBlack));
   screen->init();
 
   viewDef = nullptr;

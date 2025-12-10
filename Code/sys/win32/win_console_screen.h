@@ -24,11 +24,11 @@ class WinConsoleScreen : public Screen {
   pos_type getHeight() const noexcept { return height; }
 
   void setBackGroundPixel(const Pixel& pixel) noexcept {
-    backgroundPixel.Char.AsciiChar = pixel.value;
+    backgroundPixel.Char.UnicodeChar = pixel.value;
     backgroundPixel.Attributes = pixel.color;
   }
   const Pixel getBackgroundPixel() const noexcept {
-    return {backgroundPixel.Char.AsciiChar, backgroundPixel.Attributes};
+    return {backgroundPixel.Char.UnicodeChar, backgroundPixel.Attributes};
   }
 
   void clear();
