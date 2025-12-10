@@ -31,7 +31,7 @@ void idMenuScreen_Shell_PressStart::Update() noexcept {
       cmdBar->ClearAllButtons();
       idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
       buttonInfo = cmdBar->GetButton(idMenuWidget_CommandBar::BUTTON_JOY1);
-      buttonInfo->label = "press start";
+      buttonInfo->label = "PRESS START";
       buttonInfo->action.Set(widgetAction_t::WIDGET_ACTION_PRESS_FOCUSED);
     }
   }

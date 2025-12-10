@@ -142,10 +142,10 @@ void idMenuScreen_Shell_Singleplayer::ShowScreen() {
 
   }
   else {*/
-  option.push_back("new game");  // new game
+  option.push_back("NEW GAME");  // new game
   menuOptions.push_back(option);
   option.clear();
-  option.push_back("load game");  // load game
+  option.push_back("LOAD GAME");  // load game
   menuOptions.push_back(option);
 
   if (options) {
