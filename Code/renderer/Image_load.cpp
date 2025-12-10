@@ -60,7 +60,7 @@ void idImage::ActuallyLoadImage(bool fromBackEnd) {
 bool idImage::ConvertImageDataToModelPixels(unsigned char* data, int img_height,
                                             int img_width, int img_nrChannels,
                                             std::vector<ModelPixel>& pixels) {
-  const char symbol{'\xDB'};
+  const wchar_t symbol{L'\x2588'};
   int col{};
 
   idassert(img_nrChannels >= 3);

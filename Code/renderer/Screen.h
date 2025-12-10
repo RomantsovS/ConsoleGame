@@ -12,11 +12,11 @@ class Screen {
   struct Pixel {
     Pixel() = default;
 
-    Pixel(char val, color_type col) noexcept : value(val), color(col) {}
+    Pixel(wchar_t val, color_type col) noexcept : value(val), color(col) {}
     Pixel(const Pixel& p, color_type col) noexcept
         : value(p.value), color(col) {}
 
-    char value;
+    wchar_t value;
     Screen::color_type color;
   };
 
