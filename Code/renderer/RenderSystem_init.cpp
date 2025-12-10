@@ -8,7 +8,7 @@ idCVar r_skipBackEnd("r_skipBackEnd", "0", CVAR_RENDERER | CVAR_BOOL,
                      "don't draw anything");
 idCVar r_update_frame_time("r_update_frame_time", "100",
                            CVAR_SYSTEM | CVAR_RENDERER, "");
-idCVar r_console_pos("r_console_pos", "10", CVAR_SYSTEM | CVAR_RENDERER, "");
+idCVar r_console_pos("r_console_pos", "0", CVAR_SYSTEM | CVAR_RENDERER, "");
 idCVar screen_width("screen_width", "120", CVAR_SYSTEM | CVAR_INIT, "");
 idCVar screen_height("screen_height", "40", CVAR_SYSTEM | CVAR_INIT, "");
 

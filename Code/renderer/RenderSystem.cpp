@@ -6,7 +6,7 @@ idRenderSystemLocal tr;
 idRenderSystem* renderSystem = &tr;
 
 const int BIGCHAR_WIDTH = 8;
-const int BIGCHAR_HEIGHT = 8;
+const int BIGCHAR_HEIGHT = 1;
 
 /*
 ====================
@@ -135,10 +135,9 @@ void idRenderSystemLocal::DrawBigStringExt(int x, int y,
   SetColor(colorWhite);
 }
 
-void idRenderSystemLocal::DrawString(Vector2 pos,
-                                               const std::string& str,
+void idRenderSystemLocal::DrawString(Vector2 pos, std::string_view string,
                                                Screen::color_type color) {
-  for (const auto& ch : str) {
+  for (const auto& ch : string) {
     screen->set(pos, Screen::Pixel(ch, color));
     ++pos.x;
   }
