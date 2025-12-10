@@ -524,6 +524,21 @@ void idPlayer::CalculateRenderView() {
     // player bodies and allow the right player view weapons
     renderView->viewID = entityNumber + 1;
   }
+
+  renderView->pos.x =
+      GetPhysics()->GetOrigin().x - renderSystem->GetWidth() / 2;
+  renderView->pos.y =
+      GetPhysics()->GetOrigin().y - renderSystem->GetHeight() / 2;
+
+  // clamp to world bounds
+  if (renderView->pos.x < 0) renderView->pos.x = 0;
+  if (renderView->pos.y < 0) renderView->pos.y = 0;
+
+  if (renderView->pos.x > gameLocal.GetWidth() - renderSystem->GetWidth())
+    renderView->pos.x = gameLocal.GetWidth() - renderSystem->GetWidth();
+
+  if (renderView->pos.y > gameLocal.GetHeight() - renderSystem->GetHeight())
+    renderView->pos.y = gameLocal.GetHeight() - renderSystem->GetHeight();
 }
 
 /*

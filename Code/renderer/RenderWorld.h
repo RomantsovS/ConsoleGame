@@ -37,6 +37,8 @@ struct renderView_t {
   // subviews (mirrors, cameras, etc) will always clear it to zero
   int viewID;
 
+  Vector2 pos;
+
   // time in milliseconds for shader effects and other time dependent rendering
   // issues
   int time[2];
