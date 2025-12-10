@@ -50,10 +50,8 @@ class idRenderSystem {
                                 const Screen::color_type setColor,
                                 bool forceColor) = 0;
 
-  virtual void DrawPositionedString(Vector2 pos, const std::string& str,
-                                    Screen::color_type color) = 0;
-  virtual void DrawString(const std::string& text,
-                          const Screen::color_type color) = 0;
+  virtual void DrawString(Vector2 pos, const std::string& str,
+                          Screen::color_type color) = 0;
 
   virtual void RenderCommandBuffers() = 0;
 

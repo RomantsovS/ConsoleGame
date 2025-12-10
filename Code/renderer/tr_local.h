@@ -212,10 +212,9 @@ class idRenderSystemLocal : public idRenderSystem {
                         const Screen::color_type setColor,
                         bool forceColor) override;
 
-  void DrawPositionedString(Vector2 pos, const std::string& str,
-                            Screen::color_type color) override;
-  void DrawString(const std::string& text,
-                  const Screen::color_type color) override;
+  void DrawString(Vector2 pos, const std::string& str,
+                  Screen::color_type color) override;
+
   void RenderCommandBuffers() override;
 
   void SetHeight(int h) noexcept override { height = h; }
@@ -247,8 +246,7 @@ class idRenderSystemLocal : public idRenderSystem {
 
   std::unique_ptr<Screen> screen;
 
-  Screen::pos_type width, height;  // , borderWidth, borderHeight;
-  Screen::Pixel borderPixel;
+  Screen::pos_type width, height;
 
   int update_frame_time = 0;
 
