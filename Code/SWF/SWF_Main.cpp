@@ -45,7 +45,7 @@ void idSWF::Init() {
 
   auto spr_inst_prompts = mainspriteInstance->PlaceObject(1, true, "prompts");
   auto spr_inst_prompts_joy1 = spr_inst_prompts->spriteInstance->PlaceObject(
-      0, true, "joy1", Vector2(-60, 0));
+      0, true, "joy1", Vector2(-10, 0));
   spr_inst_prompts_joy1->spriteInstance->PlaceObject(0, false, "txt_info");
   auto spr_inst_prompts_joy2 = spr_inst_prompts->spriteInstance->PlaceObject(
       1, true, "joy2", Vector2(0, -20));
@@ -63,22 +63,22 @@ void idSWF::Init() {
   auto spr_inst_pcBar =
       mainspriteInstance->PlaceObject(3, true, "pcBar", Vector2(0, 5));
   auto spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      0, true, "btn0", Vector2(-100, 0));
+      0, true, "btn0", Vector2(-60, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
   spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      1, true, "btn1", Vector2(-30, 0));
+      1, true, "btn1", Vector2(-45, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
   spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      2, true, "btn2", Vector2(70, 0));
+      2, true, "btn2", Vector2(-30, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
   spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      3, true, "btn3", Vector2(50, 0));
+      3, true, "btn3", Vector2(-15, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
   spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      4, true, "btn4", Vector2(70, 0));
+      4, true, "btn4", Vector2(0, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
   spr_inst_pcBar_btn = spr_inst_pcBar->spriteInstance->PlaceObject(
-      5, true, "btn5", Vector2(80, 0));
+      5, true, "btn5", Vector2(15, 0));
   spr_inst_pcBar_btn->spriteInstance->PlaceObject(0, false, "txtVal");
 
   auto spr_inst_buttons = mainspriteInstance->PlaceObject(4, true, "buttons");
@@ -102,7 +102,7 @@ void idSWF::Init() {
         spr_inst_menuCampaing_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuCampaing_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
+        0, false, "txtVal", Vector2(-60.0f, 2.0f * i - 15.0f));
   }
 
   auto spr_inst_menuNewGame =
@@ -119,7 +119,7 @@ void idSWF::Init() {
         spr_inst_menuNewGame_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuNewGame_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
+        0, false, "txtVal", Vector2(-60.0f, 2.0f * i - 15.0f));
   }
 
   auto spr_inst_menuPause =
@@ -134,7 +134,7 @@ void idSWF::Init() {
         spr_inst_menuPause_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuPause_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
+        0, false, "txtVal", Vector2(-60.0f, 2.0f * i - 15.0f));
   }
 
   auto spr_inst_menuPartyLobby =
@@ -151,7 +151,7 @@ void idSWF::Init() {
         spr_inst_menuPartyLobby_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuPartyLobby_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
+        0, false, "txtVal", Vector2(-60.0f, 2.0f * i - 15.0f));
   }
   auto spr_inst_PartyLobby_options =
       spr_inst_menuPartyLobby->spriteInstance->PlaceObject(1, true, "options");
@@ -170,7 +170,7 @@ void idSWF::Init() {
         spr_inst_menuGameLobby_info_options->spriteInstance->PlaceObject(
             i, true, va("item%d", i));
     spr_inst_menuGameLobby_info_options_item->spriteInstance->PlaceObject(
-        0, false, "txtVal", Vector2(-60.0f, 10.0f * i - 15.0f));
+        0, false, "txtVal", Vector2(-60.0f, 2.0f * i - 15.0f));
   }
 
   auto spr_inst_GameLobby_match_info =

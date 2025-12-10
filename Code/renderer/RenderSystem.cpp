@@ -135,19 +135,12 @@ void idRenderSystemLocal::DrawBigStringExt(int x, int y,
   SetColor(colorWhite);
 }
 
-void idRenderSystemLocal::DrawPositionedString(Vector2 pos,
+void idRenderSystemLocal::DrawString(Vector2 pos,
                                                const std::string& str,
                                                Screen::color_type color) {
   for (const auto& ch : str) {
     screen->set(pos, Screen::Pixel(ch, color));
-    ++pos.y;
-  }
-}
-
-void idRenderSystemLocal::DrawString(const std::string& text,
-                                     const Screen::color_type color) {
-  if (!text.empty()) {
-    // tr.screen->writeInColor(text, color);
+    ++pos.x;
   }
 }
 
@@ -165,25 +158,7 @@ void idRenderSystemLocal::FreeRenderWorld(std::shared_ptr<idRenderWorld> rw) {
 }
 
 void idRenderSystemLocal::Display() noexcept { screen->display(); }
-/*
-void idRenderSystemLocal::FillBorder() {
-    for (Screen::pos_type y = 0; y < height; ++y) {
-        for (Screen::pos_type x = 0; x < borderWidth; ++x)
-            screen->set(x, y, borderPixel);
 
-        for (Screen::pos_type x = width - 1; x > width - 1 - borderWidth; --x)
-            screen->set(x, y, borderPixel);
-    }
-
-    for (Screen::pos_type x = 0; x < width; ++x) {
-        for (Screen::pos_type y = 0; y < borderHeight; ++y)
-            screen->set(x, y, borderPixel);
-
-        for (Screen::pos_type y = height - 1; y > height - 1 - borderHeight;
---y) screen->set(x, y, borderPixel);
-    }
-}
-*/
 void idRenderSystemLocal::ClearScreen() { screen->clear(); }
 
 void idRenderSystemLocal::UpdateTimers() {
@@ -199,7 +174,6 @@ void idRenderSystemLocal::UpdateTimers() {
   if (!tr.update_frame) return;
 
   tr.ClearScreen();
-  // tr.FillBorder();
 }
 
 void idRenderSystemLocal::SetConsoleTextTitle(const std::string& str) {

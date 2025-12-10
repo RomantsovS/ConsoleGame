@@ -189,16 +189,16 @@ void RB_ShowDebugLines() {
       for (x_pos = static_cast<Screen::pos_type>(line->start.x);
            x_pos <= line->end.x; ++x_pos) {
         tr.screen->set(
-            x_pos /* + tr.borderHeight*/,
-            static_cast<Screen::pos_type>(line->start.y) /* + tr.borderWidth*/,
+            x_pos,
+            static_cast<Screen::pos_type>(line->start.y),
             Screen::Pixel(debug_symbol, line->rgb));
       }
 
       for (y_pos = static_cast<Screen::pos_type>(line->start.y);
            y_pos <= line->end.y; ++y_pos) {
         tr.screen->set(
-            static_cast<Screen::pos_type>(line->start.x) /* + tr.borderHeight*/,
-            y_pos /* + tr.borderWidth*/,
+            static_cast<Screen::pos_type>(line->start.x),
+            y_pos,
             Screen::Pixel(debug_symbol, line->rgb));
       }
     }

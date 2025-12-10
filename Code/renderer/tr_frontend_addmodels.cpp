@@ -112,9 +112,7 @@ void R_AddSingleModel(const viewEntity_t& vEntity) {
   auto rEntSp = vEntity.entityDef;
 
   if (rEntSp) {
-    const auto curPos = /*Vector2(static_cast<float>(tr.borderHeight),
-                           static_cast<float>(tr.borderWidth)) +*/
-        rEntSp->parms.origin.GetIntegerVectorFloor();
+    const auto curPos = rEntSp->parms.origin.GetIntegerVectorFloor();
 
     for (int surfaceNum = 0; surfaceNum != modelNumSurfaces; surfaceNum++) {
       const ModelPixel& surf = model->Surface(surfaceNum);

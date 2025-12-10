@@ -62,13 +62,8 @@ void idRenderSystemLocal::Init() {
 
   renderModelManager->Init();
 
-  // borderWidth = 0;
-  // borderHeight = 0;
-
-  width = screen_width.GetInteger();    // +borderWidth * 2;
-  height = screen_height.GetInteger();  // +borderHeight * 2;
-
-  borderPixel = Screen::Pixel('#', colorWhite);
+  width = screen_width.GetInteger();
+  height = screen_height.GetInteger();
 
   screen = WinConsoleScreenFactory().MakeScreen(
       width, height, Screen::Pixel('\xDB', colorBlack));

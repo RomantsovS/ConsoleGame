@@ -70,7 +70,8 @@ void idSWF::RenderEditText(gsl::not_null<idRenderSystem*> gui,
     return;
   }
 
-  gui->DrawBigStringExt(static_cast<int>(renderState.pos.x),
+  /*gui->DrawBigStringExt(static_cast<int>(renderState.pos.x),
                         static_cast<int>(renderState.pos.y), textInstance->text,
-                        textInstance->color, true);
+                        textInstance->color, true);*/
+  gui->DrawString(renderState.pos, textInstance->text, textInstance->color);
 }
