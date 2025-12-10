@@ -11,9 +11,6 @@ class LinuxConsoleScreen : public Screen {
 
   void init() override;
 
-  inline Screen::Pixel get(pos_type r,
-                           pos_type c) const noexcept;  // explicitly inline
-
   Screen& set(pos_type col, pos_type row, const Screen::Pixel& ch) override;
 
   void setBackGroundPixel(const Pixel& pixel) noexcept override {

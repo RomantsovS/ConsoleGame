@@ -70,7 +70,8 @@ void idRenderSystemLocal::Init() {
 
   borderPixel = Screen::Pixel('#', colorWhite);
 
-  screen = MakeScreen(width, height, Screen::Pixel('\xDB', colorBlack));
+  screen = WinConsoleScreenFactory().MakeScreen(
+      width, height, Screen::Pixel('\xDB', colorBlack));
   screen->init();
 
   viewDef = nullptr;

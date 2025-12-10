@@ -30,9 +30,6 @@ class Screen {
 
   virtual void init() = 0;
 
-  inline Screen::Pixel get(pos_type r,
-                           pos_type c) const noexcept;  // explicitly inline
-
   virtual Screen& set(pos_type row, pos_type col, const Screen::Pixel& ch) = 0;
   Screen& set(const Vector2& pos, const Screen::Pixel& ch);
 
@@ -56,8 +53,12 @@ inline Screen& Screen::set(const Vector2& pos, const Screen::Pixel& ch) {
   return set(static_cast<pos_type>(pos.x), static_cast<pos_type>(pos.y), ch);
 }
 
-std::unique_ptr<Screen> MakeScreen(Screen::pos_type ht, Screen::pos_type wd,
-                                   Screen::Pixel back);
+class ConsoleScreenFactory {
+ public:
+  virtual std::unique_ptr<Screen> MakeScreen(Screen::pos_type ht,
+                                             Screen::pos_type wd,
+                                             Screen::Pixel back) const = 0;
+};
 
 #ifdef _WIN32
 
