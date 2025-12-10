@@ -113,9 +113,8 @@ void RB_ShowDebugText() {
   }
 
   for (auto& text : rb_debugText) {
-    renderSystem->DrawBigStringExt(
-        0, r_console_pos.GetInteger() + (i + 1) * (BIGCHAR_HEIGHT + 2),
-        text.text, text.color, true);
+    renderSystem->DrawString(Vector2(40, r_console_pos.GetInteger() + i),
+                             text.text, text.color);
     ++i;
   }
 }
@@ -188,18 +187,14 @@ void RB_ShowDebugLines() {
     if (!line->depthTest) {
       for (x_pos = static_cast<Screen::pos_type>(line->start.x);
            x_pos <= line->end.x; ++x_pos) {
-        tr.screen->set(
-            x_pos,
-            static_cast<Screen::pos_type>(line->start.y),
-            Screen::Pixel(debug_symbol, line->rgb));
+        tr.screen->set(x_pos, static_cast<Screen::pos_type>(line->start.y),
+                       Screen::Pixel(debug_symbol, line->rgb));
       }
 
       for (y_pos = static_cast<Screen::pos_type>(line->start.y);
            y_pos <= line->end.y; ++y_pos) {
-        tr.screen->set(
-            static_cast<Screen::pos_type>(line->start.x),
-            y_pos,
-            Screen::Pixel(debug_symbol, line->rgb));
+        tr.screen->set(static_cast<Screen::pos_type>(line->start.x), y_pos,
+                       Screen::Pixel(debug_symbol, line->rgb));
       }
     }
   }

@@ -109,7 +109,7 @@ idConsoleLocal::Init
 void idConsoleLocal::Init() noexcept {
   keyCatching = false;
 
-  LINE_WIDTH = 26;
+  LINE_WIDTH = 40;
   TOTAL_LINES = CON_TEXTSIZE / LINE_WIDTH;
   text.resize(CON_TEXTSIZE);
 
@@ -362,7 +362,7 @@ Draw the editline after a ] prompt
 void idConsoleLocal::DrawInput() {
   std::string console_text = std::string(":").append(consoleField.GetBuffer());
   console_text.append("_");
-  renderSystem->DrawBigStringExt(0, vislines, console_text, colorWhite, true);
+  renderSystem->DrawString(Vector2(0, vislines), console_text, colorWhite);
 }
 
 /*
@@ -399,15 +399,15 @@ void idConsoleLocal::DrawSolidConsole(float frac) {
   for (int i = 0; i < lines && row >= 0; i++, y -= BIGCHAR_HEIGHT, row--) {
     size_t text_p = (row % TOTAL_LINES) * LINE_WIDTH;
 
-    renderSystem->DrawBigStringExt(x, y, text_sv.substr(text_p, LINE_WIDTH),
-                                   colorWhite, true);
+    renderSystem->DrawString(Vector2(x, y), text_sv.substr(text_p, LINE_WIDTH),
+                             colorWhite);
   }
 
   // draw the input prompt, user text, and cursor if desired
   DrawInput();
 
   if (keyCatching) {
-    // RB_ShowDebugText();
+     RB_ShowDebugText();
   }
 }
 

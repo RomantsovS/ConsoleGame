@@ -212,7 +212,7 @@ class idRenderSystemLocal : public idRenderSystem {
                         const Screen::color_type setColor,
                         bool forceColor) override;
 
-  void DrawString(Vector2 pos, const std::string& str,
+  void DrawString(Vector2 pos, std::string_view string,
                   Screen::color_type color) override;
 
   void RenderCommandBuffers() override;
