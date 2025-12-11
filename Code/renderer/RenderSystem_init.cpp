@@ -65,7 +65,13 @@ void idRenderSystemLocal::Init() {
   width = screen_width.GetInteger();
   height = screen_height.GetInteger();
 
-  screen = WinConsoleScreenFactory().MakeScreen(
+  #ifdef _WIN32
+  auto screen_factory = WinConsoleScreenFactory();
+  #else
+  auto screen_factory = LinuxConsoleScreenFactory();
+  #endif
+
+  screen = .MakeScreen(
       width, height, Screen::Pixel(L'\x2588', colorBlack));
   screen->init();
 
