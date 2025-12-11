@@ -22,4 +22,4 @@ set(CMAKE_RC_FLAGS /nologo)
 
 # Override cxx flags
 set(CMAKE_CXX_FLAGS "${MSVC_COMMON_FLAGS}" CACHE STRING "C++ Common Flags" FORCE)
-set(CMAKE_CXX_FLAGS_DEBUG "/MTd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /EHsc /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
+set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Zi /Zo /Od /Ob0 /Oy- /RTC1 /GS /EHsc /DDEBUG /D_DEBUG" CACHE STRING "C++ Flags" FORCE)
