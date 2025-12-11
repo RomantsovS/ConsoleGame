@@ -65,14 +65,14 @@ void idRenderSystemLocal::Init() {
   width = screen_width.GetInteger();
   height = screen_height.GetInteger();
 
-  #ifdef _WIN32
+#ifdef _WIN32
   auto screen_factory = WinConsoleScreenFactory();
-  #else
+#else
   auto screen_factory = LinuxConsoleScreenFactory();
-  #endif
+#endif
 
-  screen = .MakeScreen(
-      width, height, Screen::Pixel(L'\x2588', colorBlack));
+  screen = screen_factory.MakeScreen(width, height,
+                                     Screen::Pixel(L'\x2588', colorBlack));
   screen->init();
 
   viewDef = nullptr;
