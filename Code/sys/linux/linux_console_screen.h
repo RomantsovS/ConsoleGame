@@ -31,4 +31,12 @@ class LinuxConsoleScreen : public Screen {
   Pixel backgroundPixel;
 };
 
+class LinuxConsoleScreenFactory : ConsoleScreenFactory {
+ public:
+  std::unique_ptr<Screen> MakeScreen(Screen::pos_type ht, Screen::pos_type wd,
+                                     Screen::Pixel back) const override {
+    return std::make_unique<LinuxConsoleScreen>(ht, wd, back);
+  }
+};
+
 #endif
