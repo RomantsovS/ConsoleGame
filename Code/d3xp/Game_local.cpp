@@ -356,8 +356,7 @@ void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
         world->spawnArgs.GetInt("game_add_point_delay");
 
     if (game_add_point_delay == 0) {
-      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 1000);
-           ++i)
+      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count"); ++i)
         AddRandomPoint();
       world->spawnArgs.SetInt("game_add_point_delay", -1);
       game_add_point_delay = -1;
@@ -367,7 +366,7 @@ void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
         time - lastTimePointSpawn > game_add_point_delay) {
       lastTimePointSpawn = time;
 
-      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0);
+      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count");
            ++i) {
         AddRandomPoint();
       }

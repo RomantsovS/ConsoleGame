@@ -21,10 +21,18 @@ Version 2
 }
 
 // entity 1
-{
-"classname" "simpleobject"
-"name" "simpleobject1"
-"origin" "10 30"
-"color" "5"
-"linearVelocity" "0 -1"
-}
+// {
+// "classname" "simpleobject"
+// "name" "simpleobject1"
+// "origin" "10 30"
+// "color" "5"
+// "linearVelocity" "0 -1"
+// }
+
+// {
+// "classname" "chain"
+// "name" "chain1"
+// "origin" "10 30"
+// "color" "5"
+// "linearVelocity" "0 -1"
+// }

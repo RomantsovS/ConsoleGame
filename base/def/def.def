@@ -96,8 +96,8 @@ entityDef player_snake_long {
 	"linearVelocity"		"0 10"
 }
 
-entityDef player {
-	"spawnclass"			"idPlayer"
+entityDef player_bomber {
+	"spawnclass"			"PlayerBomber"
 	"model"					"mario"
 	"size"					"13 15"
 	"linearVelocity"		"0 10"

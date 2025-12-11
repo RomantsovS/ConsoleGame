@@ -3,7 +3,7 @@ Version 2
 {
 "classname"				"worldspawn"
 "call"					"map_marscity1::main"
-"def_player"			"player"
+"def_player"			"player_bomber"
 "player_origin"			"28 8"
 "game_add_point_delay"	"0"
 "game_add_point_count"	"0"
