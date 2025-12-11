@@ -5,7 +5,7 @@
 
 constexpr int MAX_WEAPONS = 32;
 
-CLASS_DECLARATION(idActor, idPlayer)
+ABSTRACT_DECLARATION(idActor, idPlayer)
 END_CLASS
 
 /*
@@ -268,15 +268,6 @@ bool idPlayer::Collide(const trace_t& collision,
     }
   }
   return false;
-}
-
-/*
-==============
-idPlayer::SetClipModel
-==============
-*/
-void idPlayer::SetClipModel() {
-  // physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
 }
 
 /*

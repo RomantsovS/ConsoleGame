@@ -40,6 +40,10 @@ void PlayerBomber::Spawn() {
   }
 }
 
+void PlayerBomber::SetClipModel() {
+  physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
+}
+
 /*
 ==================
 idPlayer::Killed

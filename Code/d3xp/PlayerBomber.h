@@ -14,6 +14,8 @@ class PlayerBomber : public idPlayer {
 
   void Spawn();
 
+  void SetClipModel() override;
+
   void Killed(idEntity* inflictor, idEntity* attacker, int damage,
               const Vector2& dir) noexcept override;
 

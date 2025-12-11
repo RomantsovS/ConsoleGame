@@ -30,7 +30,7 @@ class idPlayer : public idActor {
   void SelectInitialSpawnPoint(Vector2& origin, Vector2& angles);
   void SpawnFromSpawnSpot();
   void SpawnToPoint(const Vector2& spawn_origin, const Vector2& spawn_angles);
-  void SetClipModel();
+  virtual void SetClipModel() = 0;
 
   void UpdateConditions();
 
