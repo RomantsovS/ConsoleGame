@@ -76,7 +76,7 @@ tree structure
 ================
 */
 void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
-                             int numLinks, const Vector2& dir) {
+                             int numLinks, const Vector2& dir, int body_size) {
   int i;
   std::shared_ptr<idAFBody> body, lastBody;
   Vector2 org;
@@ -107,6 +107,7 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
     lastBody = body;
   }
 
+  physicsObj->SetBodySize(body_size);
   physicsObj->BuildPath(dir.GetUnitDir());
 }
 
@@ -181,7 +182,7 @@ void PlayerChain::Spawn() {
       dir[i] = size[i];
   }
 
-  BuildChain("link", origin, numLinks, dir);
+  BuildChain("link", origin, numLinks, dir, size.x);
 
   if (common->IsMultiplayer()) {
     Init();

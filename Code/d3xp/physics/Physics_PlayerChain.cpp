@@ -423,14 +423,14 @@ void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
 
   // translate world origin
   for (size_t i = 1; i < bodies.size(); ++i) {
-    bodies[i]->next->worldOrigin = path[i * 2];
+    bodies[i]->next->worldOrigin = path[i * body_size];
 
     bodies[i]->clipModel->Link(gameLocal.clip, self,
                                bodies[i]->clipModel->GetId(),
                                bodies[i]->next->worldOrigin);
   }
 
-  while (path.size() > bodies.size() * 2) path.pop_back();
+  while (path.size() > bodies.size() * body_size) path.pop_back();
 }
 
 /*
@@ -674,12 +674,16 @@ Physics_PlayerChain::LinkClip
 */
 void Physics_PlayerChain::LinkClip() noexcept { UpdateClipModels(); }
 
+void Physics_PlayerChain::SetBodySize(int body_size) noexcept {
+  this->body_size = body_size;
+}
+
 void Physics_PlayerChain::BuildPath(const Vector2& dir) noexcept {
   if (bodies.empty()) return;
 
   auto start = bodies[0]->current->worldOrigin;
 
-  for (int i = 0; i < bodies.size() * 2; ++i) {
+  for (int i = 0; i < bodies.size() * body_size; ++i) {
     path.push_back(start + dir * i);
   }
 }

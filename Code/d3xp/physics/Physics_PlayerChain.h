@@ -91,6 +91,7 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
   void UnlinkClip() noexcept override;
   void LinkClip() noexcept override;
 
+  void SetBodySize(int body_size) noexcept;
   void BuildPath(const Vector2& dir) noexcept;
 
  private:
@@ -104,6 +105,7 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
   playerPState_t current;
   playerPState_t saved;
 
+  int body_size;
   std::deque<Vector2> path;
 
  private:
