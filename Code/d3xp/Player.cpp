@@ -531,14 +531,14 @@ void idPlayer::CalculateRenderView() {
       GetPhysics()->GetOrigin().y - renderSystem->GetHeight() / 2;
 
   // clamp to world bounds
-  if (renderView->pos.x < 0) renderView->pos.x = 0;
-  if (renderView->pos.y < 0) renderView->pos.y = 0;
-
   if (renderView->pos.x > gameLocal.GetWidth() - renderSystem->GetWidth())
     renderView->pos.x = gameLocal.GetWidth() - renderSystem->GetWidth();
 
   if (renderView->pos.y > gameLocal.GetHeight() - renderSystem->GetHeight())
     renderView->pos.y = gameLocal.GetHeight() - renderSystem->GetHeight();
+
+  if (renderView->pos.x < 0) renderView->pos.x = 0;
+  if (renderView->pos.y < 0) renderView->pos.y = 0;
 }
 
 /*
