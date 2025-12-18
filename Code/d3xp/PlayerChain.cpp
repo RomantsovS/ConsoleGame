@@ -26,7 +26,10 @@ PlayerChain::SetModelForId
 void PlayerChain::SetModelForId(int id, const std::string& modelName) {
   modelHandles.resize(id + 1);
   modelDefHandles.resize(id + 1, -1);
-  modelHandles[id] = renderModelManager->FindModel(modelName);
+  // modelHandles[id] = animator.SetModel(modelName);
+  if (!modelHandles[id]) {
+    modelHandles[id] = renderModelManager->FindModel(modelName);
+  }
 }
 
 /*
@@ -50,6 +53,9 @@ void PlayerChain::Present() {
     renderEntity.axis = physicsObj->GetAxis(i);
     renderEntity.hModel = modelHandles[i].get();
 
+    /*renderEntity.callback = idEntity::ModelCallback;
+    animator.GetTextCoords(&renderEntity.text_coords);*/
+
     // add to refresh list
     if (modelDefHandles[i] == -1) {
       modelDefHandles[i] = gameRenderWorld->AddEntityDef(&renderEntity);
@@ -57,34 +63,6 @@ void PlayerChain::Present() {
       gameRenderWorld->UpdateEntityDef(modelDefHandles[i], &renderEntity);
     }
   }
-}
-
-/*
-==============
-PlayerChain::Init
-==============
-*/
-void PlayerChain::Init() {
-  int numLinks;
-  Vector2 origin;
-
-  spawnArgs.GetInt("links", "3", numLinks);
-  origin = GetPhysics()->GetOrigin();
-
-  Vector2 linearVelocity;
-  spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
-  auto size = spawnArgs.GetVector("size", "1 1");
-
-  Vector2 dir = vec2_origin;
-
-  for (size_t i = 0; i < 2; ++i) {
-    if (linearVelocity[i] > 0)
-      dir[i] = -size.x;
-    else if (linearVelocity[i] < 0)
-      dir[i] = size.x;
-  }
-
-  BuildChain("link", origin, 1.0f, numLinks, dir);
 }
 
 /*
@@ -98,8 +76,7 @@ tree structure
 ================
 */
 void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
-                             float linkLength, int numLinks,
-                             const Vector2& dir) {
+                             int numLinks, const Vector2& dir) {
   int i;
   std::shared_ptr<idAFBody> body, lastBody;
   Vector2 org;
@@ -129,6 +106,8 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
 
     lastBody = body;
   }
+
+  physicsObj->BuildPath(dir.GetUnitDir());
 }
 
 void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin,
@@ -167,6 +146,20 @@ Prepare any resources used by the player.
 ==============
 */
 void PlayerChain::Spawn() {
+  int numLinks;
+  Vector2 origin;
+  float length;
+
+  spawnArgs.GetInt("links", "3", numLinks);
+
+  origin = GetPhysics()->GetOrigin();
+
+  Vector2 linearVelocity;
+  spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
+
+  Vector2 size;
+  spawnArgs.GetVector("size", "", size);
+
   // set our collision model
   physicsObj = std::make_shared<Physics_PlayerChain>();
   physicsObj->SetSelf(this);
@@ -179,15 +172,26 @@ void PlayerChain::Spawn() {
   // init the damage effects
   playerView.SetPlayerEntity(this);
 
+  Vector2 dir = vec2_origin;
+
+  for (size_t i = 0; i < 2; ++i) {
+    if (linearVelocity[i] > 0)
+      dir[i] = -size[i];
+    else if (linearVelocity[i] < 0)
+      dir[i] = size[i];
+  }
+
+  BuildChain("link", origin, numLinks, dir);
+
   if (common->IsMultiplayer()) {
     Init();
     if (!common->IsClient()) {
       // set yourself ready to spawn. idMultiplayerGame will decide when/if
       // appropriate and call SpawnFromSpawnSpot
-      //SpawnFromSpawnSpot();
+      SpawnFromSpawnSpot();
     }
   } else {
-    //SpawnFromSpawnSpot();
+    SpawnFromSpawnSpot();
   }
 }
 
@@ -244,64 +248,6 @@ idPlayer::SetClipModel
 */
 void PlayerChain::SetClipModel() {
   physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
-}
-
-/*
-==============
-PlayerChain::Think
-
-Called every tic for each player
-==============
-*/
-void PlayerChain::Think() {
-  /*playedTimeResidual += (gameLocal.time - gameLocal.previousTime);
-  playedTimeSecs += playedTimeResidual / 1000;
-  playedTimeResidual = playedTimeResidual % 1000;
-
-  buttonMask &= usercmd.buttons;
-  usercmd.buttons &= ~buttonMask;*/
-
-  EvaluateControls();
-
-  Move();
-
-  Present();
-
-  if (!(thinkFlags & TH_THINK)) {
-    gameLocal.Printf("player %d not thinking?\n", entityNumber);
-  }
-}
-
-/*
-==============
-PlayerChain::EvaluateControls
-==============
-*/
-void PlayerChain::EvaluateControls() noexcept {
-  /*if (usercmd.impulseSequence != oldImpulseSequence) {
-          PerformImpulse(usercmd.impulse);
-  }
-
-  oldImpulseSequence = usercmd.impulseSequence;*/
-
-  AdjustSpeed();
-}
-
-/*
-==============
-PlayerChain::AdjustSpeed
-==============
-*/
-void PlayerChain::AdjustSpeed() noexcept {
-  float speed{};
-
-  if (usercmd.buttons & BUTTON_RUN) {
-    speed = pm_runspeed.GetFloat();
-  } else {
-    speed = pm_walkspeed.GetFloat();
-  }
-
-  physicsObj->SetSpeed(speed, 0.0f);
 }
 
 /*

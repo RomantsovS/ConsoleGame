@@ -9,7 +9,7 @@ Version 2
 {
  brushDef3
  {
-  ( 0 0 36 80 )
+  ( 0 0 80 30 )
  }
 }
 }
@@ -17,7 +17,7 @@ Version 2
 {
 "classname" "info_player_start"
 "name" "info_player_start_1"
-"origin" "30 40"
+"origin" "40 20"
 }
 
 // entity 1

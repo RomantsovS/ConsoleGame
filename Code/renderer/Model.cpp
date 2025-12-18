@@ -143,6 +143,7 @@ void idRenderModelStatic::MakeDefaultModel() {
       surfaces.emplace_back(Vector2(j, i), Screen::Pixel('?', colorWhite));
     }
   }
+  common->Warning("Model '%s' defaulted", name.c_str());
 }
 
 bool idRenderModelStatic::LoadTextModel(const std::string& fileName) {

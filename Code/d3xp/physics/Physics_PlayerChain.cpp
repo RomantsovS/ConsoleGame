@@ -234,6 +234,8 @@ bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
   // check for collisions between current and next state
   CheckForCollisions(timeStep);
 
+  MoveEachBodiesToPrevOne();
+
   // swap the current and next state
   SwapStates();
 
@@ -338,25 +340,25 @@ std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(
   size_t i;
   std::shared_ptr<idEntity> passEntity;
 
-  if (!selfCollision || !body->fl.selfCollision) {
-    // disable all bodies
-    for (i = 0; i < bodies.size(); i++) {
+  // if (!selfCollision || !body->fl.selfCollision) {
+  //  disable all bodies
+  for (i = 0; i < bodies.size(); i++) {
+    bodies[i]->clipModel->Disable();
+  }
+
+  //} else {
+  // enable all bodies that have self collision
+  /*for (i = 0; i < bodies.size(); i++) {
+    if (bodies[i]->fl.selfCollision) {
+      bodies[i]->clipModel->Enable();
+    } else {
       bodies[i]->clipModel->Disable();
     }
+  }*/
 
-  } else {
-    // enable all bodies that have self collision
-    for (i = 0; i < bodies.size(); i++) {
-      if (bodies[i]->fl.selfCollision) {
-        bodies[i]->clipModel->Enable();
-      } else {
-        bodies[i]->clipModel->Disable();
-      }
-    }
-
-    // don't let the body collide with itself
-    body->clipModel->Disable();
-  }
+  // don't let the body collide with itself
+  // body->clipModel->Disable();
+  //}
 
   return passEntity;
 }
@@ -381,7 +383,7 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
     return;
   }
 
-  for (size_t i = 0; i < bodies.size(); i++) {
+  for (size_t i = 0; i < 1; i++) {
     auto body = bodies[i];
 
     if (body->clipMask != 0) {
@@ -405,30 +407,30 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
     body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(),
                           body->next->worldOrigin);
   }
-
-  MoveEachBodiesToPrevOne();
 }
 
 void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
-  auto body = bodies[0];
-
   if (bodies.size() < 2) return;
+
+  auto body = bodies[0];
 
   auto head_body_moved = body->current->worldOrigin.GetIntegerVectorFloor() !=
                          body->next->worldOrigin.GetIntegerVectorFloor();
 
+  if (!head_body_moved) return;
+
+  path.push_front(body->next->worldOrigin);
+
   // translate world origin
   for (size_t i = 1; i < bodies.size(); ++i) {
-    if (head_body_moved) {
-      bodies[i]->next->worldOrigin = bodies[i - 1]->current->worldOrigin;
-    } else {
-      bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
-    }
+    bodies[i]->next->worldOrigin = path[i * 2];
 
     bodies[i]->clipModel->Link(gameLocal.clip, self,
                                bodies[i]->clipModel->GetId(),
                                bodies[i]->next->worldOrigin);
   }
+
+  while (path.size() > bodies.size() * 2) path.pop_back();
 }
 
 /*
@@ -671,3 +673,13 @@ Physics_PlayerChain::LinkClip
 ================
 */
 void Physics_PlayerChain::LinkClip() noexcept { UpdateClipModels(); }
+
+void Physics_PlayerChain::BuildPath(const Vector2& dir) noexcept {
+  if (bodies.empty()) return;
+
+  auto start = bodies[0]->current->worldOrigin;
+
+  for (int i = 0; i < bodies.size() * 2; ++i) {
+    path.push_back(start + dir * i);
+  }
+}
