@@ -44,7 +44,7 @@ class idStaticEntity : public idEntity {
               const Vector2& dir) noexcept override;
 };
 
-class idSimpleObject : public idAnimatedEntity {
+class idSimpleObject : public idEntity {
  public:
   CLASS_PROTOTYPE(idSimpleObject);
 

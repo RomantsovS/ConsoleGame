@@ -24,24 +24,22 @@ void Physics_PlayerChain::WalkMove() noexcept {
   Physics_PlayerChain::Friction();
 
   if (GetUserCmd().forwardmove > 0) {
-    SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
+    next_dir = Vector2(0.0f, GetPlayerSpeed());
   } else if (GetUserCmd().forwardmove < 0) {
-    SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
+    next_dir = Vector2(0.0f, -GetPlayerSpeed());
   } else if (GetUserCmd().rightmove > 0) {
-    SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
+    next_dir = Vector2(GetPlayerSpeed(), 0.0f);
   } else if (GetUserCmd().rightmove < 0) {
-    SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
-  } else {
-    auto linearvel = GetLinearVelocity();
+    next_dir = Vector2(-GetPlayerSpeed(), 0.0f);
+  }
 
-    if (linearvel.x > 0)
-      SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
-    else if (linearvel.x < 0)
-      SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
-    else if (linearvel.y > 0)
-      SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
-    else if (linearvel.y < 0)
-      SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
+  auto cur_pos = GetOrigin(0);
+
+  if (next_dir && static_cast<int>(cur_pos.x) % body_size == body_size / 2 &&
+      static_cast<int>(cur_pos.y) % body_size == body_size / 2 &&
+      GetLinearVelocity(0) != *next_dir &&
+      GetLinearVelocity(0).GetUnitDir() != next_dir->GetUnitDir() * -1) {
+    SetLinearVelocity(*next_dir);
   }
 
   // evolve current state to next state
@@ -148,6 +146,8 @@ int Physics_PlayerChain::AddBody(const std::shared_ptr<idAFBody>& body) {
 
   bodies.push_back(body);
 
+  pending_growth += body_size;
+
   return id;
 }
 
@@ -233,6 +233,8 @@ bool Physics_PlayerChain::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
   // check for collisions between current and next state
   CheckForCollisions(timeStep);
+
+  MoveEachBodiesToPrevOne();
 
   // swap the current and next state
   SwapStates();
@@ -339,7 +341,7 @@ std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(
   std::shared_ptr<idEntity> passEntity;
 
   if (!selfCollision || !body->fl.selfCollision) {
-    // disable all bodies
+    //  disable all bodies
     for (i = 0; i < bodies.size(); i++) {
       bodies[i]->clipModel->Disable();
     }
@@ -381,7 +383,7 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
     return;
   }
 
-  for (size_t i = 0; i < bodies.size(); i++) {
+  for (size_t i = 0; i < 1; i++) {
     auto body = bodies[i];
 
     if (body->clipMask != 0) {
@@ -405,29 +407,37 @@ void Physics_PlayerChain::CheckForCollisions(float timeStep) {
     body->clipModel->Link(gameLocal.clip, self, body->clipModel->GetId(),
                           body->next->worldOrigin);
   }
-
-  MoveEachBodiesToPrevOne();
 }
 
 void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
-  auto body = bodies[0];
-
   if (bodies.size() < 2) return;
+
+  auto body = bodies[0];
 
   auto head_body_moved = body->current->worldOrigin.GetIntegerVectorFloor() !=
                          body->next->worldOrigin.GetIntegerVectorFloor();
 
+  if (!head_body_moved) return;
+
+  path.push_front(body->next->worldOrigin);
+
   // translate world origin
   for (size_t i = 1; i < bodies.size(); ++i) {
-    if (head_body_moved) {
-      bodies[i]->next->worldOrigin = bodies[i - 1]->current->worldOrigin;
-    } else {
-      bodies[i]->next->worldOrigin = bodies[i]->current->worldOrigin;
+    if (path.size() <= i * body_size) {
+      bodies[i]->clipModel->Disable();
+      continue;
     }
+    bodies[i]->next->worldOrigin = path[i * body_size];
 
     bodies[i]->clipModel->Link(gameLocal.clip, self,
                                bodies[i]->clipModel->GetId(),
                                bodies[i]->next->worldOrigin);
+  }
+
+  if (pending_growth > 0) {
+    pending_growth--;
+  } else {
+    while (path.size() > bodies.size() * body_size) path.pop_back();
   }
 }
 
@@ -671,3 +681,17 @@ Physics_PlayerChain::LinkClip
 ================
 */
 void Physics_PlayerChain::LinkClip() noexcept { UpdateClipModels(); }
+
+void Physics_PlayerChain::SetBodySize(int body_size) noexcept {
+  this->body_size = body_size;
+}
+
+void Physics_PlayerChain::BuildPath(const Vector2& dir) noexcept {
+  if (bodies.empty()) return;
+
+  auto start = bodies[0]->current->worldOrigin;
+
+  for (int i = 0; i < bodies.size() * body_size; ++i) {
+    path.push_back(start + dir * i);
+  }
+}

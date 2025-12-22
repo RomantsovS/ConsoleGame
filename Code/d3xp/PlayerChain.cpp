@@ -26,7 +26,10 @@ PlayerChain::SetModelForId
 void PlayerChain::SetModelForId(int id, const std::string& modelName) {
   modelHandles.resize(id + 1);
   modelDefHandles.resize(id + 1, -1);
-  modelHandles[id] = renderModelManager->FindModel(modelName);
+  // modelHandles[id] = animator.SetModel(modelName);
+  if (!modelHandles[id]) {
+    modelHandles[id] = renderModelManager->FindModel(modelName);
+  }
 }
 
 /*
@@ -50,6 +53,9 @@ void PlayerChain::Present() {
     renderEntity.axis = physicsObj->GetAxis(i);
     renderEntity.hModel = modelHandles[i].get();
 
+    /*renderEntity.callback = idEntity::ModelCallback;
+    animator.GetTextCoords(&renderEntity.text_coords);*/
+
     // add to refresh list
     if (modelDefHandles[i] == -1) {
       modelDefHandles[i] = gameRenderWorld->AddEntityDef(&renderEntity);
@@ -57,34 +63,6 @@ void PlayerChain::Present() {
       gameRenderWorld->UpdateEntityDef(modelDefHandles[i], &renderEntity);
     }
   }
-}
-
-/*
-==============
-PlayerChain::Init
-==============
-*/
-void PlayerChain::Init() {
-  int numLinks;
-  Vector2 origin;
-
-  spawnArgs.GetInt("links", "3", numLinks);
-  origin = GetPhysics()->GetOrigin();
-
-  Vector2 linearVelocity;
-  spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
-  auto size = spawnArgs.GetVector("size", "1 1");
-
-  Vector2 dir = vec2_origin;
-
-  for (size_t i = 0; i < 2; ++i) {
-    if (linearVelocity[i] > 0)
-      dir[i] = -size.x;
-    else if (linearVelocity[i] < 0)
-      dir[i] = size.x;
-  }
-
-  BuildChain("link", origin, 1.0f, numLinks, dir);
 }
 
 /*
@@ -98,32 +76,17 @@ tree structure
 ================
 */
 void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
-                             float linkLength, int numLinks,
-                             const Vector2& dir) {
+                             int numLinks, const Vector2& dir, int body_size) {
   int i;
   std::shared_ptr<idAFBody> body, lastBody;
   Vector2 org;
 
-  idTraceModel trm;
-  float density = 0.0f;
-  std::string clipModelName;
-
-  // check if a clip model is set
-  spawnArgs.GetString("clipmodel", "", &clipModelName);
-  if (!clipModelName[0]) {
-    clipModelName = spawnArgs.GetString("model");  // use the visual model
-  }
-
-  /*if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-          gameLocal.Error("idSimpleObject '%s': cannot load collision model %s",
-  name, clipModelName); return;
-  }*/
-
   org = origin;
 
+  physicsObj->SetBodySize(body_size);
+
   for (i = 0; i < numLinks; i++) {
-    // AddModel(trm, org, i, density);
-    AddModel(org, i, density);
+    AddModel(org, i);
 
     org += dir;
 
@@ -131,32 +94,19 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
   }
 }
 
-void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin,
-                           const int id, const float density) {
-  // add body
-  auto clip = std::make_shared<idClipModel>(trm);
-  // clip->SetContents(CONTENTS_SOLID);
-  clip->Link(gameLocal.clip, this, id, origin);
-  auto body =
-      std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
-  physicsObj->AddBody(body);
-
-  // visual model for body
-  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
-}
-
-void PlayerChain::AddModel(const Vector2& origin, const int id,
-                           const float density) {
+void PlayerChain::AddModel(const Vector2& origin, const int id) {
   // add body
   auto clip = std::make_shared<idClipModel>(*GetPhysics()->GetClipModel());
   // clip->SetContents(CONTENTS_SOLID);
   clip->Link(gameLocal.clip, this, id, origin);
   auto body =
-      std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
+      std::make_shared<idAFBody>(name + std::to_string(id), clip);
   physicsObj->AddBody(body);
 
   // visual model for body
-  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
+  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString(id == 0 ? "model_head" : "model"));
+
+  physicsObj->GetBody(id)->SetSelfCollision(false);
 }
 
 /*
@@ -167,12 +117,55 @@ Prepare any resources used by the player.
 ==============
 */
 void PlayerChain::Spawn() {
+  int numLinks;
+  Vector2 origin;
+  float length;
+
+  spawnArgs.GetInt("links", "3", numLinks);
+
+  origin = GetPhysics()->GetOrigin();
+
+  Vector2 linearVelocity;
+  spawnArgs.GetVector("linearVelocity", "0 10", linearVelocity);
+
+  Vector2 size;
+  spawnArgs.GetVector("size", "", size);
+
   // set our collision model
   physicsObj = std::make_shared<Physics_PlayerChain>();
   physicsObj->SetSelf(this);
-  physicsObj->SetClipMask(MASK_SOLID);
+  SetClipModel();
+  // physicsObj.SetMass(spawnArgs.GetFloat("mass", "100"));
+  physicsObj->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_BODY));
+  physicsObj->SetClipMask(MASK_PLAYERSOLID);
+  SetPhysics(physicsObj);
 
-  SpawnFromSpawnSpot();
+  // init the damage effects
+  playerView.SetPlayerEntity(this);
+
+  Vector2 dir = vec2_origin;
+
+  for (size_t i = 0; i < 2; ++i) {
+    if (linearVelocity[i] > 0)
+      dir[i] = -size[i];
+    else if (linearVelocity[i] < 0)
+      dir[i] = size[i];
+  }
+
+  BuildChain("link", origin, numLinks, dir, size.x);
+
+  if (common->IsMultiplayer()) {
+    Init();
+    if (!common->IsClient()) {
+      // set yourself ready to spawn. idMultiplayerGame will decide when/if
+      // appropriate and call SpawnFromSpawnSpot
+      SpawnFromSpawnSpot();
+    }
+  } else {
+    SpawnFromSpawnSpot();
+  }
+
+  physicsObj->BuildPath(dir.GetUnitDir());
 }
 
 /*
@@ -185,26 +178,10 @@ bool PlayerChain::Collide(const trace_t& collision,
   auto other = gameLocal.entities[collision.c.entityNum];
   if (other) {
     if (other->IsType(idSimpleObject::Type) || other->IsType(idChain::Type)) {
-      idTraceModel trm;
-      float density = 0.0f;
-      std::string clipModelName;
-
-      // check if a clip model is set
-      spawnArgs.GetString("clipmodel", "", &clipModelName);
-      if (!clipModelName[0]) {
-        clipModelName = spawnArgs.GetString("model");  // use the visual model
-      }
-
-      if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-        gameLocal.Error("PlayerChain '%s': cannot load collision model %s",
-                        name, clipModelName);
-        return true;
-      }
-
       auto last_body =
           physicsObj->GetBody(GetPhysics()->GetNumClipModels() - 1);
-      AddModel(trm, last_body->GetClipModel()->GetOrigin(),
-               GetPhysics()->GetNumClipModels(), density);
+      AddModel(last_body->GetClipModel()->GetOrigin(),
+               GetPhysics()->GetNumClipModels());
 
       physicsObj->EnableClip();
 
@@ -223,60 +200,11 @@ bool PlayerChain::Collide(const trace_t& collision,
 
 /*
 ==============
-PlayerChain::Think
-
-Called every tic for each player
+idPlayer::SetClipModel
 ==============
 */
-void PlayerChain::Think() {
-  /*playedTimeResidual += (gameLocal.time - gameLocal.previousTime);
-  playedTimeSecs += playedTimeResidual / 1000;
-  playedTimeResidual = playedTimeResidual % 1000;
-
-  buttonMask &= usercmd.buttons;
-  usercmd.buttons &= ~buttonMask;*/
-
-  EvaluateControls();
-
-  Move();
-
-  Present();
-
-  if (!(thinkFlags & TH_THINK)) {
-    gameLocal.Printf("player %d not thinking?\n", entityNumber);
-  }
-}
-
-/*
-==============
-PlayerChain::EvaluateControls
-==============
-*/
-void PlayerChain::EvaluateControls() noexcept {
-  /*if (usercmd.impulseSequence != oldImpulseSequence) {
-          PerformImpulse(usercmd.impulse);
-  }
-
-  oldImpulseSequence = usercmd.impulseSequence;*/
-
-  AdjustSpeed();
-}
-
-/*
-==============
-PlayerChain::AdjustSpeed
-==============
-*/
-void PlayerChain::AdjustSpeed() noexcept {
-  float speed{};
-
-  if (usercmd.buttons & BUTTON_RUN) {
-    speed = pm_runspeed.GetFloat();
-  } else {
-    speed = pm_walkspeed.GetFloat();
-  }
-
-  physicsObj->SetSpeed(speed, 0.0f);
+void PlayerChain::SetClipModel() {
+  physicsObj->SetClipModel(GetPhysics()->GetClipModel(), 1.0f);
 }
 
 /*

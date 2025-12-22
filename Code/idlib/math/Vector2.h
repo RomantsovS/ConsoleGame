@@ -35,6 +35,7 @@ struct Vector2 {
   uint8_t GetDimension() const noexcept;
   Vector2 GetIntegerVectorFloor() const noexcept;
   Vector2 GetIntegerVectorCeil() const noexcept;
+  Vector2 GetUnitDir() const noexcept;
   const float* ToFloatPtr() const noexcept;
   float* ToFloatPtr() noexcept;
 
@@ -122,6 +123,10 @@ inline Vector2 Vector2::GetIntegerVectorCeil() const noexcept {
   Vector2 res(static_cast<float>(ceil(x)), static_cast<float>(ceil(y)));
 
   return res;
+}
+
+inline Vector2 Vector2::GetUnitDir() const noexcept {
+  return Vector2(x > 0 ? 1 : (x < 0 ? -1 : 0), y > 0 ? 1 : (y < 0 ? -1 : 0));
 }
 
 inline const float* Vector2::ToFloatPtr() const noexcept { return &x; }

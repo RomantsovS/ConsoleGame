@@ -61,7 +61,17 @@ bool idDict::GetString(const std::string& key, const std::string& defaultString,
   return false;
 }
 
-bool idDict::GetInt(const std::string key, const std::string defaultString,
+bool idDict::GetFloat(const std::string& key, const std::string& defaultString,
+                    float& out) const {
+  std::string s;
+  bool found;
+
+  found = GetString(key, defaultString, &s);
+  out = atof(s.c_str());
+  return found;
+}
+
+bool idDict::GetInt(const std::string& key, const std::string& defaultString,
                     int& out) const {
   std::string s;
   bool found;
@@ -91,14 +101,14 @@ bool idDict::GetBool(const std::string& key, const bool defaultBool) const {
   return defaultBool;
 }
 
-Vector2 idDict::GetVector(const std::string key,
-                          const std::string defaultString) const {
+Vector2 idDict::GetVector(const std::string& key,
+                          const std::string& defaultString) const {
   Vector2 out;
   GetVector(key, defaultString, out);
   return out;
 }
 
-bool idDict::GetVector(const std::string key, std::string defaultString,
+bool idDict::GetVector(const std::string& key, std::string defaultString,
                        Vector2& out) const {
   bool found;
   std::string s;

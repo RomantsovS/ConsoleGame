@@ -35,6 +35,8 @@ class idBounds {
   idBounds& ExpandSelf(
       const float d);  // expand bounds in all directions with the given value
 
+  void ShiftToCenter();
+
   bool ContainsPoint(const Vector2& p) const;      // includes touching
   bool IntersectsBounds(const idBounds& a) const;  // includes touching
   bool ContainsBounds(const idBounds& a) const;    // includes touching
@@ -171,6 +173,10 @@ inline idBounds& idBounds::ExpandSelf(const float d) {
   b[1].x += d;
   b[1].y += d;
   return *this;
+}
+
+inline void idBounds::ShiftToCenter() {
+  *this += Vector2((b[0].x - b[1].x) / 2, (b[0].y - b[1].y) / 2);
 }
 
 inline bool idBounds::ContainsPoint(const Vector2& p) const {

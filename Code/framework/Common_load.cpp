@@ -145,14 +145,14 @@ void idCommonLocal::ExecuteMapChange() {
     common->Printf("----- Running initial game frames -----\n");
 
     // In single player, run a bunch of frames to make sure ragdolls are settled
-    idUserCmdMgr emptyCommandManager;
+    /*idUserCmdMgr emptyCommandManager;
     gameReturn_t emptyGameReturn;
     for (int i = 0; i < 100; i++) {
       for (int playerIndex = 0; playerIndex < MAX_PLAYERS; ++playerIndex) {
         emptyCommandManager.PutUserCmdForPlayer(playerIndex, usercmd_t());
       }
       game->RunFrame(emptyCommandManager, emptyGameReturn);
-    }
+    }*/
 
     // kick off an auto-save of the game (so we can always continue in this map
     // if we die before hitting an autosave)

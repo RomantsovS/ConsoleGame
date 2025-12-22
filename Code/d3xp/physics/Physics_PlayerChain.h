@@ -91,6 +91,9 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
   void UnlinkClip() noexcept override;
   void LinkClip() noexcept override;
 
+  void SetBodySize(int body_size) noexcept;
+  void BuildPath(const Vector2& dir) noexcept;
+
  private:
   std::vector<std::shared_ptr<idAFBody>> bodies;  // all bodies
   std::vector<AFCollision_t> collisions;          // collisions
@@ -101,6 +104,11 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
   // player physics state
   playerPState_t current;
   playerPState_t saved;
+
+  int body_size;
+  std::deque<Vector2> path;
+  int pending_growth = 0;
+  std::optional<Vector2> next_dir;
 
  private:
   void Evolve(float timeStep) noexcept;

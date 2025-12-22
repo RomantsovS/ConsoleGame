@@ -13,10 +13,9 @@ class PlayerChain : public idPlayer {
   PlayerChain& operator=(PlayerChain&&) = default;
 
   void Spawn();
-  void Think() override;
   void Present() override;
 
-  void Init();
+  void SetClipModel();
 
   bool Collide(const trace_t& collision,
                const Vector2& velocity) noexcept override;
@@ -30,14 +29,10 @@ class PlayerChain : public idPlayer {
   std::vector<std::shared_ptr<idRenderModel>> modelHandles;
   std::vector<int> modelDefHandles;
 
-  void BuildChain(const std::string& name, const Vector2& origin,
-                  float linkLength, int numLinks, const Vector2& dir);
-  void AddModel(const idTraceModel& trm, const Vector2& origin, const int id,
-                const float density);
-  void AddModel(const Vector2& origin, const int id, const float density);
+  void BuildChain(const std::string& name, const Vector2& origin, int numLinks,
+                  const Vector2& dir, int body_size);
+  void AddModel(const Vector2& origin, const int id);
 
-  void EvaluateControls() noexcept;
-  void AdjustSpeed() noexcept;
   void Move();
 };
 

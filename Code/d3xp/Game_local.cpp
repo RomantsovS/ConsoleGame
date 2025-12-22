@@ -356,8 +356,7 @@ void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
         world->spawnArgs.GetInt("game_add_point_delay");
 
     if (game_add_point_delay == 0) {
-      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 1000);
-           ++i)
+      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count"); ++i)
         AddRandomPoint();
       world->spawnArgs.SetInt("game_add_point_delay", -1);
       game_add_point_delay = -1;
@@ -367,7 +366,7 @@ void idGameLocal::RunFrame(idUserCmdMgr& cmdMgr, gameReturn_t& ret) {
         time - lastTimePointSpawn > game_add_point_delay) {
       lastTimePointSpawn = time;
 
-      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count", 0);
+      for (int i = 0; i < world->spawnArgs.GetInt("game_add_point_count");
            ++i) {
         AddRandomPoint();
       }
@@ -1148,26 +1147,25 @@ void idGameLocal::MapClear(bool clearClients) noexcept {
 void idGameLocal::AddRandomPoint() {
   idDict args;
 
-  const size_t ent_type = GetRandomValue(3, 10);
+  std::string classname = gameLocal.world->spawnArgs.GetString("random_spawn_entity");
+  if (classname.empty()) {
+    const size_t ent_type = GetRandomValue(3, 10);
 
-  float searching_radius = 0.0f;
-  float start_pos = 0.0f;
-  std::string classname;
+    if (ent_type == 0) {
+      classname = "mushroom_static";
+    }
+    /*else if (ent_type < 3) {
+        classname = "chain";
 
-  if (ent_type == 0) {
-    classname = "mushroom_static";
-  }
-  /*else if (ent_type < 3) {
-      classname = "chain";
-
-      const size_t links = GetRandomValue(3, 5);
-      args.Set("links", std::to_string(links));
-      searching_radius = static_cast<float>(links);
-  }*/
-  else if (ent_type < 8) {
-    classname = "mushroom";
-  } else {
-    classname = "turtle";
+        const size_t links = GetRandomValue(3, 5);
+        args.Set("links", std::to_string(links));
+        searching_radius = static_cast<float>(links);
+    }*/
+    else if (ent_type < 8) {
+      classname = "mushroom";
+    } else {
+      classname = "turtle";
+    }
   }
 
   args.Set("classname", classname);
@@ -1179,33 +1177,35 @@ void idGameLocal::AddRandomPoint() {
     return;
   }
 
+  float searching_radius = 0.0f;
+  float start_pos = 0.0f;
+
   auto size_x = def->dict.GetVector("size").x;
   auto size_y = def->dict.GetVector("size").y;
-  auto size_max = std::max(size_x, size_y);
-  searching_radius = std::max(searching_radius, size_max) / 2.0f;
+  auto size_max = std::max(size_x, size_y) / 2;
+  searching_radius = std::max(searching_radius, size_max);
   start_pos += searching_radius;
 
-  Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max),
-                 GetRandomValue(start_pos, GetHeight() - size_max));
-  // Vector2 origin = { 136.0f, 156.0f };
+  Vector2 origin;
   const Vector2 axis(0, 0);
 
   std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
   int num_attempts = 0;
-  int finded_ents = 0;
-  while ((finded_ents = EntitiesWithinRadius(origin, searching_radius, ent_vec,
-                                             ent_vec.size())) != 0) {
-    if (num_attempts++ > 1000) {
-      Warning(
-          "couldn't spawn random point at %5.2f %5.2f, finded %d with radius "
-          "%5.2f",
-          origin.x, origin.y, finded_ents, searching_radius);
-      return;
-    }
-
+  int found_ents = 0;
+  for (; num_attempts < 1000; ++num_attempts) {
     origin = Vector2(GetRandomValue(start_pos, GetWidth() - size_max),
                      GetRandomValue(start_pos, GetHeight() - size_max));
+    found_ents =
+        EntitiesWithinRadius(origin, searching_radius, ent_vec, ent_vec.size());
+  }
+
+  if (num_attempts > 1000) {
+    Warning(
+        "Couldn't spawn random point at %5.2f %5.2f, found %d with radius "
+        "%5.2f",
+        origin.x, origin.y, found_ents, searching_radius);
+    return;
   }
 
   args.Set("origin", origin.ToString());

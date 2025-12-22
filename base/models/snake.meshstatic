@@ -1,0 +1,6 @@
+"numMeshes" 1
+{
+	"shader" textures/snake
+	"size" 8 8
+}
+"text_coords" 0 0

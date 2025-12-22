@@ -138,20 +138,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin,
   Vector2 org;
 
   idTraceModel trm;
-  float density;
-  std::string clipModelName;
 
-  // check if a clip model is set
-  /*spawnArgs.GetString("clipmodel", "", &clipModelName);
-  if (!clipModelName[0]) {
-          clipModelName = spawnArgs.GetString("model");		// use the
-  visual model
-  }
-
-  if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-          gameLocal.Error("idSimpleObject '%s': cannot load collision model %s",
-  name, clipModelName); return;
-  }*/
   idBounds bounds;
   Vector2 size;
 
@@ -173,7 +160,7 @@ void idChain::BuildChain(const std::string& name, const Vector2& origin,
     auto clip = std::make_shared<idClipModel>(trm);
     clip->SetContents(static_cast<int>(contentsFlags_t::CONTENTS_SOLID));
     clip->Link(gameLocal.clip, this, i, org);
-    body = std::make_shared<idAFBody>(name + std::to_string(i), clip, density);
+    body = std::make_shared<idAFBody>(name + std::to_string(i), clip);
     physicsObj->AddBody(body);
 
     // visual model for body

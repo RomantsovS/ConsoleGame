@@ -26,8 +26,7 @@ class idAFBody {
 
  public:
   idAFBody();
-  idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipModel,
-           float density);
+  idAFBody(const std::string& name, std::shared_ptr<idClipModel> clipModel);
   ~idAFBody();
   idAFBody(const idAFBody&) = default;
   idAFBody& operator=(const idAFBody&) = default;
@@ -39,6 +38,7 @@ class idAFBody {
   std::shared_ptr<idClipModel> GetClipModel() const noexcept {
     return clipModel;
   }
+  void SetSelfCollision(const bool enable) { fl.selfCollision = enable; }
 
  private:
   // properties
