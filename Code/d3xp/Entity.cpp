@@ -547,13 +547,15 @@ void idEntity::InitDefaultPhysics(const Vector2& origin, const Vector2& axis) {
           gameLocal.Error("Invalid size '%s' on entity '%s'", size.ToString(),
                           name.c_str());
         }
-        bounds[0].Set(size.x * -0.5f, size.y * -0.5f);
-        bounds[1].Set(size.x * 0.5f, size.y * 0.5f);
+        bounds.Zero();
+        bounds.AddPoint(size);
         setClipModel = true;
       }
 
       if (setClipModel) {
         idTraceModel trm;
+
+        bounds.ShiftToCenter();
 
         trm.SetupBox(bounds);
 

@@ -114,7 +114,6 @@ std::shared_ptr<idRenderModel> idRenderModelManagerLocal::GetModel(
   }
 
   if (model) {
-    idFileLocal file(fileSystem->OpenFileReadMemory(canonical));
     model->InitFromFile(canonical);
   }
 

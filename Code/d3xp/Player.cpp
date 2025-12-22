@@ -120,7 +120,8 @@ void idPlayer::SpawnToPoint(const Vector2& spawn_origin,
   Vector2 linearVelocity;
   spawnArgs.GetVector("linearVelocity", "0 0", linearVelocity);
 
-  GetPhysics()->SetLinearVelocity(linearVelocity);
+  GetPhysics()->SetLinearVelocity(linearVelocity.GetUnitDir() *
+                                  pm_walkspeed.GetFloat());
 
   // setup our initial view
   SetOrigin(spawn_origin);

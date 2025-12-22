@@ -24,24 +24,22 @@ void Physics_PlayerChain::WalkMove() noexcept {
   Physics_PlayerChain::Friction();
 
   if (GetUserCmd().forwardmove > 0) {
-    SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
+    next_dir = Vector2(0.0f, GetPlayerSpeed());
   } else if (GetUserCmd().forwardmove < 0) {
-    SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
+    next_dir = Vector2(0.0f, -GetPlayerSpeed());
   } else if (GetUserCmd().rightmove > 0) {
-    SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
+    next_dir = Vector2(GetPlayerSpeed(), 0.0f);
   } else if (GetUserCmd().rightmove < 0) {
-    SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
-  } else {
-    auto linearvel = GetLinearVelocity();
+    next_dir = Vector2(-GetPlayerSpeed(), 0.0f);
+  }
 
-    if (linearvel.x > 0)
-      SetLinearVelocity(Vector2(GetPlayerSpeed(), 0.0f));
-    else if (linearvel.x < 0)
-      SetLinearVelocity(Vector2(-GetPlayerSpeed(), 0.0f));
-    else if (linearvel.y > 0)
-      SetLinearVelocity(Vector2(0.0f, GetPlayerSpeed()));
-    else if (linearvel.y < 0)
-      SetLinearVelocity(Vector2(0.0f, -GetPlayerSpeed()));
+  auto cur_pos = GetOrigin(0);
+
+  if (next_dir && static_cast<int>(cur_pos.x) % body_size == body_size / 2 &&
+      static_cast<int>(cur_pos.y) % body_size == body_size / 2 &&
+      GetLinearVelocity(0) != *next_dir &&
+      GetLinearVelocity(0).GetUnitDir() != next_dir->GetUnitDir() * -1) {
+    SetLinearVelocity(*next_dir);
   }
 
   // evolve current state to next state
@@ -147,6 +145,8 @@ int Physics_PlayerChain::AddBody(const std::shared_ptr<idAFBody>& body) {
   }
 
   bodies.push_back(body);
+
+  pending_growth += body_size;
 
   return id;
 }
@@ -340,25 +340,25 @@ std::shared_ptr<idEntity> Physics_PlayerChain::SetupCollisionForBody(
   size_t i;
   std::shared_ptr<idEntity> passEntity;
 
-  // if (!selfCollision || !body->fl.selfCollision) {
-  //  disable all bodies
-  for (i = 0; i < bodies.size(); i++) {
-    bodies[i]->clipModel->Disable();
-  }
-
-  //} else {
-  // enable all bodies that have self collision
-  /*for (i = 0; i < bodies.size(); i++) {
-    if (bodies[i]->fl.selfCollision) {
-      bodies[i]->clipModel->Enable();
-    } else {
+  if (!selfCollision || !body->fl.selfCollision) {
+    //  disable all bodies
+    for (i = 0; i < bodies.size(); i++) {
       bodies[i]->clipModel->Disable();
     }
-  }*/
 
-  // don't let the body collide with itself
-  // body->clipModel->Disable();
-  //}
+  } else {
+    // enable all bodies that have self collision
+    for (i = 0; i < bodies.size(); i++) {
+      if (bodies[i]->fl.selfCollision) {
+        bodies[i]->clipModel->Enable();
+      } else {
+        bodies[i]->clipModel->Disable();
+      }
+    }
+
+    // don't let the body collide with itself
+    body->clipModel->Disable();
+  }
 
   return passEntity;
 }
@@ -423,6 +423,10 @@ void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
 
   // translate world origin
   for (size_t i = 1; i < bodies.size(); ++i) {
+    if (path.size() <= i * body_size) {
+      bodies[i]->clipModel->Disable();
+      continue;
+    }
     bodies[i]->next->worldOrigin = path[i * body_size];
 
     bodies[i]->clipModel->Link(gameLocal.clip, self,
@@ -430,7 +434,11 @@ void Physics_PlayerChain::MoveEachBodiesToPrevOne() {
                                bodies[i]->next->worldOrigin);
   }
 
-  while (path.size() > bodies.size() * body_size) path.pop_back();
+  if (pending_growth > 0) {
+    pending_growth--;
+  } else {
+    while (path.size() > bodies.size() * body_size) path.pop_back();
+  }
 }
 
 /*

@@ -31,9 +31,7 @@ class PlayerChain : public idPlayer {
 
   void BuildChain(const std::string& name, const Vector2& origin, int numLinks,
                   const Vector2& dir, int body_size);
-  void AddModel(const idTraceModel& trm, const Vector2& origin, const int id,
-                const float density);
-  void AddModel(const Vector2& origin, const int id, const float density);
+  void AddModel(const Vector2& origin, const int id);
 
   void Move();
 };

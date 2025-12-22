@@ -5,11 +5,15 @@ Version 2
 "call" "map_marscity1::main"
 "no_Weapons" "1"
 "def_player" "player_snake_short"
+"game_add_point_delay"	"0"
+"game_add_point_count"	"0"
+"r_background_color"	"2"
+"random_spawn_entity"   "apple_static"
 // primitive 2
 {
  brushDef3
  {
-  ( 0 0 80 30 )
+  ( 0 0 121 25 )
  }
 }
 }
@@ -17,17 +21,16 @@ Version 2
 {
 "classname" "info_player_start"
 "name" "info_player_start_1"
-"origin" "40 20"
+"origin" "48 4.1"
 }
 
-// entity 1
-// {
-// "classname" "simpleobject"
-// "name" "simpleobject1"
-// "origin" "10 30"
-// "color" "5"
-// "linearVelocity" "0 -1"
-// }
+{
+"classname" "apple_static"
+"name" "apple1"
+"origin" "4 4"
+"color" "1"
+"linearVelocity" "0 0"
+}
 
 // {
 // "classname" "chain"

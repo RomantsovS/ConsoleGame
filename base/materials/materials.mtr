@@ -39,3 +39,21 @@ textures/colors {
 		map textures/colors.png
 	}
 }
+
+textures/apple {
+	{
+		map textures/apple_red8x8.png
+	}
+}
+
+textures/snake {
+	{
+		map textures/snake_yellow8x8.png
+	}
+}
+
+textures/snake_head {
+	{
+		map textures/snake_head_yellow8x8.png
+	}
+}

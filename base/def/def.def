@@ -63,12 +63,13 @@ entityDef turtle {
 	"def_damage"			"damage_entityCollide"
 }
 
-entityDef mushroom_static {
-	"spawnclass"			"idStaticEntity"
-	"model"					"mushroom"
-	"size"					"16 16"
-	"speed"					"10"
+entityDef apple_static {
+	"spawnclass"			"idSimpleObject"
+	"model"					"models/apple.meshstatic"
+	"size"					"8 8"
+	"speed"					"0"
 	"color"					"10"
+	"health"				"1"
 }
 
 entityDef chain {
@@ -83,9 +84,12 @@ entityDef player_snake_short {
 	"spawnclass"			"PlayerChain"
 	//"name"					"PlayerChain"
 	"links"					"3"
-	"model"					"mario"
-	"size"					"4 4"
-	"linearVelocity"		"10 0"
+	"model"					"models/snake.meshstatic"
+	"model_head"			"models/snake_head.meshstatic"
+	//"mins"                  "0 0"
+	//"maxs"                  "1.9 1.9"
+	"size"					"8 8"
+	"linearVelocity"		"1 0"
 	"health"				"1"
 }
 

@@ -42,6 +42,7 @@ class idPhysics_PlayerBase : public idPhysics_Actor {
                          int id = 0) noexcept override;
 
   const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
+  float GetPlayerSpeed() const noexcept { return playerSpeed; }
 
  private:
   // properties
@@ -58,7 +59,6 @@ class idPhysics_PlayerBase : public idPhysics_Actor {
   float CmdScale(const usercmd_t& cmd) const noexcept;
   const usercmd_t& GetUserCmd() const noexcept { return command; }
   float GetFrameTime() noexcept { return frametime; }
-  float GetPlayerSpeed() const noexcept { return playerSpeed; }
 
   // player input
   usercmd_t command;

@@ -107,6 +107,8 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
 
   int body_size;
   std::deque<Vector2> path;
+  int pending_growth = 0;
+  std::optional<Vector2> next_dir;
 
  private:
   void Evolve(float timeStep) noexcept;

@@ -24,7 +24,7 @@ idAFBody::idAFBody
 ================
 */
 idAFBody::idAFBody(const std::string& name,
-                   std::shared_ptr<idClipModel> clipModel, float density) {
+                   std::shared_ptr<idClipModel> clipModel) {
   // idassert(clipModel);
   // idassert(clipModel->IsTraceModel());
 

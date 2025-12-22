@@ -81,62 +81,32 @@ void PlayerChain::BuildChain(const std::string& name, const Vector2& origin,
   std::shared_ptr<idAFBody> body, lastBody;
   Vector2 org;
 
-  idTraceModel trm;
-  float density = 0.0f;
-  std::string clipModelName;
-
-  // check if a clip model is set
-  spawnArgs.GetString("clipmodel", "", &clipModelName);
-  if (!clipModelName[0]) {
-    clipModelName = spawnArgs.GetString("model");  // use the visual model
-  }
-
-  /*if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-          gameLocal.Error("idSimpleObject '%s': cannot load collision model %s",
-  name, clipModelName); return;
-  }*/
-
   org = origin;
 
+  physicsObj->SetBodySize(body_size);
+
   for (i = 0; i < numLinks; i++) {
-    // AddModel(trm, org, i, density);
-    AddModel(org, i, density);
+    AddModel(org, i);
 
     org += dir;
 
     lastBody = body;
   }
-
-  physicsObj->SetBodySize(body_size);
-  physicsObj->BuildPath(dir.GetUnitDir());
 }
 
-void PlayerChain::AddModel(const idTraceModel& trm, const Vector2& origin,
-                           const int id, const float density) {
-  // add body
-  auto clip = std::make_shared<idClipModel>(trm);
-  // clip->SetContents(CONTENTS_SOLID);
-  clip->Link(gameLocal.clip, this, id, origin);
-  auto body =
-      std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
-  physicsObj->AddBody(body);
-
-  // visual model for body
-  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
-}
-
-void PlayerChain::AddModel(const Vector2& origin, const int id,
-                           const float density) {
+void PlayerChain::AddModel(const Vector2& origin, const int id) {
   // add body
   auto clip = std::make_shared<idClipModel>(*GetPhysics()->GetClipModel());
   // clip->SetContents(CONTENTS_SOLID);
   clip->Link(gameLocal.clip, this, id, origin);
   auto body =
-      std::make_shared<idAFBody>(name + std::to_string(id), clip, density);
+      std::make_shared<idAFBody>(name + std::to_string(id), clip);
   physicsObj->AddBody(body);
 
   // visual model for body
-  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString("model"));
+  SetModelForId(physicsObj->GetBodyId(body), spawnArgs.GetString(id == 0 ? "model_head" : "model"));
+
+  physicsObj->GetBody(id)->SetSelfCollision(false);
 }
 
 /*
@@ -194,6 +164,8 @@ void PlayerChain::Spawn() {
   } else {
     SpawnFromSpawnSpot();
   }
+
+  physicsObj->BuildPath(dir.GetUnitDir());
 }
 
 /*
@@ -206,26 +178,10 @@ bool PlayerChain::Collide(const trace_t& collision,
   auto other = gameLocal.entities[collision.c.entityNum];
   if (other) {
     if (other->IsType(idSimpleObject::Type) || other->IsType(idChain::Type)) {
-      idTraceModel trm;
-      float density = 0.0f;
-      std::string clipModelName;
-
-      // check if a clip model is set
-      spawnArgs.GetString("clipmodel", "", &clipModelName);
-      if (!clipModelName[0]) {
-        clipModelName = spawnArgs.GetString("model");  // use the visual model
-      }
-
-      if (!collisionModelManager->TrmFromModel(clipModelName, trm)) {
-        gameLocal.Error("PlayerChain '%s': cannot load collision model %s",
-                        name, clipModelName);
-        return true;
-      }
-
       auto last_body =
           physicsObj->GetBody(GetPhysics()->GetNumClipModels() - 1);
-      AddModel(trm, last_body->GetClipModel()->GetOrigin(),
-               GetPhysics()->GetNumClipModels(), density);
+      AddModel(last_body->GetClipModel()->GetOrigin(),
+               GetPhysics()->GetNumClipModels());
 
       physicsObj->EnableClip();
 
