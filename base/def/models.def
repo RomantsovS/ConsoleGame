@@ -11,6 +11,16 @@ model mushroom {
 	anim "idle" models/mushroom_idle.meshanim
 }
 
+model hedgehog {
+	mesh "models/hedgehog.mesh"
+	anim "idle" models/hedgehog_idle.meshanim
+}
+
+model fish{
+	mesh "models/fish.mesh"
+	anim "idle" models/fish_idle.meshanim
+}
+
 model mario {
 	mesh "models/mario.mesh"
 	anim "idle" models/mario_idle.meshanim

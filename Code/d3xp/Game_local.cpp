@@ -1148,15 +1148,15 @@ void idGameLocal::MapClear(bool clearClients) noexcept {
 void idGameLocal::AddRandomPoint() {
   idDict args;
 
-  const size_t ent_type = GetRandomValue(3, 10);
+  const size_t ent_type = GetRandomValue(1, 4);
 
   float searching_radius = 0.0f;
   float start_pos = 0.0f;
   std::string classname;
 
-  if (ent_type == 0) {
-    classname = "mushroom_static";
-  }
+  // if (ent_type == 0) {
+  //   classname = "mushroom_static";
+  // }
   /*else if (ent_type < 3) {
       classname = "chain";
 
@@ -1164,8 +1164,12 @@ void idGameLocal::AddRandomPoint() {
       args.Set("links", std::to_string(links));
       searching_radius = static_cast<float>(links);
   }*/
-  else if (ent_type < 8) {
+  if (ent_type == 1) {
     classname = "mushroom";
+  } else if (ent_type == 2) {
+    classname = "hedgehog";
+  } else if (ent_type == 3) {
+    classname = "fish";
   } else {
     classname = "turtle";
   }
@@ -1517,8 +1521,8 @@ void idGameLocal::RandomizeInitialSpawns() {
   }
 
   common->Printf("spawns (%d initials)\n", initialSpots.size());
-  // if there are no initial spots in the map, consider they can all be used as
-  // initial
+  // if there are no initial spots in the map, consider they can all be used
+  // as initial
   if (initialSpots.empty()) {
     common->Warning("no info_player_deathmatch entities marked initial in map");
   }
@@ -1533,8 +1537,8 @@ idGameLocal::SelectInitialSpawnPoint
 spectators are spawned randomly anywhere
 in-game clients are spawned based on distance to active players (randomized on
 the first half) upon map restart, initial spawns are used (randomized ordered
-list of spawns flagged "initial") if there are more players than initial spots,
-overflow to regular spawning
+list of spawns flagged "initial") if there are more players than initial
+spots, overflow to regular spawning
 ============
 */
 idEntity* idGameLocal::SelectInitialSpawnPoint(idPlayer* player) {

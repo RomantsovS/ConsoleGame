@@ -5,8 +5,8 @@ Version 2
 "call"					"map_marscity1::main"
 "def_player"			"player"
 "player_origin"			"28 8"
-"game_add_point_delay"	"0"
-"game_add_point_count"	"0"
+"game_add_point_delay"	"10000"
+"game_add_point_count"	"1"
 "r_background_color"	"2"
 // primitive 2
 {
@@ -35,96 +35,6 @@ Version 2
 "classname" "info_player_start"
 "name" "info_player_start_1"
 "origin" "28 8"
-}
-
-{
-"classname" "block"
-"origin" "24 24"
-}
-
-{
-"classname" "block"
-"origin" "56 24"
-}
-
-{
-"classname" "block"
-"origin" "88 24"
-}
-
-{
-"classname" "block"
-"origin" "120 24"
-}
-
-{
-"classname" "block"
-"origin" "152 24"
-}
-
-{
-"classname" "block"
-"origin" "184 24"
-}
-
-{
-"classname" "block"
-"origin" "24 56"
-}
-
-{
-"classname" "block"
-"origin" "56 56"
-}
-
-{
-"classname" "block"
-"origin" "88 56"
-}
-
-{
-"classname" "block"
-"origin" "120 56"
-}
-
-{
-"classname" "block"
-"origin" "152 56"
-}
-
-{
-"classname" "block"
-"origin" "184 56"
-}
-
-{
-"classname" "block"
-"origin" "24 88"
-}
-
-{
-"classname" "block"
-"origin" "56 88"
-}
-
-{
-"classname" "block"
-"origin" "88 88"
-}
-
-{
-"classname" "block"
-"origin" "120 88"
-}
-
-{
-"classname" "block"
-"origin" "152 88"
-}
-
-{
-"classname" "block"
-"origin" "184 88"
 }
 
 {
@@ -194,9 +104,17 @@ Version 2
 }
 
 {
-"classname" "mushroom"
-"name" "mushroom3"
+"classname" "hedgehog"
+"name" "hedgehog1"
 "origin" "120 8"
+"color" "3"
+"linearVelocity" "10 0"
+}
+
+{
+"classname" "fish"
+"name" "fish"
+"origin" "72 40"
 "color" "3"
 "linearVelocity" "10 0"
 }
