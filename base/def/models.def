@@ -9,6 +9,9 @@ model test_model {
 model mushroom {
 	mesh "models/mushroom.mesh"
 	anim "idle" models/mushroom_idle.meshanim
+	anim "idle_left" models/mushroom_idle.meshanim
+	anim "walk_right" models/mushroom_idle.meshanim
+	anim "walk_left" models/mushroom_idle.meshanim
 }
 
 model hedgehog {
@@ -19,7 +22,7 @@ model hedgehog {
 	anim "walk_left" models/hedgehog_idle_left.meshanim
 }
 
-model fish{
+model fish {
 	mesh "models/fish.mesh"
 	anim "idle" models/fish_idle.meshanim
 	anim "idle_left" models/fish_idle_left.meshanim
