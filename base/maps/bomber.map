@@ -118,3 +118,11 @@ Version 2
 "color" "3"
 "linearVelocity" "10 0"
 }
+
+{
+"classname" "dinosaur"
+"name" "dinosaur"
+"origin" "72 104"
+"color" "3"
+"linearVelocity" "10 0"
+}
