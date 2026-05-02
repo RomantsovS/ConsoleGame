@@ -38,6 +38,11 @@ Version 2
 }
 
 {
+"classname" "block"
+"origin" "104 72"
+}
+
+{
 "classname" "brick"
 "origin" "40 40"
 }
