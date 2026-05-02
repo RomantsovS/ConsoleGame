@@ -14,11 +14,17 @@ model mushroom {
 model hedgehog {
 	mesh "models/hedgehog.mesh"
 	anim "idle" models/hedgehog_idle.meshanim
+	anim "idle_left" models/hedgehog_idle_left.meshanim
+	anim "walk_right" models/hedgehog_idle.meshanim
+	anim "walk_left" models/hedgehog_idle_left.meshanim
 }
 
 model fish{
 	mesh "models/fish.mesh"
 	anim "idle" models/fish_idle.meshanim
+	anim "idle_left" models/fish_idle_left.meshanim
+	anim "walk_right" models/fish_idle.meshanim
+	anim "walk_left" models/fish_idle_left.meshanim
 }
 
 model mario {
@@ -32,4 +38,15 @@ model mario {
 model turtle {
 	mesh "models/turtle.mesh"
 	anim "idle" models/turtle_idle.meshanim
+	anim "idle_left" models/turtle_idle_left.meshanim
+	anim "walk_right" models/turtle_idle.meshanim
+	anim "walk_left" models/turtle_idle_left.meshanim
+}
+
+model dinosaur {
+	mesh "models/dinosaur.mesh"
+	anim "idle" models/dinosaur_idle.meshanim
+	anim "idle_left" models/dinosaur_idle_left.meshanim
+	anim "walk_right" models/dinosaur_idle.meshanim
+	anim "walk_left" models/dinosaur_idle_left.meshanim
 }

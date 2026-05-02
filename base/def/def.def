@@ -58,6 +58,7 @@ entityDef hedgehog {
 	"size"					"15 15"
 	"speed"					"10"
 	"color"					"10"
+	"directionChangePeriod" "5000"
 	"health"				"1"
 	"def_damage"			"damage_entityCollide"
 }
@@ -198,7 +199,7 @@ entityDef damage_grenadeDirect {
 
 entityDef projectile_grenade_explosion {
 	"spawnclass"				"idProjectile"
-	"size"						"15.8 15.8"
+	"size"						"11 11"
 	"shift"						"16"
 	"model"						"models/fireball.meshstatic"
 
