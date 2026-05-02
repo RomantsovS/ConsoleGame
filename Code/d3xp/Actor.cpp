@@ -58,6 +58,39 @@ void idActor::Attach(std::shared_ptr<idEntity> ent) {
   ent->SetOrigin(origin + originOffset);
 }
 
-int idActor::GetAnim(const std::string& name) {
-  return animator.GetAnim(name);
+int idActor::GetAnim(const std::string& name) { return animator.GetAnim(name); }
+
+void idActor::UpdateAnimation() {
+  if (GetPhysics()->GetLinearVelocity().x > 0) {
+    if (cur_anim != "walk_right") {
+      cur_anim = "walk_right";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (GetPhysics()->GetLinearVelocity().x < 0) {
+    if (cur_anim != "walk_left") {
+      cur_anim = "walk_left";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (GetPhysics()->GetLinearVelocity().x == 0 &&
+             GetPhysics()->GetLinearVelocity().y == 0) {
+    if (cur_anim.substr(0, 4) != "idle") {
+      cur_anim = cur_anim == "walk_left" ? "idle_left" : "idle";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  } else if (GetPhysics()->GetLinearVelocity().y != 0) {
+    if (cur_anim.substr(0, 4) != "walk") {
+      cur_anim = cur_anim == "idle" ? "walk_right" : "walk_left";
+      auto anim = GetAnim(cur_anim);
+
+      animator.CycleAnim(anim, gameLocal.time);
+    }
+  }
+
+  idAnimatedEntity::UpdateAnimation();
 }

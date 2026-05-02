@@ -24,7 +24,11 @@ class idActor : public idAnimatedEntity {
   int GetAnim(const std::string& name);
 
  protected:
+  void UpdateAnimation() override;
+
   std::list<idAttachInfo> attachments;
+
+  std::string cur_anim = "idle";
 };
 
 #endif
