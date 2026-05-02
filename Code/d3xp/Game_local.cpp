@@ -1148,7 +1148,7 @@ void idGameLocal::MapClear(bool clearClients) noexcept {
 void idGameLocal::AddRandomPoint() {
   idDict args;
 
-  const size_t ent_type = GetRandomValue(1, 4);
+  const size_t ent_type = GetRandomValue(1, 5);
 
   float searching_radius = 0.0f;
   float start_pos = 0.0f;
@@ -1170,6 +1170,8 @@ void idGameLocal::AddRandomPoint() {
     classname = "hedgehog";
   } else if (ent_type == 3) {
     classname = "fish";
+  } else if (ent_type == 4) {
+    classname = "donosaur";
   } else {
     classname = "turtle";
   }

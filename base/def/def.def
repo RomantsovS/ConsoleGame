@@ -83,6 +83,17 @@ entityDef turtle {
 	"def_damage"			"damage_entityCollide"
 }
 
+entityDef dinosaur {
+	"spawnclass"			"AISimple"
+	"model"					"dinosaur"
+	"size"					"15 15"
+	"speed"					"10"
+	"color"					"11"
+	"directionChangePeriod" "5000"
+	"health"				"1"
+	"def_damage"			"damage_entityCollide"
+}
+
 entityDef mushroom_static {
 	"spawnclass"			"idStaticEntity"
 	"model"					"mushroom"
