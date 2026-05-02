@@ -359,6 +359,24 @@ void idAnimBlend::CycleAnim(const idDeclModelDef* modelDef, int _animNum,
   starttime = currentTime;
 }
 
+void idAnimBlend::PlayAnim(const idDeclModelDef* modelDef, int _animNum,
+                           int currentTime) {
+  Reset(modelDef);
+  if (!modelDef) {
+    return;
+  }
+
+  const idAnim* _anim = modelDef->GetAnim(_animNum);
+  if (!_anim) {
+    return;
+  }
+
+  animNum = _animNum;
+  starttime = currentTime;
+  endtime = starttime + _anim->Length();
+  cycle = 1;
+}
+
 void idAnimBlend::Clear(int currentTime, int clearTime) {
   if (!clearTime) {
     Reset(modelDef);
@@ -446,7 +464,7 @@ bool idAnimBlend::BlendAnim(int currentTime, Vector2& text_coords) const {
   if (frame) {
     meshanim->GetSingleFrame(frame - 1, text_coords);
   } else {
-     meshanim->ConvertTimeToFrame(time, cycle, text_coords);
+    meshanim->ConvertTimeToFrame(time, cycle, text_coords);
   }
 
   return true;
@@ -560,6 +578,18 @@ void idAnimator::CycleAnim(int animNum, int currentTime) {
 
   PushAnims(currentTime);
   channel.CycleAnim(modelDef, animNum, currentTime);
+  if (entity) {
+    entity->BecomeActive(TH_ANIMATE);
+  }
+}
+
+void idAnimator::PlayAnim(int animNum, int currentTime) {
+  if (!modelDef || !modelDef->GetAnim(animNum)) {
+    return;
+  }
+
+  PushAnims(currentTime);
+  channel.PlayAnim(modelDef, animNum, currentTime);
   if (entity) {
     entity->BecomeActive(TH_ANIMATE);
   }

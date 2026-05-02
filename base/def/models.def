@@ -53,3 +53,13 @@ model dinosaur {
 	anim "walk_right" models/dinosaur_idle.meshanim
 	anim "walk_left" models/dinosaur_idle_left.meshanim
 }
+
+model bomb {
+	mesh "models/bomb.mesh"
+	anim "idle" models/bomb_idle.meshanim
+}
+
+model fireball {
+	mesh "models/fireball.mesh"
+	anim "idle" models/fireball_idle.meshanim
+}

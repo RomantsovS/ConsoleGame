@@ -14,6 +14,9 @@ idProjectile::Spawn
 ================
 */
 void idProjectile::Spawn() {
+  animator.ClearAllAnims(gameLocal.time, 0);
+  animator.PlayAnim(animator.GetAnim("idle"), gameLocal.time);
+
   physicsObj = std::make_shared<idPhysics_RigidBody>();
   physicsObj->SetSelf(this);
   physicsObj->SetClipModel(
@@ -173,6 +176,8 @@ void idProjectile::Think() {
     if (physicsObj->GetNumContacts() > 0) {
     }
   }
+
+  UpdateAnimation();
 
   Present();
 }

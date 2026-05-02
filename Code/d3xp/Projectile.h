@@ -3,7 +3,7 @@
 
 extern const idEventDef EV_Explode;
 
-class idProjectile : public idEntity {
+class idProjectile : public idAnimatedEntity {
  public:
   CLASS_PROTOTYPE(idProjectile);
 

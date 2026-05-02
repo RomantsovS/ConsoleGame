@@ -27,7 +27,7 @@ class MeshAnim {
   int NumFrames() const;
   std::string Name() const;
 
-   void ConvertTimeToFrame(int time, int cyclecount, Vector2& text_coords) const;
+  void ConvertTimeToFrame(int time, int cyclecount, Vector2& text_coords) const;
 };
 
 class idDeclModelDef;
@@ -99,8 +99,7 @@ class idAnimBlend {
   void SetFrame(const idDeclModelDef* modelDef, int animnum, int frame,
                 int currenttime);
   void CycleAnim(const idDeclModelDef* modelDef, int animnum, int currenttime);
-  void PlayAnim(const idDeclModelDef* modelDef, int animnum, int currenttime,
-                int blendtime);
+  void PlayAnim(const idDeclModelDef* modelDef, int animnum, int currenttime);
   bool BlendAnim(int currentTime, Vector2& text_coords) const;
 
  public:
@@ -152,7 +151,7 @@ class idAnimator {
   void Clear(int channelNum, int currentTime, int cleartime);
   void SetFrame(int animnum, int frame, int currenttime);
   void CycleAnim(int animnum, int currenttime);
-  void PlayAnim(int channelNum, int animnum, int currenttime, int blendTime);
+  void PlayAnim(int animnum, int currenttime);
 
   void ClearAllAnims(int currentTime, int cleartime);
 

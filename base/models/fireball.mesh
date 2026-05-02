@@ -1,6 +1,5 @@
 "numMeshes" 1
 {
 	"shader" textures/enemies
-	"size" 12 14
+	"size" 16 16
 }
-"text_coords" 392 185

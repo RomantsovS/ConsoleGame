@@ -166,7 +166,7 @@ entityDef weapon_handgrenade {
 entityDef projectile_grenade {
 	"spawnclass"				"idProjectile"
 	"size"						"16 16"
-	"model"						"models/bomb.meshstatic"
+	"model"						"bomb"
 
 	"def_damage"				"damage_grenadeDirect"
 
@@ -201,7 +201,7 @@ entityDef projectile_grenade_explosion {
 	"spawnclass"				"idProjectile"
 	"size"						"11 11"
 	"shift"						"16"
-	"model"						"models/fireball.meshstatic"
+	"model"						"fireball"
 
 	"def_damage"				"damage_grenadeExplosion"
 
