@@ -74,7 +74,7 @@ bool MeshAnim::LoadAnim(const std::string& filename) {
   }
 
   // we don't count last frame because it would cause a 1 frame pause at the end
-  animLength = ((numFrames) * 1000 + frameRate - 1) / frameRate;
+  animLength = ((numFrames) * 10000 + frameRate - 1) / frameRate;
 
   return true;
 }
@@ -99,7 +99,7 @@ void MeshAnim::ConvertTimeToFrame(int time, int cyclecount,
   }
 
   auto frameTime = time * frameRate;
-  auto frameNum = frameTime / 1000;
+  auto frameNum = frameTime / 10000;
 
   text_coords = componentFrames[frameNum % (numFrames)];
 }
