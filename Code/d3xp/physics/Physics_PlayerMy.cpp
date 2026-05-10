@@ -127,21 +127,15 @@ void Physics_PlayerMy::WalkMove() {
   Physics_PlayerMy::Friction();
 
   float scale = CmdScale(GetUserCmd());
-  Vector2 wishvel{};
 
-  if (GetUserCmd().forwardmove > 0) {
-    wishvel += Vector2(0.0f, GetPlayerSpeed());
-  } else if (GetUserCmd().forwardmove < 0) {
-    wishvel += Vector2(0.0f, -GetPlayerSpeed());
-  }
+  auto wishvel =
+      Vector2(0, 1) * command.forwardmove + Vector2(1, 0) * command.rightmove;
 
-  if (GetUserCmd().rightmove > 0) {
-    wishvel += Vector2(GetPlayerSpeed(), 0.0f);
-  } else if (GetUserCmd().rightmove < 0) {
-    wishvel += Vector2(-GetPlayerSpeed(), 0.0f);
-  }
+  auto wishdir = wishvel;
+  auto wishspeed = wishdir.Normalize();
+  wishspeed *= scale;
 
-  current.velocity = wishvel;
+  current.velocity = wishdir * wishspeed;
 
   SlideMove(false, true, true, true);
 }
