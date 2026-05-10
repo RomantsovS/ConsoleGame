@@ -54,6 +54,14 @@ model dinosaur {
 	anim "walk_left" models/dinosaur_idle_left.meshanim
 }
 
+model dragon {
+	mesh "models/dragon.mesh"
+	anim "idle" models/dragon_idle.meshanim
+	anim "idle_left" models/dragon_idle_left.meshanim
+	anim "walk_right" models/dragon_idle.meshanim
+	anim "walk_left" models/dragon_idle_left.meshanim
+}
+
 model bomb {
 	mesh "models/bomb.mesh"
 	anim "idle" models/bomb_idle.meshanim

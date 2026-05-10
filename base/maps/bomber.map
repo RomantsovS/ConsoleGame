@@ -120,7 +120,7 @@ Version 2
 {
 "classname" "fish"
 "name" "fish"
-"origin" "72 40"
+"origin" "154 88"
 "color" "3"
 "linearVelocity" "10 0"
 }
@@ -129,6 +129,14 @@ Version 2
 "classname" "dinosaur"
 "name" "dinosaur"
 "origin" "72 104"
+"color" "3"
+"linearVelocity" "10 0"
+}
+
+{
+"classname" "dragon"
+"name" "dragon"
+"origin" "154 40"
 "color" "3"
 "linearVelocity" "10 0"
 }
