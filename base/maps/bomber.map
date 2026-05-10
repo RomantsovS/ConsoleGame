@@ -7,7 +7,8 @@ Version 2
 "player_origin"			"28 8"
 "game_add_point_delay"	"10000"
 "game_add_point_count"	"1"
-"r_background_color"	"2"
+"r_background_color"	"1"
+"random_spawn_entity_list" "mushroom,turtle,hedgehog,fish,dinosaur,dragon"
 // primitive 2
 {
  brushDef3

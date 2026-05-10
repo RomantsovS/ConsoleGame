@@ -1148,35 +1148,19 @@ void idGameLocal::MapClear(bool clearClients) noexcept {
 void idGameLocal::AddRandomPoint() {
   idDict args;
 
-  const size_t ent_type = GetRandomValue(1, 5);
+  auto random_spawn_entity_list =
+      idStr::Split(world->spawnArgs.GetString("random_spawn_entity_list"));
+
+  if (random_spawn_entity_list.empty()) return;
+
+  const size_t ent_type = GetRandomValue(1ull, random_spawn_entity_list.size());
 
   float searching_radius = 0.0f;
   float start_pos = 0.0f;
-  std::string classname;
-
-  // if (ent_type == 0) {
-  //   classname = "mushroom_static";
-  // }
-  /*else if (ent_type < 3) {
-      classname = "chain";
-
-      const size_t links = GetRandomValue(3, 5);
-      args.Set("links", std::to_string(links));
-      searching_radius = static_cast<float>(links);
-  }*/
-  if (ent_type == 1) {
-    classname = "mushroom";
-  } else if (ent_type == 2) {
-    classname = "hedgehog";
-  } else if (ent_type == 3) {
-    classname = "fish";
-  } else if (ent_type == 4) {
-    classname = "donosaur";
-  } else {
-    classname = "turtle";
-  }
+  std::string classname = random_spawn_entity_list.at(ent_type);
 
   args.Set("classname", classname);
+  args.Set("name", classname.c_str());
 
   const std::shared_ptr<idDeclEntityDef> def = FindEntityDef(classname, false);
 
@@ -1193,7 +1177,6 @@ void idGameLocal::AddRandomPoint() {
 
   Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max),
                  GetRandomValue(start_pos, GetHeight() - size_max));
-  // Vector2 origin = { 136.0f, 156.0f };
   const Vector2 axis(0, 0);
 
   std::vector<std::shared_ptr<idEntity>> ent_vec(1);
@@ -1232,16 +1215,7 @@ void idGameLocal::AddRandomPoint() {
   if (!gameLocal.SpawnEntityDef(args, &ent)) {
     Warning("Failed to spawn random point as '%s'",
             args.GetString("classname").c_str());
-  } else {
-    // ent->PostEventMS(&EV_Remove, 1000);
   }
-
-  /*args.Set("classname", "idSimpleObject");
-  args.Set("spawnclass", "idSimpleObject");
-  args.Set("origin", Vector2(4.0f, 5.0f).ToString());
-  args.Set("linearVelocity", (Vector2(0.0f, 0.0f).ToString()));
-  args.Set("color", std::to_string(colorLightRed));
-  gameLocal.SpawnEntityDef(args, &ent);*/
 }
 
 Screen::color_type idGameLocal::GetRandomColor() {

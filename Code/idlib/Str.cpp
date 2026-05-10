@@ -217,3 +217,19 @@ void idStr::ExtractFileExtension(const std::string& str, std::string& dest) {
     dest = str.substr(pos, str.size() - pos);
   }
 }
+
+std::vector<std::string> idStr::Split(const std::string& str,
+                                      const std::string& delim) {
+  std::vector<std::string> res;
+  if (str.empty()) return res;
+
+  size_t offset = 0;
+  auto del = str.find(delim, offset);
+  while (del != std::string::npos) {
+    res.push_back(str.substr(offset, del - offset));
+    offset = del + 1;
+    del = str.find(delim, offset);
+  }
+  res.push_back(str.substr(offset));
+  return res;
+}

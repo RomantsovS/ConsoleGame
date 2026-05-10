@@ -32,6 +32,9 @@ class idStr {
   static void ExtractFileExtension(
       const std::string& str,
       std::string& dest);  // copy the file extension to another string
+
+  static std::vector<std::string> Split(const std::string& str,
+                                        const std::string& delim = ",");
 };
 
 std::string va(const char* fmt, ...);
