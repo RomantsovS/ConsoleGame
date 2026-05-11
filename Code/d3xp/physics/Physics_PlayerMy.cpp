@@ -6,6 +6,16 @@
 CLASS_DECLARATION(idPhysics_PlayerBase, Physics_PlayerMy)
 END_CLASS
 
+// movement parameters
+const float PM_STOPSPEED = 100.0f;
+
+const float PM_ACCELERATE = 10.0f;
+
+const float PM_FRICTION = 6.0f;
+
+// movementFlags
+const int PMF_JUMP_HELD = 16;  // set when jump button is held down
+
 /*
 ============
 idPhysics_Player::CmdScale
@@ -64,11 +74,16 @@ bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown,
                                  bool push) {
   size_t bumpcount, numbumps = 3;
   float time_left;
-  Vector2 end, clipVelocity = current.velocity;
+  Vector2 end;
   trace_t trace;
-  bool stepped = false;
 
   time_left = GetFrameTime();
+
+  if (gravity) {
+    current.velocity = current.velocity + gravityVector * time_left;
+  }
+
+  auto clipVelocity = current.velocity;
 
   std::vector<int> collidedEntities;
 
@@ -85,17 +100,14 @@ bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown,
 
     // if moved the entire distance
     if (trace.fraction >= 1.0f) {
-      stepped = true;
       break;
     }
 
-    if (!stepped) {
-      if (std::find(std::begin(collidedEntities), std::end(collidedEntities),
-                    trace.c.entityNum) == std::end(collidedEntities)) {
-        // let the entity know about the collision
-        self->Collide(trace, current.velocity);
-        collidedEntities.push_back(trace.c.entityNum);
-      }
+    if (std::find(std::begin(collidedEntities), std::end(collidedEntities),
+                  trace.c.entityNum) == std::end(collidedEntities)) {
+      // let the entity know about the collision
+      self->Collide(trace, current.velocity);
+      collidedEntities.push_back(trace.c.entityNum);
     }
 
     if (bumpcount == 0 && current.velocity.x != 0.0f)
@@ -109,22 +121,30 @@ bool Physics_PlayerMy::SlideMove(bool gravity, bool stepUp, bool stepDown,
   return bumpcount == 0;
 }
 
-/*
-==================
-Physics_PlayerMy::Friction
+void Physics_PlayerMy::Friction() {
+  auto vel = current.velocity;
 
-Handles both ground friction and water friction
-==================
-*/
-void Physics_PlayerMy::Friction() noexcept {}
+  auto speed = vel.Length();
+  if (speed < 1.0f) {
+    current.velocity.Zero();
+    return;
+  }
 
-/*
-===================
-Physics_PlayerMy::WalkMove
-===================
-*/
-void Physics_PlayerMy::WalkMove() {
-  Physics_PlayerMy::Friction();
+  auto drop = 0;
+
+  auto control = speed < PM_STOPSPEED ? PM_STOPSPEED : speed;
+  drop += control * PM_FRICTION * GetFrameTime();
+
+  // scale the velocity
+  auto newspeed = speed - drop;
+  if (newspeed < 0) {
+    newspeed = 0;
+  }
+  current.velocity *= (newspeed / speed);
+}
+
+void Physics_PlayerMy::AirMove() {
+  Friction();
 
   float scale = CmdScale(GetUserCmd());
 
@@ -135,7 +155,34 @@ void Physics_PlayerMy::WalkMove() {
   auto wishspeed = wishdir.Normalize();
   wishspeed *= scale;
 
-  current.velocity = wishdir * wishspeed;
+  current.velocity += wishdir * wishspeed;
+
+  SlideMove(true, true, true, true);
+}
+
+/*
+===================
+Physics_PlayerMy::WalkMove
+===================
+*/
+void Physics_PlayerMy::WalkMove() {
+  if (CheckJump()) {
+    AirMove();
+    return;
+  }
+
+  Friction();
+
+  float scale = CmdScale(GetUserCmd());
+
+  auto wishvel =
+      Vector2(0, 1) * command.forwardmove + Vector2(1, 0) * command.rightmove;
+
+  auto wishdir = wishvel;
+  auto wishspeed = wishdir.Normalize();
+  wishspeed *= scale;
+
+  current.velocity += wishdir * wishspeed;
 
   SlideMove(false, true, true, true);
 }
@@ -147,9 +194,53 @@ idPhysics_Player::CheckGround
 */
 void Physics_PlayerMy::CheckGround() {
   // set the clip model origin before getting the contacts
-  // clipModel->SetPosition(current.origin, clipModel->GetAxis());
+  clipModel->SetPosition(current.origin);
 
   EvaluateContacts();
+
+  // setup a ground trace from the contacts
+  groundTrace.endpos = current.origin;
+
+  if (!contacts.empty()) {
+    groundTrace.fraction = 0.0f;
+    groundTrace.c = contacts[0];
+  } else {
+    groundTrace.fraction = 1.0;
+  }
+
+  // if the trace didn't hit anything, we are in free fall
+  if (groundTrace.fraction == 1.0f) {
+    walking = false;
+    return;
+  }
+
+  walking = true;
+
+  // let the entity know about the collision
+  self->Collide(groundTrace, current.velocity);
+}
+
+bool Physics_PlayerMy::CheckJump() {
+  Vector2 addVelocity;
+
+  if ((command.buttons & BUTTON_JUMP) == 0) {
+    // not holding jump
+    return false;
+  }
+
+  // must wait for jump to be released
+  if (current.movementFlags & PMF_JUMP_HELD) {
+    return false;
+  }
+
+  walking = false;
+  current.movementFlags |= PMF_JUMP_HELD;
+
+  addVelocity = 2.0f * maxJumpHeight * -gravityVector;
+  addVelocity *= idMath::Sqrt(addVelocity.Normalize());
+  current.velocity += addVelocity;
+
+  return true;
 }
 
 /*
@@ -160,8 +251,10 @@ Physics_PlayerMy::MovePlayer
 void Physics_PlayerMy::MovePlayer(int msec) {
   idPhysics_PlayerBase::MovePlayer(msec);
 
-  // move the player velocity into the frame of a pusher
-  // current.velocity -= current.pushVelocity;
+  if ((command.buttons & BUTTON_JUMP) == 0) {
+    // not holding jump
+    current.movementFlags &= ~PMF_JUMP_HELD;
+  }
 
   // no control when dead
   if (current.movementType == pmtype_t::PM_DEAD) {
@@ -177,14 +270,15 @@ void Physics_PlayerMy::MovePlayer(int msec) {
   if (current.movementType == pmtype_t::PM_DEAD) {
     // dead
     // idPhysics_PlayerBase::DeadMove();
-  } else {
+  } else if (walking) {
     // walking on ground
     WalkMove();
+  } else {
+    // airborne
+    AirMove();
   }
 
-  // move the player velocity back into the world frame
-  // current.velocity += current.pushVelocity;
-  // current.pushVelocity.Zero();
+  CheckGround();
 }
 
 /*
@@ -275,8 +369,8 @@ Physics_PlayerMy::SetOrigin
 void Physics_PlayerMy::SetOrigin(const Vector2& newOrigin, int id) noexcept {
   current.localOrigin = newOrigin;
   /*if (masterEntity) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.origin = masterOrigin + newOrigin * masterAxis;
+          self->GetMasterPosition(masterOrigin);
+          current.origin = masterOrigin + newOrigin;
   }
   else {*/
   current.origin = newOrigin;

@@ -201,6 +201,8 @@ class idGameLocal : public idGame {
                            std::vector<std::shared_ptr<idEntity>>& entityList,
                            int maxCount) const;
 
+  const Vector2& GetGravity() const;
+
   // added the following to assist licensees with merge issues
   int GetFrameNum() const noexcept { return framenum; };
   int GetTime() const noexcept override { return time; };
@@ -249,8 +251,6 @@ class idGameLocal : public idGame {
   }
   void AddRandomPoint();
 
-  int GetInfoUpdateTime() noexcept { return info_update_time; }
-
  private:
   const static int INITIAL_SPAWN_COUNT = 1;
 
@@ -264,6 +264,7 @@ class idGameLocal : public idGame {
 
   idDict spawnArgs;
 
+  Vector2 gravity;        // global gravity vector
   gameState_t gamestate;  // keeps track of whether we're spawning, shutting
                           // down, or normal gameplay
 
@@ -294,6 +295,7 @@ class idGameLocal : public idGame {
   void MapPopulate();
   void MapClear(bool clearClients) noexcept;
 
+  void UpdateGravity();
   void RunDebugInfo();
   void PrintSpawnedEntities();
 
@@ -309,7 +311,6 @@ class idGameLocal : public idGame {
   bool checkCollidePosToAllObjects(pos_type pos);*/
 
   short height, width;
-  int info_update_time;
   std::vector<Screen::color_type> colors;
 
   std::default_random_engine rand_eng;

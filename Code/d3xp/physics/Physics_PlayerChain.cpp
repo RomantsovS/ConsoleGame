@@ -490,16 +490,6 @@ const idBounds& Physics_PlayerChain::GetBounds(int id) const noexcept {
     relBounds.Zero();
     return relBounds;
   } else {
-    /*relBounds = bodies[0]->GetClipModel()->GetBounds();
-    for (i = 1; i < bodies.size(); i++) {
-            idBounds bounds;
-            Vector2 origin = (bodies[i]->GetWorldOrigin() -
-    bodies[0]->GetWorldOrigin()) * bodies[0]->GetWorldAxis().Transpose(); idMat3
-    axis = bodies[i]->GetWorldAxis() * bodies[0]->GetWorldAxis().Transpose();
-            bounds.FromTransformedBounds(bodies[i]->GetClipModel()->GetBounds(),
-    origin, axis); relBounds += bounds;
-    }
-    return relBounds;*/
     gameLocal.Warning("Error Physics_AF GetBounds()");
   }
 

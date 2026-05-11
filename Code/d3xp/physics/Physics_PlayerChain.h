@@ -74,10 +74,8 @@ class Physics_PlayerChain : public idPhysics_PlayerBase {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  // void SetAxis(const Vector2& newAxis, int id = -1) override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  // void Rotate(const Vector2& rotation, int id = -1) override;
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
 

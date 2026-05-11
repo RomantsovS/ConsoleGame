@@ -36,7 +36,6 @@ idAFBody::idAFBody(const std::string& name,
   SetClipModel(clipModel);
 
   current->worldOrigin = clipModel->GetOrigin();
-  // current->worldAxis = clipModel->GetAxis();
   *next = *current;
 }
 
@@ -301,7 +300,7 @@ bool idPhysics_AF::EvaluateContacts() noexcept {
 
           numContacts = gameLocal.clip.Contacts(contactInfo, 10,
   body->current->worldOrigin, dir.SubVec6(0), 2.0f, //CONTACT_EPSILON,
-                  body->clipModel, body->current->worldAxis, body->clipMask,
+                  body->clipModel, body->clipMask,
   passEntity);
 
           // merge nearby contacts between the same bodies
@@ -463,16 +462,6 @@ const idBounds& idPhysics_AF::GetBounds(int id) const noexcept {
     relBounds.Zero();
     return relBounds;
   } else {
-    /*relBounds = bodies[0]->GetClipModel()->GetBounds();
-    for (i = 1; i < bodies.size(); i++) {
-            idBounds bounds;
-            Vector2 origin = (bodies[i]->GetWorldOrigin() -
-    bodies[0]->GetWorldOrigin()) * bodies[0]->GetWorldAxis().Transpose(); idMat3
-    axis = bodies[i]->GetWorldAxis() * bodies[0]->GetWorldAxis().Transpose();
-            bounds.FromTransformedBounds(bodies[i]->GetClipModel()->GetBounds(),
-    origin, axis); relBounds += bounds;
-    }
-    return relBounds;*/
     gameLocal.Warning("Error Physics_AF GetBounds()");
   }
 
@@ -766,20 +755,13 @@ idPhysics_AF::SetOrigin
 */
 void idPhysics_AF::SetOrigin(const Vector2& newOrigin, int id) noexcept {
   /*if (masterBody) {
-          Translate(masterBody->current->worldOrigin +
-  masterBody->current->worldAxis * newOrigin - bodies[0]->current->worldOrigin);
+          Translate(masterBody->current->worldOrigin + newOrigin -
+  bodies[0]->current->worldOrigin);
   }
   else {*/
   Translate(newOrigin - bodies[0]->current->worldOrigin);
   //}
 }
-
-/*
-================
-idPhysics_AF::SetAxis
-================
-*/
-void idPhysics_AF::SetAxis(const Vector2& newAxis, int id) noexcept {}
 
 /*
 ================

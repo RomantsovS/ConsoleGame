@@ -29,14 +29,11 @@ class idClipModel : public std::enable_shared_from_this<idClipModel> {
   void Link(idClip& clp);  // must have been linked with an entity and id before
   void Link(idClip& clp, idEntity* ent, int newId, const Vector2& newOrigin,
             int renderModelHandle = -1);
-  void Unlink() noexcept;  // unlink from sectors
-  // void					SetPosition(const idVec3&
-  // newOrigin, const idMat3& newAxis);	// unlinks the clip model
+  void Unlink() noexcept;                      // unlink from sectors
+  void SetPosition(const Vector2& newOrigin);  // unlinks the clip model
   void Translate(
       const Vector2& translation) noexcept;  // unlinks the clip model
-  // void					Rotate(const idRotation&
-  // rotation);							// unlinks the
-  // clip model
+
   void Enable() noexcept;             // enable for clipping
   void Disable() noexcept;            // keep linked but disable for clipping
   void SetContents(int newContents);  // override contents
@@ -57,12 +54,11 @@ class idClipModel : public std::enable_shared_from_this<idClipModel> {
   static void ClearTraceModelCache() noexcept;
 
  private:
-  bool enabled;      // true if this clip model is used for clipping
-  idEntity* entity;  // entity using this clip model
-  int id;            // id for entities that use multiple clip models
-  idEntity* owner;   // owner of the entity that owns this clip model
-  Vector2 origin;    // origin of clip model
-  // idMat3 axis; // orientation of clip model
+  bool enabled;        // true if this clip model is used for clipping
+  idEntity* entity;    // entity using this clip model
+  int id;              // id for entities that use multiple clip models
+  idEntity* owner;     // owner of the entity that owns this clip model
+  Vector2 origin;      // origin of clip model
   idBounds bounds;     // bounds
   idBounds absBounds;  // absolute bounds
   // const idMaterial* material; // material for trace models

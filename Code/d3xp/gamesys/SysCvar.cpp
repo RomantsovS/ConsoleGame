@@ -10,6 +10,8 @@ idCVar si_map("si_map", "-1",
 // change anytime vars
 idCVar developer("developer", "0", CVAR_GAME | CVAR_BOOL, "");
 
+idCVar g_gravity("g_gravity", "5000", CVAR_GAME | CVAR_FLOAT, "");
+
 idCVar g_debugDamage("g_debugDamage", "0", CVAR_GAME | CVAR_BOOL, "");
 idCVar g_stopTime("g_stopTime", "0", CVAR_GAME | CVAR_BOOL, "");
 
@@ -23,6 +25,10 @@ idCVar g_maxShowDistance("g_maxShowDistance", "128", CVAR_GAME | CVAR_FLOAT,
                          "");
 idCVar g_showEntityInfo("g_showEntityInfo", "0", CVAR_GAME | CVAR_BOOL, "");
 
+// The default values for player movement cvars are set in def/player.def
+idCVar pm_jumpheight("pm_jumpheight", "48",
+                     CVAR_GAME | CVAR_NETWORKSYNC | CVAR_FLOAT,
+                     "approximate hieght the player can jump");
 idCVar pm_walkspeed("pm_walkspeed", "10",
                     CVAR_GAME | CVAR_NETWORKSYNC | CVAR_FLOAT,
                     "speed the player can move while walking");

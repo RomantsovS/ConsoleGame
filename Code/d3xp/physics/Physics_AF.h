@@ -11,9 +11,7 @@ class idPhysics_AF;
 //===============================================================
 
 struct AFBodyPState_t {
-  Vector2 worldOrigin;  // position in world space
-  // idMat3					worldAxis;
-  // // axis at worldOrigin
+  Vector2 worldOrigin;      // position in world space
   Vector2 spatialVelocity;  // linear and rotational velocity of body
                             // idVec6
                             // externalForce;
@@ -127,13 +125,10 @@ class idPhysics_AF : public idPhysics_Base {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  // void Rotate(const Vector2& rotation, int id = -1) override;
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
-  // const Vector2& GetAxis(int id = 0) const override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;

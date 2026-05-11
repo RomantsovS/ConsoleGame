@@ -27,10 +27,8 @@ struct contactInfo_t {
 
 // trace result
 struct trace_t {
-  float fraction;  // fraction of movement completed, 1.0 = didn't hit anything
-  Vector2 endpos;  // final position of trace model
-  // idMat3					endAxis;		// final
-  // axis of trace model
+  float fraction;   // fraction of movement completed, 1.0 = didn't hit anything
+  Vector2 endpos;   // final position of trace model
   contactInfo_t c;  // contact information, only valid if fraction < 1.0
 };
 

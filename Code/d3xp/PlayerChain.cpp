@@ -47,7 +47,6 @@ void PlayerChain::Present() {
     }
 
     renderEntity.origin = physicsObj->GetOrigin(i);
-    renderEntity.axis = physicsObj->GetAxis(i);
     renderEntity.hModel = modelHandles[i].get();
 
     // add to refresh list
@@ -301,8 +300,7 @@ void PlayerChain::Move() {
 
   {
     // Vector2	org;
-    // idMat3	axis;
-    // GetViewPos(org, axis);
+    // GetViewPos(org);
 
     physicsObj->SetPlayerInput(usercmd, vec2_origin);
   }

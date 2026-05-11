@@ -68,7 +68,14 @@ idPhysics_PlayerBase::idPhysics_PlayerBase
 idPhysics_PlayerBase::idPhysics_PlayerBase() {
   clipModel = nullptr;
   clipMask = 0;
+  walkSpeed = 0;
+  maxJumpHeight = 0;
   memset(&command, 0, sizeof(command));
+  framemsec = 0;
+  frametime = 0;
+  playerSpeed = 0;
+  walking = false;
+  memset(&groundTrace, 0, sizeof(groundTrace));
 }
 
 /*
@@ -79,6 +86,10 @@ Physics_PlayerChain::SetSpeed
 void idPhysics_PlayerBase::SetSpeed(const float newWalkSpeed,
                                     const float newCrouchSpeed) noexcept {
   walkSpeed = newWalkSpeed;
+}
+
+void idPhysics_PlayerBase::SetMaxJumpHeight(const float newMaxJumpHeight) {
+  maxJumpHeight = newMaxJumpHeight;
 }
 
 /*
@@ -170,6 +181,8 @@ idPhysics_PlayerBase::MovePlayer
 ================
 */
 void idPhysics_PlayerBase::MovePlayer(int msec) noexcept {
+  walking = false;
+
   // determine the time
   framemsec = msec;
   frametime = framemsec * 0.001f;

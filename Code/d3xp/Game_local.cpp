@@ -10,16 +10,9 @@ std::shared_ptr<idRenderWorld>
 idGameLocal gameLocal;
 idGame* game = &gameLocal;
 
-idCVar game_add_point_delay("game_add_point_delay", "1000",
-                            CVAR_SYSTEM | CVAR_INIT, "");
-idCVar game_add_point_count("game_add_point_count", "1",
-                            CVAR_SYSTEM | CVAR_INIT, "");
-
-idCVar r_info_update_frame_time("r_info_update_frame_time", "100",
-                                CVAR_SYSTEM | CVAR_INIT, "");
-
 void AddRandomPoints(const idCmdArgs& args) {
-  auto cnt = std::max(game_add_point_count.GetInteger(), 1);
+  auto cnt =
+      std::max(gameLocal.world->spawnArgs.GetInt("game_add_point_count"), 1);
 
   for (int i = 0; i < cnt; ++i) gameLocal.AddRandomPoint();
 }
@@ -32,8 +25,6 @@ void idGameLocal::Init() {
   Printf("--------- Initializing Game ----------\n");
   Printf("gamename: %s\n", GAME_VERSION.c_str());
   Printf("gamedate: %s\n", __DATE__);
-
-  info_update_time = r_info_update_frame_time.GetInteger();
 
   // register game specific decl types
   declManager->RegisterDeclType("model", declType_t::DECL_MODELDEF,
@@ -164,6 +155,8 @@ void idGameLocal::MapShutdown() {
   gameRenderWorld = nullptr;
 
   gamestate = GAMESTATE_NOMAP;
+
+  RB_ClearDebugTools();
 
   Printf("--------------------------------------\n");
 }
@@ -516,10 +509,10 @@ idGameLocal::RunDebugInfo
 ================
 */
 void idGameLocal::RunDebugInfo() {
-  if (time - prev_info_update_time > info_update_time) {
-    prev_info_update_time = time;
-  } else
-    return;
+  // if (time - prev_info_update_time > info_update_time) {
+  //   prev_info_update_time = time;
+  // } else
+  //   return;
 
   const idPlayer* player = GetLocalPlayer();
   if (!player) {
@@ -541,14 +534,13 @@ void idGameLocal::RunDebugInfo() {
     gameRenderWorld->DrawTextToScreen(
         string_format("ents: %3d, active: %3d", num_spawned_entities,
                       num_active_entities),
-        Vector2(), colorYellow, info_update_time + 1);
+        Vector2(), colorYellow, 1);
 
     if (g_showCollisionTraces.GetBool()) {
-      clip.PrintStatistics(info_update_time + 1);
+      clip.PrintStatistics(1);
     }
 
-    /*idMat3		axis = player->viewAngles.ToMat3();
-    idVec3		up = axis[2] * 5.0f;
+    /*
     idBounds	viewTextBounds(origin);
     idBounds	viewBounds(origin);
 
@@ -587,8 +579,8 @@ void idGameLocal::RunDebugInfo() {
       }
       if (viewTextBounds.IntersectsBounds(entBounds)) {
           gameRenderWorld->DrawText(ent->name.c_str(), entBounds.GetCenter(),
-      0.1f, colorWhite, axis, 1); gameRenderWorld->DrawText(va("#%d",
-      ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite, axis,
+      0.1f, colorWhite, 1); gameRenderWorld->DrawText(va("#%d",
+      ent->entityNumber), entBounds.GetCenter() + up, 0.1f, colorWhite,
       1);
       }*/
       if (ent->IsActive()) {
@@ -599,8 +591,7 @@ void idGameLocal::RunDebugInfo() {
                           phys->GetOrigin().y, phys->GetLinearVelocity().x,
                           phys->GetLinearVelocity().y, phys->IsAtRest());
         gameRenderWorld->DrawTextToScreen(std::move(str), Vector2(),
-                                          ent->GetRenderEntity()->color,
-                                          info_update_time + 1);
+                                          ent->GetRenderEntity()->color, 1);
       }
     }
   }
@@ -681,8 +672,8 @@ void idGameLocal::RunDebugInfo() {
           idVec3 seekPos;
           obstaclePath_t path;
 
-          seekPos = player->GetPhysics()->GetOrigin() + player->viewAxis[0] *
-  200.0f; idAI::FindPathAroundObstacles(player->GetPhysics(), aas, NULL,
+          seekPos = player->GetPhysics()->GetOrigin();
+  idAI::FindPathAroundObstacles(player->GetPhysics(), aas, NULL,
   player->GetPhysics()->GetOrigin(), seekPos, path);
       }
   }
@@ -849,6 +840,8 @@ void idGameLocal::LoadMap(const std::string& mapName, int randseed) {
   framenum = 0;
   sessionCommand.clear();
 
+  gravity.Set(0, g_gravity.GetFloat());
+
   spawnArgs.Clear();
 
   clip.Init();
@@ -906,6 +899,7 @@ void idGameLocal::Clear() {
   mapFile = nullptr;
   spawnCount = INITIAL_SPAWN_COUNT;
   spawnArgs.Clear();
+  gravity.Set(0, -1);
   gamestate = GAMESTATE_UNINITIALIZED;
 
   shellHandler = nullptr;
@@ -1153,7 +1147,8 @@ void idGameLocal::AddRandomPoint() {
 
   if (random_spawn_entity_list.empty()) return;
 
-  const size_t ent_type = GetRandomValue(1ull, random_spawn_entity_list.size());
+  const size_t ent_type =
+      GetRandomValue(0ull, random_spawn_entity_list.size() - 1);
 
   float searching_radius = 0.0f;
   float start_pos = 0.0f;
@@ -1177,7 +1172,6 @@ void idGameLocal::AddRandomPoint() {
 
   Vector2 origin(GetRandomValue(start_pos, GetWidth() - size_max),
                  GetRandomValue(start_pos, GetHeight() - size_max));
-  const Vector2 axis(0, 0);
 
   std::vector<std::shared_ptr<idEntity>> ent_vec(1);
 
@@ -1198,7 +1192,6 @@ void idGameLocal::AddRandomPoint() {
   }
 
   args.Set("origin", origin.ToString());
-  args.Set("axis", axis.ToString());
   args.Set("size", va("%s %s", std::to_string(size_x).c_str(),
                       std::to_string(size_y).c_str()));
   args.Set("color", std::to_string(static_cast<Screen::color_type>(
@@ -1474,6 +1467,19 @@ int idGameLocal::EntitiesWithinRadius(
 
   return entCount;
 }
+
+void idGameLocal::UpdateGravity() {
+  if (g_gravity.IsModified()) {
+    if (g_gravity.GetFloat() == 0.0f) {
+      g_gravity.SetFloat(1.0f);
+    }
+    gravity.Set(0, g_gravity.GetFloat());
+
+    g_gravity.ClearModified();
+  }
+}
+
+const Vector2& idGameLocal::GetGravity() const { return gravity; }
 
 void idGameLocal::RandomizeInitialSpawns() {
   idEntity* ent;

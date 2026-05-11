@@ -126,22 +126,14 @@ bool idPhysics_Static::Evaluate(int timeStepMSec, int endTimeMSec) noexcept {
 
   /*if (hasMaster) {
           oldOrigin = current.origin;
-          oldAxis = current.axis;
 
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.origin = masterOrigin + current.localOrigin * masterAxis;
-          if (isOrientated) {
-                  current.axis = current.localAxis * masterAxis;
-          }
-          else {
-                  current.axis = current.localAxis;
-          }
+          self->GetMasterPosition(masterOrigin);
+          current.origin = masterOrigin + current.localOrigin;
           if (clipModel) {
-                  clipModel->Link(gameLocal.clip, self, 0, current.origin,
-  current.axis);
+                  clipModel->Link(gameLocal.clip, self, 0, current.origin);
           }
 
-          return (current.origin != oldOrigin || current.axis != oldAxis);
+          return (current.origin != oldOrigin);
   }*/
   return false;
 }
@@ -166,14 +158,13 @@ void idPhysics_Static::SaveState() noexcept {}
 void idPhysics_Static::RestoreState() noexcept {}
 
 void idPhysics_Static::SetOrigin(const Vector2& newOrigin, int id) {
-  /*Vector2 masterOrigin;
-  Vector2 masterAxis;*/
+  // Vector2 masterOrigin;
 
   current.localOrigin = newOrigin;
 
   /*if (hasMaster) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.origin = masterOrigin + newOrigin * masterAxis;
+          self->GetMasterPosition(masterOrigin);
+          current.origin = masterOrigin + newOrigin;
   }
   else {*/
   current.origin = newOrigin;
@@ -187,29 +178,6 @@ void idPhysics_Static::SetOrigin(const Vector2& newOrigin, int id) {
   previous = next;*/
 }
 
-void idPhysics_Static::SetAxis(const Vector2& newAxis, int id) noexcept {
-  /*Vector2 masterOrigin;
-  Vector2 masterAxis;*/
-
-  current.localAxis = newAxis;
-
-  /*if (hasMaster && isOrientated) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.axis = newAxis * masterAxis;
-  }
-  else {*/
-  current.axis = newAxis;
-  /*}
-
-  if (clipModel) {
-          clipModel->Link(gameLocal.clip, self, 0, current.origin,
-  current.axis);
-  }
-
-  next = ConvertPStateToInterpolateState(current);
-  previous = next;*/
-}
-
 void idPhysics_Static::Translate(const Vector2& translation, int id) {
   current.localOrigin += translation;
   current.origin += translation;
@@ -219,38 +187,8 @@ void idPhysics_Static::Translate(const Vector2& translation, int id) {
   }
 }
 
-void idPhysics_Static::Rotate(const Vector2& rotation, int id) noexcept {
-  /*Vector2 masterOrigin;
-  Vector2 masterAxis;*/
-
-  // current.origin *= rotation;
-  // current.axis *= rotation.ToMat3();
-  current.origin = rotation;
-  current.axis = rotation;
-
-  /*if (hasMaster) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.localAxis *= rotation.ToMat3();
-          current.localOrigin = (current.origin - masterOrigin) *
-  masterAxis.Transpose();
-  }
-  else {*/
-  current.localAxis = current.axis;
-  current.localOrigin = current.origin;
-  /*}
-
-  if (clipModel) {
-          clipModel->Link(gameLocal.clip, self, 0, current.origin,
-  current.axis);
-  }*/
-}
-
 const Vector2& idPhysics_Static::GetOrigin(int id) const noexcept {
   return current.origin;
-}
-
-const Vector2& idPhysics_Static::GetAxis(int id) const noexcept {
-  return current.axis;
 }
 
 void idPhysics_Static::SetLinearVelocity(const Vector2& newLinearVelocity,
@@ -263,6 +201,28 @@ idPhysics_Static::GetLinearVelocity
 */
 const Vector2& idPhysics_Static::GetLinearVelocity(int id) const noexcept {
   return vec2_origin;
+}
+
+void idPhysics_Static::SetGravity(const Vector2& newGravity) {}
+
+/*
+================
+idPhysics_Static::GetGravity
+================
+*/
+const Vector2& idPhysics_Static::GetGravity() const {
+  static Vector2 gravity(0.0f, g_gravity.GetFloat());
+  return gravity;
+}
+
+/*
+================
+idPhysics_Static::GetGravityNormal
+================
+*/
+const Vector2& idPhysics_Static::GetGravityNormal() const {
+  static Vector2 gravity(0, -1);
+  return gravity;
 }
 
 /*

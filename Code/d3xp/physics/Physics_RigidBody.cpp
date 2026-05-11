@@ -356,9 +356,9 @@ bool idPhysics_RigidBody::EvaluateContacts() noexcept {
   } else {
     dir = vec2_point_size;
   }
-  auto num = gameLocal.clip.Contacts(&contacts[0], 10, clipModel->GetOrigin(),
-                                     dir, CONTACT_EPSILON, clipModel.get(),
-                                     /*clipModel->GetAxis(),*/ clipMask, self);
+  auto num =
+      gameLocal.clip.Contacts(&contacts[0], 10, clipModel->GetOrigin(), dir,
+                              CONTACT_EPSILON, clipModel.get(), clipMask, self);
   contacts.resize(num);
 
   AddContactEntitiesForContacts();
@@ -419,7 +419,6 @@ bool idPhysics_RigidBody::CheckForCollisions(const float deltaTime,
                             clipModel.get(), clipMask, self)) {
     // set the next state to the state at the moment of impact
     next_.i.position = collision.endpos;
-    // next_.i.orientation = collision.endAxis;
     // next_.i.linearMomentum = current.i.linearMomentum;
     // next_.i.angularMomentum = current.i.angularMomentum;
     collided = true;
@@ -464,8 +463,8 @@ idPhysics::SetOrigin
 void idPhysics_RigidBody::SetOrigin(const Vector2& newOrigin, int id) noexcept {
   current.localOrigin = newOrigin;
   /*if (hasMaster) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.i.position = masterOrigin + newOrigin * masterAxis;
+          self->GetMasterPosition(masterOrigin);
+          current.i.position = masterOrigin + newOrigin;
   }
   else {*/
   current.i.position = newOrigin;
@@ -474,30 +473,6 @@ void idPhysics_RigidBody::SetOrigin(const Vector2& newOrigin, int id) noexcept {
   clipModel->Link(gameLocal.clip, self, clipModel->GetId(), current.i.position);
 
   Activate();
-}
-
-/*
-================
-idPhysics::SetAxis
-================
-*/
-void idPhysics_RigidBody::SetAxis(const Vector2& newAxis, int id) noexcept {
-  /*idVec3 masterOrigin;
-  idMat3 masterAxis;
-
-  current.localAxis = newAxis;
-  if (hasMaster && isOrientated) {
-          self->GetMasterPosition(masterOrigin, masterAxis);
-          current.i.orientation = newAxis * masterAxis;
-  }
-  else {
-          current.i.orientation = newAxis;
-  }
-
-  clipModel->Link(gameLocal.clip, self, clipModel->GetId(),
-  clipModel->GetOrigin(), current.i.orientation);
-
-  Activate();*/
 }
 
 void idPhysics_RigidBody::Translate(const Vector2& translation,

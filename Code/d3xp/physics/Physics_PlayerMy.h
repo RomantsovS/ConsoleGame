@@ -16,7 +16,7 @@ struct playerMyPState_t {
   // idVec3					pushVelocity;
   // float					stepUp;
   pmtype_t movementType;
-  // int movementFlags;
+  int movementFlags;
   // int movementTime;
 
   playerMyPState_t()
@@ -25,9 +25,9 @@ struct playerMyPState_t {
         localOrigin(vec2_origin),
         /*pushVelocity(vec3_zero),
         stepUp(0.0f),*/
-        movementType(pmtype_t::PM_NORMAL)
-  /*movementFlags(0),
-  movementTime(0)*/
+        movementType(pmtype_t::PM_NORMAL),
+        movementFlags(0)
+  // movementTime(0)
   {}
 };
 
@@ -54,10 +54,8 @@ class Physics_PlayerMy : public idPhysics_PlayerBase {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  // void SetAxis(const Vector2& newAxis, int id = -1) override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  // void Rotate(const Vector2& rotation, int id = -1) override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;
@@ -74,11 +72,12 @@ class Physics_PlayerMy : public idPhysics_PlayerBase {
  private:
   float CmdScale(const usercmd_t& cmd) const noexcept;
   bool SlideMove(bool gravity, bool stepUp, bool stepDown, bool push);
-  void CheckForCollisions(float timeStep);
+  void Friction();
 
-  void Friction() noexcept;
+  void AirMove();
   void WalkMove();
   void CheckGround();
+  bool CheckJump();
   void MovePlayer(int msec);
 };
 

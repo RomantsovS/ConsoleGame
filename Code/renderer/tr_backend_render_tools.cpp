@@ -54,10 +54,10 @@ void RB_ClearDebugText(int time) {
   // copy any text that still needs to be drawn
   num = 0;
 
-  for (auto& text : rb_debugText) {
-    if (text.lifeTime > time) {
+  for (int i = 0; i < rb_numDebugText; ++i) {
+    if (rb_debugText[i].lifeTime > time) {
       if (num != i) {
-        rb_debugText[num] = text;
+        rb_debugText[num] = rb_debugText[i];
       }
       num++;
     }
@@ -81,24 +81,6 @@ void RB_AddDebugText(std::string text, const Vector2& origin,
     debugText->lifeTime = rb_debugTextTime + lifetime;
   }
 }
-
-/*
-================
-RB_DrawText
-
-  oriented on the viewaxis>	ConsoleGame.exe!RB_DrawText(const std::string &
-text, const Vector2 & origin, const Screen::ConsoleColor & color) Line 93
-C++
-
-  align can be 0-left, 1-center (default), 2-right
-================
-*/
-/*
-void RB_DrawText(const std::string &text, const Vector2 &origin, const
-Screen::color_type color) { if (!text.empty()) { tr.screen->writeInColor(text,
-color);
-        }
-}*/
 
 /*
 ================
@@ -208,5 +190,10 @@ RB_RenderDebugTools
 
 void RB_RenderDebugTools() {
   RB_ShowDebugLines();
-  // RB_ShowDebugText();
+  RB_ShowDebugText();
+}
+
+void RB_ClearDebugTools() {
+  RB_ClearDebugLines(0);
+  RB_ClearDebugText(0);
 }

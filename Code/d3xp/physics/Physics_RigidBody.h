@@ -19,7 +19,6 @@ struct rigidBodyPState_t {
   int atRest;           // set when simulation is suspended
   float lastTimeStep;   // length of last time step
   Vector2 localOrigin;  // origin relative to master
-  // idMat3 localAxis; // axis relative to master
   // idVec6 pushVelocity; // push velocity
   // Vector2 externalForce; // external force relative to center of mass
   // Vector2 externalTorque; // external torque relative to center of mass
@@ -29,7 +28,6 @@ struct rigidBodyPState_t {
       : atRest(true),
         lastTimeStep(0),
         localOrigin(vec2_origin)
-  // localAxis(mat3_identity),
   // pushVelocity(vec6_zero),
   // externalForce(vec2_origin),
   // externalTorque(vec2_origin)
@@ -71,13 +69,10 @@ class idPhysics_RigidBody : public idPhysics_Base {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  // void Rotate(const Vector2 &rotation, int id = -1) override;
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
-  // const Vector2 &	GetAxis(int id = 0) const override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;

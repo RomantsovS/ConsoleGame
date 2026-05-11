@@ -126,7 +126,6 @@ idClipModel::idClipModel(const idClipModel& model) {
   id = model.id;
   owner = model.owner;
   origin = model.origin;
-  // axis = model.axis;
   bounds = model.bounds;
   absBounds = model.absBounds;
   // material = model.material;
@@ -201,15 +200,8 @@ void idClipModel::Link(idClip& clp) {
   }
 
   // set the abs box
-  /*if (axis.IsRotated()) {
-          // expand for rotation
-          absBounds.FromTransformedBounds(bounds, origin, axis);
-  }
-  else {*/
-  // normal
   absBounds[0] = bounds[0] + origin;
   absBounds[1] = bounds[1] + origin;
-  //}
 
   // because movement is clipped an epsilon away from an actual edge,
   // we must fully check even when bounding boxes don't quite touch
@@ -224,7 +216,6 @@ void idClipModel::Link(idClip& clp, idEntity* ent, int newId,
   this->entity = ent;
   this->id = newId;
   this->origin = newOrigin;
-  // this->axis = newAxis;
   if (renderModelHandle != -1) {
     this->renderModelHandle = renderModelHandle;
     const renderEntity_t* renderEntity =
@@ -260,13 +251,19 @@ void idClipModel::Unlink() noexcept {
   }
 }
 
+void idClipModel::SetPosition(const Vector2& newOrigin) {
+  if (clipLinks) {
+    Unlink();  // unlink from old position
+  }
+  origin = newOrigin;
+}
+
 void idClipModel::Init() {
   enabled = true;
   entity = nullptr;
   id = 0;
   owner = nullptr;
   origin.Zero();
-  // axis.Identity();
   bounds.Zero();
   absBounds.Zero();
   // material = NULL;
@@ -919,8 +916,7 @@ void idClip::DrawClipModels(const Vector2& eye, const float radius,
     }
     // if (clipModel->renderModelHandle != -1) {
     gameRenderWorld->DebugBounds(colorCyan, clipModel->GetAbsBounds(),
-                                 vec2_origin,
-                                 gameLocal.GetInfoUpdateTime() + 1);
+                                 vec2_origin, 1);
     /* }
     else {
             collisionModelManager->DrawModel(clipModel->Handle(),
@@ -947,13 +943,11 @@ bool idClip::DrawClipSectors_r(const clipSector_t* node,
   front[0][node->axis] = back[1][node->axis] = node->dist;
 
   if (!DrawClipSectors_r(node->children[0].get(), front)) {
-    gameRenderWorld->DebugBounds(colorGreen, front, vec2_origin,
-                                 gameLocal.GetInfoUpdateTime() + 1);
+    gameRenderWorld->DebugBounds(colorGreen, front, vec2_origin, 1);
   }
 
   if (!DrawClipSectors_r(node->children[1].get(), back)) {
-    gameRenderWorld->DebugBounds(colorGreen, back, vec2_origin,
-                                 gameLocal.GetInfoUpdateTime() + 1);
+    gameRenderWorld->DebugBounds(colorGreen, back, vec2_origin, 1);
   }
 
   return true;

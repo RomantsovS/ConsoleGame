@@ -344,6 +344,7 @@ void RB_AddDebugLine(const Screen::color_type color, const Vector2& start,
 void RB_ClearDebugLines(int time) noexcept;
 void RB_RenderDebugToolsBefore();
 void RB_RenderDebugTools();
+void RB_ClearDebugTools();
 void RB_ShowDebugText();
 void RB_DrawText(const std::string& text, const Vector2& origin,
                  const Screen::color_type color);

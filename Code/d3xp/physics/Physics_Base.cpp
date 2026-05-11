@@ -8,6 +8,7 @@ END_CLASS
 idPhysics_Base::idPhysics_Base() {
   self = nullptr;
   clipMask = 0;
+  SetGravity(gameLocal.GetGravity());
   ClearContacts();
 }
 
@@ -97,17 +98,9 @@ void idPhysics_Base::RestoreState() noexcept {}
 
 void idPhysics_Base::SetOrigin(const Vector2& newOrigin, int id) noexcept {}
 
-void idPhysics_Base::SetAxis(const Vector2& newAxis, int id) noexcept {}
-
 void idPhysics_Base::Translate(const Vector2& translation, int id) noexcept {}
 
-void idPhysics_Base::Rotate(const Vector2& rotation, int id) noexcept {}
-
 const Vector2& idPhysics_Base::GetOrigin(int id) const noexcept {
-  return vec2_origin;
-}
-
-const Vector2& idPhysics_Base::GetAxis(int id) const noexcept {
   return vec2_origin;
 }
 
@@ -121,6 +114,23 @@ idPhysics_Base::GetLinearVelocity
 */
 const Vector2& idPhysics_Base::GetLinearVelocity(int id) const noexcept {
   return vec2_origin;
+}
+
+void idPhysics_Base::SetGravity(const Vector2& newGravity) {
+  gravityVector = newGravity;
+  gravityNormal = newGravity;
+  gravityNormal.Normalize();
+}
+
+const Vector2& idPhysics_Base::GetGravity() const { return gravityVector; }
+
+/*
+================
+idPhysics_Base::GetGravityNormal
+================
+*/
+const Vector2& idPhysics_Base::GetGravityNormal() const {
+  return gravityNormal;
 }
 
 /*
@@ -230,7 +240,7 @@ void idPhysics_Base::AddGroundContacts(const idClipModel* clipModel) {
   index = contacts.size();
   contacts.resize(index + 10);
 
-  dir = vec2_point_size;
+  dir = gravityNormal;
   num =
       gameLocal.clip.Contacts(&contacts[index], 10, clipModel->GetOrigin(), dir,
                               CONTACT_EPSILON, clipModel, clipMask, self);

@@ -83,20 +83,14 @@ idBounds::FromTransformedBounds
 void idBounds::FromTransformedBounds(const idBounds& bounds,
                                      const Vector2& origin) noexcept {
   // int i;
-  Vector2 center, extents;  // , rotatedExtents;
+  Vector2 center, extents;
 
   center = (bounds[0] + bounds[1]) * 0.5f;
   extents = bounds[1] - center;
 
-  /*for (i = 0; i < 3; i++) {
-          rotatedExtents[i] = idMath::Fabs(extents[0] * axis[0][i]) +
-                  idMath::Fabs(extents[1] * axis[1][i]) +
-                  idMath::Fabs(extents[2] * axis[2][i]);
-  }*/
-
-  center = origin + center;  // * axis;
-  b[0] = center - extents;   // -rotatedExtents;
-  b[1] = center + extents;   // +rotatedExtents;
+  center = origin + center;
+  b[0] = center - extents;
+  b[1] = center + extents;
 }
 
 void idBounds::FromPointTranslation(const Vector2& point,
@@ -119,10 +113,6 @@ void idBounds::FromBoundsTranslation(const idBounds& bounds,
                                      const Vector2& translation) {
   int i;
 
-  /*if (axis.IsRotated()) {
-          FromTransformedBounds(bounds, origin, axis);
-  }
-  else*/
   {
     b[0] = bounds[0] + origin;
     b[1] = bounds[1] + origin;

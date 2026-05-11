@@ -23,6 +23,7 @@ class idPhysics_PlayerBase : public idPhysics_Actor {
                       const Vector2& forwardVector) noexcept;
   virtual void SetSpeed(const float newWalkSpeed,
                         const float newCrouchSpeed) noexcept;
+  void SetMaxJumpHeight(const float newMaxJumpHeight);
   virtual const Vector2& PlayerGetOrigin() const noexcept;  // != GetOrigin
  public:  // common physics interface
   bool Evaluate(int timeStepMSec, int endTimeMSec) noexcept override;
@@ -33,10 +34,8 @@ class idPhysics_PlayerBase : public idPhysics_Actor {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  // void SetAxis(const Vector2& newAxis, int id = -1) override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  // void Rotate(const Vector2& rotation, int id = -1) override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;
@@ -57,11 +56,17 @@ class idPhysics_PlayerBase : public idPhysics_Actor {
 
   float CmdScale(const usercmd_t& cmd) const noexcept;
   const usercmd_t& GetUserCmd() const noexcept { return command; }
-  float GetFrameTime() noexcept { return frametime; }
+  float GetFrameTime() const noexcept { return frametime; }
   float GetPlayerSpeed() const noexcept { return playerSpeed; }
 
   // player input
   usercmd_t command;
+
+  float maxJumpHeight;
+
+  // walk movement
+  bool walking;
+  trace_t groundTrace;
 };
 
 #endif  // !PHYSICS_PHYSICS_PLAYER_H_

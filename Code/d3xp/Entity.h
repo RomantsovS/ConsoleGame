@@ -106,12 +106,9 @@ class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
   bool RunPhysics();
   // set the origin of the physics object (relative to bindMaster if not NULL)
   void SetOrigin(const Vector2& org);
-  // set the axis of the physics object (relative to bindMaster if not NULL)
-  void SetAxis(const Vector2& axis);
-  // retrieves the transformation going from the physics origin/axis to the
-  // visual origin/axis
-  virtual bool GetPhysicsToVisualTransform(Vector2& origin,
-                                           Vector2& axis) noexcept;
+  // retrieves the transformation going from the physics origin to the
+  // visual origin
+  virtual bool GetPhysicsToVisualTransform(Vector2& origin) noexcept;
   // called from the physics object when colliding, should return true if the
   // physics simulation should stop
   virtual bool Collide(const trace_t& collision,
@@ -156,13 +153,11 @@ class idEntity : public idClass, public std::enable_shared_from_this<idEntity> {
 
   // Delta values that are set when the server or client disagree on where the
   // render model should be. If this happens, they resolve it through
-  // DecayOriginAndAxisDelta()
   Vector2 originDelta;
-  Vector2 axisDelta;
 
   // physics
   // initialize the default physics
-  void InitDefaultPhysics(const Vector2& origin, const Vector2& axis);
+  void InitDefaultPhysics(const Vector2& origin);
   // update visual position from the physics
   void UpdateFromPhysics(bool moveBack);
   // get physics timestep

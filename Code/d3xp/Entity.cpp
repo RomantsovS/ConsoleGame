@@ -30,10 +30,9 @@ void idGameEdit::ParseSpawnArgsToRenderEntity(gsl::not_null<const idDict*> args,
   }*/
 
   args->GetVector("origin", "0 0", renderEntity->origin);
-  args->GetVector("axis", "0 0", renderEntity->axis);
 }
 
-idEntity::idEntity() : originDelta(vec2_origin), axisDelta(vec2_origin) {
+idEntity::idEntity() : originDelta(vec2_origin) {
   entityNumber = ENTITYNUM_NONE;
   entityDefNumber = -1;
 
@@ -58,7 +57,6 @@ idEntity::~idEntity() {
 void idEntity::Spawn() {
   std::string temp;
   Vector2 origin;
-  Vector2 axis;
   std::string classname;
 
   spawnNode.SetOwner(shared_from_this());
@@ -78,7 +76,6 @@ void idEntity::Spawn() {
   renderEntity.entityNum = entityNumber;
 
   origin = renderEntity.origin;
-  axis = renderEntity.axis;
 
   // every object will have a unique name
   std::string def_name;
@@ -89,10 +86,9 @@ void idEntity::Spawn() {
 
   health = spawnArgs.GetInt("health");
 
-  InitDefaultPhysics(origin, axis);
+  InitDefaultPhysics(origin);
 
   SetOrigin(origin);
-  SetAxis(axis);
 
   temp = spawnArgs.GetString("model");
   if (!temp.empty()) {
@@ -321,16 +317,12 @@ void idEntity::UpdateModel() {
 
 void idEntity::UpdateModelTransform() {
   Vector2 origin;
-  Vector2 axis;
 
-  if (GetPhysicsToVisualTransform(origin, axis)) {
-    renderEntity.axis = axis * GetPhysics()->GetAxis();
-    renderEntity.origin =
-        GetPhysics()->GetOrigin() + origin * renderEntity.axis;
+  if (GetPhysicsToVisualTransform(origin)) {
+    renderEntity.origin = GetPhysics()->GetOrigin() + origin;
   } else {
     // Add the deltas here, used for projectiles in MP. These deltas should only
     // affect the visuals.
-    renderEntity.axis = GetPhysics()->GetAxis() * axisDelta;
     renderEntity.origin = GetPhysics()->GetOrigin() + originDelta;
   }
 }
@@ -406,19 +398,7 @@ void idEntity::SetOrigin(const Vector2& org) {
   UpdateVisuals();
 }
 
-void idEntity::SetAxis(const Vector2& axis) {
-  /*if (GetPhysics()->IsType(Physics_Actor::Type)) {
-          static_cast<Actor *>(this)->viewAxis = axis;
-  }
-  else {*/
-  GetPhysics()->SetAxis(axis);
-  //}
-
-  UpdateVisuals();
-}
-
-bool idEntity::GetPhysicsToVisualTransform(Vector2& origin,
-                                           Vector2& axis) noexcept {
+bool idEntity::GetPhysicsToVisualTransform(Vector2& origin) noexcept {
   return false;
 }
 
@@ -515,7 +495,7 @@ This is a virtual function that subclasses are expected to implement.
 void idEntity::Killed(idEntity* inflictor, idEntity* attacker, int damage,
                       const Vector2& dir) noexcept {}
 
-void idEntity::InitDefaultPhysics(const Vector2& origin, const Vector2& axis) {
+void idEntity::InitDefaultPhysics(const Vector2& origin) {
   std::string temp;
   std::shared_ptr<idClipModel> clipModel;
 
@@ -577,7 +557,6 @@ void idEntity::InitDefaultPhysics(const Vector2& origin, const Vector2& axis) {
   defaultPhysicsObj->SetSelf(this);
   defaultPhysicsObj->SetClipModel(clipModel, 1.0f);
   defaultPhysicsObj->SetOrigin(origin);
-  defaultPhysicsObj->SetAxis(axis);
 
   physics = defaultPhysicsObj;
 }

@@ -3,6 +3,8 @@
 
 extern idCVar developer;
 
+extern idCVar g_gravity;
+
 extern idCVar g_debugDamage;
 extern idCVar g_stopTime;
 extern idCVar g_debugSpawn;
@@ -12,6 +14,7 @@ extern idCVar g_showCollisionTraces;
 extern idCVar g_maxShowDistance;
 extern idCVar g_showEntityInfo;
 
+extern idCVar pm_jumpheight;
 extern idCVar pm_walkspeed;
 extern idCVar pm_runspeed;
 

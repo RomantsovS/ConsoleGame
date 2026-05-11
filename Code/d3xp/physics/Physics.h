@@ -57,18 +57,19 @@ class idPhysics : public idClass {
   // set the position and orientation in master space or world space if no
   // master set
   virtual void SetOrigin(const Vector2& newOrigin, int id = -1) = 0;
-  virtual void SetAxis(const Vector2& newAxis, int id = -1) = 0;
   // translate or rotate the physics object in world space
   virtual void Translate(const Vector2& translation, int id = -1) = 0;
-  virtual void Rotate(const Vector2& rotation, int id = -1) = 0;
   // get the position and orientation in world space
   virtual const Vector2& GetOrigin(int id = 0) const = 0;
-  virtual const Vector2& GetAxis(int id = 0) const = 0;
   // set linear and angular velocity
   virtual void SetLinearVelocity(const Vector2& newLinearVelocity,
                                  int id = 0) = 0;
   // get linear and angular velocity
   virtual const Vector2& GetLinearVelocity(int id = 0) const = 0;
+  // gravity
+  virtual void SetGravity(const Vector2& newGravity) = 0;
+  virtual const Vector2& GetGravity() const = 0;
+  virtual const Vector2& GetGravityNormal() const = 0;
 
   virtual void DisableClip() = 0;
   virtual void EnableClip() = 0;

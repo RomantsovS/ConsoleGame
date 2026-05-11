@@ -42,17 +42,18 @@ class idPhysics_Base : public idPhysics {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) noexcept override;
-  void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
   void Translate(const Vector2& translation, int id = -1) noexcept override;
-  void Rotate(const Vector2& rotation, int id = -1) noexcept override;
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
-  const Vector2& GetAxis(int id = 0) const noexcept override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;
   const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
+
+  void SetGravity(const Vector2& newGravity) override;
+  const Vector2& GetGravity() const override;
+  const Vector2& GetGravityNormal() const override;
 
   void DisableClip() noexcept override;
   void EnableClip() noexcept override;
@@ -71,8 +72,10 @@ class idPhysics_Base : public idPhysics {
   void ReadFromSnapshot(const idBitMsg& msg) override;
 
  protected:
-  idEntity* self;  // entity using this physics object
-  int clipMask;    // contents the physics object collides with
+  idEntity* self;         // entity using this physics object
+  int clipMask;           // contents the physics object collides with
+  Vector2 gravityVector;  // direction and magnitude of gravity
+  Vector2 gravityNormal;  // normalized direction of gravity
   std::vector<contactInfo_t> contacts;  // contacts with other physics objects
   std::vector<contactEntity_t>
       contactEntities;  // entities touching this physics object

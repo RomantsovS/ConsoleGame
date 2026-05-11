@@ -25,7 +25,7 @@ struct Vector2 {
   Vector2 operator-() const noexcept;
   Vector2& operator+=(const Vector2& r) noexcept;
   Vector2& operator-=(const Vector2& a) noexcept;
-  Vector2& operator*=(const Vector2& r) noexcept;
+  Vector2& operator*=(const float a) noexcept;
 
   Vector2 Cross(const Vector2& a) const noexcept;
   float Length() const noexcept;
@@ -48,7 +48,9 @@ struct Vector2 {
 extern Vector2 vec2_origin;
 
 inline Vector2 operator*(const float a, const Vector2 b) noexcept {
-  return Vector2(b.x * a, b.y * a);
+  Vector2 res(b);
+  res *= a;
+  return res;
 }
 
 inline bool operator==(const Vector2& l, const Vector2& r) noexcept {
@@ -82,12 +84,12 @@ inline Vector2 Vector2::operator+(const Vector2& a) const noexcept {
   return Vector2(x + a.x, y + a.y);
 }
 
-inline Vector2& Vector2::operator*=(const Vector2& r) noexcept {
-  x = x * r.x;
-  y = y * r.y;
-
-  return *this;
-}
+// inline Vector2& Vector2::operator*=(const Vector2& r) noexcept {
+//   x = x * r.x;
+//   y = y * r.y;
+//
+//   return *this;
+// }
 
 inline Vector2 Vector2::Cross(const Vector2& a) const noexcept {
   return Vector2(y * a.x - x * a.y, x * a.y - y * a.x);
@@ -128,11 +130,11 @@ inline const float* Vector2::ToFloatPtr() const noexcept { return &x; }
 
 inline float* Vector2::ToFloatPtr() noexcept { return &x; }
 
-inline Vector2 operator*(const Vector2& l, const Vector2& r) noexcept {
-  Vector2 res = l;
-  res *= r;
-  return res;
-}
+// inline Vector2 operator*(const Vector2& l, const Vector2& r) noexcept {
+//   Vector2 res = l;
+//   res *= r;
+//   return res;
+// }
 
 inline Vector2 Vector2::operator-(const Vector2& a) const noexcept {
   return Vector2(x - a.x, y - a.y);
@@ -153,6 +155,13 @@ inline Vector2& Vector2::operator-=(const Vector2& a) noexcept {
 
   return *this;
 }
+
+inline Vector2& Vector2::operator*=(const float a) noexcept {
+  x *= a;
+  y *= a;
+  return *this;
+}
+
 /*
 inline Vector2 operator+(const Vector2 & l, const Vector2 & r)
 {

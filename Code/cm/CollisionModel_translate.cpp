@@ -139,7 +139,6 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results,
   if (tw.dir.LengthSqr() > Square(CM_MAX_TRACE_DIST)) {
     results->fraction = 0.0f;
     results->endpos = start;
-    // results->endAxis = trmAxis;
     // results->c.normal = vec3_origin;
     // results->c.material = NULL;
     // results->c.point = start;
@@ -221,12 +220,6 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results,
   // if we're getting contacts
   if (tw.getContacts) {
     // move all contacts to world space
-    /*if (model_rotated) {
-            for (i = 0; i < tw.numContacts; i++) {
-                    tw.contacts[i].normal *= modelAxis;
-                    tw.contacts[i].point *= modelAxis;
-            }
-    }*/
     if (modelOrigin != vec2_origin) {
       for (i = 0; i < tw.numContacts; i++) {
         // tw.contacts[i].point += modelOrigin;
@@ -238,7 +231,6 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results,
     // store results
     *results = tw.trace;
     results->endpos = start + results->fraction * (end - start);
-    // results->endAxis = trmAxis;
 
     if (results->fraction < 1.0f) {
       // if the fraction is tiny the actual movement could end up zero
@@ -246,10 +238,6 @@ void idCollisionModelManagerLocal::TranslationIter(trace_t* results,
         results->fraction = 0.0f;
       }
       // rotate trace plane normal if there was a collision with a rotated model
-      /*if (model_rotated) {
-              results->c.normal *= modelAxis;
-              results->c.point *= modelAxis;
-      }*/
       // results->c.point += modelOrigin;
       // results->c.dist += modelOrigin * results->c.normal;
     }

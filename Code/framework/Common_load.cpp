@@ -140,8 +140,8 @@ void idCommonLocal::ExecuteMapChange() {
   }
 
   renderSystem->EndLevelLoad();
-
-  if (/*!mapSpawnData.savegameFile &&*/ !IsMultiplayer()) {
+  /*
+  if (!IsMultiplayer()) {
     common->Printf("----- Running initial game frames -----\n");
 
     // In single player, run a bunch of frames to make sure ragdolls are settled
@@ -159,7 +159,7 @@ void idCommonLocal::ExecuteMapChange() {
     // common->Printf("----- Saving Game -----\n");
     // SaveGame("autosave");
   }
-
+  */
   session->Pump();
 
   usercmdGen->Clear();

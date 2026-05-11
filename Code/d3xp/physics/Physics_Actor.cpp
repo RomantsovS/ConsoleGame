@@ -115,6 +115,13 @@ const Vector2& idPhysics_Actor::GetOrigin(int id) const noexcept {
   return clipModel->GetOrigin();
 }
 
+void idPhysics_Actor::SetGravity(const Vector2& newGravity) {
+  if (newGravity != gravityVector) {
+    idPhysics_Base::SetGravity(newGravity);
+    SetClipModelAxis();
+  }
+}
+
 /*
 ================
 idPhysics_Actor::DisableClip

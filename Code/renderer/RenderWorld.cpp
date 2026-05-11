@@ -22,8 +22,7 @@ idRenderWorldLocal::~idRenderWorldLocal() {
 #endif  // DEBUG_PRINT_Ctor_Dtor
 
   // free up the debug lines, polys, and text
-  RB_ClearDebugLines(0);
-  RB_ClearDebugText(0);
+  RB_ClearDebugTools();
 }
 
 int idRenderWorldLocal::AddEntityDef(const renderEntity_t* re) {
@@ -73,11 +72,10 @@ void idRenderWorldLocal::UpdateEntityDef(
       // if we have a callback function and the bounds, origin, axis and model
       // match, then we can leave the references as they are
       if (re->callback) {
-        bool axisMatch = (re->axis == def->parms.axis);
         bool originMatch = (re->origin == def->parms.origin);
         bool modelMatch = (re->hModel == def->parms.hModel);
 
-        if (boundsMatch && originMatch && axisMatch && modelMatch) {
+        if (boundsMatch && originMatch && modelMatch) {
           // only clear the dynamic model and interaction surfaces if they exist
           R_ClearEntityDefDynamicModel(def);
           def->parms = *re;
@@ -254,8 +252,6 @@ void idRenderWorldLocal::DebugClearLines(int time) {
 /*
 ================
 idRenderWorldLocal::DrawText
-
-  oriented on the viewaxis
   align can be 0-left, 1-center (default), 2-right
 ================
 */

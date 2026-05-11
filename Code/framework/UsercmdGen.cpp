@@ -59,7 +59,7 @@ class buttonState_t {
   int on{};
   bool held{};
 
-  buttonState_t(){};
+  buttonState_t() {};
   void Clear() noexcept;
   void SetKeyState(int keystate, bool toggle) noexcept;
 };
@@ -126,18 +126,12 @@ class idUsercmdGenLocal : public idUsercmdGen {
   bool Inhibited();
   // void			AdjustAngles();
   void KeyMove() noexcept;
-  /*void			CircleToSquare(float& axis_x, float& axis_y)
-  const; void			HandleJoystickAxis(int keyNum, float
-  unclampedValue, float threshold, bool positive); void
-  JoystickMove(); void			JoystickMove2(); void
-  MouseMove();*/
   void CmdButtons() noexcept;
 
   /*void			AimAssist();
 
   void			Mouse();*/
   void Keyboard();
-  // void			Joystick(int deviceNum);
 
   void Key(int keyNum, bool down) noexcept;
 
@@ -266,8 +260,8 @@ void idUsercmdGenLocal::KeyMove() noexcept {
   side += KEY_MOVESPEED * ButtonState(UB_MOVERIGHT);
   side -= KEY_MOVESPEED * ButtonState(UB_MOVELEFT);
 
-  forward -= KEY_MOVESPEED * ButtonState(UB_MOVEUP);
-  forward += KEY_MOVESPEED * ButtonState(UB_MOVEDOWN);
+  forward -= KEY_MOVESPEED * ButtonState(UB_MOVEFORWARD);
+  forward += KEY_MOVESPEED * ButtonState(UB_MOVEBACK);
 
   cmd.forwardmove += idMath::ClampChar(forward);
   cmd.rightmove += idMath::ClampChar(side);

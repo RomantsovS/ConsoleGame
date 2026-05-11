@@ -5,9 +5,7 @@ class idEntity;
 
 struct staticPState_s {
   Vector2 origin;
-  Vector2 axis;
   Vector2 localOrigin;
-  Vector2 localAxis;
 };
 
 class idPhysics_Static : public idPhysics {
@@ -49,17 +47,18 @@ class idPhysics_Static : public idPhysics {
   void RestoreState() noexcept override;
 
   void SetOrigin(const Vector2& newOrigin, int id = -1) override;
-  void SetAxis(const Vector2& newAxis, int id = -1) noexcept override;
 
   void Translate(const Vector2& translation, int id = -1) override;
-  void Rotate(const Vector2& rotation, int id = -1) noexcept override;
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
-  const Vector2& GetAxis(int id = 0) const noexcept override;
 
   void SetLinearVelocity(const Vector2& newLinearVelocity,
                          int id = 0) noexcept override;
   const Vector2& GetLinearVelocity(int id = 0) const noexcept override;
+
+  void SetGravity(const Vector2& newGravity) override;
+  const Vector2& GetGravity() const override;
+  const Vector2& GetGravityNormal() const override;
 
   void DisableClip() noexcept override;
   void EnableClip() noexcept override;

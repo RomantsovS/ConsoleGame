@@ -405,10 +405,6 @@ void idConsoleLocal::DrawSolidConsole(float frac) {
 
   // draw the input prompt, user text, and cursor if desired
   DrawInput();
-
-  if (keyCatching) {
-     RB_ShowDebugText();
-  }
 }
 
 /*

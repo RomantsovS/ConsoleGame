@@ -1,7 +1,7 @@
 #ifndef RENDER_WORLD_H
 #define RENDER_WORLD_H
 
-using deferredEntityCallback_t = bool(*)(renderEntity_t*, const renderView_t*);
+using deferredEntityCallback_t = bool (*)(renderEntity_t*, const renderView_t*);
 
 struct renderEntity_t {
   idRenderModel* hModel;
@@ -21,11 +21,8 @@ struct renderEntity_t {
   deferredEntityCallback_t callback;
 
   // positioning
-  // axis rotation vectors must be unit length for many
   // R_LocalToGlobal functions to work, so don't scale models!
-  // axis vectors are [0] = forward, [1] = left, [2] = up
   Vector2 origin;
-  Vector2 axis;
 
   Screen::color_type color;
 

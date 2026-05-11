@@ -55,6 +55,9 @@ void idPlayer::Init() {
 
   SetupWeaponEntity();
   currentWeapon = -1;
+
+  // set the gravity
+  physicsObj->SetGravity(gameLocal.GetGravity());
 }
 
 /*
@@ -538,6 +541,9 @@ void idPlayer::Move() {
   oldVelocity = physicsObj->GetLinearVelocity();
   // pushVelocity = physicsObj->GetPushedLinearVelocity();
 
+  // set physics variables
+  physicsObj->SetMaxJumpHeight(pm_jumpheight.GetFloat());
+
   if (health <= 0) {
     physicsObj->SetContents(
         static_cast<int>(contentsFlags_t::CONTENTS_CORPSE) |
@@ -554,8 +560,7 @@ void idPlayer::Move() {
 
   {
     // Vector2	org;
-    // idMat3	axis;
-    // GetViewPos(org, axis);
+    // GetViewPos(org);
 
     physicsObj->SetPlayerInput(usercmd, vec2_origin);
   }

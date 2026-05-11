@@ -41,6 +41,8 @@ class idPhysics_Actor : public idPhysics_Base {
 
   const Vector2& GetOrigin(int id = 0) const noexcept override;
 
+  void SetGravity(const Vector2& newGravity) override;
+
   void DisableClip() noexcept override;
   void EnableClip() noexcept override;
 

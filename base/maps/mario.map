@@ -5,15 +5,15 @@ Version 2
 "call"					"map_marscity1::main"
 "def_player"			"player"
 "player_origin"			"28 8"
-"game_add_point_delay"	"10000"
-"game_add_point_count"	"1"
-"r_background_color"	"1"
-"random_spawn_entity_list" "mushroom,turtle,hedgehog,fish,dinosaur,dragon,jellyfish"
+"game_add_point_delay"	"0"
+"game_add_point_count"	"0"
+"r_background_color"	"9"
+"random_spawn_entity_list" "mushroom,turtle,hedgehog,fish,dinosaur,dragon"
 // primitive 2
 {
  brushDef3
  {
-  ( 0 0 208 112 )
+  ( 0 0 208 64 )
  }
 }
 }
@@ -35,62 +35,32 @@ Version 2
 {
 "classname" "info_player_start"
 "name" "info_player_start_1"
-"origin" "28 8"
+"origin" "28 48"
+}
+
+{
+"classname" "brick"
+"origin" "60 40"
 }
 
 {
 "classname" "block"
-"origin" "104 72"
+"origin" "76 40"
 }
 
 {
 "classname" "brick"
-"origin" "40 40"
+"origin" "92 40"
+}
+
+{
+"classname" "block"
+"origin" "108 40"
 }
 
 {
 "classname" "brick"
-"origin" "40 72"
-}
-
-{
-"classname" "brick"
-"origin" "72 72"
-}
-
-{
-"classname" "brick"
-"origin" "104 104"
-}
-
-{
-"classname" "brick"
-"origin" "136 104"
-}
-
-{
-"classname" "brick"
-"origin" "168 72"
-}
-
-{
-"classname" "brick"
-"origin" "8 104"
-}
-
-{
-"classname" "brick"
-"origin" "104 8"
-}
-
-{
-"classname" "brick"
-"origin" "136 72"
-}
-
-{
-"classname" "brick"
-"origin" "168 104"
+"origin" "124 40"
 }
 /*
 {
@@ -140,11 +110,4 @@ Version 2
 "color" "3"
 "linearVelocity" "10 0"
 }
-
-{
-"classname" "jellyfish"
-"name" "jellyfish"
-"origin" "190 26"
-"color" "3"
-"linearVelocity" "0 10"
-}
+*/

@@ -70,7 +70,7 @@ int idCollisionModelManagerLocal::ContentsTrm(trace_t* results,
                trm->bounds[1][2] - trm->bounds[0][2] <= 0.0f)) {
     // results->c.contents =
     // idCollisionModelManagerLocal::TransformedPointContents(start, model,
-    // modelOrigin, modelAxis);
+    // modelOrigin);
     results->c.contents = contentMask;
     results->fraction = (results->c.contents == 0);
     results->endpos = start;
