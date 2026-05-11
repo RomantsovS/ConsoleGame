@@ -13,7 +13,7 @@ Version 2
 {
  brushDef3
  {
-  ( 0 0 208 64 )
+  ( 0 0 2008 64 )
  }
 }
 }
@@ -62,15 +62,15 @@ Version 2
 "classname" "brick"
 "origin" "124 40"
 }
-/*
+
 {
 "classname" "mushroom"
 "name" "mushroom1"
-"origin" "104 40"
+"origin" "104 56"
 "color" "1"
-"linearVelocity" "0 10"
+"linearVelocity" "10 0"
 }
-
+/*
 {
 "classname" "turtle"
 "name" "turtle1"

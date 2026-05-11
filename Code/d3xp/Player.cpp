@@ -496,7 +496,7 @@ void idPlayer::CalculateRenderView() {
   renderView->pos.x =
       GetPhysics()->GetOrigin().x - renderSystem->GetWidth() / 2;
   renderView->pos.y =
-      GetPhysics()->GetOrigin().y - renderSystem->GetHeight() / 2;
+      /* GetPhysics()->GetOrigin().y -*/ renderSystem->GetHeight() / 2;
 
   // clamp to world bounds
   if (renderView->pos.x > gameLocal.GetWidth() - renderSystem->GetWidth())
