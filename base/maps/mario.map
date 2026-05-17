@@ -64,6 +64,11 @@ Version 2
 }
 
 {
+"classname" "brick"
+"origin" "160 56"
+}
+
+{
 "classname" "mushroom"
 "name" "mushroom1"
 "origin" "104 56"
