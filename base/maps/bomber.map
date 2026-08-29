@@ -8,7 +8,7 @@ Version 2
 "game_add_point_delay"	"10000"
 "game_add_point_count"	"1"
 "r_background_color"	"1"
-"random_spawn_entity_list" "mushroom,turtle,hedgehog,fish,dinosaur,dragon"
+"random_spawn_entity_list" "mushroom,turtle,hedgehog,fish,dinosaur,dragon,jellyfish"
 // primitive 2
 {
  brushDef3
@@ -139,4 +139,12 @@ Version 2
 "origin" "154 40"
 "color" "3"
 "linearVelocity" "10 0"
+}
+
+{
+"classname" "jellyfish"
+"name" "jellyfish"
+"origin" "190 26"
+"color" "3"
+"linearVelocity" "0 10"
 }
