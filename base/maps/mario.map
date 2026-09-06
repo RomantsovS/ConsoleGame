@@ -69,29 +69,34 @@ Version 2
 }
 
 {
+"classname" "brick"
+"origin" "192 40"
+}
+
+{
 "classname" "mushroom"
 "name" "mushroom1"
 "origin" "104 56"
 "color" "1"
 "linearVelocity" "10 0"
 }
-/*
+
 {
 "classname" "turtle"
 "name" "turtle1"
-"origin" "8 40"
+"origin" "220 50"
 "color" "2"
 "linearVelocity" "0 10"
 }
 
 {
-"classname" "hedgehog"
-"name" "hedgehog1"
-"origin" "120 8"
-"color" "3"
-"linearVelocity" "10 0"
+"classname" "mushroom"
+"name" "mushroom2"
+"origin" "260 50"
+"color" "2"
+"linearVelocity" "0 10"
 }
-
+/*
 {
 "classname" "fish"
 "name" "fish"
